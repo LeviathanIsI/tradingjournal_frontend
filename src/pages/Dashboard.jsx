@@ -5,8 +5,10 @@ import TradeModal from "../components/TradeModal";
 import { useTrades } from "../hooks/useTrades";
 import ProfitLossChart from "../components/ProfitLossChart";
 import WinLossChart from "../components/WinLossChart";
+import { useAuth } from "../context/AuthContext";
 
 const Dashboard = () => {
+  const { user } = useAuth();
   const [isTradeModalOpen, setIsTradeModalOpen] = useState(false);
   const [selectedTrade, setSelectedTrade] = useState(null);
   const { trades, stats, loading, error, addTrade, updateTrade, deleteTrade } =
@@ -66,7 +68,52 @@ const Dashboard = () => {
   return (
     <div className="w-full p-6 text-black">
       {/* Stats Overview */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+      <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-8">
+        {" "}
+        {/* Changed to 5 columns */}
+        <div className="bg-white p-4 rounded shadow">
+          <h3 className="text-sm text-black">Starting Capital</h3>
+          <p className="text-2xl font-bold text-black">
+            {formatCurrency(user?.preferences?.startingCapital || 0)}
+          </p>
+        </div>
+        <div className="bg-white p-4 rounded shadow">
+          <h3 className="text-sm text-black">Current Balance</h3>
+          <div className="flex items-baseline gap-2">
+            <p
+              className={`text-2xl font-bold ${
+                stats?.totalProfit > 0
+                  ? "text-green-600"
+                  : stats?.totalProfit < 0
+                  ? "text-red-600"
+                  : "text-black"
+              }`}
+            >
+              {formatCurrency(
+                (user?.preferences?.startingCapital || 0) +
+                  (stats?.totalProfit || 0)
+              )}
+            </p>
+            {user?.preferences?.startingCapital > 0 && (
+              <span
+                className={`text-sm ${
+                  stats?.totalProfit > 0
+                    ? "text-green-600"
+                    : stats?.totalProfit < 0
+                    ? "text-red-600"
+                    : "text-black"
+                }`}
+              >
+                {(
+                  ((stats?.totalProfit || 0) /
+                    user.preferences.startingCapital) *
+                  100
+                ).toFixed(2)}
+                %
+              </span>
+            )}
+          </div>
+        </div>
         <div className="bg-white p-4 rounded shadow">
           <h3 className="text-sm text-black">Total Trades</h3>
           <p className="text-2xl font-bold text-black">
@@ -80,14 +127,12 @@ const Dashboard = () => {
           </p>
         </div>
         <div className="bg-white p-4 rounded shadow">
-          <h3 className="text-sm text-black">Profit Factor</h3>
-          <p className="text-2xl font-bold text-black">
-            {stats?.profitFactor || 0}
-          </p>
-        </div>
-        <div className="bg-white p-4 rounded shadow">
           <h3 className="text-sm text-black">Total P/L</h3>
-          <p className="text-2xl font-bold text-black">
+          <p
+            className={`text-2xl font-bold ${
+              (stats?.totalProfit || 0) >= 0 ? "text-green-600" : "text-red-600"
+            }`}
+          >
             {formatCurrency(stats?.totalProfit || 0)}
           </p>
         </div>

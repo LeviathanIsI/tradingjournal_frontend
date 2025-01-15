@@ -1,19 +1,23 @@
 // src/components/TradeModal.jsx
 import { useState, useEffect, useRef } from "react";
-import { X } from "lucide-react";
+import { X, Trash2 } from "lucide-react";
 
 const TradeModal = ({ isOpen, onClose, onSubmit, trade }) => {
   const modalRef = useRef(null);
   const initialFormState = {
     symbol: "",
     type: "LONG",
-    entryPrice: "",
-    entryDate: "",
-    exitPrice: "",
-    exitDate: "",
-    quantity: "",
+    tradeType: "DAY",
     strategy: "",
     notes: "",
+    legs: [
+      {
+        quantity: "",
+        price: "",
+        date: "",
+        type: "ENTRY",
+      },
+    ],
   };
 
   const [formData, setFormData] = useState(initialFormState);
@@ -37,23 +41,15 @@ const TradeModal = ({ isOpen, onClose, onSubmit, trade }) => {
 
   useEffect(() => {
     if (trade) {
-      // Format dates for datetime-local input
-      const formatDate = (dateString) => {
-        if (!dateString) return "";
-        const date = new Date(dateString);
-        return date.toISOString().slice(0, 16); // Format: YYYY-MM-DDThh:mm
-      };
-
       setFormData({
         symbol: trade.symbol || "",
         type: trade.type || "LONG",
-        entryPrice: trade.entryPrice || "",
-        entryDate: formatDate(trade.entryDate),
-        exitPrice: trade.exitPrice || "",
-        exitDate: formatDate(trade.exitDate),
-        quantity: trade.quantity || "",
+        tradeType: trade.tradeType || "DAY",
         strategy: trade.strategy || "",
         notes: trade.notes || "",
+        legs: trade.legs || [
+          { quantity: "", price: "", date: "", type: "ENTRY" },
+        ],
       });
     } else {
       setFormData(initialFormState);
@@ -66,12 +62,80 @@ const TradeModal = ({ isOpen, onClose, onSubmit, trade }) => {
       ...prev,
       [name]: value,
     }));
+
+    // If it's a day trade, update exit dates to match entry dates
+    if (name === "tradeType" && value === "DAY") {
+      const entryLegs = formData.legs.filter((leg) => leg.type === "ENTRY");
+      if (entryLegs.length > 0) {
+        const entryDate = entryLegs[0].date.split("T")[0]; // Get just the date part
+        setFormData((prev) => ({
+          ...prev,
+          legs: prev.legs.map((leg) => {
+            if (leg.type === "EXIT") {
+              return {
+                ...leg,
+                date: leg.date
+                  ? `${entryDate}T${leg.date.split("T")[1]}`
+                  : leg.date,
+              };
+            }
+            return leg;
+          }),
+        }));
+      }
+    }
+  };
+
+  const handleLegChange = (index, e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      legs: prev.legs.map((leg, i) => {
+        if (i === index) {
+          const updatedLeg = { ...leg, [name]: value };
+
+          // If it's a day trade and this is an entry leg, update exit leg dates
+          if (
+            formData.tradeType === "DAY" &&
+            leg.type === "ENTRY" &&
+            name === "date"
+          ) {
+            const entryDate = value.split("T")[0];
+            prev.legs.forEach((otherLeg, otherIndex) => {
+              if (otherLeg.type === "EXIT") {
+                const exitTime = prev.legs[otherIndex].date
+                  ? prev.legs[otherIndex].date.split("T")[1]
+                  : new Date().toTimeString().slice(0, 5);
+                prev.legs[otherIndex].date = `${entryDate}T${exitTime}`;
+              }
+            });
+          }
+
+          return updatedLeg;
+        }
+        return leg;
+      }),
+    }));
+  };
+
+  const addLeg = (type) => {
+    setFormData((prev) => ({
+      ...prev,
+      legs: [...prev.legs, { quantity: "", price: "", date: "", type }],
+    }));
+  };
+
+  const removeLeg = (index) => {
+    setFormData((prev) => ({
+      ...prev,
+      legs: prev.legs.filter((_, i) => i !== index),
+    }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    await onSubmit(trade ? { ...formData, _id: trade._id } : formData);
+    await onSubmit(formData);
     setLoading(false);
   };
 
@@ -81,7 +145,7 @@ const TradeModal = ({ isOpen, onClose, onSubmit, trade }) => {
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div
         ref={modalRef}
-        className="bg-white rounded-lg p-6 w-full max-w-xl max-h-[90vh] overflow-y-auto"
+        className="bg-white rounded-lg p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto"
       >
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-semibold text-black">
@@ -89,126 +153,171 @@ const TradeModal = ({ isOpen, onClose, onSubmit, trade }) => {
           </h2>
           <button
             onClick={onClose}
-            className="p-2 hover:bg-gray-100 rounded-full bg-white text-gray-500"
+            className="p-2 hover:bg-gray-100 rounded-full text-gray-500"
           >
             <X size={24} />
           </button>
         </div>
 
         <form onSubmit={handleSubmit}>
-          <div className="grid grid-cols-2 gap-4">
-            <div className="col-span-2">
-              <label className="block text-sm text-black mb-1">Symbol</label>
-              <input
-                type="text"
-                name="symbol"
-                value={formData.symbol}
-                onChange={handleChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded bg-white text-black"
-                required
-              />
+          <div className="space-y-4">
+            {/* Basic Trade Info */}
+            <div className="grid grid-cols-3 gap-4">
+              <div>
+                <label className="block text-sm text-black mb-1">Symbol</label>
+                <input
+                  type="text"
+                  name="symbol"
+                  value={formData.symbol}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded bg-white text-black"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm text-black mb-1">Type</label>
+                <select
+                  name="type"
+                  value={formData.type}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded bg-white text-black"
+                  required
+                >
+                  <option value="LONG">Long</option>
+                  <option value="SHORT">Short</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm text-black mb-1">
+                  Trade Type
+                </label>
+                <select
+                  name="tradeType"
+                  value={formData.tradeType}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded bg-white text-black"
+                  required
+                >
+                  <option value="DAY">Day Trade</option>
+                  <option value="SWING">Swing Trade</option>
+                </select>
+              </div>
             </div>
 
-            <div>
-              <label className="block text-sm text-black mb-1">Type</label>
-              <select
-                name="type"
-                value={formData.type}
-                onChange={handleChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded bg-white text-black"
-                required
-              >
-                <option value="LONG">Long</option>
-                <option value="SHORT">Short</option>
-              </select>
+            {/* Trade Legs */}
+            <div className="space-y-4">
+              <div className="flex justify-between items-center">
+                <h3 className="text-lg font-semibold text-black">Trade Legs</h3>
+                <div className="space-x-2">
+                  <button
+                    type="button"
+                    onClick={() => addLeg("ENTRY")}
+                    className="px-3 py-1 text-sm bg-green-600 text-white rounded hover:bg-green-700"
+                  >
+                    Add Entry
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => addLeg("EXIT")}
+                    className="px-3 py-1 text-sm bg-red-600 text-white rounded hover:bg-red-700"
+                  >
+                    Add Exit
+                  </button>
+                </div>
+              </div>
+
+              {formData.legs.map((leg, index) => (
+                <div key={index} className="border p-4 rounded space-y-3">
+                  <div className="flex justify-between items-center">
+                    <h4 className="font-medium text-black">
+                      {leg.type === "ENTRY" ? "Entry" : "Exit"} Leg {index + 1}
+                    </h4>
+                    {formData.legs.length > 1 && (
+                      <button
+                        type="button"
+                        onClick={() => removeLeg(index)}
+                        className="text-red-600 hover:text-red-700"
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    )}
+                  </div>
+
+                  <div className="grid grid-cols-3 gap-4">
+                    <div>
+                      <label className="block text-sm text-black mb-1">
+                        Quantity
+                      </label>
+                      <input
+                        type="number"
+                        name="quantity"
+                        value={leg.quantity}
+                        onChange={(e) => handleLegChange(index, e)}
+                        className="w-full px-3 py-2 border border-gray-300 rounded bg-white text-black"
+                        required
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm text-black mb-1">
+                        Price
+                      </label>
+                      <input
+                        type="number"
+                        step="0.01"
+                        name="price"
+                        value={leg.price}
+                        onChange={(e) => handleLegChange(index, e)}
+                        className="w-full px-3 py-2 border border-gray-300 rounded bg-white text-black"
+                        required
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm text-black mb-1">
+                        Date & Time
+                      </label>
+                      <input
+                        type="datetime-local"
+                        name="date"
+                        value={leg.date}
+                        onChange={(e) => handleLegChange(index, e)}
+                        className="w-full px-3 py-2 border border-gray-300 rounded bg-white text-black"
+                        required
+                      />
+                    </div>
+                  </div>
+                </div>
+              ))}
             </div>
 
-            <div>
-              <label className="block text-sm text-black mb-1">Quantity</label>
-              <input
-                type="number"
-                name="quantity"
-                value={formData.quantity}
-                onChange={handleChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded bg-white text-black"
-                required
-              />
-            </div>
+            {/* Additional Info */}
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm text-black mb-1">
+                  Strategy
+                </label>
+                <input
+                  type="text"
+                  name="strategy"
+                  value={formData.strategy}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded bg-white text-black"
+                />
+              </div>
 
-            <div>
-              <label className="block text-sm text-black mb-1">
-                Entry Price
-              </label>
-              <input
-                type="number"
-                step="0.01"
-                name="entryPrice"
-                value={formData.entryPrice}
-                onChange={handleChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded bg-white text-black"
-                required
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm text-black mb-1">
-                Entry Date
-              </label>
-              <input
-                type="datetime-local"
-                name="entryDate"
-                value={formData.entryDate}
-                onChange={handleChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded bg-white text-black"
-                required
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm text-black mb-1">
-                Exit Price
-              </label>
-              <input
-                type="number"
-                step="0.01"
-                name="exitPrice"
-                value={formData.exitPrice}
-                onChange={handleChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded bg-white text-black"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm text-black mb-1">Exit Date</label>
-              <input
-                type="datetime-local"
-                name="exitDate"
-                value={formData.exitDate}
-                onChange={handleChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded bg-white text-black"
-              />
-            </div>
-
-            <div className="col-span-2">
-              <label className="block text-sm text-black mb-1">Strategy</label>
-              <input
-                type="text"
-                name="strategy"
-                value={formData.strategy}
-                onChange={handleChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded bg-white text-black"
-              />
-            </div>
-
-            <div className="col-span-2">
-              <label className="block text-sm text-black mb-1">Notes</label>
-              <textarea
-                name="notes"
-                value={formData.notes}
-                onChange={handleChange}
-                rows="3"
-                className="w-full px-3 py-2 border border-gray-300 rounded bg-white text-black"
-              />
+              <div>
+                <label className="block text-sm text-black mb-1">Notes</label>
+                <textarea
+                  name="notes"
+                  value={formData.notes}
+                  onChange={handleChange}
+                  rows="3"
+                  className="w-full px-3 py-2 border border-gray-300 rounded bg-white text-black"
+                />
+              </div>
             </div>
           </div>
 
