@@ -139,22 +139,9 @@ const Dashboard = () => {
       </div>
 
       {/* Charts Section */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-        <div className="bg-white p-4 rounded shadow">
-          <h2 className="text-lg font-semibold mb-4 text-black">
-            Profit/Loss Over Time
-          </h2>
-          <div className="h-64">
-            <ProfitLossChart trades={trades} />
-          </div>
-        </div>
-        <div className="bg-white p-4 rounded shadow">
-          <h2 className="text-lg font-semibold mb-4 text-black">
-            Win/Loss Distribution
-          </h2>
-          <div className="h-64">
-            <WinLossChart trades={trades} />
-          </div>
+      <div className="bg-white p-6 rounded shadow mb-8">
+        <div className="h-[500px]">
+          <ProfitLossChart trades={trades} />
         </div>
       </div>
 
