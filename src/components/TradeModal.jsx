@@ -67,35 +67,6 @@ const TradeModal = ({ isOpen, onClose, onSubmit, trade }) => {
       ...prev,
       [name]: value,
     }));
-
-    // If it's a day trade and entry date changes, update exit date
-    if (
-      name === "entryDate" &&
-      formData.tradeType === "DAY" &&
-      formData.exitDate
-    ) {
-      const newDate = value.split("T")[0];
-      const exitTime = formData.exitDate.split("T")[1];
-      setFormData((prev) => ({
-        ...prev,
-        exitDate: `${newDate}T${exitTime}`,
-      }));
-    }
-
-    // If changing to day trade, update exit date to match entry date
-    if (
-      name === "tradeType" &&
-      value === "DAY" &&
-      formData.entryDate &&
-      formData.exitDate
-    ) {
-      const entryDate = formData.entryDate.split("T")[0];
-      const exitTime = formData.exitDate.split("T")[1];
-      setFormData((prev) => ({
-        ...prev,
-        exitDate: `${entryDate}T${exitTime}`,
-      }));
-    }
   };
 
   const handleSubmit = async (e) => {
@@ -324,8 +295,8 @@ const TradeModal = ({ isOpen, onClose, onSubmit, trade }) => {
                   <div className="relative">
                     <input
                       type="datetime-local"
-                      name="entryDate"
-                      value={formData.entryDate}
+                      name="exitDate"
+                      value={formData.exitDate}
                       onChange={handleChange}
                       className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded bg-white text-gray-900 appearance-none"
                       style={{ width: "250px" }} // Adjust width as necessary
@@ -335,7 +306,7 @@ const TradeModal = ({ isOpen, onClose, onSubmit, trade }) => {
                       className="absolute left-3 top-1/2 transform -translate-y-1/2 text-blue-600 cursor-pointer"
                       onClick={() => {
                         const input = document.querySelector(
-                          'input[name="entryDate"]'
+                          'input[name="exitDate"]'
                         );
                         if (input) input.showPicker();
                       }}
