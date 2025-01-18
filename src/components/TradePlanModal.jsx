@@ -39,12 +39,17 @@ const TradePlanModal = ({ isOpen, onClose, onSubmit, plan }) => {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (plan) {
+    if (!isOpen) {
+      // Reset form when modal closes
+      setFormData(initialFormState);
+    } else if (plan) {
+      // Load plan data when editing
       setFormData(plan);
     } else {
+      // Reset to initial state for new trade
       setFormData(initialFormState);
     }
-  }, [plan]);
+  }, [isOpen, plan]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();

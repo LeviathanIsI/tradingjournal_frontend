@@ -14,6 +14,13 @@ const TradeModal = ({ isOpen, onClose, onSubmit, trade }) => {
     exitPrice: "",
     exitQuantity: "",
     exitDate: "",
+    pattern: "",
+    session: "Regular",
+    mentalState: {
+      focus: "",
+      emotion: "",
+    },
+    mistakes: [],
     strategy: "",
     notes: "",
   };
@@ -126,7 +133,10 @@ const TradeModal = ({ isOpen, onClose, onSubmit, trade }) => {
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div ref={modalRef} className="bg-white rounded-lg p-6 w-full max-w-4xl">
+      <div
+        ref={modalRef}
+        className="bg-white rounded-lg p-6 w-full max-w-6xl max-h-[80vh] overflow-y-auto"
+      >
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-semibold text-gray-900">
             {trade ? "Edit Trade" : "Add Trade"}
@@ -142,7 +152,7 @@ const TradeModal = ({ isOpen, onClose, onSubmit, trade }) => {
         <form onSubmit={handleSubmit}>
           <div className="space-y-4">
             {/* Basic Info */}
-            <div className="grid grid-cols-3 gap-4">
+            <div className="grid grid-cols-4 gap-4">
               <div>
                 <label className="block text-sm text-gray-700 mb-1">
                   Symbol
@@ -189,7 +199,7 @@ const TradeModal = ({ isOpen, onClose, onSubmit, trade }) => {
             </div>
 
             {/* Entry Details */}
-            <div className="border-t pt-4">
+            <div className="grid grid-cols-4 gap-4">
               <h3 className="text-lg font-semibold text-gray-900 mb-3">
                 Entry Details
               </h3>
@@ -254,7 +264,7 @@ const TradeModal = ({ isOpen, onClose, onSubmit, trade }) => {
             </div>
 
             {/* Exit Details */}
-            <div className="border-t pt-4">
+            <div className="grid grid-cols-4 gap-4">
               <h3 className="text-lg font-semibold text-gray-900 mb-3">
                 Exit Details (Optional)
               </h3>
@@ -312,6 +322,152 @@ const TradeModal = ({ isOpen, onClose, onSubmit, trade }) => {
                       }}
                     />
                   </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Pattern and Session */}
+            <div className="border-t pt-4">
+              <h3 className="text-lg font-semibold text-gray-900 mb-3">
+                Trade Analysis
+              </h3>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm text-gray-700 mb-1">
+                    Pattern
+                  </label>
+                  <select
+                    name="pattern"
+                    value={formData.pattern || ""}
+                    onChange={handleChange}
+                    className="w-full px-3 py-2 border border-gray-300 rounded bg-white text-gray-900"
+                  >
+                    <option value="">Select Pattern</option>
+                    <option value="Gap Up">Gap Up</option>
+                    <option value="Gap Down">Gap Down</option>
+                    <option value="Breakout">Breakout</option>
+                    <option value="Breakdown">Breakdown</option>
+                    <option value="Reversal">Reversal</option>
+                    <option value="Trend Following">Trend Following</option>
+                    <option value="Range Play">Range Play</option>
+                    <option value="VWAP Play">VWAP Play</option>
+                    <option value="Opening Range">Opening Range</option>
+                    <option value="First Pullback">First Pullback</option>
+                    <option value="RCT">RCT</option>
+                    <option value="Other">Other</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm text-gray-700 mb-1">
+                    Session
+                  </label>
+                  <select
+                    name="session"
+                    value={formData.session || ""}
+                    onChange={handleChange}
+                    className="w-full px-3 py-2 border border-gray-300 rounded bg-white text-gray-900"
+                    required
+                  >
+                    <option value="Pre-Market">Pre-Market</option>
+                    <option value="Regular">Regular Hours</option>
+                    <option value="After-Hours">After Hours</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            {/* Mental State */}
+            <div className="border-t pt-4">
+              <h3 className="text-lg font-semibold text-gray-900 mb-3">
+                Psychology
+              </h3>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm text-gray-700 mb-1">
+                    Focus Level (1-10)
+                  </label>
+                  <input
+                    type="number"
+                    name="mentalState.focus"
+                    value={formData.mentalState?.focus || ""}
+                    onChange={handleChange}
+                    min="1"
+                    max="10"
+                    className="w-full px-3 py-2 border border-gray-300 rounded bg-white text-gray-900"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm text-gray-700 mb-1">
+                    Emotion
+                  </label>
+                  <select
+                    name="mentalState.emotion"
+                    value={formData.mentalState?.emotion || ""}
+                    onChange={handleChange}
+                    className="w-full px-3 py-2 border border-gray-300 rounded bg-white text-gray-900"
+                  >
+                    <option value="">Select Emotion</option>
+                    <option value="Calm">Calm</option>
+                    <option value="Excited">Excited</option>
+                    <option value="Fearful">Fearful</option>
+                    <option value="Confident">Confident</option>
+                    <option value="Frustrated">Frustrated</option>
+                    <option value="Neutral">Neutral</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            {/* Mistakes */}
+            <div className="border-t pt-4">
+              <h3 className="text-lg font-semibold text-gray-900 mb-3">
+                Trade Review
+              </h3>
+              <div>
+                <label className="block text-sm text-gray-700 mb-1">
+                  Mistakes Made
+                </label>
+                <div className="grid grid-cols-2 gap-2">
+                  {[
+                    "FOMO",
+                    "Sized Too Big",
+                    "Poor Entry",
+                    "Poor Exit",
+                    "No Stop Loss",
+                    "Moved Stop Loss",
+                    "Break Trading Rules",
+                    "Chasing",
+                    "Revenge Trading",
+                    "Other",
+                  ].map((mistake) => (
+                    <label key={mistake} className="flex items-center">
+                      <input
+                        type="checkbox"
+                        name="mistakes"
+                        value={mistake}
+                        checked={formData.mistakes?.includes(mistake)}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          const isChecked = e.target.checked;
+                          handleChange({
+                            target: {
+                              name: "mistakes",
+                              value: isChecked
+                                ? [...(formData.mistakes || []), value]
+                                : formData.mistakes?.filter(
+                                    (m) => m !== value
+                                  ) || [],
+                            },
+                          });
+                        }}
+                        className="h-4 w-4 text-blue-600 bg-white rounded border-gray-300 focus:ring-blue-500"
+                      />
+                      <span className="ml-2 text-sm text-gray-900">
+                        {mistake}
+                      </span>
+                    </label>
+                  ))}
                 </div>
               </div>
             </div>

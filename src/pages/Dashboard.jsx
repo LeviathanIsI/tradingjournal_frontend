@@ -4,7 +4,6 @@ import { Pencil, Trash2 } from "lucide-react";
 import TradeModal from "../components/TradeModal";
 import { useTrades } from "../hooks/useTrades";
 import ProfitLossChart from "../components/ProfitLossChart";
-import WinLossChart from "../components/WinLossChart";
 import { useAuth } from "../context/AuthContext";
 
 const Dashboard = () => {
@@ -140,7 +139,9 @@ const Dashboard = () => {
 
       {/* Charts Section */}
       <div className="bg-white p-6 rounded shadow mb-8">
-        <div className="h-[500px]">
+        <div className="min-h-[500px] flex flex-col">
+          {" "}
+          {/* Changed to min-height and added flex-col */}
           <ProfitLossChart trades={trades} />
         </div>
       </div>

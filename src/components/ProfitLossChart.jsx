@@ -166,11 +166,14 @@ const TradesTable = ({ trades }) => {
 };
 
 const ProfitLossChart = ({ trades }) => {
+  console.log("Incoming trades:", trades);
   const [timeframe, setTimeframe] = useState("ALL");
   const [showTrades, setShowTrades] = useState(false);
   const [displayMode, setDisplayMode] = useState("currency");
+  const [selectedDate, setSelectedDate] = useState(null);
 
   const chartData = useMemo(() => {
+    console.log("Starting chartData calculation");
     let runningTotal = 0;
     let runningWins = 0;
     let runningTrades = 0;
@@ -179,7 +182,10 @@ const ProfitLossChart = ({ trades }) => {
       .filter((trade) => trade.status === "CLOSED")
       .sort((a, b) => new Date(a.exitDate) - new Date(b.exitDate))
       .reduce((acc, trade) => {
-        const tradeDate = new Date(trade.exitDate).toISOString().split("T")[0];
+        const tradeDate = new Date(trade.exitDate).toLocaleDateString("en-US", {
+          timeZone: "America/New_York",
+        });
+
         const isWin = trade.profitLoss.realized > 0;
 
         runningTotal += trade.profitLoss.realized;
@@ -207,12 +213,25 @@ const ProfitLossChart = ({ trades }) => {
         return acc;
       }, []);
 
+    console.log("Raw data:", rawData);
+
+    console.log("Final rawData:", rawData);
     return timeframe === "ALL"
       ? rawData
       : groupDataByTimeframe(rawData, timeframe);
   }, [trades, timeframe]);
 
-  // Calculate min and max values for better chart scaling
+  const filteredTrades = useMemo(() => {
+    if (!selectedDate) return [];
+    return trades
+      .filter(
+        (trade) =>
+          trade.status === "CLOSED" &&
+          new Date(trade.exitDate).toLocaleDateString() === selectedDate
+      )
+      .sort((a, b) => new Date(b.exitDate) - new Date(a.exitDate));
+  }, [trades, selectedDate]);
+
   const yAxisDomain = useMemo(() => {
     if (!chartData.length) return [0, 100];
     const values = chartData.map((d) => d.cumulative);
@@ -223,19 +242,30 @@ const ProfitLossChart = ({ trades }) => {
   }, [chartData]);
 
   return (
-    <div className="h-full flex flex-col">
-      <div className="flex justify-between items-center mb-4">
+    <div className="flex flex-col space-y-6">
+      <div className="flex justify-between items-center">
         <div className="flex items-center space-x-4">
           <h2 className="text-lg font-semibold text-gray-900">
             Profit/Loss Over Time
           </h2>
           <button
             onClick={() => setShowTrades(!showTrades)}
-            className="flex items-center gap-2 px-3 py-1 text-sm bg-white border border-gray-300 rounded text-gray-700 hover:bg-gray-50"
+            disabled={!selectedDate}
+            className={`flex items-center gap-2 px-3 py-1 text-sm bg-white border border-gray-300 rounded
+              ${
+                !selectedDate
+                  ? "opacity-50 cursor-not-allowed"
+                  : "hover:bg-gray-50"
+              }`}
           >
             <Table size={16} />
             {showTrades ? "Hide Trades" : "Show Trades"}
           </button>
+          {selectedDate && (
+            <span className="text-sm text-gray-600">
+              Selected: {selectedDate}
+            </span>
+          )}
         </div>
         <div className="flex items-center space-x-4">
           <div className="flex border border-gray-300 rounded-lg">
@@ -278,11 +308,20 @@ const ProfitLossChart = ({ trades }) => {
         </div>
       </div>
 
-      <div className="flex-1 min-h-[400px]">
+      <div style={{ width: "100%", height: "600px", minHeight: "600px" }}>
         <ResponsiveContainer width="100%" height="100%">
           <LineChart
             data={chartData}
             margin={{ top: 20, right: 30, left: 70, bottom: 20 }}
+            onClick={(data) => {
+              if (data && data.activePayload) {
+                const clickedDate = data.activePayload[0].payload.date;
+                setSelectedDate((prevDate) =>
+                  prevDate === clickedDate ? null : clickedDate
+                );
+                if (!showTrades) setShowTrades(true);
+              }
+            }}
           >
             <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
             <XAxis
@@ -294,7 +333,13 @@ const ProfitLossChart = ({ trades }) => {
             <YAxis
               domain={yAxisDomain}
               tick={{ fill: "#374151" }}
-              tickFormatter={formatCurrency}
+              tickFormatter={(value) =>
+                displayMode === "percentage"
+                  ? `${((value / chartData[0].cumulative - 1) * 100).toFixed(
+                      2
+                    )}%`
+                  : formatCurrency(value)
+              }
               width={80}
             />
             <Tooltip content={<CustomTooltip displayMode={displayMode} />} />
@@ -304,23 +349,46 @@ const ProfitLossChart = ({ trades }) => {
               stroke="#2563eb"
               strokeWidth={2}
               dot={timeframe !== "DAY"}
-              activeDot={{ r: 6 }}
+              activeDot={{
+                r: 6,
+                fill: (dot) =>
+                  dot.payload.date === selectedDate ? "#2563eb" : "#fff",
+              }}
+              formatter={(value) =>
+                displayMode === "percentage"
+                  ? ((value / chartData[0].cumulative - 1) * 100).toFixed(2)
+                  : value
+              }
             />
           </LineChart>
         </ResponsiveContainer>
       </div>
 
-      {showTrades && (
-        <div className="mt-4">
-          {trades.filter((trade) => trade.status === "CLOSED").length > 0 ? (
-            <TradesTable
-              trades={trades
-                .filter((trade) => trade.status === "CLOSED")
-                .sort((a, b) => new Date(b.exitDate) - new Date(a.exitDate))}
-            />
+      {showTrades && selectedDate && (
+        <div className="border-t pt-6">
+          {trades.filter(
+            (trade) =>
+              trade.status === "CLOSED" &&
+              new Date(trade.exitDate).toLocaleDateString() === selectedDate
+          ).length > 0 ? (
+            <div>
+              <h3 className="text-lg font-medium text-gray-900 mb-4">
+                Trades for {selectedDate}
+              </h3>
+              <TradesTable
+                trades={trades
+                  .filter(
+                    (trade) =>
+                      trade.status === "CLOSED" &&
+                      new Date(trade.exitDate).toLocaleDateString() ===
+                        selectedDate
+                  )
+                  .sort((a, b) => new Date(b.exitDate) - new Date(a.exitDate))}
+              />
+            </div>
           ) : (
             <div className="text-center text-gray-500 py-4">
-              No closed trades found
+              No trades found for {selectedDate}
             </div>
           )}
         </div>
