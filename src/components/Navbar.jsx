@@ -72,6 +72,12 @@ const Navbar = () => {
                 >
                   Dashboard
                 </Link>
+                <Link
+                  to="/trade-planning"
+                  className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm"
+                >
+                  Trade Planning
+                </Link>
                 <button
                   onClick={() => setIsSettingsOpen(true)}
                   className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm flex items-center gap-2"
@@ -133,6 +139,12 @@ const Navbar = () => {
                   className="block text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-base"
                 >
                   Dashboard
+                </Link>
+                <Link
+                  to="/trade-planning"
+                  className="block text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-base"
+                >
+                  Trade Planning
                 </Link>
                 <button
                   onClick={() => setIsSettingsOpen(true)}

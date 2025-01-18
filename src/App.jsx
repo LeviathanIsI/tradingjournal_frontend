@@ -11,7 +11,8 @@ import Navbar from "./components/Navbar";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import SignUp from "./pages/SignUp";
-import Dashboard from "./pages/Dashboard"; // We'll create this next
+import Dashboard from "./pages/Dashboard";
+import TradePlanning from "./pages/TradePlanning";
 
 // Protected Route wrapper
 const ProtectedRoute = ({ children }) => {
@@ -60,6 +61,14 @@ function AppRoutes() {
         element={
           <ProtectedRoute>
             <Dashboard />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/trade-planning"
+        element={
+          <ProtectedRoute>
+            <TradePlanning />
           </ProtectedRoute>
         }
       />

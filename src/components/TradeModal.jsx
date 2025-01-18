@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { X } from "lucide-react";
+import { FaCalendarAlt } from "react-icons/fa";
 
 const TradeModal = ({ isOpen, onClose, onSubmit, trade }) => {
   const modalRef = useRef(null);
@@ -154,14 +155,14 @@ const TradeModal = ({ isOpen, onClose, onSubmit, trade }) => {
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div ref={modalRef} className="bg-white rounded-lg p-6 w-full max-w-2xl">
+      <div ref={modalRef} className="bg-white rounded-lg p-6 w-full max-w-4xl">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-semibold text-gray-900">
             {trade ? "Edit Trade" : "Add Trade"}
           </h2>
           <button
             onClick={onClose}
-            className="p-2 rounded-full text-gray-500 hover:bg-gray-100"
+            className="p-2 rounded-full bg-white text-gray-500 hover:bg-gray-100"
           >
             <X size={24} />
           </button>
@@ -253,18 +254,30 @@ const TradeModal = ({ isOpen, onClose, onSubmit, trade }) => {
                   />
                 </div>
 
-                <div>
+                <div className="relative">
                   <label className="block text-sm text-gray-700 mb-1">
                     Date & Time
                   </label>
-                  <input
-                    type="datetime-local"
-                    name="entryDate"
-                    value={formData.entryDate}
-                    onChange={handleChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded bg-white text-gray-900"
-                    required
-                  />
+                  <div className="relative">
+                    <input
+                      type="datetime-local"
+                      name="entryDate"
+                      value={formData.entryDate}
+                      onChange={handleChange}
+                      className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded bg-white text-gray-900 appearance-none"
+                      style={{ width: "250px" }} // Adjust width as necessary
+                      required
+                    />
+                    <FaCalendarAlt
+                      className="absolute left-3 top-1/2 transform -translate-y-1/2 text-blue-600 cursor-pointer"
+                      onClick={() => {
+                        const input = document.querySelector(
+                          'input[name="entryDate"]'
+                        );
+                        if (input) input.showPicker();
+                      }}
+                    />
+                  </div>
                 </div>
               </div>
             </div>
@@ -304,17 +317,30 @@ const TradeModal = ({ isOpen, onClose, onSubmit, trade }) => {
                   />
                 </div>
 
-                <div>
+                <div className="relative">
                   <label className="block text-sm text-gray-700 mb-1">
                     Date & Time
                   </label>
-                  <input
-                    type="datetime-local"
-                    name="exitDate"
-                    value={formData.exitDate}
-                    onChange={handleChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded bg-white text-gray-900"
-                  />
+                  <div className="relative">
+                    <input
+                      type="datetime-local"
+                      name="entryDate"
+                      value={formData.entryDate}
+                      onChange={handleChange}
+                      className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded bg-white text-gray-900 appearance-none"
+                      style={{ width: "250px" }} // Adjust width as necessary
+                      required
+                    />
+                    <FaCalendarAlt
+                      className="absolute left-3 top-1/2 transform -translate-y-1/2 text-blue-600 cursor-pointer"
+                      onClick={() => {
+                        const input = document.querySelector(
+                          'input[name="entryDate"]'
+                        );
+                        if (input) input.showPicker();
+                      }}
+                    />
+                  </div>
                 </div>
               </div>
             </div>
