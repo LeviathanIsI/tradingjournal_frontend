@@ -5,6 +5,7 @@ import TradeModal from "../components/TradeModal";
 import { useTrades } from "../hooks/useTrades";
 import ProfitLossChart from "../components/ProfitLossChart";
 import { useAuth } from "../context/AuthContext";
+import TimeAnalysis from "../components/TimeAnalysis";
 
 const Dashboard = () => {
   const { user } = useAuth();
@@ -12,6 +13,7 @@ const Dashboard = () => {
   const [selectedTrade, setSelectedTrade] = useState(null);
   const { trades, stats, loading, error, addTrade, updateTrade, deleteTrade } =
     useTrades();
+  const [activeChart, setActiveChart] = useState("pnl");
 
   const formatCurrency = (value) => {
     return new Intl.NumberFormat("en-US", {
@@ -140,9 +142,39 @@ const Dashboard = () => {
       {/* Charts Section */}
       <div className="bg-white p-6 rounded shadow mb-8">
         <div className="min-h-[500px] flex flex-col">
-          {" "}
-          {/* Changed to min-height and added flex-col */}
-          <ProfitLossChart trades={trades} />
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-lg font-semibold text-gray-900">
+              Performance Analysis
+            </h2>
+            <div className="flex gap-2">
+              <button
+                onClick={() => setActiveChart("pnl")}
+                className={`px-3 py-1 rounded-lg ${
+                  activeChart === "pnl"
+                    ? "bg-blue-600 text-white"
+                    : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                }`}
+              >
+                P/L Chart
+              </button>
+              <button
+                onClick={() => setActiveChart("time")}
+                className={`px-3 py-1 rounded-lg ${
+                  activeChart === "time"
+                    ? "bg-blue-600 text-white"
+                    : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                }`}
+              >
+                Time Analysis
+              </button>
+            </div>
+          </div>
+
+          {activeChart === "pnl" ? (
+            <ProfitLossChart trades={trades} />
+          ) : (
+            <TimeAnalysis trades={trades} />
+          )}
         </div>
       </div>
 

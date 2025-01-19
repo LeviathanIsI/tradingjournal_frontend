@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef } from "react";
 import { X } from "lucide-react";
-import { FaCalendarAlt } from "react-icons/fa";
 
 const TradeModal = ({ isOpen, onClose, onSubmit, trade }) => {
   const modalRef = useRef(null);
@@ -99,6 +98,18 @@ const TradeModal = ({ isOpen, onClose, onSubmit, trade }) => {
           entryDate: !!formData.entryDate,
         });
         throw new Error("Please fill in all required fields");
+      }
+
+      // Validate day trade dates first
+      if (formData.tradeType === "DAY" && formData.exitDate) {
+        const entryDay = new Date(formData.entryDate).toDateString();
+        const exitDay = new Date(formData.exitDate).toDateString();
+
+        if (entryDay !== exitDay) {
+          setLoading(false);
+          alert("Day trades must have entry and exit on the same day");
+          return;
+        }
       }
 
       // Transform data for submission
@@ -249,15 +260,6 @@ const TradeModal = ({ isOpen, onClose, onSubmit, trade }) => {
                       style={{ width: "250px" }} // Adjust width as necessary
                       required
                     />
-                    <FaCalendarAlt
-                      className="absolute left-3 top-1/2 transform -translate-y-1/2 text-blue-600 cursor-pointer"
-                      onClick={() => {
-                        const input = document.querySelector(
-                          'input[name="entryDate"]'
-                        );
-                        if (input) input.showPicker();
-                      }}
-                    />
                   </div>
                 </div>
               </div>
@@ -311,15 +313,6 @@ const TradeModal = ({ isOpen, onClose, onSubmit, trade }) => {
                       className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded bg-white text-gray-900 appearance-none"
                       style={{ width: "250px" }} // Adjust width as necessary
                       required
-                    />
-                    <FaCalendarAlt
-                      className="absolute left-3 top-1/2 transform -translate-y-1/2 text-blue-600 cursor-pointer"
-                      onClick={() => {
-                        const input = document.querySelector(
-                          'input[name="exitDate"]'
-                        );
-                        if (input) input.showPicker();
-                      }}
                     />
                   </div>
                 </div>
