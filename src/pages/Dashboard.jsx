@@ -6,6 +6,7 @@ import { useTrades } from "../hooks/useTrades";
 import ProfitLossChart from "../components/ProfitLossChart";
 import { useAuth } from "../context/AuthContext";
 import TimeAnalysis from "../components/TimeAnalysis";
+import DrawdownAnalysis from "../components/DrawdownAnalysis";
 
 const Dashboard = () => {
   const { user } = useAuth();
@@ -167,13 +168,25 @@ const Dashboard = () => {
               >
                 Time Analysis
               </button>
+              <button
+                onClick={() => setActiveChart("risk")}
+                className={`px-3 py-1 rounded-lg ${
+                  activeChart === "risk"
+                    ? "bg-blue-600 text-white"
+                    : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                }`}
+              >
+                Risk Analysis
+              </button>
             </div>
           </div>
 
           {activeChart === "pnl" ? (
             <ProfitLossChart trades={trades} />
-          ) : (
+          ) : activeChart === "time" ? (
             <TimeAnalysis trades={trades} />
+          ) : (
+            <DrawdownAnalysis trades={trades} />
           )}
         </div>
       </div>
