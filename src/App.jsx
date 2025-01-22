@@ -13,6 +13,7 @@ import Login from "./pages/Login";
 import SignUp from "./pages/SignUp";
 import Dashboard from "./pages/Dashboard";
 import TradePlanning from "./pages/TradePlanning";
+import Community from "./pages/Community";
 
 // Protected Route wrapper
 const ProtectedRoute = ({ children }) => {
@@ -69,6 +70,14 @@ function AppRoutes() {
         element={
           <ProtectedRoute>
             <TradePlanning />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/community"
+        element={
+          <ProtectedRoute>
+            <Community />
           </ProtectedRoute>
         }
       />

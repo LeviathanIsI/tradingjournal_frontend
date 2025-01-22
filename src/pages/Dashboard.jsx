@@ -7,6 +7,7 @@ import ProfitLossChart from "../components/ProfitLossChart";
 import { useAuth } from "../context/AuthContext";
 import TimeAnalysis from "../components/TimeAnalysis";
 import DrawdownAnalysis from "../components/DrawdownAnalysis";
+import StreakAnalysis from "../components/StreakAnalysis";
 
 const Dashboard = () => {
   const { user } = useAuth();
@@ -178,6 +179,16 @@ const Dashboard = () => {
               >
                 Risk Analysis
               </button>
+              <button
+                onClick={() => setActiveChart("streaks")}
+                className={`px-3 py-1 rounded-lg ${
+                  activeChart === "streaks"
+                    ? "bg-blue-600 text-white"
+                    : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                }`}
+              >
+                Streaks
+              </button>
             </div>
           </div>
 
@@ -185,8 +196,10 @@ const Dashboard = () => {
             <ProfitLossChart trades={trades} />
           ) : activeChart === "time" ? (
             <TimeAnalysis trades={trades} />
-          ) : (
+          ) : activeChart === "risk" ? (
             <DrawdownAnalysis trades={trades} />
+          ) : (
+            <StreakAnalysis trades={trades} />
           )}
         </div>
       </div>
