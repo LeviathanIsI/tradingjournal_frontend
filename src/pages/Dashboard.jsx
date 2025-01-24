@@ -1,6 +1,6 @@
 // src/pages/Dashboard.jsx
 import { useState } from "react";
-import { Pencil, Trash2 } from "lucide-react";
+import { Pencil, Trash2, BookOpen } from "lucide-react";
 import TradeModal from "../components/TradeModal";
 import { useTrades } from "../hooks/useTrades";
 import ProfitLossChart from "../components/ProfitLossChart";
@@ -8,6 +8,7 @@ import { useAuth } from "../context/AuthContext";
 import TimeAnalysis from "../components/TimeAnalysis";
 import DrawdownAnalysis from "../components/DrawdownAnalysis";
 import StreakAnalysis from "../components/StreakAnalysis";
+import ReviewModal from "../components/ReviewModal";
 
 const Dashboard = () => {
   const { user } = useAuth();
@@ -16,12 +17,36 @@ const Dashboard = () => {
   const { trades, stats, loading, error, addTrade, updateTrade, deleteTrade } =
     useTrades();
   const [activeChart, setActiveChart] = useState("pnl");
+  const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
+  const [selectedTradeForReview, setSelectedTradeForReview] = useState(null);
 
   const formatCurrency = (value) => {
     return new Intl.NumberFormat("en-US", {
       style: "currency",
       currency: "USD",
     }).format(value);
+  };
+
+  const handleReviewSubmit = async (reviewData) => {
+    try {
+      const response = await fetch("http://localhost:5000/api/trade-reviews", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        body: JSON.stringify(reviewData),
+      });
+
+      if (response.ok) {
+        setIsReviewModalOpen(false);
+        setSelectedTradeForReview(null);
+        // Optionally show a success message
+      }
+    } catch (error) {
+      console.error("Error submitting review:", error);
+      // Optionally show an error message
+    }
   };
 
   const handleSubmit = async (tradeData) => {
@@ -267,6 +292,16 @@ const Dashboard = () => {
                     <td className="py-3 px-4 text-right">
                       <div className="flex justify-end gap-2">
                         <button
+                          onClick={() => {
+                            setSelectedTradeForReview(trade);
+                            setIsReviewModalOpen(true);
+                          }}
+                          className="p-1 hover:bg-gray-100 rounded bg-transparent"
+                          title="Review Trade"
+                        >
+                          <BookOpen className="h-4 w-4 text-green-600" />
+                        </button>
+                        <button
                           onClick={() => handleEditClick(trade)}
                           className="p-1 hover:bg-gray-100 rounded bg-transparent"
                         >
@@ -293,6 +328,15 @@ const Dashboard = () => {
         onClose={handleModalClose}
         onSubmit={handleSubmit}
         trade={selectedTrade}
+      />
+      <ReviewModal
+        isOpen={isReviewModalOpen}
+        onClose={() => {
+          setIsReviewModalOpen(false);
+          setSelectedTradeForReview(null);
+        }}
+        trade={selectedTradeForReview}
+        onSubmit={handleReviewSubmit}
       />
     </div>
   );

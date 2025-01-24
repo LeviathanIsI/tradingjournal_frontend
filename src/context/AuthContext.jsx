@@ -1,4 +1,3 @@
-// src/context/AuthContext.jsx
 import { createContext, useContext, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import PropTypes from "prop-types";
@@ -11,9 +10,42 @@ export const AuthProvider = ({ children }) => {
   const navigate = useNavigate();
 
   const updateUser = (userData) => {
+    console.log("Updating user:", userData);
     setUser(userData);
     if (userData) {
       localStorage.setItem("user", JSON.stringify(userData));
+    }
+  };
+
+  // Add this new function to validate and refresh user data
+  const validateAuth = async () => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      setUser(null);
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const response = await fetch("http://localhost:5000/api/auth/validate", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error("Invalid token");
+      }
+
+      const data = await response.json();
+      updateUser(data.data);
+    } catch (error) {
+      console.error("Auth validation error:", error);
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      setUser(null);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -23,12 +55,17 @@ export const AuthProvider = ({ children }) => {
     const storedUser = localStorage.getItem("user");
 
     if (token && storedUser) {
+      console.log("Found stored user:", JSON.parse(storedUser));
       setUser(JSON.parse(storedUser));
+      validateAuth(); // Validate and refresh user data
+    } else {
+      console.log("No stored user found");
+      setLoading(false);
     }
-    setLoading(false);
   }, []);
 
-  const login = (userData) => {
+  const login = async (userData) => {
+    console.log("Logging in user:", userData);
     localStorage.setItem("token", userData.token);
     localStorage.setItem("user", JSON.stringify(userData));
     setUser(userData);
@@ -36,18 +73,34 @@ export const AuthProvider = ({ children }) => {
   };
 
   const logout = () => {
+    console.log("Logging out user");
     localStorage.removeItem("token");
     localStorage.removeItem("user");
     setUser(null);
     navigate("/login");
   };
 
+  // Add this to help with debugging
+  useEffect(() => {
+    console.log("Current auth state:", { user, loading });
+  }, [user, loading]);
+
   if (loading) {
     return <div>Loading...</div>;
   }
 
+  const contextValue = {
+    user,
+    login,
+    logout,
+    updateUser,
+    isAuthenticated: !!user,
+    loading,
+  };
+
   return (
     <AuthContext.Provider value={{ user, login, logout, updateUser }}>
+      {" "}
       {children}
     </AuthContext.Provider>
   );

@@ -56,7 +56,7 @@ const Home = () => {
                 <div className="mt-2 flex flex-auto flex-col text-base leading-7 text-gray-600">
                   <p>
                     Track entries, exits, position sizes, and strategies. Add
-                    notes and screenshots to document your thought process.
+                    notes to document your thought process.
                   </p>
                 </div>
               </div>
