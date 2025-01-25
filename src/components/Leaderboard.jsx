@@ -188,7 +188,7 @@ const Leaderboard = () => {
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <Link
-                    to={`/profile/${trader.username}`}
+                    to={`/community/profile/${trader.username}`}
                     className="text-sm font-medium text-blue-600 hover:text-blue-900"
                   >
                     {trader.username}

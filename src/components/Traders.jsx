@@ -112,7 +112,7 @@ const Traders = () => {
         {filteredTraders.map((trader) => (
           <div key={trader._id} className="bg-white rounded-lg shadow p-6">
             <div className="flex justify-between items-start mb-4">
-              <Link to={`/profile/${trader.username}`}>
+              <Link to={`/community/profile/${trader.username}`}>
                 <h3 className="text-lg font-medium text-gray-900 hover:text-blue-600">
                   {trader.username}
                 </h3>

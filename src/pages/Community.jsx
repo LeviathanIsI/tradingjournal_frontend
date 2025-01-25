@@ -16,7 +16,6 @@ const Community = () => {
             path="reviews"
             element={
               <>
-                <FeaturedReviews />
                 <PublicReviews />
               </>
             }

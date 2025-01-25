@@ -19,7 +19,9 @@ const PublicReviews = () => {
     { value: "mostLiked", label: "Most Liked" },
     { value: "mostComments", label: "Most Comments" },
     { value: "highestProfit", label: "Highest Profit" },
+    { value: "username", label: "Username" },
   ];
+  const [searchQuery, setSearchQuery] = useState("");
 
   const formatCurrency = (value) => {
     return new Intl.NumberFormat("en-US", {
@@ -40,7 +42,14 @@ const PublicReviews = () => {
 
   // Add filtering and sorting logic
   const filteredAndSortedReviews = useMemo(() => {
-    let filtered = [...reviews].filter((review) => review.trade); // Only include reviews with trade data
+    let filtered = [...reviews].filter((review) => review.trade);
+
+    // Apply search filter
+    if (searchQuery.trim()) {
+      filtered = filtered.filter((review) =>
+        review.user.username.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+    }
 
     if (filters.profitType !== "all") {
       filtered = filtered.filter((review) => {
@@ -51,10 +60,40 @@ const PublicReviews = () => {
       });
     }
 
-    // ... rest of your filtering logic
-
-    return filtered;
-  }, [reviews, filters, currentSort]);
+    // Apply sorting
+    switch (currentSort) {
+      case "newest":
+        return filtered.sort(
+          (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+        );
+      case "oldest":
+        return filtered.sort(
+          (a, b) => new Date(a.createdAt) - new Date(b.createdAt)
+        );
+      case "mostLiked":
+        return filtered.sort(
+          (a, b) => (b.likes?.length || 0) - (a.likes?.length || 0)
+        );
+      case "mostComments":
+        return filtered.sort(
+          (a, b) => (b.comments?.length || 0) - (a.comments?.length || 0)
+        );
+      case "highestProfit":
+        return filtered.sort(
+          (a, b) =>
+            (b.trade?.profitLoss?.realized || 0) -
+            (a.trade?.profitLoss?.realized || 0)
+        );
+      case "username":
+        return filtered.sort((a, b) =>
+          (a.user?.username || "")
+            .toLowerCase()
+            .localeCompare((b.user?.username || "").toLowerCase())
+        );
+      default:
+        return filtered;
+    }
+  }, [reviews, filters, currentSort, searchQuery]);
 
   useEffect(() => {
     const fetchReviews = async () => {
@@ -97,6 +136,8 @@ const PublicReviews = () => {
         sortOptions={sortOptions}
         currentSort={currentSort}
         setSort={setCurrentSort}
+        searchQuery={searchQuery}
+        setSearchQuery={setSearchQuery}
       />
 
       <div className="grid gap-6">
@@ -111,7 +152,7 @@ const PublicReviews = () => {
                 <p className="text-sm text-gray-500">
                   by{" "}
                   <Link
-                    to={`/profile/${review.user.username}`}
+                    to={`/community/profile/${review.user.username}`}
                     className="text-blue-600 hover:text-blue-700"
                   >
                     {review.user.username}
