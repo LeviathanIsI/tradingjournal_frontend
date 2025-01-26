@@ -96,16 +96,23 @@ const Dashboard = () => {
   return (
     <div className="w-full p-6 text-black">
       {/* Stats Overview */}
-      <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-8">
-        {" "}
-        {/* Changed to 5 columns */}
-        <div className="bg-white p-4 rounded shadow">
+      <div
+        className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-8"
+        data-tour="stats-overview"
+      >
+        <div
+          className="bg-white p-4 rounded shadow"
+          data-tour="starting-capital"
+        >
           <h3 className="text-sm text-black">Starting Capital</h3>
           <p className="text-2xl font-bold text-black">
             {formatCurrency(user?.preferences?.startingCapital || 0)}
           </p>
         </div>
-        <div className="bg-white p-4 rounded shadow">
+        <div
+          className="bg-white p-4 rounded shadow"
+          data-tour="current-balance"
+        >
           <h3 className="text-sm text-black">Current Balance</h3>
           <div className="flex items-baseline gap-2">
             <p
@@ -167,13 +174,16 @@ const Dashboard = () => {
       </div>
 
       {/* Charts Section */}
-      <div className="bg-white p-6 rounded shadow mb-8">
+      <div
+        className="bg-white p-6 rounded shadow mb-8"
+        data-tour="performance-charts"
+      >
         <div className="min-h-[500px] flex flex-col">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-lg font-semibold text-gray-900">
               Performance Analysis
             </h2>
-            <div className="flex gap-2">
+            <div className="flex gap-2" data-tour="chart-controls">
               <button
                 onClick={() => setActiveChart("pnl")}
                 className={`px-3 py-1 rounded-lg ${
@@ -230,10 +240,11 @@ const Dashboard = () => {
       </div>
 
       {/* Recent Trades */}
-      <div className="bg-white p-4 rounded shadow">
+      <div className="bg-white p-4 rounded shadow" data-tour="trades-table">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-lg font-semibold text-black">Recent Trades</h2>
           <button
+            data-tour="add-trade"
             onClick={() => setIsTradeModalOpen(true)}
             className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
           >

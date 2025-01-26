@@ -10,7 +10,6 @@ export const AuthProvider = ({ children }) => {
   const navigate = useNavigate();
 
   const updateUser = (userData) => {
-    console.log("Updating user:", userData);
     setUser(userData);
     if (userData) {
       localStorage.setItem("user", JSON.stringify(userData));
@@ -55,7 +54,6 @@ export const AuthProvider = ({ children }) => {
     const storedUser = localStorage.getItem("user");
 
     if (token && storedUser) {
-      console.log("Found stored user:", JSON.parse(storedUser));
       setUser(JSON.parse(storedUser));
       validateAuth(); // Validate and refresh user data
     } else {
@@ -82,7 +80,6 @@ export const AuthProvider = ({ children }) => {
 
   // Add this to help with debugging
   useEffect(() => {
-    console.log("Current auth state:", { user, loading });
   }, [user, loading]);
 
   if (loading) {

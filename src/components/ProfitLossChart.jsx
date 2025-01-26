@@ -166,14 +166,12 @@ const TradesTable = ({ trades }) => {
 };
 
 const ProfitLossChart = ({ trades }) => {
-  console.log("Incoming trades:", trades);
   const [timeframe, setTimeframe] = useState("ALL");
   const [showTrades, setShowTrades] = useState(false);
   const [displayMode, setDisplayMode] = useState("currency");
   const [selectedDate, setSelectedDate] = useState(null);
 
   const chartData = useMemo(() => {
-    console.log("Starting chartData calculation");
     let runningTotal = 0;
     let runningWins = 0;
     let runningTrades = 0;
@@ -212,10 +210,6 @@ const ProfitLossChart = ({ trades }) => {
 
         return acc;
       }, []);
-
-    console.log("Raw data:", rawData);
-
-    console.log("Final rawData:", rawData);
     return timeframe === "ALL"
       ? rawData
       : groupDataByTimeframe(rawData, timeframe);

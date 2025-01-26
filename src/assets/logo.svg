@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 60">
+  <!-- Background for reference, can be removed -->
+  <rect width="200" height="60" fill="transparent"/>
+  
+  <!-- The letters with a modern, slightly angled design -->
+  <g fill="#FFFFFF" font-family="Arial, sans-serif" font-weight="bold">
+    <!-- R with custom path for uniqueness -->
+    <path d="M20,45 V15 H35 Q42,15 42,22 T35,29 L45,45 H35 L26,29 H25 V45 Z M25,24 H32 Q34,24 34,22 T32,20 H25 Z"/>
+    
+    <!-- i -->
+    <path d="M55,45 V25 H65 V45 Z M55,15 H65 V20 H55 Z"/>
+    
+    <!-- v -->
+    <path d="M75,25 L85,45 L95,25 H105 L90,50 H80 L65,25 Z"/>
+    
+    <!-- y -->
+    <path d="M115,25 L125,45 L135,25 H145 L130,55 Q125,65 115,65 V55 Q118,55 120,50 L105,25 Z"/>
+    
+    <!-- l -->
+    <path d="M155,45 V15 H165 V45 Z"/>
+  </g>
+  
+  <!-- Optional: Add a subtle line or accent -->
+  <path d="M20,50 H165" stroke="#FFFFFF" stroke-width="0.5" opacity="0.3"/>
+</svg>

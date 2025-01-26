@@ -5,6 +5,7 @@ import { Menu, X, Settings, Calculator } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import SettingsModal from "./SettingsModal";
 import PositionCalculatorModal from "./PositionCalculatorModal";
+import logo from "../assets/logo.svg";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -12,9 +13,7 @@ const Navbar = () => {
   const navigate = useNavigate();
   const { user, logout, updateUser } = useAuth();
   const [isCalculatorOpen, setIsCalculatorOpen] = useState(false);
-  useEffect(() => {
-    console.log("Calculator open state:", isCalculatorOpen);
-  }, [isCalculatorOpen]);
+  useEffect(() => {}, [isCalculatorOpen]);
 
   const handleLogout = () => {
     logout();
@@ -56,41 +55,43 @@ const Navbar = () => {
 
   return (
     <nav className="bg-gray-800 shadow-lg">
-      <div className="max-w-7xl mx-auto px-4">
+      <div className="max-w-full px-8">
         <div className="flex items-center justify-between h-16">
-          {/* Logo and brand */}
-          <div className="flex-shrink-0">
-            <Link to="/" className="flex items-center">
-              <span className="text-white text-lg font-bold">
-                Rivyl
-              </span>
+          {/* Logo and brand - pushed to the far left */}
+          <div className="flex-shrink-0 pl-8" data-tour="logo">
+            <Link to="/" className="flex-shrink-0">
+              <img src={logo} alt="Rivyl" className="h-12 w-auto" />
             </Link>
           </div>
 
-          {/* Desktop menu */}
-          <div className="hidden md:flex md:items-center md:space-x-4">
+          {/* Desktop menu - pushed to the far right */}
+          <div className="hidden md:flex md:items-center pr-8">
             {user ? (
-              <>
+              <div className="flex items-center space-x-4">
                 <Link
                   to="/dashboard"
+                  data-tour="dashboard"
                   className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm"
                 >
                   Dashboard
                 </Link>
                 <Link
                   to="/trade-planning"
+                  data-tour="trade-planning"
                   className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm"
                 >
                   Trade Planning
                 </Link>
                 <Link
                   to="/community"
+                  data-tour="community"
                   className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm"
                 >
                   Community
                 </Link>
                 <button
                   onClick={() => setIsSettingsOpen(true)}
+                  data-tour="settings"
                   className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm flex items-center gap-2"
                 >
                   <Settings size={16} />
@@ -98,9 +99,9 @@ const Navbar = () => {
                 </button>
                 <button
                   onClick={() => {
-                    console.log("Desktop calculator button clicked");
                     setIsCalculatorOpen(true);
                   }}
+                  data-tour="calculator"
                   className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm flex items-center gap-2"
                 >
                   <Calculator size={16} />
@@ -116,7 +117,7 @@ const Navbar = () => {
                 >
                   Logout
                 </button>
-              </>
+              </div>
             ) : (
               <>
                 <Link
