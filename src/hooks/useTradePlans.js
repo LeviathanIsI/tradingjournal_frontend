@@ -1,54 +1,71 @@
-// src/hooks/useTradePlans.js
 import { useState, useEffect } from "react";
 
 export const useTradePlans = () => {
   const [tradePlans, setTradePlans] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [stats, setStats] = useState(null);
+  const [stats, setStats] = useState({
+    totalPlans: 0,
+    executedPlans: 0,
+    successfulPlans: 0,
+    averageRR: 0,
+  });
 
   const fetchTradePlans = async () => {
-    try {
-      const token = localStorage.getItem("token");
-      const response = await fetch("http://localhost:5000/api/trade-plans", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+    const token = localStorage.getItem("token");
+    const response = await fetch("http://localhost:5000/api/trade-plans", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
 
-      if (!response.ok) {
-        throw new Error("Failed to fetch trade plans");
-      }
-
-      const data = await response.json();
-      return data.data;
-    } catch (error) {
-      console.error("Error fetching trade plans:", error);
-      throw error;
+    if (!response.ok) {
+      throw new Error("Failed to fetch trade plans");
     }
+
+    const data = await response.json();
+    return data.data;
   };
 
-  const fetchStats = async () => {
+  // Calculate stats from trade plans data
+  const calculateStats = (plans) => {
+    const totalPlans = plans.length;
+    const executedPlans = plans.filter(
+      (plan) => plan.status === "EXECUTED"
+    ).length;
+    const successfulPlans = plans.filter(
+      (plan) =>
+        plan.status === "EXECUTED" && plan.riskManagement?.rewardRatio > 1
+    ).length;
+
+    const avgRR =
+      plans.reduce((sum, plan) => {
+        return sum + (plan.riskManagement?.rewardRatio || 0);
+      }, 0) / totalPlans || 0;
+
+    return {
+      totalPlans,
+      executedPlans,
+      successfulPlans,
+      averageRR: avgRR,
+    };
+  };
+
+  const loadData = async () => {
+    setLoading(true);
+    setError(null);
     try {
-      const token = localStorage.getItem("token");
-      const response = await fetch(
-        "http://localhost:5000/api/trade-plans/stats",
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const plansData = await fetchTradePlans();
+      setTradePlans(plansData);
 
-      if (!response.ok) {
-        throw new Error("Failed to fetch stats");
-      }
-
-      const data = await response.json();
-      return data.data;
+      // Calculate stats from the plans data
+      const calculatedStats = calculateStats(plansData);
+      setStats(calculatedStats);
     } catch (error) {
-      console.error("Error fetching stats:", error);
-      throw error;
+      console.error("Error loading data:", error);
+      setError(error.message);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -65,13 +82,15 @@ export const useTradePlans = () => {
       });
 
       if (!response.ok) {
-        throw new Error("Failed to add trade plan");
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Failed to add trade plan");
       }
 
       await loadData();
       return true;
     } catch (error) {
       console.error("Error adding trade plan:", error);
+      setError(error.message);
       return false;
     }
   };
@@ -79,13 +98,10 @@ export const useTradePlans = () => {
   const updateTradePlan = async (id, planData) => {
     try {
       const token = localStorage.getItem("token");
-      console.log("Updating trade plan with ID:", id);
-      console.log("Update data:", planData);
-
       const response = await fetch(
         `http://localhost:5000/api/trade-plans/${id}`,
         {
-          method: "PUT", // Make sure we're using PUT
+          method: "PUT",
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
@@ -99,37 +115,11 @@ export const useTradePlans = () => {
         throw new Error(errorData.error || "Failed to update trade plan");
       }
 
-      await loadData(); // Reload all data after successful update
+      await loadData();
       return true;
     } catch (error) {
       console.error("Error updating trade plan:", error);
-      return false;
-    }
-  };
-
-  const toggleTradePlanStatus = async (id, newStatus) => {
-    try {
-      const token = localStorage.getItem("token");
-      const response = await fetch(
-        `http://localhost:5000/api/trade-plans/${id}/toggle-status`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({ status: newStatus }),
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error("Failed to update status");
-      }
-
-      await loadData(); // Refresh the data
-      return true;
-    } catch (error) {
-      console.error("Error toggling trade plan status:", error);
+      setError(error.message);
       return false;
     }
   };
@@ -148,31 +138,16 @@ export const useTradePlans = () => {
       );
 
       if (!response.ok) {
-        throw new Error("Failed to delete trade plan");
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Failed to delete trade plan");
       }
 
       await loadData();
       return true;
     } catch (error) {
       console.error("Error deleting trade plan:", error);
-      return false;
-    }
-  };
-
-  const loadData = async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const [plansData, statsData] = await Promise.all([
-        fetchTradePlans(),
-        fetchStats(),
-      ]);
-      setTradePlans(plansData);
-      setStats(statsData);
-    } catch (error) {
       setError(error.message);
-    } finally {
-      setLoading(false);
+      return false;
     }
   };
 
