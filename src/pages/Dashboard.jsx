@@ -85,10 +85,6 @@ const Dashboard = () => {
     return new Date(dateString).toLocaleString();
   };
 
-  if (loading) {
-    return <div className="w-full p-6 text-black">Loading...</div>;
-  }
-
   if (error) {
     return <div className="w-full p-6 text-red-600">Error: {error}</div>;
   }

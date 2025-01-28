@@ -89,6 +89,13 @@ const Navbar = () => {
                 >
                   Community
                 </Link>
+                <Link
+                  to="/tools"
+                  data-tour="tools"
+                  className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm"
+                >
+                  Tools
+                </Link>
                 <button
                   onClick={() => setIsSettingsOpen(true)}
                   data-tour="settings"

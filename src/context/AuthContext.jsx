@@ -82,10 +82,6 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
   }, [user, loading]);
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
   const contextValue = {
     user,
     login,
