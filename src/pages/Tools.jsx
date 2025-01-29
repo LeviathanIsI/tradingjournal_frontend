@@ -1,7 +1,6 @@
 // src/pages/Tools.jsx
 import { Routes, Route, Navigate } from "react-router-dom";
 import ToolsNav from "../components/ToolsNav";
-import InsiderDashboard from "../components/tools/InsiderDashboard";
 
 const Tools = () => {
   return (
@@ -9,7 +8,6 @@ const Tools = () => {
       <ToolsNav />
       <div className="w-full p-6">
         <Routes>
-          <Route path="insider" element={<InsiderDashboard />} />
           <Route path="/" element={<Navigate to="insider" replace />} />
         </Routes>
       </div>
