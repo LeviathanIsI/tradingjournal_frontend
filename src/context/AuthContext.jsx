@@ -10,10 +10,12 @@ export const AuthProvider = ({ children }) => {
   const navigate = useNavigate();
 
   const updateUser = (userData) => {
-    setUser(userData);
-    if (userData) {
-      localStorage.setItem("user", JSON.stringify(userData));
-    }
+    const updatedUser = {
+      ...userData,
+      hasCompletedTour: userData.hasCompletedTour ?? false,
+    };
+    setUser(updatedUser);
+    localStorage.setItem("user", JSON.stringify(updatedUser));
   };
 
   // Add this new function to validate and refresh user data
@@ -36,8 +38,8 @@ export const AuthProvider = ({ children }) => {
         throw new Error("Invalid token");
       }
 
-      const data = await response.json();
-      updateUser(data.data);
+      const { data } = await response.json();
+      updateUser(data);
     } catch (error) {
       console.error("Auth validation error:", error);
       localStorage.removeItem("token");
@@ -49,15 +51,14 @@ export const AuthProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    // Check if user is logged in
     const token = localStorage.getItem("token");
     const storedUser = localStorage.getItem("user");
 
     if (token && storedUser) {
-      setUser(JSON.parse(storedUser));
-      validateAuth(); // Validate and refresh user data
+      const parsedUser = JSON.parse(storedUser);
+      setUser(parsedUser);
+      validateAuth();
     } else {
-      console.log("No stored user found");
       setLoading(false);
     }
   }, []);
@@ -65,8 +66,12 @@ export const AuthProvider = ({ children }) => {
   const login = async (userData) => {
     console.log("Logging in user:", userData);
     localStorage.setItem("token", userData.token);
-    localStorage.setItem("user", JSON.stringify(userData));
-    setUser(userData);
+    const userDataToStore = {
+      ...userData,
+      hasCompletedTour: userData.hasCompletedTour || false,
+    };
+    localStorage.setItem("user", JSON.stringify(userDataToStore));
+    setUser(userDataToStore);
     navigate("/dashboard");
   };
 
@@ -79,8 +84,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   // Add this to help with debugging
-  useEffect(() => {
-  }, [user, loading]);
+  useEffect(() => {}, [user, loading]);
 
   const contextValue = {
     user,

@@ -1,6 +1,6 @@
 // src/pages/Dashboard.jsx
 import { useState } from "react";
-import { Pencil, Trash2, BookOpen } from "lucide-react";
+import { Pencil, Trash2, BookOpen, Upload } from "lucide-react";
 import TradeModal from "../components/TradeModal";
 import { useTrades } from "../hooks/useTrades";
 import ProfitLossChart from "../components/ProfitLossChart";
@@ -9,6 +9,8 @@ import TimeAnalysis from "../components/TimeAnalysis";
 import DrawdownAnalysis from "../components/DrawdownAnalysis";
 import StreakAnalysis from "../components/StreakAnalysis";
 import ReviewModal from "../components/ReviewModal";
+import ImportTradeModal from "../components/ImportTradeModal";
+import StopLossStudy from "../components/StopLossStudy";
 
 const Dashboard = () => {
   const { user } = useAuth();
@@ -19,6 +21,7 @@ const Dashboard = () => {
   const [activeChart, setActiveChart] = useState("pnl");
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
   const [selectedTradeForReview, setSelectedTradeForReview] = useState(null);
+  const [isImportModalOpen, setIsImportModalOpen] = useState(false);
 
   const formatCurrency = (value) => {
     return new Intl.NumberFormat("en-US", {
@@ -89,11 +92,18 @@ const Dashboard = () => {
     return <div className="w-full p-6 text-red-600">Error: {error}</div>;
   }
 
+  const handleImportTrades = async (trades) => {
+    const success = await importTrades(trades);
+    if (success) {
+      setIsImportModalOpen(false);
+    }
+  };
+
   return (
     <div className="w-full p-6 text-black">
       {/* Stats Overview */}
       <div
-        className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-8"
+        className="grid grid-cols-1 md:grid-cols-6 gap-4 mb-8"
         data-tour="stats-overview"
       >
         <div
@@ -167,6 +177,9 @@ const Dashboard = () => {
             {formatCurrency(stats?.totalProfit || 0)}
           </p>
         </div>
+        <div className="bg-white p-4 rounded shadow">
+          <StopLossStudy trades={trades} />
+        </div>
       </div>
 
       {/* Charts Section */}
@@ -239,13 +252,22 @@ const Dashboard = () => {
       <div className="bg-white p-4 rounded shadow" data-tour="trades-table">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-lg font-semibold text-black">Recent Trades</h2>
-          <button
-            data-tour="add-trade"
-            onClick={() => setIsTradeModalOpen(true)}
-            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-          >
-            Add Trade
-          </button>
+          <div className="flex gap-2">
+            <button
+              data-tour="add-trade"
+              onClick={() => setIsTradeModalOpen(true)}
+              className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+            >
+              Add Trade
+            </button>
+            <button
+              onClick={() => setIsImportModalOpen(true)}
+              className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 flex items-center gap-2"
+            >
+              <Upload className="h-4 w-4" />
+              Import Trades
+            </button>
+          </div>
         </div>
         <div className="overflow-x-auto">
           <table className="min-w-full">
@@ -344,6 +366,11 @@ const Dashboard = () => {
         }}
         trade={selectedTradeForReview}
         onSubmit={handleReviewSubmit}
+      />
+      <ImportTradeModal
+        isOpen={isImportModalOpen}
+        onClose={() => setIsImportModalOpen(false)}
+        onImport={handleImportTrades}
       />
     </div>
   );

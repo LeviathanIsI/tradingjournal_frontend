@@ -180,6 +180,31 @@ export const useTrades = () => {
     loadData();
   }, []);
 
+  const importTrades = async (trades) => {
+    try {
+      const response = await fetch("http://localhost:5000/api/trades/import", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        body: JSON.stringify({ trades }),
+      });
+
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.error || "Failed to import trades");
+      }
+
+      // Refresh trades list after import
+      fetchTrades();
+      return true;
+    } catch (error) {
+      console.error("Import error:", error);
+      return false;
+    }
+  };
+
   return {
     trades,
     stats,
@@ -190,5 +215,6 @@ export const useTrades = () => {
     deleteTrade,
     fetchTrades,
     fetchStats,
+    importTrades,
   };
 };

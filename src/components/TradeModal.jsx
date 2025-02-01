@@ -13,14 +13,10 @@ const TradeModal = ({ isOpen, onClose, onSubmit, trade }) => {
     exitPrice: "",
     exitQuantity: "",
     exitDate: "",
+    postExitHigh: "",
+    postExitLow: "",
     pattern: "",
     session: "Regular",
-    mentalState: {
-      focus: "",
-      emotion: "",
-    },
-    mistakes: [],
-    strategy: "",
     notes: "",
   };
 
@@ -59,6 +55,12 @@ const TradeModal = ({ isOpen, onClose, onSubmit, trade }) => {
         exitDate: trade.exitDate
           ? new Date(trade.exitDate).toISOString().slice(0, 16)
           : "",
+        postExitHigh: trade.postExitHigh?.toString() || "",
+        postExitLow: trade.postExitLow?.toString() || "",
+        pattern: trade.pattern || "",
+        session: trade.session || "Regular",
+        mentalState: trade.mentalState || { focus: "", emotion: "" },
+        mistakes: trade.mistakes || [],
         strategy: trade.strategy || "",
         notes: trade.notes || "",
       });
@@ -69,10 +71,23 @@ const TradeModal = ({ isOpen, onClose, onSubmit, trade }) => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    setFormData((prev) => {
+      // Handle nested objects (stopLossAnalysis, profitTargetAnalysis, mentalState)
+      if (name.includes(".")) {
+        const [parent, child] = name.split(".");
+        return {
+          ...prev,
+          [parent]: {
+            ...prev[parent],
+            [child]: value,
+          },
+        };
+      }
+      return {
+        ...prev,
+        [name]: value,
+      };
+    });
   };
 
   const handleSubmit = async (e) => {
@@ -89,18 +104,10 @@ const TradeModal = ({ isOpen, onClose, onSubmit, trade }) => {
         !formData.entryQuantity ||
         !formData.entryDate
       ) {
-        console.error("Missing required fields:", {
-          symbol: !!formData.symbol,
-          type: !!formData.type,
-          tradeType: !!formData.tradeType,
-          entryPrice: !!formData.entryPrice,
-          entryQuantity: !!formData.entryQuantity,
-          entryDate: !!formData.entryDate,
-        });
         throw new Error("Please fill in all required fields");
       }
 
-      // Validate day trade dates first
+      // Validate day trade dates
       if (formData.tradeType === "DAY" && formData.exitDate) {
         const entryDay = new Date(formData.entryDate).toDateString();
         const exitDay = new Date(formData.exitDate).toDateString();
@@ -120,6 +127,14 @@ const TradeModal = ({ isOpen, onClose, onSubmit, trade }) => {
         entryPrice: Number(formData.entryPrice),
         entryQuantity: Number(formData.entryQuantity),
         entryDate: new Date(formData.entryDate).toISOString(),
+        postExitHigh: formData.postExitHigh
+          ? Number(formData.postExitHigh)
+          : null,
+        postExitLow: formData.postExitLow ? Number(formData.postExitLow) : null,
+        pattern: formData.pattern || null,
+        session: formData.session,
+        mentalState: formData.mentalState,
+        mistakes: formData.mistakes,
         strategy: formData.strategy || "",
         notes: formData.notes || "",
       };
@@ -135,6 +150,7 @@ const TradeModal = ({ isOpen, onClose, onSubmit, trade }) => {
       onClose();
     } catch (error) {
       console.error("Error submitting trade:", error);
+      alert(error.message);
     } finally {
       setLoading(false);
     }
@@ -210,8 +226,8 @@ const TradeModal = ({ isOpen, onClose, onSubmit, trade }) => {
             </div>
 
             {/* Entry Details */}
-            <div className="grid grid-cols-4 gap-4">
-              <h3 className="text-lg font-semibold text-gray-900 mb-3">
+            <div className="grid grid-cols-1 gap-4">
+              <h3 className="text-lg font-semibold text-gray-900">
                 Entry Details
               </h3>
               <div className="grid grid-cols-3 gap-4">
@@ -246,29 +262,26 @@ const TradeModal = ({ isOpen, onClose, onSubmit, trade }) => {
                   />
                 </div>
 
-                <div className="relative">
+                <div>
                   <label className="block text-sm text-gray-700 mb-1">
                     Date & Time
                   </label>
-                  <div className="relative">
-                    <input
-                      type="datetime-local"
-                      name="entryDate"
-                      value={formData.entryDate}
-                      onChange={handleChange}
-                      className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded bg-white text-gray-900 appearance-none"
-                      style={{ width: "250px" }} // Adjust width as necessary
-                      required
-                    />
-                  </div>
+                  <input
+                    type="datetime-local"
+                    name="entryDate"
+                    value={formData.entryDate}
+                    onChange={handleChange}
+                    className="w-full px-3 py-2 border border-gray-300 rounded bg-white text-gray-900"
+                    required
+                  />
                 </div>
               </div>
             </div>
 
             {/* Exit Details */}
-            <div className="grid grid-cols-4 gap-4">
-              <h3 className="text-lg font-semibold text-gray-900 mb-3">
-                Exit Details (Optional)
+            <div className="grid grid-cols-1 gap-4">
+              <h3 className="text-lg font-semibold text-gray-900">
+                Exit Details
               </h3>
               <div className="grid grid-cols-3 gap-4">
                 <div>
@@ -300,21 +313,52 @@ const TradeModal = ({ isOpen, onClose, onSubmit, trade }) => {
                   />
                 </div>
 
-                <div className="relative">
+                <div>
                   <label className="block text-sm text-gray-700 mb-1">
                     Date & Time
                   </label>
-                  <div className="relative">
-                    <input
-                      type="datetime-local"
-                      name="exitDate"
-                      value={formData.exitDate}
-                      onChange={handleChange}
-                      className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded bg-white text-gray-900 appearance-none"
-                      style={{ width: "250px" }} // Adjust width as necessary
-                      required
-                    />
-                  </div>
+                  <input
+                    type="datetime-local"
+                    name="exitDate"
+                    value={formData.exitDate}
+                    onChange={handleChange}
+                    className="w-full px-3 py-2 border border-gray-300 rounded bg-white text-gray-900"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Post-Exit Analysis */}
+            <div className="grid grid-cols-1 gap-4">
+              <h3 className="text-lg font-semibold text-gray-900">
+                Post-Exit Price Movement
+              </h3>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm text-gray-700 mb-1">
+                    Stock High After Exit
+                  </label>
+                  <input
+                    type="number"
+                    name="postExitHigh"
+                    value={formData.postExitHigh}
+                    onChange={handleChange}
+                    className="w-full px-3 py-2 border border-gray-300 rounded bg-white text-gray-900"
+                    step="0.01"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm text-gray-700 mb-1">
+                    Stock Low After Exit
+                  </label>
+                  <input
+                    type="number"
+                    name="postExitLow"
+                    value={formData.postExitLow}
+                    onChange={handleChange}
+                    className="w-full px-3 py-2 border border-gray-300 rounded bg-white text-gray-900"
+                    step="0.01"
+                  />
                 </div>
               </div>
             </div>

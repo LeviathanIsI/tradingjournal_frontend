@@ -13,6 +13,7 @@ const UserGuide = () => {
   useEffect(() => {
     setTimeout(() => {
       setIsReady(true);
+      console.log("User tour status:", user?.hasCompletedTour);
       if (user && !user.hasCompletedTour) {
         setRunTour(true);
       }
