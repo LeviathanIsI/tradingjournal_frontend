@@ -11,6 +11,7 @@ import StreakAnalysis from "../components/StreakAnalysis";
 import ReviewModal from "../components/ReviewModal";
 import ImportTradeModal from "../components/ImportTradeModal";
 import StopLossStudy from "../components/StopLossStudy";
+import DashboardTour from "../components/DashboardTour";
 
 const Dashboard = () => {
   const { user } = useAuth();
@@ -101,6 +102,7 @@ const Dashboard = () => {
 
   return (
     <div className="w-full p-6 text-black">
+      <DashboardTour />
       {/* Stats Overview */}
       <div
         className="grid grid-cols-1 md:grid-cols-6 gap-4 mb-8"
@@ -177,7 +179,7 @@ const Dashboard = () => {
             {formatCurrency(stats?.totalProfit || 0)}
           </p>
         </div>
-        <div className="bg-white p-4 rounded shadow">
+        <div className="col-span-1">
           <StopLossStudy trades={trades} />
         </div>
       </div>

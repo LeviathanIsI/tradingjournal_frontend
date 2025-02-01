@@ -15,7 +15,6 @@ import Dashboard from "./pages/Dashboard";
 import TradePlanning from "./pages/TradePlanning";
 import Community from "./pages/Community";
 import Traders from "./components/Traders";
-import UserGuide from "./components/UserGuide";
 
 // Protected Route wrapper
 const ProtectedRoute = ({ children }) => {
@@ -101,7 +100,6 @@ function App() {
       <AuthProvider>
         <div className="w-screen min-h-screen bg-white">
           <Navbar />
-          <UserGuide />
           <AppRoutes />
         </div>
       </AuthProvider>

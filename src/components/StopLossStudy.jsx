@@ -54,7 +54,6 @@ const StopLossStudy = ({ trades }) => {
 
               // Momentum-based adjustment
               if (momentum) {
-                // Higher targets for strong momentum
                 if (momentum > 0.02) {
                   weightedMove *= 1.2; // 20% wider target for strong momentum
                 } else if (momentum < 0.01) {
@@ -123,61 +122,18 @@ const StopLossStudy = ({ trades }) => {
         ).toFixed(2)
       : null;
 
-    // Calculate success rates for suggested levels
-    const calculateSuccessRates = (suggestedStop, suggestedTarget) => {
-      const tradesWithPostData = closedTrades.filter(
-        (t) => t.postExitHigh !== null && t.postExitLow !== null
-      );
-
-      if (!tradesWithPostData.length)
-        return { stopSuccess: 0, targetSuccess: 0 };
-
-      const stopSuccess =
-        (tradesWithPostData.reduce((acc, trade) => {
-          const wouldHaveWorked =
-            trade.type === "LONG"
-              ? Math.min(trade.postExitLow, trade.exitPrice) >
-                trade.entryPrice - suggestedStop
-              : Math.max(trade.postExitHigh, trade.exitPrice) <
-                trade.entryPrice + suggestedStop;
-          return acc + (wouldHaveWorked ? 1 : 0);
-        }, 0) /
-          tradesWithPostData.length) *
-        100;
-
-      const targetSuccess =
-        (tradesWithPostData.reduce((acc, trade) => {
-          const wouldHaveHitTarget =
-            trade.type === "LONG"
-              ? Math.max(trade.postExitHigh, trade.exitPrice) >=
-                trade.entryPrice + suggestedTarget
-              : Math.min(trade.postExitLow, trade.exitPrice) <=
-                trade.entryPrice - suggestedTarget;
-          return acc + (wouldHaveHitTarget ? 1 : 0);
-        }, 0) /
-          tradesWithPostData.length) *
-        100;
-
-      return {
-        stopSuccess: Math.round(stopSuccess),
-        targetSuccess: Math.round(targetSuccess),
-      };
-    };
-
-    const successRates = calculateSuccessRates(suggestedStop, suggestedTarget);
-
     return {
       suggestedStopLoss: suggestedStop,
       suggestedTarget,
       tradesAnalyzed: closedTrades.length,
-      recentTrades: recentTrades.length,
-      stopSuccessRate: successRates.stopSuccess,
-      targetSuccessRate: successRates.targetSuccess,
     };
   }, [trades]);
 
   return (
-    <div className="bg-white p-4 rounded shadow h-full">
+    <div
+      className="bg-white p-4 rounded shadow h-full"
+      data-tour="exit-analysis"
+    >
       <h3 className="text-sm text-black font-medium">Exit Analysis</h3>
       <div className="grid grid-cols-1 gap-4 mt-2">
         {!trades?.length ? (
@@ -188,35 +144,21 @@ const StopLossStudy = ({ trades }) => {
           <>
             <div>
               <p className="text-xs text-gray-500 mb-1">Suggested Stop Loss</p>
-              <div className="flex items-baseline gap-2">
-                <p className="text-lg font-bold text-red-600">
-                  {analysis?.suggestedStopLoss
-                    ? `$${analysis.suggestedStopLoss}`
-                    : "Insufficient data"}
-                </p>
-                {analysis?.stopSuccessRate > 0 && (
-                  <span className="text-xs text-gray-500">
-                    {analysis.stopSuccessRate}% historical success
-                  </span>
-                )}
-              </div>
+              <p className="text-lg font-bold text-red-600">
+                {analysis?.suggestedStopLoss
+                  ? `$${analysis.suggestedStopLoss}`
+                  : "Insufficient data"}
+              </p>
             </div>
             <div>
               <p className="text-xs text-gray-500 mb-1">
                 Suggested Profit Target
               </p>
-              <div className="flex items-baseline gap-2">
-                <p className="text-lg font-bold text-green-600">
-                  {analysis?.suggestedTarget
-                    ? `$${analysis.suggestedTarget}`
-                    : "Insufficient data"}
-                </p>
-                {analysis?.targetSuccessRate > 0 && (
-                  <span className="text-xs text-gray-500">
-                    {analysis.targetSuccessRate}% historical success
-                  </span>
-                )}
-              </div>
+              <p className="text-lg font-bold text-green-600">
+                {analysis?.suggestedTarget
+                  ? `$${analysis.suggestedTarget}`
+                  : "Insufficient data"}
+              </p>
             </div>
           </>
         )}

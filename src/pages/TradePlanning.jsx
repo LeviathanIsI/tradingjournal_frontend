@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import TradePlanModal from "../components/TradePlanModal";
 import { useTradePlans } from "../hooks/useTradePlans";
+import TradePlanningTour from "../components/TradePlanningTour";
 
 const TradePlanning = () => {
   const {
@@ -96,10 +97,14 @@ const TradePlanning = () => {
                 {plan.execution?.entry ? `$${plan.execution.entry}` : "N/A"}
               </td>
               <td className="py-3 px-4 text-gray-900">
-                {plan.execution?.profitTarget ? `$${plan.execution.profitTarget}` : "N/A"}
+                {plan.execution?.profitTarget
+                  ? `$${plan.execution.profitTarget}`
+                  : "N/A"}
               </td>
               <td className="py-3 px-4 text-gray-900">
-                {plan.execution?.stopLoss ? `$${plan.execution.stopLoss}` : "N/A"}
+                {plan.execution?.stopLoss
+                  ? `$${plan.execution.stopLoss}`
+                  : "N/A"}
               </td>
               <td className="py-3 px-4 text-center">
                 <select
@@ -335,6 +340,7 @@ const TradePlanning = () => {
 
   return (
     <div className="p-6">
+      <TradePlanningTour />
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold text-gray-900">Trade Planning</h1>
         <div className="flex items-center space-x-4">
@@ -361,6 +367,7 @@ const TradePlanning = () => {
             </button>
           </div>
           <button
+            data-tour="create-plan"
             onClick={handleNewPlan}
             className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
           >
@@ -371,58 +378,66 @@ const TradePlanning = () => {
       </div>
 
       {/* Quick Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-        <div className="bg-white p-4 rounded-lg shadow">
-          <h3 className="text-sm font-medium text-gray-500">Total Plans</h3>
-          <p className="text-2xl font-semibold text-gray-900">
-            {stats?.totalPlans || 0}
-          </p>
+      <div className="p-6">
+        <div
+          className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6"
+          data-tour="plan-stats"
+        >
+          <div className="bg-white p-4 rounded-lg shadow">
+            <h3 className="text-sm font-medium text-gray-500">Total Plans</h3>
+            <p className="text-2xl font-semibold text-gray-900">
+              {stats?.totalPlans || 0}
+            </p>
+          </div>
+          <div className="bg-white p-4 rounded-lg shadow">
+            <h3 className="text-sm font-medium text-gray-500">
+              Executed Plans
+            </h3>
+            <p className="text-2xl font-semibold text-gray-900">
+              {stats?.executedPlans || 0}
+            </p>
+          </div>
+          <div className="bg-white p-4 rounded-lg shadow">
+            <h3 className="text-sm font-medium text-gray-500">Success Rate</h3>
+            <p className="text-2xl font-semibold text-gray-900">
+              {stats?.successfulPlans
+                ? ((stats.successfulPlans / stats.executedPlans) * 100).toFixed(
+                    1
+                  )
+                : "0"}
+              %
+            </p>
+          </div>
+          <div className="bg-white p-4 rounded-lg shadow">
+            <h3 className="text-sm font-medium text-gray-500">Avg R:R Ratio</h3>
+            <p className="text-2xl font-semibold text-gray-900">
+              {stats?.averageRR?.toFixed(2) || "0:0"}
+            </p>
+          </div>
         </div>
-        <div className="bg-white p-4 rounded-lg shadow">
-          <h3 className="text-sm font-medium text-gray-500">Executed Plans</h3>
-          <p className="text-2xl font-semibold text-gray-900">
-            {stats?.executedPlans || 0}
-          </p>
-        </div>
-        <div className="bg-white p-4 rounded-lg shadow">
-          <h3 className="text-sm font-medium text-gray-500">Success Rate</h3>
-          <p className="text-2xl font-semibold text-gray-900">
-            {stats?.successfulPlans
-              ? ((stats.successfulPlans / stats.executedPlans) * 100).toFixed(1)
-              : "0"}
-            %
-          </p>
-        </div>
-        <div className="bg-white p-4 rounded-lg shadow">
-          <h3 className="text-sm font-medium text-gray-500">Avg R:R Ratio</h3>
-          <p className="text-2xl font-semibold text-gray-900">
-            {stats?.averageRR?.toFixed(2) || "0:0"}
-          </p>
-        </div>
-      </div>
 
-      {/* Plans List/Grid */}
-      <div className="bg-white rounded-lg shadow">
-        <div className="p-4 border-b border-gray-200">
-          <h2 className="text-lg font-medium text-gray-900">Recent Plans</h2>
-        </div>
-        <div className="p-4">
-          {loading ? (
-            <div className="text-center text-gray-500 py-8">Loading...</div>
-          ) : tradePlans?.length > 0 ? (
-            view === "list" ? (
-              renderListView()
+        {/* Plans List/Grid */}
+        <div className="bg-white rounded-lg shadow" data-tour="plans-list">
+          <div className="p-4 border-b border-gray-200">
+            <h2 className="text-lg font-medium text-gray-900">Recent Plans</h2>
+          </div>
+          <div className="p-4">
+            {loading ? (
+              <div className="text-center text-gray-500 py-8">Loading...</div>
+            ) : tradePlans?.length > 0 ? (
+              view === "list" ? (
+                renderListView()
+              ) : (
+                renderGridView()
+              )
             ) : (
-              renderGridView()
-            )
-          ) : (
-            <div className="text-center text-gray-500 py-8">
-              No trade plans yet. Click "New Plan" to create one.
-            </div>
-          )}
+              <div className="text-center text-gray-500 py-8">
+                No trade plans yet. Click "New Plan" to create one.
+              </div>
+            )}
+          </div>
         </div>
       </div>
-
       <TradePlanModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
