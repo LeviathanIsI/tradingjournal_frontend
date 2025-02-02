@@ -3,6 +3,7 @@ import React, { useState, useEffect, useMemo } from "react";
 import { Link } from "react-router-dom";
 import ReviewInteractions from "./ReviewInteractions";
 import FiltersBar from "./FiltersBar";
+import ReviewsTour from "./ReviewsTour";
 
 const PublicReviews = () => {
   const [reviews, setReviews] = useState([]);
@@ -125,12 +126,14 @@ const PublicReviews = () => {
   if (!reviews.length) return <div>No public reviews available yet.</div>;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6" data-tour="reviews-content">
+      <ReviewsTour />
       <h2 className="text-xl font-semibold text-gray-900">
         Public Trade Reviews
       </h2>
 
       <FiltersBar
+        data-tour="reviews-filters, reviews-search, reviews-sort"
         filters={filters}
         setFilters={setFilters}
         sortOptions={sortOptions}
@@ -140,7 +143,7 @@ const PublicReviews = () => {
         setSearchQuery={setSearchQuery}
       />
 
-      <div className="grid gap-6">
+      <div className="grid gap-6" data-tour="review-card">
         {filteredAndSortedReviews.map((review) => (
           <div key={review._id} className="bg-white rounded-lg shadow p-6">
             <div className="flex justify-between items-start mb-4">

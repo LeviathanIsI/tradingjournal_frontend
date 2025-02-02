@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { Star, Link as LinkIcon } from "lucide-react";
 import { Link } from "react-router-dom";
 import ReviewInteractions from "./ReviewInteractions";
+import FeaturedTour from "./FeaturedTour";
 
 const FeaturedReviews = () => {
   const [featuredReviews, setFeaturedReviews] = useState([]);
@@ -61,8 +62,15 @@ const FeaturedReviews = () => {
   if (error || !featuredReviews.length) return null;
 
   return (
-    <div className="bg-white rounded-lg shadow-lg p-6 mb-6">
-      <div className="flex items-center justify-between mb-4">
+    <div
+      className="bg-white rounded-lg shadow-lg p-6 mb-6"
+      data-tour="featured-content"
+    >
+      <FeaturedTour />
+      <div
+        className="flex items-center justify-between mb-4"
+        data-tour="featured-header"
+      >
         <div className="flex items-center gap-2">
           <Star className="h-5 w-5 text-yellow-400 fill-current" />
           <h2 className="text-lg font-semibold text-gray-900">
@@ -79,6 +87,7 @@ const FeaturedReviews = () => {
           <div
             key={review._id}
             className="border-b border-gray-200 last:border-0 pb-6 last:pb-0"
+            data-tour="featured-review"
           >
             <div className="flex justify-between items-start mb-4">
               <div>

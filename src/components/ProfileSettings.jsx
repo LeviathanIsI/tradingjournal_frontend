@@ -2,7 +2,12 @@ import React, { useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import { AlertCircle } from "lucide-react";
 
-const ProfileSettings = ({ user, onUpdate }) => {
+const ProfileSettings = ({
+  user,
+  onUpdate,
+  currentSettings,
+  onSettingsSubmit,
+}) => {
   const [tab, setTab] = useState("general");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -20,6 +25,11 @@ const ProfileSettings = ({ user, onUpdate }) => {
     currentPassword: "",
     newPassword: "",
     confirmPassword: "",
+  });
+
+  const [accountForm, setAccountForm] = useState({
+    startingCapital: currentSettings?.preferences?.startingCapital || "",
+    defaultCurrency: currentSettings?.preferences?.defaultCurrency || "USD",
   });
 
   const handleGeneralSubmit = async (e) => {
@@ -105,6 +115,59 @@ const ProfileSettings = ({ user, onUpdate }) => {
     }
   };
 
+  const handleAccountSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError(null);
+    setSuccess(null);
+
+    try {
+      const token = localStorage.getItem("token");
+      const response = await fetch("http://localhost:5000/api/auth/settings", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          preferences: {
+            startingCapital: accountForm.startingCapital,
+            defaultCurrency: accountForm.defaultCurrency,
+          },
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to update settings");
+      }
+
+      await onSettingsSubmit(accountForm);
+      setSuccess("Account settings updated successfully");
+    } catch (error) {
+      setError("Error saving settings: " + error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleAccountChange = (e) => {
+    const { name, value } = e.target;
+    if (name === "startingCapital" && value !== "") {
+      const num = parseFloat(value);
+      if (num >= 0) {
+        setAccountForm((prev) => ({
+          ...prev,
+          [name]: num,
+        }));
+      }
+    } else {
+      setAccountForm((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    }
+  };
+
   return (
     <div className="bg-white rounded-lg shadow overflow-hidden">
       <div className="border-b border-gray-200">
@@ -129,6 +192,16 @@ const ProfileSettings = ({ user, onUpdate }) => {
           >
             Password
           </button>
+          <button
+            onClick={() => setTab("account")}
+            className={`px-3 py-4 text-sm font-medium border-b-2 ${
+              tab === "account"
+                ? "border-blue-500 text-blue-600"
+                : "border-transparent text-gray-500 hover:border-gray-300"
+            }`}
+          >
+            Account
+          </button>
         </nav>
       </div>
 
@@ -146,7 +219,7 @@ const ProfileSettings = ({ user, onUpdate }) => {
           </div>
         )}
 
-        {tab === "general" ? (
+        {tab === "general" && (
           <form onSubmit={handleGeneralSubmit} className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-700">
@@ -225,7 +298,9 @@ const ProfileSettings = ({ user, onUpdate }) => {
               </button>
             </div>
           </form>
-        ) : (
+        )}
+
+        {tab === "password" && (
           <form onSubmit={handlePasswordSubmit} className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-700">
@@ -285,6 +360,52 @@ const ProfileSettings = ({ user, onUpdate }) => {
                 className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50"
               >
                 {loading ? "Updating..." : "Update Password"}
+              </button>
+            </div>
+          </form>
+        )}
+
+        {tab === "account" && (
+          <form onSubmit={handleAccountSubmit} className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700">
+                Starting Capital
+              </label>
+              <input
+                type="number"
+                name="startingCapital"
+                step="0.01"
+                min="0"
+                value={accountForm.startingCapital}
+                onChange={handleAccountChange}
+                placeholder="Enter your starting capital"
+                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700">
+                Default Currency
+              </label>
+              <select
+                name="defaultCurrency"
+                value={accountForm.defaultCurrency}
+                onChange={handleAccountChange}
+                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+              >
+                <option value="USD">USD</option>
+                <option value="EUR">EUR</option>
+                <option value="GBP">GBP</option>
+              </select>
+            </div>
+
+            <div className="flex justify-end">
+              <button
+                type="submit"
+                disabled={loading}
+                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50"
+              >
+                {loading ? "Saving..." : "Save Settings"}
               </button>
             </div>
           </form>

@@ -5,12 +5,12 @@ import FeaturedReviews from "../components/FeaturedReviews";
 import Traders from "../components/Traders";
 import Leaderboard from "../components/Leaderboard";
 import Profile from "../components/Profile";
-import CommunityTour from "../components/CommunityTour";
+import CommunityNavTour from "../components/CommunityNavTour";
 
 const Community = () => {
   return (
     <div className="flex flex-col">
-      <CommunityTour />
+      <CommunityNavTour />
       <CommunityNav />
       <div className="w-full p-6">
         <Routes>
