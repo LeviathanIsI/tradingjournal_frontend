@@ -32,6 +32,14 @@ const ProfileSettings = ({
     defaultCurrency: currentSettings?.preferences?.defaultCurrency || "USD",
   });
 
+  const timeZones = [
+    { value: "UTC", label: "UTC" },
+    { value: "America/New_York", label: "Eastern Time" },
+    { value: "America/Chicago", label: "Central Time" },
+    { value: "America/Denver", label: "Mountain Time" },
+    { value: "America/Los_Angeles", label: "Pacific Time" },
+  ];
+
   const handleGeneralSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -396,6 +404,23 @@ const ProfileSettings = ({
                 <option value="USD">USD</option>
                 <option value="EUR">EUR</option>
                 <option value="GBP">GBP</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700">
+                Time Zone
+              </label>
+              <select
+                name="timeZone"
+                value={accountForm.timeZone}
+                onChange={handleAccountChange}
+                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+              >
+                {timeZones.map((tz) => (
+                  <option key={tz.value} value={tz.value}>
+                    {tz.label}
+                  </option>
+                ))}
               </select>
             </div>
 

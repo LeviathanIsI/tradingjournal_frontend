@@ -1,7 +1,14 @@
 import { useState, useEffect, useRef } from "react";
 import { X } from "lucide-react";
+import { formatInTimeZone, getTimezoneOffset } from "date-fns-tz";
 
-const TradeModal = ({ isOpen, onClose, onSubmit, trade }) => {
+const convertToUTC = (date, timeZone) => {
+  const offset = getTimezoneOffset(timeZone);
+  const localDate = new Date(date);
+  return new Date(localDate.getTime() + offset);
+};
+
+const TradeModal = ({ isOpen, onClose, onSubmit, trade, userTimeZone }) => {
   const modalRef = useRef(null);
   const initialFormState = {
     symbol: "",
@@ -17,11 +24,20 @@ const TradeModal = ({ isOpen, onClose, onSubmit, trade }) => {
     postExitLow: "",
     pattern: "",
     session: "Regular",
+    mentalState: { focus: "", emotion: "" },
+    mistakes: [],
+    strategy: "",
     notes: "",
   };
 
-  const [formData, setFormData] = useState(initialFormState);
+  const [formData, setFormData] = useState({ ...initialFormState });
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (isOpen && !trade) {
+      setFormData({ ...initialFormState });
+    }
+  }, [isOpen]);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -40,6 +56,7 @@ const TradeModal = ({ isOpen, onClose, onSubmit, trade }) => {
   }, [isOpen, onClose]);
 
   useEffect(() => {
+    console.log("Trade prop changed:", trade);
     if (trade) {
       setFormData({
         symbol: trade.symbol || "",
@@ -48,12 +65,20 @@ const TradeModal = ({ isOpen, onClose, onSubmit, trade }) => {
         entryPrice: trade.entryPrice?.toString() || "",
         entryQuantity: trade.entryQuantity?.toString() || "",
         entryDate: trade.entryDate
-          ? new Date(trade.entryDate).toISOString().slice(0, 16)
+          ? formatInTimeZone(
+              new Date(trade.entryDate),
+              userTimeZone,
+              "yyyy-MM-dd'T'HH:mm"
+            )
           : "",
         exitPrice: trade.exitPrice?.toString() || "",
         exitQuantity: trade.exitQuantity?.toString() || "",
         exitDate: trade.exitDate
-          ? new Date(trade.exitDate).toISOString().slice(0, 16)
+          ? formatInTimeZone(
+              new Date(trade.exitDate),
+              userTimeZone,
+              "yyyy-MM-dd'T'HH:mm"
+            )
           : "",
         postExitHigh: trade.postExitHigh?.toString() || "",
         postExitLow: trade.postExitLow?.toString() || "",
@@ -65,14 +90,20 @@ const TradeModal = ({ isOpen, onClose, onSubmit, trade }) => {
         notes: trade.notes || "",
       });
     } else {
-      setFormData(initialFormState);
+      console.log("Resetting to initial state");
+      setFormData({ ...initialFormState });
     }
-  }, [trade]);
+  }, [trade, userTimeZone]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => {
-      // Handle nested objects (stopLossAnalysis, profitTargetAnalysis, mentalState)
+      if (name === "symbol") {
+        return {
+          ...prev,
+          [name]: value.toUpperCase(),
+        };
+      }
       if (name.includes(".")) {
         const [parent, child] = name.split(".");
         return {
@@ -95,7 +126,6 @@ const TradeModal = ({ isOpen, onClose, onSubmit, trade }) => {
     setLoading(true);
 
     try {
-      // Validate required fields
       if (
         !formData.symbol ||
         !formData.type ||
@@ -124,13 +154,23 @@ const TradeModal = ({ isOpen, onClose, onSubmit, trade }) => {
         symbol: formData.symbol.toUpperCase(),
         type: formData.type,
         tradeType: formData.tradeType,
-        entryPrice: Number(formData.entryPrice),
+        entryDate: convertToUTC(
+          new Date(formData.entryDate),
+          userTimeZone
+        ).toISOString(),
         entryQuantity: Number(formData.entryQuantity),
-        entryDate: new Date(formData.entryDate).toISOString(),
+        exitDate: formData.exitDate
+          ? convertToUTC(
+              new Date(formData.exitDate),
+              userTimeZone
+            ).toISOString()
+          : undefined,
         postExitHigh: formData.postExitHigh
-          ? Number(formData.postExitHigh)
+          ? Number(parseFloat(formData.postExitHigh).toFixed(4))
           : null,
-        postExitLow: formData.postExitLow ? Number(formData.postExitLow) : null,
+        postExitLow: formData.postExitLow
+          ? Number(parseFloat(formData.postExitLow).toFixed(4))
+          : null,
         pattern: formData.pattern || null,
         session: formData.session,
         mentalState: formData.mentalState,
@@ -189,8 +229,9 @@ const TradeModal = ({ isOpen, onClose, onSubmit, trade }) => {
                   name="symbol"
                   value={formData.symbol}
                   onChange={handleChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded bg-white text-gray-900"
+                  className="w-full px-3 py-2 border border-gray-300 rounded bg-white text-gray-900 uppercase"
                   required
+                  style={{ textTransform: "uppercase" }}
                 />
               </div>
 
@@ -257,7 +298,7 @@ const TradeModal = ({ isOpen, onClose, onSubmit, trade }) => {
                     onChange={handleChange}
                     className="w-full px-3 py-2 border border-gray-300 rounded bg-white text-gray-900"
                     min="0"
-                    step="0.01"
+                    step="0.0001"
                     required
                   />
                 </div>
@@ -309,7 +350,7 @@ const TradeModal = ({ isOpen, onClose, onSubmit, trade }) => {
                     onChange={handleChange}
                     className="w-full px-3 py-2 border border-gray-300 rounded bg-white text-gray-900"
                     min="0"
-                    step="0.01"
+                    step="0.0001"
                   />
                 </div>
 
@@ -344,7 +385,7 @@ const TradeModal = ({ isOpen, onClose, onSubmit, trade }) => {
                     value={formData.postExitHigh}
                     onChange={handleChange}
                     className="w-full px-3 py-2 border border-gray-300 rounded bg-white text-gray-900"
-                    step="0.01"
+                    step="0.0001"
                   />
                 </div>
                 <div>
@@ -357,7 +398,7 @@ const TradeModal = ({ isOpen, onClose, onSubmit, trade }) => {
                     value={formData.postExitLow}
                     onChange={handleChange}
                     className="w-full px-3 py-2 border border-gray-300 rounded bg-white text-gray-900"
-                    step="0.01"
+                    step="0.0001"
                   />
                 </div>
               </div>

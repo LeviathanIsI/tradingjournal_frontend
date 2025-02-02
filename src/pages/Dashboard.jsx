@@ -12,9 +12,11 @@ import ReviewModal from "../components/ReviewModal";
 import ImportTradeModal from "../components/ImportTradeModal";
 import StopLossStudy from "../components/StopLossStudy";
 import DashboardTour from "../components/DashboardTour";
+import { formatInTimeZone } from "date-fns-tz";
 
 const Dashboard = () => {
   const { user } = useAuth();
+  const userTimeZone = user?.preferences?.timeZone || "UTC";
   const [isTradeModalOpen, setIsTradeModalOpen] = useState(false);
   const [selectedTrade, setSelectedTrade] = useState(null);
   const { trades, stats, loading, error, addTrade, updateTrade, deleteTrade } =
@@ -54,6 +56,7 @@ const Dashboard = () => {
   };
 
   const handleSubmit = async (tradeData) => {
+    console.log("Submit handler - selectedTrade:", selectedTrade); // Debug log
     let success;
     if (selectedTrade) {
       // If we have a selectedTrade, we're editing
@@ -85,8 +88,17 @@ const Dashboard = () => {
     setSelectedTrade(null);
   };
 
+  const handleAddTradeClick = () => {
+    setSelectedTrade(null);
+    setIsTradeModalOpen(true);
+  };
+
   const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleString();
+    return formatInTimeZone(
+      new Date(dateString),
+      userTimeZone,
+      "MM/dd/yyyy hh:mm a"
+    );
   };
 
   if (error) {
@@ -257,18 +269,18 @@ const Dashboard = () => {
           <div className="flex gap-2">
             <button
               data-tour="add-trade"
-              onClick={() => setIsTradeModalOpen(true)}
+              onClick={handleAddTradeClick}
               className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
             >
               Add Trade
             </button>
-            <button
+            {/* <button
               onClick={() => setIsImportModalOpen(true)}
               className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 flex items-center gap-2"
             >
               <Upload className="h-4 w-4" />
               Import Trades
-            </button>
+            </button> */}
           </div>
         </div>
         <div className="overflow-x-auto">
@@ -359,6 +371,7 @@ const Dashboard = () => {
         onClose={handleModalClose}
         onSubmit={handleSubmit}
         trade={selectedTrade}
+        userTimeZone={userTimeZone}
       />
       <ReviewModal
         isOpen={isReviewModalOpen}
