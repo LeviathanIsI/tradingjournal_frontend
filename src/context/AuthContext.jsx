@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import PropTypes from "prop-types";
 
 const AuthContext = createContext(null);
@@ -8,6 +8,7 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const location = useLocation();
 
   const updateUser = (userData) => {
     const updatedUser = {
@@ -18,7 +19,6 @@ export const AuthProvider = ({ children }) => {
     localStorage.setItem("user", JSON.stringify(updatedUser));
   };
 
-  // Add this new function to validate and refresh user data
   const validateAuth = async () => {
     const token = localStorage.getItem("token");
     if (!token) {
@@ -50,6 +50,7 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  // Initial auth check
   useEffect(() => {
     const token = localStorage.getItem("token");
     const storedUser = localStorage.getItem("user");
@@ -71,7 +72,8 @@ export const AuthProvider = ({ children }) => {
     };
     localStorage.setItem("user", JSON.stringify(userDataToStore));
     setUser(userDataToStore);
-    navigate("/dashboard");
+    const from = location.state?.from || "/dashboard";
+    navigate(from);
   };
 
   const logout = () => {
@@ -81,28 +83,15 @@ export const AuthProvider = ({ children }) => {
     navigate("/login");
   };
 
-  // Add this to help with debugging
-  useEffect(() => {}, [user, loading]);
-
-  const contextValue = {
+  const value = {
     user,
     login,
     logout,
     updateUser,
-    isAuthenticated: !!user,
     loading,
   };
 
-  return (
-    <AuthContext.Provider value={{ user, login, logout, updateUser }}>
-      {" "}
-      {children}
-    </AuthContext.Provider>
-  );
-};
-
-AuthProvider.propTypes = {
-  children: PropTypes.node.isRequired,
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 
 export const useAuth = () => {
