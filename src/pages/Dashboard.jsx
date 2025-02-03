@@ -191,7 +191,7 @@ const Dashboard = () => {
           </p>
         </div>
         <div className="col-span-1">
-          <StopLossStudy trades={trades} />
+          <StopLossStudy trades={trades} user={user} stats={stats} />
         </div>
       </div>
 
