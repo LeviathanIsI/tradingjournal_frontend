@@ -16,7 +16,7 @@ const StopLossStudy = ({ trades }) => {
 
     // Enhanced volatility and momentum calculation
     const getTradeMetrics = (trade) => {
-      if (trade.postExitHigh && trade.postExitLow) {
+      if (trade.postExitHigh && trade.postExitLow && trade.exitDate) {
         const volatility =
           (trade.postExitHigh - trade.postExitLow) / trade.entryPrice;
         const totalMove =
@@ -25,55 +25,79 @@ const StopLossStudy = ({ trades }) => {
             : trade.postExitLow - trade.postExitHigh;
         const momentum = Math.abs(totalMove / trade.entryPrice);
 
-        // Enhanced trend analysis using both timing and sequence
         let trendStrength = 1;
+        let timingQuality = 1;
 
-        if (trade.postExitAnalysis?.lowBeforeHigh !== null) {
-          // Base adjustment from sequence
+        if (
+          trade.postExitAnalysis?.timeOfLow &&
+          trade.postExitAnalysis?.timeOfHigh
+        ) {
+          const exitTime = new Date(trade.exitDate);
+          const lowTime = new Date(trade.postExitAnalysis.timeOfLow);
+          const highTime = new Date(trade.postExitAnalysis.timeOfHigh);
+
+          // Calculate minutes from exit to high and low
+          const minsToHigh = Math.abs(highTime - exitTime) / (1000 * 60);
+          const minsToLow = Math.abs(lowTime - exitTime) / (1000 * 60);
+
+          // For long trades:
           if (trade.type === "LONG") {
-            trendStrength = trade.postExitAnalysis.lowBeforeHigh ? 0.8 : 1.2;
-          } else {
-            trendStrength = trade.postExitAnalysis.lowBeforeHigh ? 1.2 : 0.8;
+            // High close to exit = stronger signal
+            if (minsToHigh <= 15) {
+              timingQuality *= 1.3; // Strong momentum continuation
+            } else if (minsToHigh <= 30) {
+              timingQuality *= 1.1; // Moderate momentum
+            }
+
+            // Low far from exit = more resilient
+            if (minsToLow >= 90) {
+              trendStrength *= 1.2; // Very resilient
+            } else if (minsToLow <= 15) {
+              trendStrength *= 0.7; // Quick reversal, be careful
+            }
+          }
+          // For short trades (inverse logic):
+          else {
+            // Low close to exit = stronger signal
+            if (minsToLow <= 15) {
+              timingQuality *= 1.3;
+            } else if (minsToLow <= 30) {
+              timingQuality *= 1.1;
+            }
+
+            // High far from exit = more resilient
+            if (minsToHigh >= 90) {
+              trendStrength *= 1.2;
+            } else if (minsToHigh <= 15) {
+              trendStrength *= 0.7;
+            }
           }
 
-          // Time-based adjustments if both times are available
-          if (
-            trade.postExitAnalysis.timeOfLow &&
-            trade.postExitAnalysis.timeOfHigh
-          ) {
-            const lowTime = new Date(trade.postExitAnalysis.timeOfLow);
-            const highTime = new Date(trade.postExitAnalysis.timeOfHigh);
-            const timeDiffMinutes = Math.abs(highTime - lowTime) / (1000 * 60);
+          // Time of day adjustments
+          const marketClose = new Date(exitTime);
+          marketClose.setHours(16, 0, 0);
+          const minsToClose = (marketClose - exitTime) / (1000 * 60);
 
-            // If times are very close (within 5 minutes), reduce the trend strength adjustment
-            if (timeDiffMinutes <= 5) {
-              trendStrength = (trendStrength + 1) / 2; // Move halfway back to neutral
-            }
-            // If there's a long delay (over 30 minutes), strengthen the trend signal
-            else if (timeDiffMinutes > 30) {
-              trendStrength =
-                trendStrength > 1
-                  ? trendStrength * 1.1 // Strengthen bullish signal
-                  : trendStrength * 0.9; // Strengthen bearish signal
-            }
-
-            // Adjust for time of day - moves near market close (last hour) get less weight
-            const marketClose = new Date(lowTime);
-            marketClose.setHours(16, 0, 0); // Assuming 4 PM market close
-            const minutesToClose = Math.min(
-              (marketClose - lowTime) / (1000 * 60),
-              (marketClose - highTime) / (1000 * 60)
-            );
-
-            if (minutesToClose <= 60) {
-              trendStrength = (trendStrength + 1) / 2; // Reduce trend strength for end-of-day moves
-            }
+          // End of day moves get reduced weight
+          if (minsToClose <= 30) {
+            timingQuality *= 0.8;
+            trendStrength *= 0.8;
           }
         }
 
-        return { volatility, momentum, trendStrength };
+        return {
+          volatility,
+          momentum,
+          trendStrength,
+          timingQuality,
+        };
       }
-      return { volatility: null, momentum: null, trendStrength: 1 };
+      return {
+        volatility: null,
+        momentum: null,
+        trendStrength: 1,
+        timingQuality: 1,
+      };
     };
 
     // Handle winning trades with enhanced analysis
@@ -92,8 +116,9 @@ const StopLossStudy = ({ trades }) => {
             let weightedMove = baseMove;
 
             if (trade.postExitHigh !== null && trade.postExitLow !== null) {
-              const { volatility, momentum, trendStrength } =
+              const { volatility, momentum, trendStrength, timingQuality } =
                 getTradeMetrics(trade);
+              weightedMove *= trendStrength * timingQuality;
               const potentialMove =
                 trade.type === "LONG"
                   ? trade.postExitHigh - trade.entryPrice
@@ -138,8 +163,9 @@ const StopLossStudy = ({ trades }) => {
             let adjustedStop = actualLoss;
 
             if (trade.postExitHigh !== null && trade.postExitLow !== null) {
-              const { volatility, momentum, trendStrength } =
+              const { volatility, momentum, trendStrength, timingQuality } =
                 getTradeMetrics(trade);
+              adjustedStop *= trendStrength / timingQuality;
               const priceRecovery =
                 trade.type === "LONG"
                   ? trade.postExitHigh - trade.postExitLow
