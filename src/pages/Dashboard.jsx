@@ -56,7 +56,6 @@ const Dashboard = () => {
   };
 
   const handleSubmit = async (tradeData) => {
-    console.log("Submit handler - selectedTrade:", selectedTrade); // Debug log
     let success;
     if (selectedTrade) {
       // If we have a selectedTrade, we're editing

@@ -30,6 +30,7 @@ const ProfileSettings = ({
   const [accountForm, setAccountForm] = useState({
     startingCapital: currentSettings?.preferences?.startingCapital || "",
     defaultCurrency: currentSettings?.preferences?.defaultCurrency || "USD",
+    timeZone: currentSettings?.preferences?.timeZone || "UTC",
   });
 
   const timeZones = [
@@ -141,6 +142,7 @@ const ProfileSettings = ({
           preferences: {
             startingCapital: accountForm.startingCapital,
             defaultCurrency: accountForm.defaultCurrency,
+            timeZone: accountForm.timeZone,
           },
         }),
       });
@@ -149,7 +151,8 @@ const ProfileSettings = ({
         throw new Error("Failed to update settings");
       }
 
-      await onSettingsSubmit(accountForm);
+      const data = await response.json();
+      await onSettingsSubmit(data.data);
       setSuccess("Account settings updated successfully");
     } catch (error) {
       setError("Error saving settings: " + error.message);

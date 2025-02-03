@@ -259,82 +259,78 @@ const TradePlanning = () => {
 
   const renderGridView = () => (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-      {tradePlans.map(
-        (plan) =>
-          console.log("plan:", plan) || (
-            <div
-              key={plan._id}
-              className="border rounded-lg p-4 hover:shadow-md bg-white"
+      {tradePlans.map((plan) => (
+        <div
+          key={plan._id}
+          className="border rounded-lg p-4 hover:shadow-md bg-white"
+        >
+          <div className="flex justify-between items-start mb-2">
+            <div>
+              <h3 className="font-medium text-gray-900">{plan.ticker}</h3>
+              <p className="text-sm text-gray-500">{plan.direction}</p>
+              <p className="text-xs text-gray-400">
+                {new Date(plan.createdAt).toLocaleDateString()}
+              </p>
+            </div>
+            <select
+              value={plan.status}
+              onChange={(e) => handleStatusChange(plan._id, e.target.value)}
+              className="px-2 py-1 text-sm border border-gray-300 rounded bg-white text-gray-700"
             >
-              <div className="flex justify-between items-start mb-2">
-                <div>
-                  <h3 className="font-medium text-gray-900">{plan.ticker}</h3>
-                  <p className="text-sm text-gray-500">{plan.direction}</p>
-                  <p className="text-xs text-gray-400">
-                    {new Date(plan.createdAt).toLocaleDateString()}
-                  </p>
-                </div>
-                <select
-                  value={plan.status}
-                  onChange={(e) => handleStatusChange(plan._id, e.target.value)}
-                  className="px-2 py-1 text-sm border border-gray-300 rounded bg-white text-gray-700"
-                >
-                  <option value="PLANNED">Planned</option>
-                  <option value="EXECUTED">Executed</option>
-                  <option value="CANCELLED">Cancelled</option>
-                </select>
-              </div>
+              <option value="PLANNED">Planned</option>
+              <option value="EXECUTED">Executed</option>
+              <option value="CANCELLED">Cancelled</option>
+            </select>
+          </div>
 
-              <div className="space-y-2 mb-4">
-                <div className="grid grid-cols-3 gap-2 text-sm">
-                  <div>
-                    <span className="text-gray-500">Entry:</span>
-                    <p className="font-medium text-gray-900">
-                      {plan.execution && plan.execution.entry !== undefined
-                        ? `$${plan.execution.entry}`
-                        : "N/A"}
-                    </p>
-                  </div>
-                  <div>
-                    <span className="text-gray-500">Profit Target:</span>
-                    <p className="font-medium text-gray-900">
-                      {plan.execution &&
-                      plan.execution.profitTarget !== undefined
-                        ? `$${plan.execution.profitTarget}`
-                        : "N/A"}
-                    </p>
-                  </div>
-                  <div>
-                    <span className="text-gray-500">Stop Loss:</span>
-                    <p className="font-medium text-gray-900">
-                      {plan.execution && plan.execution.stopLoss !== undefined
-                        ? `$${plan.execution.stopLoss}`
-                        : "N/A"}
-                    </p>
-                  </div>
-                </div>
+          <div className="space-y-2 mb-4">
+            <div className="grid grid-cols-3 gap-2 text-sm">
+              <div>
+                <span className="text-gray-500">Entry:</span>
+                <p className="font-medium text-gray-900">
+                  {plan.execution && plan.execution.entry !== undefined
+                    ? `$${plan.execution.entry}`
+                    : "N/A"}
+                </p>
               </div>
-
-              <div className="flex justify-end gap-2">
-                <button
-                  onClick={() => {
-                    setSelectedPlan(plan);
-                    setIsModalOpen(true);
-                  }}
-                  className="p-1 text-blue-600 hover:bg-blue-50 bg-white rounded border border-gray-200"
-                >
-                  <Pencil size={16} />
-                </button>
-                <button
-                  onClick={() => handleDelete(plan._id)}
-                  className="p-1 text-red-600 hover:bg-red-50 bg-white rounded border border-gray-200"
-                >
-                  <Trash2 size={16} />
-                </button>
+              <div>
+                <span className="text-gray-500">Profit Target:</span>
+                <p className="font-medium text-gray-900">
+                  {plan.execution && plan.execution.profitTarget !== undefined
+                    ? `$${plan.execution.profitTarget}`
+                    : "N/A"}
+                </p>
+              </div>
+              <div>
+                <span className="text-gray-500">Stop Loss:</span>
+                <p className="font-medium text-gray-900">
+                  {plan.execution && plan.execution.stopLoss !== undefined
+                    ? `$${plan.execution.stopLoss}`
+                    : "N/A"}
+                </p>
               </div>
             </div>
-          )
-      )}
+          </div>
+
+          <div className="flex justify-end gap-2">
+            <button
+              onClick={() => {
+                setSelectedPlan(plan);
+                setIsModalOpen(true);
+              }}
+              className="p-1 text-blue-600 hover:bg-blue-50 bg-white rounded border border-gray-200"
+            >
+              <Pencil size={16} />
+            </button>
+            <button
+              onClick={() => handleDelete(plan._id)}
+              className="p-1 text-red-600 hover:bg-red-50 bg-white rounded border border-gray-200"
+            >
+              <Trash2 size={16} />
+            </button>
+          </div>
+        </div>
+      ))}
     </div>
   );
 

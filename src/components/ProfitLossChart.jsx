@@ -114,8 +114,6 @@ const groupDataByTimeframe = (data, tf) => {
 const filterTradesByTimeframe = (trades, selectedDate, timeframe) => {
   if (!selectedDate || !trades.length) return [];
 
-  console.log("Raw selected date:", selectedDate);
-
   // Create date preserving the local date components
   const [year, month, day] = selectedDate.split("-").map(Number);
   // Use setFullYear to avoid any timezone shifts
@@ -154,11 +152,6 @@ const filterTradesByTimeframe = (trades, selectedDate, timeframe) => {
     }
   }
 
-  console.log("Date range:", {
-    startDate: startDate.toISOString(),
-    endDate: endDate.toISOString(),
-  });
-
   return trades
     .filter((trade) => {
       const tradeDate = new Date(trade.exitDate);
@@ -166,13 +159,6 @@ const filterTradesByTimeframe = (trades, selectedDate, timeframe) => {
         trade.status === "CLOSED" &&
         tradeDate >= startDate &&
         tradeDate <= endDate;
-
-      if (isInRange) {
-        console.log("Including trade:", {
-          symbol: trade.symbol,
-          date: tradeDate.toISOString(),
-        });
-      }
 
       return isInRange;
     })
@@ -387,7 +373,6 @@ const ProfitLossChart = ({ trades }) => {
             onClick={(data) => {
               if (data && data.activePayload) {
                 const clickedDate = data.activePayload[0].payload.date;
-                console.log("Clicked date payload:", clickedDate);
                 setSelectedDate((prevDate) =>
                   prevDate === clickedDate ? null : clickedDate
                 );

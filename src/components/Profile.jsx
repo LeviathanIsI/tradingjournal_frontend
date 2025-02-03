@@ -70,17 +70,6 @@ const Profile = () => {
     await fetchProfile();
   };
 
-  // Log whenever profile changes
-  useEffect(() => {
-    if (profile) {
-      console.log("6. Profile updated:", {
-        profile,
-        currentUser,
-        isOwnProfile: currentUser?.username === profile.user.username,
-      });
-    }
-  }, [profile, currentUser]);
-
   const handleFollow = async () => {
     try {
       const token = localStorage.getItem("token");

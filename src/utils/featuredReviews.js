@@ -10,7 +10,6 @@ const updateFeaturedReviews = async () => {
 
     // If it's weekend, keep current featured reviews
     if (isWeekend) {
-      console.log("Weekend detected - keeping current featured reviews");
       return;
     }
 
@@ -44,9 +43,6 @@ const updateFeaturedReviews = async () => {
 
     // If it's Monday and we have no new reviews, keep weekend reviews
     if (isMonday && topLikedReviews.length === 0) {
-      console.log(
-        "Monday with no new reviews - keeping weekend featured reviews"
-      );
       return;
     }
 
@@ -82,10 +78,6 @@ const updateFeaturedReviews = async () => {
         { featured: true }
       );
     }
-
-    console.log(
-      `Updated featured reviews: ${featuredReviews.length} reviews selected`
-    );
     return featuredReviews;
   } catch (error) {
     console.error("Error updating featured reviews:", error);

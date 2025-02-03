@@ -25,9 +25,55 @@ const StopLossStudy = ({ trades }) => {
             : trade.postExitLow - trade.postExitHigh;
         const momentum = Math.abs(totalMove / trade.entryPrice);
 
-        return { volatility, momentum };
+        // Enhanced trend analysis using both timing and sequence
+        let trendStrength = 1;
+
+        if (trade.postExitAnalysis?.lowBeforeHigh !== null) {
+          // Base adjustment from sequence
+          if (trade.type === "LONG") {
+            trendStrength = trade.postExitAnalysis.lowBeforeHigh ? 0.8 : 1.2;
+          } else {
+            trendStrength = trade.postExitAnalysis.lowBeforeHigh ? 1.2 : 0.8;
+          }
+
+          // Time-based adjustments if both times are available
+          if (
+            trade.postExitAnalysis.timeOfLow &&
+            trade.postExitAnalysis.timeOfHigh
+          ) {
+            const lowTime = new Date(trade.postExitAnalysis.timeOfLow);
+            const highTime = new Date(trade.postExitAnalysis.timeOfHigh);
+            const timeDiffMinutes = Math.abs(highTime - lowTime) / (1000 * 60);
+
+            // If times are very close (within 5 minutes), reduce the trend strength adjustment
+            if (timeDiffMinutes <= 5) {
+              trendStrength = (trendStrength + 1) / 2; // Move halfway back to neutral
+            }
+            // If there's a long delay (over 30 minutes), strengthen the trend signal
+            else if (timeDiffMinutes > 30) {
+              trendStrength =
+                trendStrength > 1
+                  ? trendStrength * 1.1 // Strengthen bullish signal
+                  : trendStrength * 0.9; // Strengthen bearish signal
+            }
+
+            // Adjust for time of day - moves near market close (last hour) get less weight
+            const marketClose = new Date(lowTime);
+            marketClose.setHours(16, 0, 0); // Assuming 4 PM market close
+            const minutesToClose = Math.min(
+              (marketClose - lowTime) / (1000 * 60),
+              (marketClose - highTime) / (1000 * 60)
+            );
+
+            if (minutesToClose <= 60) {
+              trendStrength = (trendStrength + 1) / 2; // Reduce trend strength for end-of-day moves
+            }
+          }
+        }
+
+        return { volatility, momentum, trendStrength };
       }
-      return { volatility: null, momentum: null };
+      return { volatility: null, momentum: null, trendStrength: 1 };
     };
 
     // Handle winning trades with enhanced analysis
@@ -46,18 +92,22 @@ const StopLossStudy = ({ trades }) => {
             let weightedMove = baseMove;
 
             if (trade.postExitHigh !== null && trade.postExitLow !== null) {
-              const { volatility, momentum } = getTradeMetrics(trade);
+              const { volatility, momentum, trendStrength } =
+                getTradeMetrics(trade);
               const potentialMove =
                 trade.type === "LONG"
                   ? trade.postExitHigh - trade.entryPrice
                   : trade.entryPrice - trade.postExitLow;
 
+              // Apply trend strength to base move
+              weightedMove *= trendStrength;
+
               // Momentum-based adjustment
               if (momentum) {
                 if (momentum > 0.02) {
-                  weightedMove *= 1.2; // 20% wider target for strong momentum
+                  weightedMove *= 1.2;
                 } else if (momentum < 0.01) {
-                  weightedMove *= 0.9; // 10% tighter target for weak momentum
+                  weightedMove *= 0.9;
                 }
               }
 
@@ -88,18 +138,21 @@ const StopLossStudy = ({ trades }) => {
             let adjustedStop = actualLoss;
 
             if (trade.postExitHigh !== null && trade.postExitLow !== null) {
-              const { volatility, momentum } = getTradeMetrics(trade);
+              const { volatility, momentum, trendStrength } =
+                getTradeMetrics(trade);
               const priceRecovery =
                 trade.type === "LONG"
                   ? trade.postExitHigh - trade.postExitLow
                   : trade.postExitHigh - trade.postExitLow;
 
-              // Momentum-based stop adjustment
+              // Apply trend strength first
+              adjustedStop *= trendStrength;
+
               if (momentum) {
                 if (momentum > 0.02) {
-                  adjustedStop *= 1.15; // 15% wider stops for high momentum
+                  adjustedStop *= 1.15;
                 } else if (momentum < 0.01) {
-                  adjustedStop *= 0.85; // 15% tighter stops for low momentum
+                  adjustedStop *= 0.85;
                 }
               }
 
@@ -107,7 +160,6 @@ const StopLossStudy = ({ trades }) => {
                 adjustedStop *= 0.8;
               }
 
-              // Never suggest a stop smaller than half the momentum
               if (momentum) {
                 adjustedStop = Math.max(
                   adjustedStop,

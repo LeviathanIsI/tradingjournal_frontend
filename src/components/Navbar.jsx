@@ -133,7 +133,6 @@ const Navbar = () => {
                 </Link>
                 <button
                   onClick={() => {
-                    console.log("Calculator button clicked");
                     setIsCalculatorOpen(true);
                   }}
                   className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm flex items-center gap-2"

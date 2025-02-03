@@ -64,7 +64,6 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const login = async (userData) => {
-    console.log("Logging in user:", userData);
     localStorage.setItem("token", userData.token);
     const userDataToStore = {
       ...userData,
@@ -76,7 +75,6 @@ export const AuthProvider = ({ children }) => {
   };
 
   const logout = () => {
-    console.log("Logging out user");
     localStorage.removeItem("token");
     localStorage.removeItem("user");
     setUser(null);

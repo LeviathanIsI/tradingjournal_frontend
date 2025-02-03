@@ -28,6 +28,11 @@ const TradeModal = ({ isOpen, onClose, onSubmit, trade, userTimeZone }) => {
     mistakes: [],
     strategy: "",
     notes: "",
+    postExitAnalysis: {
+      lowBeforeHigh: null,
+      timeOfLow: "",
+      timeOfHigh: "",
+    },
   };
 
   const [formData, setFormData] = useState({ ...initialFormState });
@@ -56,7 +61,6 @@ const TradeModal = ({ isOpen, onClose, onSubmit, trade, userTimeZone }) => {
   }, [isOpen, onClose]);
 
   useEffect(() => {
-    console.log("Trade prop changed:", trade);
     if (trade) {
       setFormData({
         symbol: trade.symbol || "",
@@ -88,9 +92,25 @@ const TradeModal = ({ isOpen, onClose, onSubmit, trade, userTimeZone }) => {
         mistakes: trade.mistakes || [],
         strategy: trade.strategy || "",
         notes: trade.notes || "",
+        postExitAnalysis: {
+          lowBeforeHigh: trade.postExitAnalysis?.lowBeforeHigh ?? null,
+          timeOfLow: trade.postExitAnalysis?.timeOfLow
+            ? formatInTimeZone(
+                new Date(trade.postExitAnalysis.timeOfLow),
+                userTimeZone,
+                "HH:mm"
+              )
+            : "",
+          timeOfHigh: trade.postExitAnalysis?.timeOfHigh
+            ? formatInTimeZone(
+                new Date(trade.postExitAnalysis.timeOfHigh),
+                userTimeZone,
+                "HH:mm"
+              )
+            : "",
+        },
       });
     } else {
-      console.log("Resetting to initial state");
       setFormData({ ...initialFormState });
     }
   }, [trade, userTimeZone]);
@@ -154,11 +174,13 @@ const TradeModal = ({ isOpen, onClose, onSubmit, trade, userTimeZone }) => {
         symbol: formData.symbol.toUpperCase(),
         type: formData.type,
         tradeType: formData.tradeType,
+        entryPrice: Number(formData.entryPrice),
         entryDate: convertToUTC(
           new Date(formData.entryDate),
           userTimeZone
         ).toISOString(),
         entryQuantity: Number(formData.entryQuantity),
+        exitPrice: formData.exitPrice ? Number(formData.exitPrice) : undefined,
         exitDate: formData.exitDate
           ? convertToUTC(
               new Date(formData.exitDate),
@@ -177,6 +199,9 @@ const TradeModal = ({ isOpen, onClose, onSubmit, trade, userTimeZone }) => {
         mistakes: formData.mistakes,
         strategy: formData.strategy || "",
         notes: formData.notes || "",
+        postExitAnalysis: {
+          lowBeforeHigh: formData.postExitAnalysis?.lowBeforeHigh || null,
+        },
       };
 
       // Only include exit fields if they all exist
@@ -184,6 +209,24 @@ const TradeModal = ({ isOpen, onClose, onSubmit, trade, userTimeZone }) => {
         submissionData.exitPrice = Number(formData.exitPrice);
         submissionData.exitQuantity = Number(formData.exitQuantity);
         submissionData.exitDate = new Date(formData.exitDate).toISOString();
+      }
+
+      // Process time inputs if they exist
+      if (formData.postExitAnalysis?.timeOfLow && formData.exitDate) {
+        const exitDate = new Date(formData.exitDate);
+        const [hours, minutes] = formData.postExitAnalysis.timeOfLow.split(":");
+        const lowDate = new Date(exitDate);
+        lowDate.setHours(parseInt(hours, 10), parseInt(minutes, 10));
+        submissionData.postExitAnalysis.timeOfLow = lowDate.toISOString();
+      }
+
+      if (formData.postExitAnalysis?.timeOfHigh && formData.exitDate) {
+        const exitDate = new Date(formData.exitDate);
+        const [hours, minutes] =
+          formData.postExitAnalysis.timeOfHigh.split(":");
+        const highDate = new Date(exitDate);
+        highDate.setHours(parseInt(hours, 10), parseInt(minutes, 10));
+        submissionData.postExitAnalysis.timeOfHigh = highDate.toISOString();
       }
 
       await onSubmit(submissionData);
@@ -401,6 +444,63 @@ const TradeModal = ({ isOpen, onClose, onSubmit, trade, userTimeZone }) => {
                     step="0.0001"
                   />
                 </div>
+              </div>
+            </div>
+
+            <div className="space-y-4 mt-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm text-gray-700 mb-1">
+                    Time of Day High
+                  </label>
+                  <input
+                    type="time"
+                    name="postExitAnalysis.timeOfHigh"
+                    value={formData.postExitAnalysis?.timeOfHigh || ""}
+                    onChange={handleChange}
+                    className="w-full px-3 py-2 border border-gray-300 rounded bg-white text-gray-900"
+                  />
+                  <p className="text-xs text-gray-500 mt-1">
+                    Enter when the stock hit its high
+                  </p>
+                </div>
+                <div>
+                  <label className="block text-sm text-gray-700 mb-1">
+                    Time of Day Low
+                  </label>
+                  <input
+                    type="time"
+                    name="postExitAnalysis.timeOfLow"
+                    value={formData.postExitAnalysis?.timeOfLow || ""}
+                    onChange={handleChange}
+                    className="w-full px-3 py-2 border border-gray-300 rounded bg-white text-gray-900"
+                  />
+                  <p className="text-xs text-gray-500 mt-1">
+                    Enter when the stock hit its low
+                  </p>
+                </div>
+              </div>
+
+              <div>
+                <label className="flex items-center">
+                  <input
+                    type="checkbox"
+                    name="postExitAnalysis.lowBeforeHigh"
+                    checked={formData.postExitAnalysis?.lowBeforeHigh || false}
+                    onChange={(e) => {
+                      handleChange({
+                        target: {
+                          name: "postExitAnalysis.lowBeforeHigh",
+                          value: e.target.checked,
+                        },
+                      });
+                    }}
+                    className="h-4 w-4 text-blue-600 bg-white rounded border-gray-300 focus:ring-blue-500"
+                  />
+                  <span className="ml-2 text-sm text-gray-700">
+                    Low occurred before high
+                  </span>
+                </label>
               </div>
             </div>
 
