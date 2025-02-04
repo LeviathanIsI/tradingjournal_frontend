@@ -224,21 +224,41 @@ const StopLossStudy = ({ trades, user, stats }) => {
     }
 
     // Add timing-based target extensions
-    const winningTradeTimings = winningTrades.filter(
+    const tradesWithTimings = closedTrades.filter(
       (t) => t.postExitAnalysis?.timeOfHigh && t.postExitAnalysis?.timeOfLow
     );
 
-    if (winningTradeTimings.length > 0) {
-      const avgTimeToHigh =
-        winningTradeTimings.reduce((acc, trade) => {
-          const exitTime = new Date(trade.exitDate);
-          const highTime = new Date(trade.postExitAnalysis.timeOfHigh);
-          return acc + Math.abs(highTime - exitTime) / (1000 * 60);
-        }, 0) / winningTradeTimings.length;
+    let suggestedHold = null;
+    let holdContext = null;
+    let avgTimeToHigh = null;
 
-      // If winners typically take time to reach highs, extend target
+    if (tradesWithTimings.length > 0) {
+      avgTimeToHigh =
+        tradesWithTimings.reduce((acc, trade) => {
+          const exitTime = new Date(trade.exitDate);
+          const highTime = new Date(
+            trade.type === "LONG"
+              ? trade.postExitAnalysis.timeOfHigh
+              : trade.postExitAnalysis.timeOfLow
+          );
+          return acc + Math.abs(highTime - exitTime) / (1000 * 60);
+        }, 0) / tradesWithTimings.length;
+
+      // If trades typically take time to reach extremes, extend target
       if (avgTimeToHigh > 30) {
         finalTarget = (Number(finalTarget) * 1.2).toFixed(2);
+      }
+
+      // Set hold time suggestion
+      if (avgTimeToHigh <= 15) {
+        suggestedHold = "5-15 minutes";
+        holdContext = "Quick moves, stay alert";
+      } else if (avgTimeToHigh <= 30) {
+        suggestedHold = "15-30 minutes";
+        holdContext = "Medium-term momentum";
+      } else {
+        suggestedHold = "30-60 minutes";
+        holdContext = "Trending move, monitor closely";
       }
     }
 
@@ -247,72 +267,10 @@ const StopLossStudy = ({ trades, user, stats }) => {
       suggestedTarget: finalTarget,
       tradesAnalyzed: closedTrades.length,
       baseTarget: suggestedTarget,
+      suggestedHoldTime: suggestedHold,
+      holdTimeContext: holdContext,
     };
   }, [trades]);
-
-  // Add to the analysis calculation
-  const getHoldTimeAnalysis = (winningTrades, losingTrades) => {
-    const winningTimings = winningTrades.filter(
-      (t) => t.postExitAnalysis?.timeOfHigh && t.exitDate
-    );
-
-    const losingTimings = losingTrades.filter(
-      (t) => t.postExitAnalysis?.timeOfLow && t.exitDate
-    );
-
-    if (!winningTimings.length) return null;
-
-    // Calculate optimal exit windows
-    const timeToTarget = winningTimings.map((trade) => {
-      const exitTime = new Date(trade.exitDate);
-      const highTime = new Date(trade.postExitAnalysis.timeOfHigh);
-      return Math.abs(highTime - exitTime) / (1000 * 60); // in minutes
-    });
-
-    const timeToStop = losingTimings.map((trade) => {
-      const exitTime = new Date(trade.exitDate);
-      const lowTime = new Date(trade.postExitAnalysis.timeOfLow);
-      return Math.abs(lowTime - exitTime) / (1000 * 60); // in minutes
-    });
-
-    // Calculate percentiles for better guidance
-    const optimalWindow = {
-      min: Math.min(...timeToTarget.filter((t) => t <= 30)), // Filter out outliers
-      max: Math.median(timeToTarget.filter((t) => t <= 60)), // Use median for upper bound
-      dangerZone: Math.median(timeToStop), // When stops typically hit
-    };
-
-    let suggestedHold = "";
-    let context = "";
-
-    if (optimalWindow.max <= 15) {
-      suggestedHold = "5-15 minutes";
-      context = "Quick moves, stay alert";
-    } else if (optimalWindow.max <= 30) {
-      suggestedHold = "15-30 minutes";
-      context = "Medium-term momentum";
-    } else {
-      suggestedHold = "30-60 minutes";
-      context = "Trending move, monitor closely";
-    }
-
-    // Add warning if holding too long is risky
-    if (optimalWindow.dangerZone < optimalWindow.max) {
-      context += ". Consider scaling out partial position.";
-    }
-
-    const holdTimeAnalysis = getHoldTimeAnalysis(winningTrades, losingTrades);
-
-    return {
-      suggestedStopLoss: finalStopLoss,
-      suggestedTarget: finalTarget,
-      tradesAnalyzed: closedTrades.length,
-      baseTarget: suggestedTarget,
-      suggestedHoldTime: holdTimeAnalysis?.suggestedHoldTime,
-      holdTimeContext: holdTimeAnalysis?.holdTimeContext,
-      timeMetrics: holdTimeAnalysis?.timeMetrics,
-    };
-  };
 
   useEffect(() => {
     if (planEntry && analysis?.suggestedStopLoss && analysis?.suggestedTarget) {
