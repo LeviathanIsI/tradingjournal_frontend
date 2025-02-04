@@ -5,7 +5,7 @@ import { formatInTimeZone, getTimezoneOffset } from "date-fns-tz";
 const convertToUTC = (date, timeZone) => {
   const offset = getTimezoneOffset(timeZone);
   const localDate = new Date(date);
-  return new Date(localDate.getTime() + offset);
+  return new Date(localDate.getTime() - offset);
 };
 
 const TradeModal = ({ isOpen, onClose, onSubmit, trade, userTimeZone }) => {
@@ -175,10 +175,7 @@ const TradeModal = ({ isOpen, onClose, onSubmit, trade, userTimeZone }) => {
         type: formData.type,
         tradeType: formData.tradeType,
         entryPrice: Number(formData.entryPrice),
-        entryDate: convertToUTC(
-          new Date(formData.entryDate),
-          userTimeZone
-        ).toISOString(),
+        entryDate: new Date(formData.entryDate).toISOString(),
         entryQuantity: Number(formData.entryQuantity),
         exitPrice: formData.exitPrice ? Number(formData.exitPrice) : undefined,
         exitDate: formData.exitDate

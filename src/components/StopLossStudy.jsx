@@ -233,32 +233,79 @@ const StopLossStudy = ({ trades, user, stats }) => {
     let avgTimeToHigh = null;
 
     if (tradesWithTimings.length > 0) {
-      avgTimeToHigh =
-        tradesWithTimings.reduce((acc, trade) => {
+      const timingAnalysis = tradesWithTimings.reduce(
+        (acc, trade) => {
           const exitTime = new Date(trade.exitDate);
-          const highTime = new Date(
+          const highTime = new Date(trade.postExitAnalysis.timeOfHigh);
+          const lowTime = new Date(trade.postExitAnalysis.timeOfLow);
+
+          // Time to optimal exit (high for longs, low for shorts)
+          const timeToOptimal =
             trade.type === "LONG"
-              ? trade.postExitAnalysis.timeOfHigh
-              : trade.postExitAnalysis.timeOfLow
-          );
-          return acc + Math.abs(highTime - exitTime) / (1000 * 60);
-        }, 0) / tradesWithTimings.length;
+              ? (highTime - exitTime) / (1000 * 60)
+              : (lowTime - exitTime) / (1000 * 60);
 
-      // If trades typically take time to reach extremes, extend target
-      if (avgTimeToHigh > 30) {
-        finalTarget = (Number(finalTarget) * 1.2).toFixed(2);
-      }
+          // Use the existing lowBeforeHigh flag instead of calculating
+          const lowBeforeHigh = trade.postExitAnalysis.lowBeforeHigh;
 
-      // Set hold time suggestion
-      if (avgTimeToHigh <= 15) {
+          // Calculate price improvement
+          const priceImprovement =
+            trade.type === "LONG"
+              ? ((trade.postExitHigh - trade.exitPrice) / trade.exitPrice) * 100
+              : ((trade.exitPrice - trade.postExitLow) / trade.exitPrice) * 100;
+
+          // Track if price action aligned with trade direction
+          const favorableTiming =
+            trade.type === "LONG"
+              ? !lowBeforeHigh // For longs, we want high before low
+              : lowBeforeHigh; // For shorts, we want low before high
+
+          acc.totalTimeToOptimal += timeToOptimal;
+          acc.totalImprovement += priceImprovement;
+          acc.favorableTimingCount += favorableTiming ? 1 : 0;
+          acc.count += 1;
+
+          return acc;
+        },
+        {
+          totalTimeToOptimal: 0,
+          totalImprovement: 0,
+          favorableTimingCount: 0,
+          count: 0,
+        }
+      );
+
+      const avgTimeToOptimal =
+        timingAnalysis.totalTimeToOptimal / timingAnalysis.count;
+      const avgImprovement =
+        timingAnalysis.totalImprovement / timingAnalysis.count;
+      const favorableTimingRate =
+        timingAnalysis.favorableTimingCount / timingAnalysis.count;
+
+      // More nuanced hold time suggestion based on timing and price action
+      if (avgTimeToOptimal <= 15 && favorableTimingRate > 0.7) {
         suggestedHold = "5-15 minutes";
-        holdContext = "Quick moves, stay alert";
-      } else if (avgTimeToHigh <= 30) {
+        holdContext = "Strong directional moves, quick targets";
+      } else if (avgTimeToOptimal <= 15 && favorableTimingRate <= 0.7) {
+        suggestedHold = "10-20 minutes";
+        holdContext = "Quick moves but choppy, allow for noise";
+      } else if (avgTimeToOptimal <= 30) {
         suggestedHold = "15-30 minutes";
-        holdContext = "Medium-term momentum";
+        holdContext = `Medium-term momentum, avg gain ${avgImprovement.toFixed(
+          1
+        )}%`;
       } else {
         suggestedHold = "30-60 minutes";
-        holdContext = "Trending move, monitor closely";
+        holdContext = `Trending move, ${
+          favorableTimingRate > 0.5 ? "steady trend" : "watch for reversals"
+        }`;
+      }
+
+      // Adjust target based on timing analysis
+      if (favorableTimingRate < 0.4) {
+        finalTarget = (Number(finalTarget) * 0.9).toFixed(2); // More conservative
+      } else if (avgImprovement > 50 && favorableTimingRate > 0.6) {
+        finalTarget = (Number(finalTarget) * 1.2).toFixed(2); // More aggressive
       }
     }
 
@@ -331,135 +378,143 @@ const StopLossStudy = ({ trades, user, stats }) => {
       className="bg-white p-4 rounded shadow h-full"
       data-tour="exit-analysis"
     >
-      <h3 className="text-sm text-black font-medium">Exit Analysis</h3>
-      <div className="grid grid-cols-1 gap-4 mt-2">
-        {!trades?.length ? (
-          <div className="text-center py-2">
-            <p className="text-sm text-gray-500">Add trades to see analysis</p>
-          </div>
-        ) : (
-          <>
-            <div>
-              <p className="text-xs text-gray-500 mb-1">Suggested Stop Loss</p>
-              <p className="text-lg font-bold text-red-600">
-                {analysis?.suggestedStopLoss
-                  ? `$${analysis.suggestedStopLoss}`
-                  : "Insufficient data"}
-              </p>
-            </div>
-            <div>
-              <p className="text-xs text-gray-500 mb-1">
-                Suggested Profit Target
-              </p>
-              <p className="text-lg font-bold text-green-600">
-                {analysis?.suggestedTarget
-                  ? `$${analysis.suggestedTarget}`
-                  : "Insufficient data"}
-              </p>
-            </div>
-            <div>
-              <p className="text-xs text-gray-500 mb-1">Suggested Hold Time</p>
-              <p className="text-lg font-bold text-blue-600">
-                {analysis?.suggestedHoldTime || "Insufficient data"}
-              </p>
-              {analysis?.holdTimeContext && (
-                <p className="text-xs text-gray-500 mt-1">
-                  {analysis.holdTimeContext}
+      <div className="grid grid-cols-2 gap-4">
+        {/* Left Side - Exit Analysis */}
+        <div>
+          <h3 className="text-sm text-black font-medium">Exit Analysis</h3>
+          <div className="grid grid-cols-1 gap-4 mt-2">
+            {!trades?.length ? (
+              <div className="text-center py-2">
+                <p className="text-sm text-gray-500">
+                  Add trades to see analysis
                 </p>
-              )}
-            </div>
-            <div className="border-t pt-4 mt-2">
-              <h4 className="text-sm font-medium mb-3">Plan Your Trade</h4>
-              <div className="grid grid-cols-2 gap-4">
+              </div>
+            ) : (
+              <>
                 <div>
-                  <label className="block text-xs text-gray-500 mb-1">
-                    Entry Price
-                  </label>
-                  <input
-                    type="number"
-                    value={planEntry}
-                    onChange={(e) => setPlanEntry(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded"
-                    step="0.01"
-                    min="0"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs text-gray-500 mb-1">
-                    Risk Percentage
-                  </label>
-                  <div className="flex items-center">
-                    <input
-                      type="number"
-                      value={riskPercentage}
-                      onChange={(e) => setRiskPercentage(e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded"
-                      step="0.1"
-                      min="0.1"
-                      max="100"
-                    />
-                    <span className="ml-1">%</span>
-                  </div>
-                  <p className="text-xs text-gray-500 mt-1">
-                    $
-                    {((Number(riskPercentage) / 100) * accountBalance).toFixed(
-                      2
-                    )}{" "}
-                    of ${accountBalance.toFixed(2)}
+                  <p className="text-xs text-gray-500 mb-1">
+                    Suggested Stop Loss
+                  </p>
+                  <p className="text-lg font-bold text-red-600">
+                    {analysis?.suggestedStopLoss
+                      ? `$${analysis.suggestedStopLoss}`
+                      : "Insufficient data"}
                   </p>
                 </div>
                 <div>
-                  <label className="block text-xs text-gray-500 mb-1">
-                    Suggested Shares
-                  </label>
-                  <input
-                    type="number"
-                    value={planShares}
-                    onChange={(e) => setPlanShares(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded"
-                    min="1"
-                    placeholder={
-                      planEntry
-                        ? Math.floor(
-                            ((Number(riskPercentage) / 100) * accountBalance) /
-                              Math.abs(
-                                Number(planEntry) -
-                                  Number(analysis?.suggestedStopLoss || 0)
-                              )
+                  <p className="text-xs text-gray-500 mb-1">
+                    Suggested Profit Target
+                  </p>
+                  <p className="text-lg font-bold text-green-600">
+                    {analysis?.suggestedTarget
+                      ? `$${analysis.suggestedTarget}`
+                      : "Insufficient data"}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-xs text-gray-500 mb-1">
+                    Suggested Hold Time
+                  </p>
+                  <p className="text-lg font-bold text-blue-600">
+                    {analysis?.suggestedHoldTime || "Insufficient data"}
+                  </p>
+                  {analysis?.holdTimeContext && (
+                    <p className="text-xs text-gray-500 mt-1">
+                      {analysis.holdTimeContext}
+                    </p>
+                  )}
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+
+        {/* Right Side - Plan Your Trade */}
+        <div>
+          <h4 className="text-sm font-medium mb-3">Plan Your Trade</h4>
+          <div className="space-y-4">
+            <div>
+              <label className="block text-xs text-gray-500 mb-1">
+                Entry Price
+              </label>
+              <input
+                type="number"
+                value={planEntry}
+                onChange={(e) => setPlanEntry(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded"
+                step="0.01"
+                min="0"
+              />
+            </div>
+            <div>
+              <label className="block text-xs text-gray-500 mb-1">
+                Risk Percentage
+              </label>
+              <div className="flex items-center">
+                <input
+                  type="number"
+                  value={riskPercentage}
+                  onChange={(e) => setRiskPercentage(e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded"
+                  step="0.1"
+                  min="0.1"
+                  max="100"
+                />
+                <span className="ml-1">%</span>
+              </div>
+              <p className="text-xs text-gray-500 mt-1">
+                ${((Number(riskPercentage) / 100) * accountBalance).toFixed(2)}{" "}
+                of ${accountBalance.toFixed(2)}
+              </p>
+            </div>
+            <div>
+              <label className="block text-xs text-gray-500 mb-1">
+                Suggested Shares
+              </label>
+              <input
+                type="number"
+                value={planShares}
+                onChange={(e) => setPlanShares(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded"
+                min="1"
+                placeholder={
+                  planEntry
+                    ? Math.floor(
+                        ((Number(riskPercentage) / 100) * accountBalance) /
+                          Math.abs(
+                            Number(planEntry) -
+                              Number(analysis?.suggestedStopLoss || 0)
                           )
-                        : ""
-                    }
-                  />
+                      )
+                    : ""
+                }
+              />
+            </div>
+
+            {plannedRisk && plannedReward && (
+              <div className="grid grid-cols-2 gap-4 mt-4">
+                <div>
+                  <p className="text-xs text-gray-500 mb-1">Potential Risk</p>
+                  <p className="text-md font-semibold text-red-600">
+                    ${plannedRisk}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-xs text-gray-500 mb-1">Potential Reward</p>
+                  <p className="text-md font-semibold text-green-600">
+                    ${plannedReward}
+                  </p>
+                </div>
+                <div className="col-span-2">
+                  <p className="text-xs text-gray-500">
+                    Risk/Reward Ratio: 1:
+                    {(plannedReward / plannedRisk).toFixed(2)}
+                  </p>
                 </div>
               </div>
-
-              {plannedRisk && plannedReward && (
-                <div className="mt-4 grid grid-cols-2 gap-4">
-                  <div>
-                    <p className="text-xs text-gray-500 mb-1">Potential Risk</p>
-                    <p className="text-md font-semibold text-red-600">
-                      ${plannedRisk}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-xs text-gray-500 mb-1">
-                      Potential Reward
-                    </p>
-                    <p className="text-md font-semibold text-green-600">
-                      ${plannedReward}
-                    </p>
-                  </div>
-                  <div className="col-span-2">
-                    <p className="text-xs text-gray-500">
-                      Risk/Reward Ratio: 1:
-                      {(plannedReward / plannedRisk).toFixed(2)}
-                    </p>
-                  </div>
-                </div>
-              )}
-            </div>
-          </>
-        )}
+            )}
+          </div>
+        </div>
       </div>
     </div>
   );

@@ -1,6 +1,6 @@
 // src/pages/Dashboard.jsx
 import { useState } from "react";
-import { Pencil, Trash2, BookOpen, Upload } from "lucide-react";
+import { Pencil, Trash2, BookOpen, Upload, X } from "lucide-react";
 import TradeModal from "../components/TradeModal";
 import { useTrades } from "../hooks/useTrades";
 import ProfitLossChart from "../components/ProfitLossChart";
@@ -19,12 +19,24 @@ const Dashboard = () => {
   const userTimeZone = user?.preferences?.timeZone || "UTC";
   const [isTradeModalOpen, setIsTradeModalOpen] = useState(false);
   const [selectedTrade, setSelectedTrade] = useState(null);
-  const { trades, stats, loading, error, addTrade, updateTrade, deleteTrade } =
-    useTrades();
+  const {
+    trades,
+    stats,
+    loading,
+    error,
+    addTrade,
+    updateTrade,
+    deleteTrade,
+    fetchTrades,
+    fetchStats,
+  } = useTrades();
   const [activeChart, setActiveChart] = useState("pnl");
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
   const [selectedTradeForReview, setSelectedTradeForReview] = useState(null);
   const [isImportModalOpen, setIsImportModalOpen] = useState(false);
+  const [selectedTrades, setSelectedTrades] = useState(new Set());
+  const [bulkDeleteError, setBulkDeleteError] = useState(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const formatCurrency = (value) => {
     return new Intl.NumberFormat("en-US", {
@@ -82,6 +94,68 @@ const Dashboard = () => {
     }
   };
 
+  const handleSelectTrade = (tradeId) => {
+    const newSelected = new Set(selectedTrades);
+    if (newSelected.has(tradeId)) {
+      newSelected.delete(tradeId);
+    } else {
+      newSelected.add(tradeId);
+    }
+    setSelectedTrades(newSelected);
+  };
+
+  const handleSelectAll = () => {
+    if (selectedTrades.size === trades.length) {
+      setSelectedTrades(new Set());
+    } else {
+      setSelectedTrades(new Set(trades.map((trade) => trade._id)));
+    }
+  };
+
+  const handleBulkDelete = async () => {
+    if (selectedTrades.size === 0) return;
+
+    if (
+      !window.confirm(
+        `Are you sure you want to delete ${selectedTrades.size} trades?`
+      )
+    ) {
+      return;
+    }
+
+    setIsDeleting(true);
+    setBulkDeleteError(null);
+
+    try {
+      const response = await fetch(
+        "http://localhost:5000/api/trades/bulk-delete",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+          body: JSON.stringify({
+            tradeIds: Array.from(selectedTrades),
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to delete trades");
+      }
+
+      // Instead of calling deleteTrade for each trade, just refetch everything
+      await Promise.all([fetchTrades(), fetchStats()]);
+      setSelectedTrades(new Set());
+    } catch (err) {
+      setBulkDeleteError("Failed to delete trades. Please try again.");
+      console.error("Bulk delete error:", err);
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
   const handleModalClose = () => {
     setIsTradeModalOpen(false);
     setSelectedTrade(null);
@@ -115,80 +189,87 @@ const Dashboard = () => {
     <div className="w-full p-6 text-black">
       <DashboardTour />
       {/* Stats Overview */}
-      <div
-        className="grid grid-cols-1 md:grid-cols-6 gap-4 mb-8"
-        data-tour="stats-overview"
-      >
-        <div
-          className="bg-white p-4 rounded shadow"
-          data-tour="starting-capital"
-        >
-          <h3 className="text-sm text-black">Starting Capital</h3>
-          <p className="text-2xl font-bold text-black">
-            {formatCurrency(user?.preferences?.startingCapital || 0)}
-          </p>
-        </div>
-        <div
-          className="bg-white p-4 rounded shadow"
-          data-tour="current-balance"
-        >
-          <h3 className="text-sm text-black">Current Balance</h3>
-          <div className="flex items-baseline gap-2">
+      <div className="space-y-4 mb-8" data-tour="stats-overview">
+        {/* Main Stats Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div
+            className="bg-white p-4 rounded shadow"
+            data-tour="starting-capital"
+          >
+            <div className="flex justify-between">
+              <div>
+                <h3 className="text-sm text-black">Starting Capital</h3>
+                <p className="text-2xl font-bold text-black">
+                  {formatCurrency(user?.preferences?.startingCapital || 0)}
+                </p>
+              </div>
+              <div>
+                <h3 className="text-sm text-black">Current Balance</h3>
+                <div className="flex items-baseline gap-2">
+                  <p
+                    className={`text-2xl font-bold ${
+                      stats?.totalProfit > 0
+                        ? "text-green-600"
+                        : stats?.totalProfit < 0
+                        ? "text-red-600"
+                        : "text-black"
+                    }`}
+                  >
+                    {formatCurrency(
+                      (user?.preferences?.startingCapital || 0) +
+                        (stats?.totalProfit || 0)
+                    )}
+                  </p>
+                  {user?.preferences?.startingCapital > 0 && (
+                    <span
+                      className={`text-sm ${
+                        stats?.totalProfit > 0
+                          ? "text-green-600"
+                          : stats?.totalProfit < 0
+                          ? "text-red-600"
+                          : "text-black"
+                      }`}
+                    >
+                      {(
+                        ((stats?.totalProfit || 0) /
+                          user.preferences.startingCapital) *
+                        100
+                      ).toFixed(2)}
+                      %
+                    </span>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white p-4 rounded shadow flex justify-between">
+            <div>
+              <h3 className="text-sm text-black">Total Trades</h3>
+              <p className="text-2xl font-bold text-black">
+                {stats?.totalTrades || 0}
+              </p>
+            </div>
+            <div>
+              <h3 className="text-sm text-black">Win Rate</h3>
+              <p className="text-2xl font-bold text-black">
+                {stats?.winRate?.toFixed(1) || 0}%
+              </p>
+            </div>
+          </div>
+
+          <div className="bg-white p-4 rounded shadow">
+            <h3 className="text-sm text-black">Total P/L</h3>
             <p
               className={`text-2xl font-bold ${
-                stats?.totalProfit > 0
+                (stats?.totalProfit || 0) >= 0
                   ? "text-green-600"
-                  : stats?.totalProfit < 0
-                  ? "text-red-600"
-                  : "text-black"
+                  : "text-red-600"
               }`}
             >
-              {formatCurrency(
-                (user?.preferences?.startingCapital || 0) +
-                  (stats?.totalProfit || 0)
-              )}
+              {formatCurrency(stats?.totalProfit || 0)}
             </p>
-            {user?.preferences?.startingCapital > 0 && (
-              <span
-                className={`text-sm ${
-                  stats?.totalProfit > 0
-                    ? "text-green-600"
-                    : stats?.totalProfit < 0
-                    ? "text-red-600"
-                    : "text-black"
-                }`}
-              >
-                {(
-                  ((stats?.totalProfit || 0) /
-                    user.preferences.startingCapital) *
-                  100
-                ).toFixed(2)}
-                %
-              </span>
-            )}
           </div>
-        </div>
-        <div className="bg-white p-4 rounded shadow">
-          <h3 className="text-sm text-black">Total Trades</h3>
-          <p className="text-2xl font-bold text-black">
-            {stats?.totalTrades || 0}
-          </p>
-        </div>
-        <div className="bg-white p-4 rounded shadow">
-          <h3 className="text-sm text-black">Win Rate</h3>
-          <p className="text-2xl font-bold text-black">
-            {stats?.winRate?.toFixed(1) || 0}%
-          </p>
-        </div>
-        <div className="bg-white p-4 rounded shadow">
-          <h3 className="text-sm text-black">Total P/L</h3>
-          <p
-            className={`text-2xl font-bold ${
-              (stats?.totalProfit || 0) >= 0 ? "text-green-600" : "text-red-600"
-            }`}
-          >
-            {formatCurrency(stats?.totalProfit || 0)}
-          </p>
         </div>
         <div className="col-span-1">
           <StopLossStudy trades={trades} user={user} stats={stats} />
@@ -266,6 +347,17 @@ const Dashboard = () => {
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-lg font-semibold text-black">Recent Trades</h2>
           <div className="flex gap-2">
+            {selectedTrades.size > 0 && (
+              <button
+                onClick={handleBulkDelete}
+                disabled={isDeleting}
+                className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 disabled:bg-red-400 flex items-center gap-2"
+              >
+                {isDeleting
+                  ? "Deleting..."
+                  : `Delete Selected (${selectedTrades.size})`}
+              </button>
+            )}
             <button
               data-tour="add-trade"
               onClick={handleAddTradeClick}
@@ -273,19 +365,38 @@ const Dashboard = () => {
             >
               Add Trade
             </button>
-            {/* <button
-              onClick={() => setIsImportModalOpen(true)}
-              className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 flex items-center gap-2"
-            >
-              <Upload className="h-4 w-4" />
-              Import Trades
-            </button> */}
           </div>
         </div>
+
+        {bulkDeleteError && (
+          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-4 flex justify-between items-center">
+            <span>{bulkDeleteError}</span>
+            <button
+              onClick={() => setBulkDeleteError(null)}
+              className="text-red-500 hover:text-red-700"
+            >
+              <X className="h-4 w-4" />
+            </button>
+          </div>
+        )}
+
         <div className="overflow-x-auto">
           <table className="min-w-full">
             <thead>
               <tr className="border-b">
+                <th className="w-12 py-3 px-4">
+                  <div className="flex justify-center">
+                    <input
+                      type="checkbox"
+                      checked={
+                        selectedTrades.size === trades.length &&
+                        trades.length > 0
+                      }
+                      onChange={handleSelectAll}
+                      className="w-4 h-4 rounded border-gray-300"
+                    />
+                  </div>
+                </th>
                 <th className="text-left py-3 px-4 text-black">Date</th>
                 <th className="text-left py-3 px-4 text-black">Symbol</th>
                 <th className="text-left py-3 px-4 text-black">Type</th>
@@ -298,13 +409,23 @@ const Dashboard = () => {
             <tbody>
               {trades.length === 0 ? (
                 <tr className="text-black text-center">
-                  <td colSpan="7" className="py-4">
+                  <td colSpan="8" className="py-4">
                     No trades yet
                   </td>
                 </tr>
               ) : (
                 trades.map((trade) => (
                   <tr key={trade._id} className="border-b hover:bg-gray-50">
+                    <td className="w-12 py-3 px-4">
+                      <div className="flex justify-center">
+                        <input
+                          type="checkbox"
+                          checked={selectedTrades.has(trade._id)}
+                          onChange={() => handleSelectTrade(trade._id)}
+                          className="w-4 h-4 rounded border-gray-300"
+                        />
+                      </div>
+                    </td>
                     <td className="py-3 px-4 text-black">
                       {formatDate(trade.entryDate)}
                     </td>
