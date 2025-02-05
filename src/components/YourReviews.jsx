@@ -11,6 +11,13 @@ const YourReviews = ({ userId }) => {
   const [selectedReview, setSelectedReview] = useState(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const isOwnProfile = user?._id === userId;
+  const [editData, setEditData] = useState({
+    lessonLearned: "",
+    whatWentWell: "",
+    whatWentWrong: "",
+    futureAdjustments: "",
+    isPublic: false,
+  });
 
   useEffect(() => {
     fetchReviews();
@@ -48,25 +55,40 @@ const YourReviews = ({ userId }) => {
     }
   };
 
+  const handleEditClick = (review) => {
+    setEditData({
+      lessonLearned: review.lessonLearned || "",
+      whatWentWell: review.whatWentWell || "",
+      whatWentWrong: review.whatWentWrong || "",
+      futureAdjustments: review.futureAdjustments || "",
+      isPublic: review.isPublic || false,
+    });
+    setIsEditModalOpen(true);
+    setSelectedReview(review);
+  };
+
   const handleVisibilityToggle = async (review) => {
     try {
-      const token = localStorage.getItem("token");
       const response = await fetch(
         `http://localhost:5000/api/trade-reviews/${review._id}`,
         {
           method: "PATCH",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
-          body: JSON.stringify({ isPublic: !review.isPublic }),
+          body: JSON.stringify({
+            isPublic: !review.isPublic,
+          }),
         }
       );
 
-      const data = await response.json();
-      if (response.ok) {
-        setReviews(reviews.map((r) => (r._id === review._id ? data.data : r)));
+      if (!response.ok) {
+        throw new Error("Failed to update review visibility");
       }
+
+      const data = await response.json();
+      setReviews(reviews.map((r) => (r._id === review._id ? data.data : r)));
     } catch (error) {
       console.error("Error updating review visibility:", error);
     }
@@ -158,10 +180,7 @@ const YourReviews = ({ userId }) => {
                     )}
                   </button>
                   <button
-                    onClick={() => {
-                      setSelectedReview(review);
-                      setIsEditModalOpen(true);
-                    }}
+                    onClick={() => handleEditClick(review)}
                     className="p-1 hover:bg-gray-100 rounded"
                     title="Edit Review"
                   >

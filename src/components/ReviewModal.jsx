@@ -2,7 +2,7 @@ import React from "react";
 import { X } from "lucide-react";
 import TradeReview from "./TradeReview";
 
-const ReviewModal = ({ isOpen, onClose, trade, onSubmit }) => {
+const ReviewModal = ({ isOpen, onClose, trade, review, onSubmit }) => {
   if (!isOpen) return null;
 
   return (
@@ -51,7 +51,12 @@ const ReviewModal = ({ isOpen, onClose, trade, onSubmit }) => {
             </div>
           </div>
 
-          <TradeReview trade={trade} onSubmit={onSubmit} onClose={onClose} />
+          <TradeReview
+            trade={trade}
+            review={review}
+            onSubmit={onSubmit}
+            onClose={onClose}
+          />
         </div>
       </div>
     </div>

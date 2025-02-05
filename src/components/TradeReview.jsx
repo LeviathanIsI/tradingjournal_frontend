@@ -1,7 +1,7 @@
 // src/components/TradeReview.jsx
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
-const TradeReview = ({ trade, onSubmit, onClose }) => {
+const TradeReview = ({ trade, review, onSubmit, onClose }) => {
   const [formData, setFormData] = useState({
     lessonLearned: "",
     whatWentWell: "",
@@ -11,20 +11,39 @@ const TradeReview = ({ trade, onSubmit, onClose }) => {
     trade: trade._id,
   });
 
+  useEffect(() => {
+    if (review) {
+      setFormData({
+        lessonLearned: review.lessonLearned || "",
+        whatWentWell: review.whatWentWell || "",
+        whatWentWrong: review.whatWentWrong || "",
+        futureAdjustments: review.futureAdjustments || "",
+        isPublic: review.isPublic || false,
+        trade: trade._id,
+      });
+    }
+  }, [review, trade._id]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch("http://localhost:5000/api/trade-reviews", {
-        method: "POST",
+      const url = review
+        ? `http://localhost:5000/api/trade-reviews/${review._id}`
+        : "http://localhost:5000/api/trade-reviews";
+
+      const response = await fetch(url, {
+        method: review ? "PATCH" : "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(formData),
       });
+
       if (response.ok) {
-        onSubmit && onSubmit();
+        const data = await response.json();
+        onSubmit && onSubmit(data.data);
         onClose && onClose();
       }
     } catch (error) {
