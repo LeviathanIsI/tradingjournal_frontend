@@ -508,7 +508,7 @@ const StopLossStudy = ({ trades, user, stats }) => {
             </div>
             <div>
               <label className="block text-xs text-gray-500 mb-1">
-                Risk Percentage
+                Account Risk %
               </label>
               <div className="flex items-center">
                 <input

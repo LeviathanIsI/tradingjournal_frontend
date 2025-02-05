@@ -5,79 +5,176 @@ const moment = require("moment-timezone");
 const updateFeaturedReviews = async () => {
   try {
     const now = moment().tz("America/New_York");
-    const isWeekend = now.day() === 0 || now.day() === 6; // 0 is Sunday, 6 is Saturday
+    const isWeekend = now.day() === 0 || now.day() === 6;
     const isMonday = now.day() === 1;
 
-    // If it's weekend, keep current featured reviews
-    if (isWeekend) {
-      return;
-    }
+    if (isWeekend) return;
 
-    // Get yesterday's date range in EST
     const estYesterday = now.subtract(1, "day");
     const startOfDay = estYesterday.startOf("day").toDate();
     const endOfDay = estYesterday.endOf("day").toDate();
 
-    // Find top liked reviews from yesterday
-    const topLikedReviews = await TradeReview.aggregate([
+    // Enhanced aggregation pipeline for top reviews
+    const topReviews = await TradeReview.aggregate([
       {
         $match: {
           createdAt: { $gte: startOfDay, $lte: endOfDay },
           isPublic: true,
         },
       },
+      // Lookup trade data
+      {
+        $lookup: {
+          from: "trades",
+          localField: "trade",
+          foreignField: "_id",
+          as: "tradeData",
+        },
+      },
+      {
+        $unwind: "$tradeData",
+      },
       {
         $addFields: {
           likesCount: { $size: { $ifNull: ["$likes", []] } },
+          commentsCount: { $size: { $ifNull: ["$comments", []] } },
+          // Calculate content score based on length and key fields
+          contentScore: {
+            $add: [
+              { $strLenCP: { $ifNull: ["$content", ""] } },
+              {
+                $cond: [
+                  { $gt: [{ $strLenCP: { $ifNull: ["$mistakes", ""] } }, 0] },
+                  50,
+                  0,
+                ],
+              },
+              {
+                $cond: [
+                  {
+                    $gt: [
+                      { $strLenCP: { $ifNull: ["$lessonsLearned", ""] } },
+                      0,
+                    ],
+                  },
+                  50,
+                  0,
+                ],
+              },
+              {
+                $cond: [
+                  { $gt: [{ $strLenCP: { $ifNull: ["$strategy", ""] } }, 0] },
+                  30,
+                  0,
+                ],
+              },
+            ],
+          },
+          // Flag if trade was profitable
+          isProfitable: { $gt: ["$tradeData.profitLoss.realized", 0] },
         },
       },
       {
-        $match: {
-          likesCount: { $gt: 0 }, // Only get reviews with likes
+        $addFields: {
+          // Calculate total score with weighted components
+          totalScore: {
+            $add: [
+              { $multiply: ["$likesCount", 10] }, // Likes weight
+              { $multiply: ["$commentsCount", 5] }, // Comments weight
+              { $divide: ["$contentScore", 100] }, // Content length & quality weight
+              { $cond: ["$isProfitable", 20, 0] }, // Profitable trade bonus
+            ],
+          },
         },
       },
       {
-        $sort: { likesCount: -1 },
+        $sort: { totalScore: -1 },
       },
     ]);
 
     // If it's Monday and we have no new reviews, keep weekend reviews
-    if (isMonday && topLikedReviews.length === 0) {
-      return;
-    }
+    if (isMonday && topReviews.length === 0) return;
 
-    // Reset all current featured reviews
+    // Reset current featured reviews
     await TradeReview.updateMany({}, { featured: false });
 
-    let featuredReviews = [...topLikedReviews];
+    let featuredReviews = [...topReviews];
 
-    // If we don't have 5 liked reviews, get random reviews to fill the gap
-    if (topLikedReviews.length < 5) {
-      const remaining = 5 - topLikedReviews.length;
-      const randomReviews = await TradeReview.aggregate([
+    // Enhanced fallback for not enough reviews
+    if (topReviews.length < 5) {
+      const remaining = 5 - topReviews.length;
+      const fallbackReviews = await TradeReview.aggregate([
         {
           $match: {
             createdAt: { $gte: startOfDay, $lte: endOfDay },
             isPublic: true,
-            _id: { $nin: topLikedReviews.map((r) => r._id) },
+            _id: { $nin: topReviews.map((r) => r._id) },
+          },
+        },
+        {
+          $lookup: {
+            from: "trades",
+            localField: "trade",
+            foreignField: "_id",
+            as: "tradeData",
+          },
+        },
+        {
+          $unwind: "$tradeData",
+        },
+        {
+          $addFields: {
+            contentScore: {
+              $add: [
+                { $strLenCP: { $ifNull: ["$content", ""] } },
+                {
+                  $cond: [
+                    { $gt: [{ $strLenCP: { $ifNull: ["$mistakes", ""] } }, 0] },
+                    50,
+                    0,
+                  ],
+                },
+                {
+                  $cond: [
+                    {
+                      $gt: [
+                        { $strLenCP: { $ifNull: ["$lessonsLearned", ""] } },
+                        0,
+                      ],
+                    },
+                    50,
+                    0,
+                  ],
+                },
+              ],
+            },
+            isProfitable: { $gt: ["$tradeData.profitLoss.realized", 0] },
+          },
+        },
+        {
+          $match: {
+            $or: [
+              { isProfitable: true },
+              { contentScore: { $gt: 100 } }, // Minimum content quality threshold
+            ],
           },
         },
         { $sample: { size: remaining } },
       ]);
 
-      featuredReviews = [...topLikedReviews, ...randomReviews];
+      featuredReviews = [...topReviews, ...fallbackReviews];
     } else {
-      // If we have more than 5, take only top 5
-      featuredReviews = topLikedReviews.slice(0, 5);
+      featuredReviews = topReviews.slice(0, 5);
     }
 
-    // Update featured status for selected reviews
+    // Update featured status
     if (featuredReviews.length > 0) {
       await TradeReview.updateMany(
         { _id: { $in: featuredReviews.map((review) => review._id) } },
         { featured: true }
       );
     }
+
     return featuredReviews;
   } catch (error) {
     console.error("Error updating featured reviews:", error);
