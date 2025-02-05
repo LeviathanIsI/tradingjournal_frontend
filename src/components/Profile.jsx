@@ -14,6 +14,7 @@ import YourReviews from "./YourReviews";
 import ProfileSettings from "./ProfileSettings";
 import ProfileStats from "./ProfileStats";
 import ProfileTour from "./ProfileTour";
+import Network from "./Network";
 
 const Profile = () => {
   const { username } = useParams();
@@ -248,7 +249,7 @@ const Profile = () => {
               stats={profile.stats}
             />
           )}
-          {activeTab === "network" && <div>Network content coming soon...</div>}
+          {activeTab === "network" && <Network userId={profile.user._id} />}
           {activeTab === "settings" && isOwnProfile && (
             <>
               {activeTab === "settings" && isOwnProfile && (

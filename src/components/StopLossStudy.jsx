@@ -232,82 +232,142 @@ const StopLossStudy = ({ trades, user, stats }) => {
     let holdContext = null;
     let avgTimeToHigh = null;
 
-    if (tradesWithTimings.length > 0) {
-      const timingAnalysis = tradesWithTimings.reduce(
-        (acc, trade) => {
-          const exitTime = new Date(trade.exitDate);
-          const highTime = new Date(trade.postExitAnalysis.timeOfHigh);
-          const lowTime = new Date(trade.postExitAnalysis.timeOfLow);
+    // Calculate intraday timing factors
+    const marketOpen = 9.5; // 9:30 AM
+    const marketClose = 16; // 4:00 PM
 
-          // Time to optimal exit (high for longs, low for shorts)
-          const timeToOptimal =
-            trade.type === "LONG"
-              ? (highTime - exitTime) / (1000 * 60)
-              : (lowTime - exitTime) / (1000 * 60);
+    const getTimeOfDay = (date) => {
+      const hours = date.getHours() + date.getMinutes() / 60;
+      return hours;
+    };
 
-          // Use the existing lowBeforeHigh flag instead of calculating
-          const lowBeforeHigh = trade.postExitAnalysis.lowBeforeHigh;
+    const timingAnalysis = tradesWithTimings.reduce(
+      (acc, trade) => {
+        const exitTime = new Date(trade.exitDate);
+        const highTime = new Date(trade.postExitAnalysis.timeOfHigh);
+        const lowTime = new Date(trade.postExitAnalysis.timeOfLow);
 
-          // Calculate price improvement
-          const priceImprovement =
-            trade.type === "LONG"
-              ? ((trade.postExitHigh - trade.exitPrice) / trade.exitPrice) * 100
-              : ((trade.exitPrice - trade.postExitLow) / trade.exitPrice) * 100;
+        const timeToOptimal =
+          trade.type === "LONG"
+            ? (highTime - exitTime) / (1000 * 60)
+            : (lowTime - exitTime) / (1000 * 60);
 
-          // Track if price action aligned with trade direction
-          const favorableTiming =
-            trade.type === "LONG"
-              ? !lowBeforeHigh // For longs, we want high before low
-              : lowBeforeHigh; // For shorts, we want low before high
+        const timeOfExit = getTimeOfDay(exitTime);
+        const isNearClose = timeOfExit >= 15.5; // After 3:30 PM
+        const isNearOpen = timeOfExit <= 10; // Before 10:00 AM
 
-          acc.totalTimeToOptimal += timeToOptimal;
-          acc.totalImprovement += priceImprovement;
-          acc.favorableTimingCount += favorableTiming ? 1 : 0;
-          acc.count += 1;
+        const priceImprovement =
+          trade.type === "LONG"
+            ? ((trade.postExitHigh - trade.exitPrice) / trade.exitPrice) * 100
+            : ((trade.exitPrice - trade.postExitLow) / trade.exitPrice) * 100;
 
-          return acc;
-        },
-        {
-          totalTimeToOptimal: 0,
-          totalImprovement: 0,
-          favorableTimingCount: 0,
-          count: 0,
-        }
-      );
+        // Enhanced timing classification
+        const quickMove = timeToOptimal <= 5;
+        const moderateMove = timeToOptimal <= 15;
+        const slowMove = timeToOptimal <= 30;
 
-      const avgTimeToOptimal =
-        timingAnalysis.totalTimeToOptimal / timingAnalysis.count;
-      const avgImprovement =
-        timingAnalysis.totalImprovement / timingAnalysis.count;
-      const favorableTimingRate =
-        timingAnalysis.favorableTimingCount / timingAnalysis.count;
-
-      // More nuanced hold time suggestion based on timing and price action
-      if (avgTimeToOptimal <= 15 && favorableTimingRate > 0.7) {
-        suggestedHold = "5-15 minutes";
-        holdContext = "Strong directional moves, quick targets";
-      } else if (avgTimeToOptimal <= 15 && favorableTimingRate <= 0.7) {
-        suggestedHold = "10-20 minutes";
-        holdContext = "Quick moves but choppy, allow for noise";
-      } else if (avgTimeToOptimal <= 30) {
-        suggestedHold = "15-30 minutes";
-        holdContext = `Medium-term momentum, avg gain ${avgImprovement.toFixed(
-          1
-        )}%`;
-      } else {
-        suggestedHold = "30-60 minutes";
-        holdContext = `Trending move, ${
-          favorableTimingRate > 0.5 ? "steady trend" : "watch for reversals"
-        }`;
+        return {
+          ...acc,
+          totalTimeToOptimal: acc.totalTimeToOptimal + timeToOptimal,
+          quickMoves: acc.quickMoves + (quickMove ? 1 : 0),
+          moderateMoves: acc.moderateMoves + (moderateMove ? 1 : 0),
+          slowMoves: acc.slowMoves + (slowMove ? 1 : 0),
+          morningTrades: acc.morningTrades + (isNearOpen ? 1 : 0),
+          endDayTrades: acc.endDayTrades + (isNearClose ? 1 : 0),
+          totalImprovement: acc.totalImprovement + priceImprovement,
+          favorableTimingCount:
+            acc.favorableTimingCount +
+            (trade.postExitAnalysis.lowBeforeHigh === (trade.type === "SHORT")
+              ? 1
+              : 0),
+          count: acc.count + 1,
+        };
+      },
+      {
+        totalTimeToOptimal: 0,
+        quickMoves: 0,
+        moderateMoves: 0,
+        slowMoves: 0,
+        morningTrades: 0,
+        endDayTrades: 0,
+        totalImprovement: 0,
+        favorableTimingCount: 0,
+        count: 0,
       }
+    );
 
-      // Adjust target based on timing analysis
-      if (favorableTimingRate < 0.4) {
-        finalTarget = (Number(finalTarget) * 0.9).toFixed(2); // More conservative
-      } else if (avgImprovement > 50 && favorableTimingRate > 0.6) {
-        finalTarget = (Number(finalTarget) * 1.2).toFixed(2); // More aggressive
-      }
+    const avgTimeToOptimal =
+      timingAnalysis.totalTimeToOptimal / timingAnalysis.count;
+    const quickMoveRate = timingAnalysis.quickMoves / timingAnalysis.count;
+    const moderateMoveRate =
+      timingAnalysis.moderateMoves / timingAnalysis.count;
+    const favorableTimingRate =
+      timingAnalysis.favorableTimingCount / timingAnalysis.count;
+    const avgImprovement =
+      timingAnalysis.totalImprovement / timingAnalysis.count;
+    const morningRate = timingAnalysis.morningTrades / timingAnalysis.count;
+    const endDayRate = timingAnalysis.endDayTrades / timingAnalysis.count;
+
+    // More granular hold time suggestions
+    if (quickMoveRate > 0.6) {
+      suggestedHold = "3-8 minutes";
+      holdContext = "Very quick moves, tight exits recommended";
+    } else if (avgTimeToOptimal <= 10 && favorableTimingRate > 0.7) {
+      suggestedHold = "5-12 minutes";
+      holdContext = "Fast directional moves, quick targets";
+    } else if (avgTimeToOptimal <= 15 && favorableTimingRate > 0.6) {
+      suggestedHold = "10-15 minutes";
+      holdContext = "Strong momentum, allow small pullbacks";
+    } else if (avgTimeToOptimal <= 20 && favorableTimingRate > 0.5) {
+      suggestedHold = "15-25 minutes";
+      holdContext = "Moderate momentum, be patient";
+    } else if (avgTimeToOptimal <= 30) {
+      suggestedHold = "20-35 minutes";
+      holdContext = `Slower moves, avg gain ${avgImprovement.toFixed(1)}%`;
+    } else {
+      suggestedHold = "30-60 minutes";
+      holdContext = `Trending move, ${
+        favorableTimingRate > 0.5 ? "steady trend" : "watch for reversals"
+      }`;
     }
+
+    // Time of day adjustments
+    if (morningRate > 0.5) {
+      holdContext += ", morning moves tend to be faster";
+      suggestedHold =
+        suggestedHold
+          .split("-")
+          .map((t) => Math.max(3, Number(t) * 0.8))
+          .join("-") + " minutes";
+    }
+
+    if (endDayRate > 0.4) {
+      holdContext += ", careful near market close";
+      suggestedHold =
+        suggestedHold
+          .split("-")
+          .map((t) => Math.max(3, Number(t) * 0.7))
+          .join("-") + " minutes";
+    }
+
+    // More nuanced target adjustments
+    let targetMultiplier = 1.0;
+
+    if (quickMoveRate > 0.6 && favorableTimingRate > 0.7) {
+      targetMultiplier *= 1.1; // Quick and accurate moves
+    } else if (favorableTimingRate < 0.4) {
+      targetMultiplier *= 0.85; // Poor timing accuracy
+    }
+
+    if (avgImprovement > 40 && favorableTimingRate > 0.6) {
+      targetMultiplier *= 1.15; // Good follow-through
+    }
+
+    if (endDayRate > 0.4) {
+      targetMultiplier *= 0.9; // More conservative near close
+    }
+
+    finalTarget = (Number(finalTarget) * targetMultiplier).toFixed(2);
 
     return {
       suggestedStopLoss: finalStopLoss,

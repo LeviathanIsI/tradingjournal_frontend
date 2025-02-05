@@ -6,6 +6,7 @@ import Traders from "../components/Traders";
 import Leaderboard from "../components/Leaderboard";
 import Profile from "../components/Profile";
 import CommunityNavTour from "../components/CommunityNavTour";
+import Network from "../components/Network";
 
 const Community = () => {
   return (
@@ -51,6 +52,14 @@ const Community = () => {
             element={
               <div data-tour="community-profile">
                 <Profile />
+              </div>
+            }
+          />
+          <Route
+            path="network"
+            element={
+              <div data-tour="community-network">
+                <Network />
               </div>
             }
           />
