@@ -133,26 +133,28 @@ const Profile = () => {
               </p>
             </div>
           </div>
-          <button
-            onClick={handleFollow}
-            className={`flex items-center gap-2 px-4 py-2 rounded-md ${
-              isFollowing
-                ? "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                : "bg-blue-600 text-white hover:bg-blue-700"
-            }`}
-          >
-            {isFollowing ? (
-              <>
-                <UserMinus className="h-4 w-4" />
-                Unfollow
-              </>
-            ) : (
-              <>
-                <UserPlus className="h-4 w-4" />
-                Follow
-              </>
-            )}
-          </button>
+          {!isOwnProfile && (
+            <button
+              onClick={handleFollow}
+              className={`flex items-center gap-2 px-4 py-2 rounded-md ${
+                isFollowing
+                  ? "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                  : "bg-blue-600 text-white hover:bg-blue-700"
+              }`}
+            >
+              {isFollowing ? (
+                <>
+                  <UserMinus className="h-4 w-4" />
+                  Unfollow
+                </>
+              ) : (
+                <>
+                  <UserPlus className="h-4 w-4" />
+                  Follow
+                </>
+              )}
+            </button>
+          )}
         </div>
 
         {/* Stats */}

@@ -41,10 +41,11 @@ const YourReviews = ({ userId }) => {
         throw new Error(data.error || "Failed to fetch reviews");
       }
 
-      // If viewing someone else's profile, only show public reviews
-      const filteredReviews = isOwnProfile
-        ? data.data
-        : data.data.filter((review) => review.isPublic);
+      const filteredReviews = data.data.filter((review) =>
+        isOwnProfile
+          ? review.user._id === userId
+          : review.isPublic && review.user._id === userId
+      );
 
       setReviews(filteredReviews);
     } catch (error) {
