@@ -15,13 +15,42 @@ const PositionCalculatorModal = ({ isOpen, onClose }) => {
     if (!entryPrice) return;
 
     const entry = Number(entryPrice);
-    // Calculate 10 cents risk by default
-    const stopLoss = entry - 0.1;
-    // Scale reward based on risk/reward ratio
-    const target = entry + 0.1 * (rewardRatio / riskRatio);
-
+    const riskNumber = Number(riskRatio) || 1;
+    const rewardNumber = Number(rewardRatio) || 1;
     const sharesCount = Number(shares) || 0;
     const positionSize = sharesCount * entry;
+
+    // Base volatility factor based on stock price
+    const priceVolatility =
+      entry < 1
+        ? 0.05 // Under $1 = 5%
+        : entry < 5
+        ? 0.03 // Under $5 = 3%
+        : entry < 10
+        ? 0.02 // Under $10 = 2%
+        : entry < 20
+        ? 0.015 // Under $20 = 1.5%
+        : entry < 50
+        ? 0.01 // Under $50 = 1%
+        : 0.005; // Over $50 = 0.5%
+
+    // Position size scaling - risk gets tighter as position size grows
+    const positionScaleFactor = Math.max(
+      0.3,
+      1 - Math.log10(positionSize) / 10
+    );
+
+    // Risk calculation with diminishing returns for higher risk numbers
+    const riskScale = Math.sqrt(riskNumber);
+    const baseRisk = entry * priceVolatility * riskScale * positionScaleFactor;
+
+    // Reward calculation considering reward ratio with progressive scaling
+    const rewardScale = Math.pow(rewardNumber, 0.8); // Progressive reward scaling
+    const rewardMultiplier = 1 + rewardScale / 2;
+
+    const stopLoss = entry - baseRisk;
+    const target = entry + baseRisk * rewardMultiplier;
+
     const riskAmount = sharesCount * Math.abs(entry - stopLoss);
     const potentialProfit = sharesCount * Math.abs(target - entry);
 
