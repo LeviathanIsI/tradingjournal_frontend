@@ -3,9 +3,12 @@ import React, { useMemo, useState, useEffect } from "react";
 const StopLossStudy = ({ trades, user, stats }) => {
   const [planEntry, setPlanEntry] = useState("");
   const [planShares, setPlanShares] = useState("");
-  const [riskPercentage, setRiskPercentage] = useState("1");
   const [plannedRisk, setPlannedRisk] = useState(null);
   const [plannedReward, setPlannedReward] = useState(null);
+
+  const RISK_PERCENTAGE = 10; // 10% account risk
+  const STOP_LOSS_PERCENTAGE = 5; // 5% below entry
+  const REWARD_MULTIPLIER = 3; // 3x risk for reward (1:3 ratio)
 
   const accountBalance =
     (user?.preferences?.startingCapital || 0) + (stats?.totalProfit || 0);
@@ -380,58 +383,35 @@ const StopLossStudy = ({ trades, user, stats }) => {
   }, [trades]);
 
   useEffect(() => {
-    if (planEntry && analysis?.suggestedStopLoss && analysis?.suggestedTarget) {
+    if (planEntry) {
       const entry = Number(planEntry);
-      const stopPrice = Number(analysis.suggestedStopLoss);
-      const targetPrice = Number(analysis.suggestedTarget);
+      const stopPrice = entry * (1 - STOP_LOSS_PERCENTAGE / 100); // 5% below entry
+      const riskAmount = entry - stopPrice; // Distance to stop
+      const targetPrice = entry + riskAmount * REWARD_MULTIPLIER; // 3x risk for reward
 
       // Calculate per-share values
-      const riskPerShare = Math.abs(entry - stopPrice);
-      const rewardPerShare = Math.abs(targetPrice - entry);
+      const riskPerShare = Number(Math.abs(entry - stopPrice).toFixed(2));
+      const rewardPerShare = Number(Math.abs(targetPrice - entry).toFixed(2));
 
-      // Always calculate suggested shares when we have risk percentage
-      if (riskPercentage) {
-        const maxRiskAmount = accountBalance * (Number(riskPercentage) / 100);
-        const calculatedShares = Math.floor(maxRiskAmount / riskPerShare);
+      // Calculate maximum position size (10% of account)
+      const maxPositionValue = accountBalance * (RISK_PERCENTAGE / 100);
+      const calculatedShares = Math.floor(maxPositionValue / entry);
 
-        // Always update shares when risk percentage changes
-        setPlanShares(calculatedShares.toString());
+      // Update shares
+      setPlanShares(calculatedShares.toString());
 
-        // Calculate risk/reward based on calculated shares
-        const actualRisk = (calculatedShares * riskPerShare).toFixed(2);
-        const actualReward = (calculatedShares * rewardPerShare).toFixed(2);
-
-        setPlannedRisk(actualRisk);
-        setPlannedReward(actualReward);
-      }
-    } else {
-      setPlannedRisk(null);
-      setPlannedReward(null);
-    }
-  }, [planEntry, analysis, riskPercentage, accountBalance]);
-
-  useEffect(() => {
-    if (
-      planShares &&
-      planEntry &&
-      analysis?.suggestedStopLoss &&
-      analysis?.suggestedTarget
-    ) {
-      const entry = Number(planEntry);
-      const stopPrice = Number(analysis.suggestedStopLoss);
-      const targetPrice = Number(analysis.suggestedTarget);
-
-      const riskPerShare = Math.abs(entry - stopPrice);
-      const rewardPerShare = Math.abs(targetPrice - entry);
-
-      const shares = Number(planShares);
-      const actualRisk = (shares * riskPerShare).toFixed(2);
-      const actualReward = (shares * rewardPerShare).toFixed(2);
+      // Calculate risk/reward based on calculated shares
+      const actualRisk = (calculatedShares * riskPerShare).toFixed(2);
+      const actualReward = (calculatedShares * rewardPerShare).toFixed(2);
 
       setPlannedRisk(actualRisk);
       setPlannedReward(actualReward);
+    } else {
+      setPlannedRisk(null);
+      setPlannedReward(null);
+      setPlanShares("");
     }
-  }, [planShares]);
+  }, [planEntry, accountBalance]);
 
   return (
     <div
@@ -442,6 +422,20 @@ const StopLossStudy = ({ trades, user, stats }) => {
         {/* Left Side - Exit Analysis */}
         <div>
           <h3 className="text-sm text-black font-medium">Exit Analysis</h3>
+          <div className="bg-blue-50 p-3 rounded-md mb-4">
+            <p className="text-sm text-blue-700">
+              Analysis of your trading patterns:
+            </p>
+            <ul className="text-xs text-blue-600 mt-2 space-y-1">
+              <li>• Based on your last 90 days of trades</li>
+              <li>• Analyzes winning and losing patterns</li>
+              <li>• Considers time of day and momentum</li>
+            </ul>
+            <p className="text-xs text-blue-600 mt-2 italic">
+              Note: Suggestions improve in accuracy as you add more trades to
+              your history
+            </p>
+          </div>
           <div className="grid grid-cols-1 gap-4 mt-2">
             {!trades?.length ? (
               <div className="text-center py-2">
@@ -460,6 +454,9 @@ const StopLossStudy = ({ trades, user, stats }) => {
                       ? `$${analysis.suggestedStopLoss}`
                       : "Insufficient data"}
                   </p>
+                  <p className="text-xs text-gray-500 mt-1">
+                    Recommended stop loss based on historical price reversals
+                  </p>
                 </div>
                 <div>
                   <p className="text-xs text-gray-500 mb-1">
@@ -469,6 +466,9 @@ const StopLossStudy = ({ trades, user, stats }) => {
                     {analysis?.suggestedTarget
                       ? `$${analysis.suggestedTarget}`
                       : "Insufficient data"}
+                  </p>
+                  <p className="text-xs text-gray-500 mt-1">
+                    Target price based on your winning trades' profit patterns
                   </p>
                 </div>
                 <div>
@@ -483,6 +483,9 @@ const StopLossStudy = ({ trades, user, stats }) => {
                       {analysis.holdTimeContext}
                     </p>
                   )}
+                  <p className="text-xs text-gray-500 mt-1">
+                    Optimal hold duration based on price movement analysis
+                  </p>
                 </div>
               </>
             )}
@@ -492,6 +495,17 @@ const StopLossStudy = ({ trades, user, stats }) => {
         {/* Right Side - Plan Your Trade */}
         <div>
           <h4 className="text-sm font-medium mb-3">Plan Your Trade</h4>
+          <div className="bg-blue-50 p-3 rounded-md mb-4">
+            <p className="text-sm text-blue-700 mb-2">Risk Management Rules:</p>
+            <ul className="text-xs text-blue-600 mt-2 space-y-1">
+              <li>
+                • Maximum position: 10% of account ($
+                {(accountBalance * (RISK_PERCENTAGE / 100)).toFixed(2)})
+              </li>
+              <li>• Stop loss: Fixed 5% below entry price</li>
+              <li>• Target: 3x distance to stop (1:3 ratio)</li>
+            </ul>
+          </div>
           <div className="space-y-4">
             <div>
               <label className="block text-xs text-gray-500 mb-1">
@@ -506,72 +520,73 @@ const StopLossStudy = ({ trades, user, stats }) => {
                 min="0"
               />
             </div>
-            <div>
-              <label className="block text-xs text-gray-500 mb-1">
-                Account Risk %
-              </label>
-              <div className="flex items-center">
-                <input
-                  type="number"
-                  value={riskPercentage}
-                  onChange={(e) => setRiskPercentage(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded"
-                  step="0.1"
-                  min="0.1"
-                  max="100"
-                />
-                <span className="ml-1">%</span>
-              </div>
-              <p className="text-xs text-gray-500 mt-1">
-                ${((Number(riskPercentage) / 100) * accountBalance).toFixed(2)}{" "}
-                of ${accountBalance.toFixed(2)}
-              </p>
-            </div>
-            <div>
-              <label className="block text-xs text-gray-500 mb-1">
-                Suggested Shares
-              </label>
-              <input
-                type="number"
-                value={planShares}
-                onChange={(e) => setPlanShares(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded"
-                min="1"
-                placeholder={
-                  planEntry
-                    ? Math.floor(
-                        ((Number(riskPercentage) / 100) * accountBalance) /
-                          Math.abs(
-                            Number(planEntry) -
-                              Number(analysis?.suggestedStopLoss || 0)
-                          )
-                      )
-                    : ""
-                }
-              />
-            </div>
 
-            {plannedRisk && plannedReward && (
-              <div className="grid grid-cols-2 gap-4 mt-4">
+            {planEntry && (
+              <>
                 <div>
-                  <p className="text-xs text-gray-500 mb-1">Potential Risk</p>
-                  <p className="text-md font-semibold text-red-600">
-                    ${plannedRisk}
+                  <label className="block text-xs text-gray-500 mb-1">
+                    Stop Loss Price
+                  </label>
+                  <p className="text-sm font-medium text-red-600">
+                    $
+                    {(
+                      Number(planEntry) *
+                      (1 - STOP_LOSS_PERCENTAGE / 100)
+                    ).toFixed(2)}
+                  </p>
+                  <p className="text-xs text-gray-500 mt-1">
+                    5% below entry price
                   </p>
                 </div>
                 <div>
-                  <p className="text-xs text-gray-500 mb-1">Potential Reward</p>
-                  <p className="text-md font-semibold text-green-600">
-                    ${plannedReward}
+                  <label className="block text-xs text-gray-500 mb-1">
+                    Target Price
+                  </label>
+                  <p className="text-sm font-medium text-green-600">
+                    $
+                    {(
+                      Number(planEntry) +
+                      (Number(planEntry) -
+                        Number(planEntry) * (1 - STOP_LOSS_PERCENTAGE / 100)) *
+                        REWARD_MULTIPLIER
+                    ).toFixed(2)}
+                  </p>
+                  <p className="text-xs text-gray-500 mt-1">
+                    3x the distance to stop loss
                   </p>
                 </div>
-                <div className="col-span-2">
-                  <p className="text-xs text-gray-500">
-                    Risk/Reward Ratio: 1:
-                    {(plannedReward / plannedRisk).toFixed(2)}
+                <div>
+                  <label className="block text-xs text-gray-500 mb-1">
+                    Position Size
+                  </label>
+                  <p className="text-sm font-medium">{planShares} shares</p>
+                  <p className="text-xs text-gray-500 mt-1">
+                    Total position value: $
+                    {(Number(planShares) * Number(planEntry)).toFixed(2)}
                   </p>
                 </div>
-              </div>
+
+                {plannedRisk && plannedReward && (
+                  <div className="grid grid-cols-2 gap-4 mt-4">
+                    <div>
+                      <p className="text-xs text-gray-500 mb-1">
+                        Potential Risk
+                      </p>
+                      <p className="text-md font-semibold text-red-600">
+                        ${plannedRisk}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-gray-500 mb-1">
+                        Potential Reward
+                      </p>
+                      <p className="text-md font-semibold text-green-600">
+                        ${plannedReward}
+                      </p>
+                    </div>
+                  </div>
+                )}
+              </>
             )}
           </div>
         </div>

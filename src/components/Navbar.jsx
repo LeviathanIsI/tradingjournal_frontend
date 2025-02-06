@@ -1,17 +1,14 @@
 // src/components/Navbar.jsx
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Menu, X, Settings, Calculator } from "lucide-react";
+import { Menu, X, Settings } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
-import PositionCalculatorModal from "./PositionCalculatorModal";
 import logo from "../assets/logo.svg";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
   const { user, logout, updateUser } = useAuth();
-  const [isCalculatorOpen, setIsCalculatorOpen] = useState(false);
-  useEffect(() => {}, [isCalculatorOpen]);
 
   const handleLogout = () => {
     logout();
@@ -54,16 +51,6 @@ const Navbar = () => {
                 >
                   Community
                 </Link>
-                <button
-                  onClick={() => {
-                    setIsCalculatorOpen(true);
-                  }}
-                  data-tour="calculator"
-                  className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm flex items-center gap-2"
-                >
-                  <Calculator size={16} />
-                  Position Calculator
-                </button>
                 <div className="border-l border-gray-700 h-6 mx-2"></div>
                 <span className="text-gray-300 px-3 py-2 text-sm">
                   Welcome, {user.username}
@@ -131,15 +118,6 @@ const Navbar = () => {
                 >
                   Community
                 </Link>
-                <button
-                  onClick={() => {
-                    setIsCalculatorOpen(true);
-                  }}
-                  className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm flex items-center gap-2"
-                >
-                  <Calculator size={16} />
-                  Position Calculator
-                </button>
                 <span className="block text-gray-300 px-3 py-2 text-base">
                   Welcome, {user.username}
                 </span>
@@ -169,10 +147,6 @@ const Navbar = () => {
           </div>
         )}
       </div>
-      <PositionCalculatorModal
-        isOpen={isCalculatorOpen}
-        onClose={() => setIsCalculatorOpen(false)}
-      />
     </nav>
   );
 };
