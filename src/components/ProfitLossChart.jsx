@@ -309,11 +309,11 @@ const ProfitLossChart = ({ trades }) => {
             onClick={() => setShowTrades(!showTrades)}
             disabled={!selectedDate}
             className={`flex items-center gap-2 px-3 py-1 text-sm bg-white border border-gray-300 rounded
-              ${
-                !selectedDate
-                  ? "opacity-50 cursor-not-allowed"
-                  : "hover:bg-gray-50"
-              }`}
+            ${
+              !selectedDate
+                ? "opacity-50 cursor-not-allowed"
+                : "hover:bg-gray-50"
+            }`}
           >
             <Table size={16} />
             {showTrades ? "Hide Trades" : "Show Trades"}
@@ -363,6 +363,15 @@ const ProfitLossChart = ({ trades }) => {
             ))}
           </div>
         </div>
+      </div>
+      <div className="bg-blue-50 p-3 rounded-md">
+        <p className="text-sm text-blue-700">Chart features:</p>
+        <ul className="text-xs text-blue-600 mt-2 space-y-1">
+          <li>• View performance in dollars or percentage gains</li>
+          <li>• Switch between daily, weekly, monthly, or yearly views</li>
+          <li>• Click any point to see trades from that period</li>
+          <li>• Track cumulative profit/loss over your selected timeframe</li>
+        </ul>
       </div>
 
       <div style={{ width: "100%", height: "600px", minHeight: "600px" }}>

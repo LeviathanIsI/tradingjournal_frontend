@@ -127,40 +127,60 @@ const TimeAnalysis = ({ trades }) => {
 
       {/* Hourly Performance Chart */}
       <div className="bg-white p-6 rounded-lg border border-gray-200">
-        <h3 className="text-lg font-medium text-gray-900 mb-4">
+        <h3 className="text-lg font-medium text-gray-900 mb-2">
           Hourly Performance{" "}
           {selectedSession !== "all" && `(${selectedSession})`}
         </h3>
+        <div className="bg-blue-50 p-3 rounded-md mb-4">
+          <p className="text-sm text-blue-700">Understanding the chart:</p>
+          <ul className="text-xs text-blue-600 mt-2 space-y-1">
+            <li>• Purple bars show your win rate for each hour</li>
+            <li>• Green/Red bars show average profit/loss per trade</li>
+            <li>• Click session tabs above to filter by market session</li>
+            <li>• Hover over bars to see detailed statistics</li>
+          </ul>
+        </div>
         <div className="h-96">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={filteredTimeData}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="hour" tickFormatter={(hour) => `${hour}:00`} />
-              <YAxis yAxisId="left" orientation="left" stroke="#8884d8" />
-              <YAxis yAxisId="right" orientation="right" stroke="#82ca9d" />
+              <YAxis yAxisId="left" orientation="left" stroke="#4338ca" />
+              <YAxis yAxisId="right" orientation="right" stroke="#059669" />
               <Tooltip
+                contentStyle={{ border: "1px solid #e5e7eb" }}
                 formatter={(value, name) => {
-                  if (name === "Win Rate") return `${value.toFixed(1)}%`;
-                  return `$${value.toFixed(2)}`;
+                  if (name === "Win Rate")
+                    return [`${value.toFixed(1)}%`, name];
+                  if (name === "Avg Profit") {
+                    return [`${value.toFixed(2)}`, name];
+                  }
+                  return [value, name];
                 }}
+                labelFormatter={(hour) => `Hour: ${hour}:00`}
               />
-              <Legend />
+              <Legend
+                payload={[
+                  { value: "Win Rate", type: "rect", color: "#818cf8" },
+                  { value: "Profitable Hours", type: "rect", color: "#34d399" },
+                  {
+                    value: "Unprofitable Hours",
+                    type: "rect",
+                    color: "#f87171",
+                  },
+                ]}
+              />
               <Bar
                 yAxisId="left"
                 dataKey="winRate"
                 name="Win Rate"
-                fill="#8884d8"
+                fill="#818cf8"
               />
-              <Bar
-                yAxisId="right"
-                dataKey="avgProfit"
-                name="Avg Profit"
-                fill="#82ca9d"
-              >
+              <Bar yAxisId="right" dataKey="avgProfit" name="Avg Profit">
                 {filteredTimeData.map((entry, index) => (
                   <Cell
                     key={`cell-${index}`}
-                    fill={entry.avgProfit >= 0 ? "#82ca9d" : "#ff7675"}
+                    fill={entry.avgProfit >= 0 ? "#34d399" : "#f87171"}
                   />
                 ))}
               </Bar>
