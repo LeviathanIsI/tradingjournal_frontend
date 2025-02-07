@@ -202,7 +202,16 @@ const Dashboard = () => {
 
       <Routes>
         <Route path="" element={<Navigate to="overview" replace />} />
-        <Route path="overview" element={<Overview />} />
+        <Route
+          path="overview"
+          element={
+            <Overview
+              trades={trades}
+              stats={stats}
+              formatCurrency={formatCurrency}
+            />
+          }
+        />
         <Route
           path="journal"
           element={
