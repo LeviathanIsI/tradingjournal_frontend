@@ -1,4 +1,4 @@
-// components/tours/ReviewsTour.jsx
+// src/components/tours/ReviewsTour.jsx
 import React, { useState, useEffect } from "react";
 import Joyride, { STATUS } from "react-joyride";
 import { useAuth } from "../context/AuthContext";
@@ -12,32 +12,57 @@ const ReviewsTour = () => {
     {
       target: '[data-tour="reviews-content"]',
       content:
-        "Browse through trade reviews from the community. Learn from others' experiences and insights.",
+        "Welcome to Trade Reviews! Share and learn from the community's trading experiences.",
       placement: "top",
       disableBeacon: true,
     },
     {
+      target: '[data-tour="reviews-intro"]',
+      content:
+        "Get insights into different trading strategies and learn from both wins and losses.",
+      placement: "bottom",
+      scrollToSteps: true,
+    },
+    {
       target: '[data-tour="reviews-filters"]',
       content:
-        "Filter reviews by profit type, date, and other criteria to find the most relevant trades.",
+        "Filter reviews by trade type, profit range, and date to find relevant examples.",
+      placement: "bottom",
+    },
+    {
+      target: '[data-tour="reviews-search"]',
+      content: "Search for specific symbols, traders, or strategies.",
       placement: "bottom",
     },
     {
       target: '[data-tour="reviews-sort"]',
       content:
-        "Sort reviews by different metrics like newest, most liked, or highest profit.",
-      placement: "bottom",
-    },
-    {
-      target: '[data-tour="reviews-search"]',
-      content: "Search for specific traders or review content.",
+        "Sort reviews by different metrics like profit, date, or popularity.",
       placement: "bottom",
     },
     {
       target: '[data-tour="review-card"]',
       content:
-        "Each review includes trade details, analysis, and lessons learned. Interact with reviews through likes and comments.",
+        "Each review includes trade details, analysis, and lessons learned.",
       placement: "top",
+      scrollToSteps: true,
+    },
+    {
+      target: '[data-tour="review-interactions"]',
+      content:
+        "Engage with reviews through likes, comments, and save them for future reference.",
+      placement: "bottom",
+    },
+    {
+      target: '[data-tour="create-review"]',
+      content: "Share your own trade reviews to contribute to the community.",
+      placement: "left",
+    },
+    {
+      target: '[data-tour="reviews-stats"]',
+      content: "Track review metrics and your contribution to the community.",
+      placement: "bottom",
+      scrollToSteps: true,
     },
   ];
 
@@ -89,8 +114,13 @@ const ReviewsTour = () => {
       showProgress
       showSkipButton
       hideCloseButton
+      scrollToFirstStep
+      scrollOffset={100}
       disableOverlayClose
       disableCloseOnEsc
+      floaterProps={{
+        disableAnimation: true,
+      }}
       callback={handleJoyrideCallback}
       styles={tourStyles}
     />

@@ -1,4 +1,4 @@
-// components/tours/CommunityNavTour.jsx
+// src/components/tours/CommunityNavTour.jsx
 import React, { useState, useEffect } from "react";
 import Joyride, { STATUS } from "react-joyride";
 import { useAuth } from "../context/AuthContext";
@@ -12,37 +12,49 @@ const CommunityNavTour = () => {
     {
       target: ".community-nav",
       content:
-        "Welcome to the Community! This is your hub for connecting with other traders and sharing experiences.",
+        "Welcome to the Community! Here you can connect with other traders and share experiences.",
       placement: "bottom",
       disableBeacon: true,
     },
     {
+      target: '[data-tour="community-info"]',
+      content: "Explore different ways to interact with the trading community.",
+      placement: "bottom",
+      scrollToSteps: true,
+    },
+    {
       target: '[href="/community/reviews"]',
       content:
-        "Trade Reviews: Share and learn from other traders' experiences.",
+        "Browse and share trade reviews to learn from each other's experiences.",
       placement: "bottom",
     },
     {
       target: '[href="/community/traders"]',
-      content: "Traders: Connect with fellow traders and build your network.",
+      content: "Find and connect with traders who match your style.",
       placement: "bottom",
     },
     {
       target: '[href="/community/leaderboard"]',
-      content:
-        "Leaderboard: Track top-performing traders and see how you stack up.",
+      content: "See top performers and track your ranking among other traders.",
       placement: "bottom",
     },
     {
       target: '[href="/community/featured"]',
       content:
-        "Featured: Discover exceptional trade reviews from experienced traders.",
+        "Access curated, high-quality trade reviews from experienced traders.",
       placement: "bottom",
     },
     {
       target: `[href="/community/profile/${user?.username}"]`,
-      content: "Profile: Manage your trading identity and track your progress.",
+      content: "View and manage your trading profile, stats, and network.",
       placement: "bottom",
+    },
+    {
+      target: '[data-tour="community-network"]',
+      content:
+        "Build your trading network and follow traders with similar strategies.",
+      placement: "top",
+      scrollToSteps: true,
     },
   ];
 
@@ -94,8 +106,13 @@ const CommunityNavTour = () => {
       showProgress
       showSkipButton
       hideCloseButton
+      scrollToFirstStep
+      scrollOffset={100}
       disableOverlayClose
       disableCloseOnEsc
+      floaterProps={{
+        disableAnimation: true,
+      }}
       callback={handleJoyrideCallback}
       styles={tourStyles}
     />

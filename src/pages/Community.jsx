@@ -13,6 +13,20 @@ const Community = () => {
     <div className="flex flex-col">
       <CommunityNavTour />
       <CommunityNav />
+      <div className="p-6 bg-gray-50" data-tour="community-info">
+        <div className="bg-blue-50 p-4 rounded-lg">
+          <p className="text-sm text-blue-700">Community Features:</p>
+          <ul className="text-xs text-blue-600 mt-2 space-y-1">
+            <li>• Share and learn from other traders' experiences</li>
+            <li>• Connect with traders who match your style</li>
+            <li>• Track your rankings and performance</li>
+            <li>• Access featured content from top traders</li>
+          </ul>
+          <p className="text-xs text-blue-600 mt-2 italic">
+            Pro tip: Engage with the community to accelerate your learning
+          </p>
+        </div>
+      </div>
       <div className="w-full p-6">
         <Routes>
           <Route

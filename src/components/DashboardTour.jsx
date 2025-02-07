@@ -2,82 +2,119 @@
 import React, { useState, useEffect } from "react";
 import Joyride, { STATUS } from "react-joyride";
 import { useAuth } from "../context/AuthContext";
+import { tourStyles } from "./tourStyles";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const DashboardTour = () => {
   const { user, updateUser } = useAuth();
   const [runTour, setRunTour] = useState(false);
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const steps = [
     {
       target: '[data-tour="stats-overview"]',
-      content: "Your trading performance at a glance.",
+      content:
+        "Here's your dashboard! Let's start with your key performance metrics.",
       placement: "bottom",
       disableBeacon: true,
     },
     {
-      target: '[data-tour="starting-capital"]',
-      content: "Your initial investment.",
-      placement: "bottom",
-    },
-    {
-      target: '[data-tour="current-balance"]',
-      content: "Current account value and overall profit/loss.",
-      placement: "bottom",
-    },
-    {
-      target: '[data-tour="exit-analysis"]',
+      target: '[data-tour="dashboard-nav"]',
       content:
-        "Our AI analyzes your trading history to suggest optimal exit points based on your past performance.",
+        "Use these tabs to navigate between different sections of your dashboard.",
       placement: "bottom",
     },
     {
-      target: '[data-tour="performance-charts"]',
-      content: "Visualize your trading performance over time.",
-      placement: "top",
+      target: '[href="/dashboard/overview"]',
+      content: "Overview shows your performance summary and recent activity.",
+      placement: "bottom",
+      spotlightClicks: true,
     },
     {
-      target: '[data-tour="chart-controls"]',
+      target: '[href="/dashboard/journal"]',
       content:
-        "Switch between different types of analysis - P/L over time, trading patterns, drawdowns, and winning streaks.",
+        "Track all your trades in the journal. Add new trades, review past ones, and analyze your performance.",
       placement: "bottom",
+      spotlightClicks: true,
     },
     {
-      target: '[data-tour="trades-table"]',
-      content: "View and manage all your trades in one place.",
-      placement: "top",
+      target: '[href="/dashboard/analysis"]',
+      content:
+        "Dive deep into your trading patterns with advanced charts and analytics.",
+      placement: "bottom",
+      spotlightClicks: true,
     },
     {
-      target: '[data-tour="add-trade"]',
-      content: "Log new trades with detailed entry and exit information.",
-      placement: "left",
+      target: '[href="/dashboard/planning"]',
+      content:
+        "Plan your trades using AI-powered insights based on your trading history.",
+      placement: "bottom",
+      spotlightClicks: true,
     },
   ];
 
   useEffect(() => {
     if (user && !user.tourStatus?.dashboardTourCompleted) {
-      setRunTour(true);
+      // Ensure we start at overview
+      if (location.pathname !== "/dashboard/overview") {
+        navigate("/dashboard/overview");
+      }
+      const timer = setTimeout(() => {
+        setRunTour(true);
+      }, 1000);
+      return () => clearTimeout(timer);
     }
-  }, [user]);
+  }, [user, location.pathname, navigate]);
 
-  const handleJoyrideCallback = (data) => {
-    const { status } = data;
+  const handleJoyrideCallback = async (data) => {
+    const { status, type, index } = data;
+
+    // Handle step changes
+    if (type === "step:after") {
+      // Navigate based on step index if needed
+      switch (index) {
+        case 2: // After Overview tab explanation
+          navigate("/dashboard/overview");
+          break;
+        case 3: // After Journal tab explanation
+          navigate("/dashboard/journal");
+          break;
+        case 4: // After Analysis tab explanation
+          navigate("/dashboard/analysis");
+          break;
+        case 5: // After Planning tab explanation
+          navigate("/dashboard/planning");
+          break;
+        default:
+          break;
+      }
+    }
+
     if ([STATUS.FINISHED, STATUS.SKIPPED].includes(status)) {
-      fetch("http://localhost:5000/api/auth/complete-tour/dashboard", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-          "Content-Type": "application/json",
-        },
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          if (data.success) {
-            updateUser({
-              ...user,
-              tourStatus: { ...user.tourStatus, dashboardTourCompleted: true },
-            });
+      try {
+        const token = localStorage.getItem("token");
+        const response = await fetch(
+          "http://localhost:5000/api/auth/complete-tour/dashboard",
+          {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
           }
-        });
+        );
+        const data = await response.json();
+
+        if (data.success) {
+          updateUser({
+            ...user,
+            tourStatus: { ...user.tourStatus, dashboardTourCompleted: true },
+          });
+        }
+      } catch (error) {
+        console.error("Error completing tour:", error);
+      }
       setRunTour(false);
     }
   };
@@ -89,19 +126,17 @@ const DashboardTour = () => {
       continuous
       showProgress
       showSkipButton
-      spotlightClicks
+      hideCloseButton
+      scrollToFirstStep
+      scrollOffset={100}
       disableOverlayClose
       disableCloseOnEsc
-      callback={handleJoyrideCallback}
-      styles={{
-        options: {
-          primaryColor: "#3B82F6",
-          textColor: "#1F2937",
-          backgroundColor: "#FFFFFF",
-          arrowColor: "#FFFFFF",
-          overlayColor: "rgba(0, 0, 0, 0.5)",
-        },
+      spotlightClicks={true}
+      floaterProps={{
+        disableAnimation: true,
       }}
+      callback={handleJoyrideCallback}
+      styles={tourStyles}
     />
   );
 };

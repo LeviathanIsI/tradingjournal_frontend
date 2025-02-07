@@ -1,33 +1,44 @@
-// components/tourStyles.js - Shared styles for all tours
 export const tourStyles = {
   options: {
-    zIndex: 10000,
     primaryColor: "#3B82F6",
     textColor: "#1F2937",
     backgroundColor: "#FFFFFF",
     arrowColor: "#FFFFFF",
     overlayColor: "rgba(0, 0, 0, 0.5)",
-  },
-  spotlight: {
-    backgroundColor: "transparent",
+    zIndex: 1000,
   },
   tooltip: {
-    padding: 16,
-    fontSize: "14px",
-    maxWidth: "400px",
+    position: "relative",
+    backgroundColor: "#FFFFFF",
+    borderRadius: "0.5rem",
+    padding: "1rem",
+    fontSize: "0.875rem",
+  },
+  tooltipContainer: {
+    textAlign: "left",
   },
   buttonNext: {
     backgroundColor: "#3B82F6",
-    fontSize: "14px",
-    padding: "8px 16px",
+    fontSize: "0.875rem",
+    padding: "0.5rem 1rem",
   },
   buttonBack: {
-    marginRight: 10,
-    fontSize: "14px",
-    padding: "8px 16px",
+    color: "#4B5563",
+    fontSize: "0.875rem",
+    padding: "0.5rem 1rem",
   },
   buttonSkip: {
-    fontSize: "14px",
-    padding: "8px 16px",
+    color: "#4B5563",
+    fontSize: "0.875rem",
+  },
+  spotlight: {
+    position: "absolute",
+    backgroundColor: "transparent",
+  },
+  floater: {
+    arrow: {
+      length: 8,
+      spread: 12,
+    },
   },
 };

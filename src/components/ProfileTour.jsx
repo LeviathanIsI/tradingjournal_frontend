@@ -1,4 +1,4 @@
-// components/tours/ProfileTour.jsx
+// src/components/tours/ProfileTour.jsx
 import React, { useState, useEffect } from "react";
 import Joyride, { STATUS } from "react-joyride";
 import { useAuth } from "../context/AuthContext";
@@ -12,27 +12,57 @@ const ProfileTour = () => {
     {
       target: '[data-tour="profile-content"]',
       content:
-        "Welcome to your Profile! This is where you manage your trading identity and track your progress.",
+        "Welcome to your Trading Profile! Track your progress and manage your trading identity.",
       placement: "top",
       disableBeacon: true,
     },
     {
       target: '[data-tour="profile-header"]',
       content:
-        "View and edit your profile information, including trading style and bio.",
-      placement: "top",
+        "Your profile overview including trading style and experience level.",
+      placement: "bottom",
+      scrollToSteps: true,
     },
     {
       target: '[data-tour="profile-stats"]',
-      content:
-        "Track your key performance metrics: total trades, win rate, followers, and following.",
+      content: "View your key performance metrics and trading statistics.",
       placement: "bottom",
     },
     {
-      target: '[data-tour="profile-tabs"]',
-      content:
-        "Navigate between your reviews, statistics, network, and settings.",
+      target: '[data-tour="profile-bio"]',
+      content: "Share your trading journey and strategy with the community.",
       placement: "bottom",
+    },
+    {
+      target: '[data-tour="profile-reviews"]',
+      content:
+        "Access all your trade reviews and share your trading experiences.",
+      placement: "top",
+      scrollToSteps: true,
+    },
+    {
+      target: '[data-tour="profile-network"]',
+      content:
+        "Manage your connections with other traders and see who follows you.",
+      placement: "bottom",
+    },
+    {
+      target: '[data-tour="profile-settings"]',
+      content: "Customize your profile settings and notification preferences.",
+      placement: "left",
+    },
+    {
+      target: '[data-tour="trading-history"]',
+      content:
+        "Review your complete trading history and performance analytics.",
+      placement: "top",
+      scrollToSteps: true,
+    },
+    {
+      target: '[data-tour="achievement-badges"]',
+      content: "Track your trading achievements and milestones.",
+      placement: "bottom",
+      scrollToSteps: true,
     },
   ];
 
@@ -84,8 +114,13 @@ const ProfileTour = () => {
       showProgress
       showSkipButton
       hideCloseButton
+      scrollToFirstStep
+      scrollOffset={100}
       disableOverlayClose
       disableCloseOnEsc
+      floaterProps={{
+        disableAnimation: true,
+      }}
       callback={handleJoyrideCallback}
       styles={tourStyles}
     />

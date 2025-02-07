@@ -1,4 +1,4 @@
-// components/tours/TradersTour.jsx
+// src/components/tours/TradersTour.jsx
 import React, { useState, useEffect } from "react";
 import Joyride, { STATUS } from "react-joyride";
 import { useAuth } from "../context/AuthContext";
@@ -11,26 +11,60 @@ const TradersTour = () => {
   const steps = [
     {
       target: '[data-tour="traders-content"]',
-      content: "Discover and connect with fellow traders in the community.",
+      content:
+        "Welcome to the Traders section! Connect with fellow traders and build your network.",
       placement: "top",
       disableBeacon: true,
     },
     {
+      target: '[data-tour="traders-intro"]',
+      content:
+        "Discover traders with similar strategies and learn from their experiences.",
+      placement: "bottom",
+      scrollToSteps: true,
+    },
+    {
+      target: '[data-tour="traders-filters"]',
+      content:
+        "Filter traders by trading style, experience level, and performance metrics.",
+      placement: "bottom",
+    },
+    {
       target: '[data-tour="traders-search"]',
-      content: "Search for traders by name or trading style.",
+      content:
+        "Search for specific traders by name or trading characteristics.",
       placement: "bottom",
     },
     {
       target: '[data-tour="trader-card"]',
       content:
-        "View trader profiles with their stats, trading style, and follow them to stay connected.",
+        "View detailed trader profiles including their stats, style, and recent activity.",
       placement: "top",
+      scrollToSteps: true,
     },
     {
       target: '[data-tour="trader-stats"]',
       content:
-        "See key performance metrics like total trades, win rate, and profit.",
+        "See key performance metrics like win rate, average profit, and total trades.",
       placement: "bottom",
+    },
+    {
+      target: '[data-tour="trader-follow"]',
+      content:
+        "Follow traders to stay updated with their latest trades and insights.",
+      placement: "left",
+    },
+    {
+      target: '[data-tour="trader-connect"]',
+      content: "Connect directly with traders to share ideas and strategies.",
+      placement: "right",
+    },
+    {
+      target: '[data-tour="trader-reviews"]',
+      content:
+        "Access traders' public trade reviews and learn from their analysis.",
+      placement: "top",
+      scrollToSteps: true,
     },
   ];
 
@@ -82,8 +116,13 @@ const TradersTour = () => {
       showProgress
       showSkipButton
       hideCloseButton
+      scrollToFirstStep
+      scrollOffset={100}
       disableOverlayClose
       disableCloseOnEsc
+      floaterProps={{
+        disableAnimation: true,
+      }}
       callback={handleJoyrideCallback}
       styles={tourStyles}
     />

@@ -1,4 +1,4 @@
-// components/tours/LeaderboardTour.jsx
+// src/components/tours/LeaderboardTour.jsx
 import React, { useState, useEffect } from "react";
 import Joyride, { STATUS } from "react-joyride";
 import { useAuth } from "../context/AuthContext";
@@ -12,32 +12,61 @@ const LeaderboardTour = () => {
     {
       target: '[data-tour="leaderboard-content"]',
       content:
-        "Welcome to the Leaderboard! Track the performance of top traders.",
+        "Welcome to the Leaderboard! Track top performers and measure your progress.",
       placement: "top",
       disableBeacon: true,
     },
     {
+      target: '[data-tour="leaderboard-overview"]',
+      content:
+        "See the community's best traders and their performance metrics.",
+      placement: "bottom",
+      scrollToSteps: true,
+    },
+    {
       target: '[data-tour="leaderboard-timeframe"]',
       content:
-        "Filter rankings by different time periods - today, week, month, or all time.",
+        "Switch between different time periods - daily, weekly, monthly, or all-time rankings.",
       placement: "bottom",
     },
     {
       target: '[data-tour="leaderboard-metrics"]',
       content:
-        "Sort traders by different metrics: total profit, win rate, or number of trades.",
+        "Sort by different metrics like total profit, win rate, or number of trades.",
       placement: "bottom",
     },
     {
-      target: '[data-tour="top-stats"]',
+      target: '[data-tour="top-performers"]',
       content:
-        "Quick view of the current top performers in different categories.",
+        "View the current top traders in different performance categories.",
       placement: "top",
+      scrollToSteps: true,
+    },
+    {
+      target: '[data-tour="your-rank"]',
+      content:
+        "Track your own ranking and see how you compare to other traders.",
+      placement: "bottom",
     },
     {
       target: '[data-tour="leaderboard-table"]',
-      content: "Detailed rankings showing each trader's performance metrics.",
+      content:
+        "Detailed rankings showing each trader's performance statistics.",
       placement: "top",
+      scrollToSteps: true,
+    },
+    {
+      target: '[data-tour="trader-profile-link"]',
+      content:
+        "Click on any trader to view their detailed profile and trading history.",
+      placement: "right",
+    },
+    {
+      target: '[data-tour="rankings-history"]',
+      content:
+        "Track how rankings change over time and identify consistent performers.",
+      placement: "top",
+      scrollToSteps: true,
     },
   ];
 
@@ -89,8 +118,13 @@ const LeaderboardTour = () => {
       showProgress
       showSkipButton
       hideCloseButton
+      scrollToFirstStep
+      scrollOffset={100}
       disableOverlayClose
       disableCloseOnEsc
+      floaterProps={{
+        disableAnimation: true,
+      }}
       callback={handleJoyrideCallback}
       styles={tourStyles}
     />

@@ -8,6 +8,7 @@ import {
   Trash2,
   ChevronDown,
   ChevronRight,
+  Target,
 } from "lucide-react";
 import TradePlanModal from "../components/TradePlanModal";
 import { useTradePlans } from "../hooks/useTradePlans";
@@ -145,7 +146,7 @@ const TradePlanning = () => {
               </td>
             </tr>
             {expandedPlanId === plan._id && (
-              <tr className="bg-gray-50">
+              <tr className="bg-gray-50" data-tour="plan-details">
                 <td colSpan="9">
                   <div className="px-4 py-3 grid grid-cols-3 gap-6">
                     {/* Column 1 */}
@@ -337,9 +338,15 @@ const TradePlanning = () => {
   return (
     <div className="p-6">
       <TradePlanningTour />
-      <div className="flex justify-between items-center mb-6">
+      <div
+        className="flex justify-between items-center mb-6"
+        data-tour="plan-info"
+      >
         <h1 className="text-2xl font-bold text-gray-900">Trade Planning</h1>
-        <div className="flex items-center space-x-4">
+        <div
+          className="flex items-center space-x-4"
+          data-tour="plan-management"
+        >
           <div className="flex border border-gray-300 rounded-lg">
             <button
               onClick={() => setView("list")}
@@ -370,6 +377,98 @@ const TradePlanning = () => {
             <Plus size={20} />
             New Plan
           </button>
+        </div>
+      </div>
+
+      {/* Info Section - Add after the header div and before Quick Stats */}
+      <div className="space-y-4 mb-6" data-tour="plan-info">
+        {/* Main Info Box */}
+        <div className="bg-blue-50 p-4 rounded-lg">
+          <p className="text-sm text-blue-700">Trade Planning Features:</p>
+          <ul className="text-xs text-blue-600 mt-2 space-y-1">
+            <li>• Create detailed trade plans before entering positions</li>
+            <li>• Track execution quality with built-in checklists</li>
+            <li>• Monitor your planning success rate and patterns</li>
+            <li>• Review and update plan statuses as trades progress</li>
+          </ul>
+          <p className="text-xs text-blue-600 mt-2 italic">
+            Pro tip: Create plans in advance during your pre-market routine
+          </p>
+        </div>
+
+        {/* Stats Info Box */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="bg-gray-50 p-4 rounded-lg">
+            <div className="flex items-start gap-2">
+              <FileText className="h-5 w-5 text-gray-600 mt-0.5" />
+              <div>
+                <h4 className="text-sm font-medium text-gray-900">
+                  Plan Management
+                </h4>
+                <ul className="text-xs text-gray-600 mt-1 space-y-1">
+                  <li>
+                    • Switch between list and grid views for different
+                    perspectives
+                  </li>
+                  <li>• Click row arrows to see detailed plan information</li>
+                  <li>• Update plan status as your trade progresses</li>
+                  <li>• Track execution metrics and notes for each plan</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-gray-50 p-4 rounded-lg">
+            <div className="flex items-start gap-2">
+              <Target className="h-5 w-5 text-gray-600 mt-0.5" />
+              <div>
+                <h4 className="text-sm font-medium text-gray-900">
+                  Success Metrics
+                </h4>
+                <ul className="text-xs text-gray-600 mt-1 space-y-1">
+                  <li>
+                    • Monitor your planning consistency with total plans count
+                  </li>
+                  <li>• Track execution rate of planned trades</li>
+                  <li>• Measure success rate of executed plans</li>
+                  <li>• Calculate average risk-reward ratios across plans</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Add explanation tooltip for the stats section */}
+      <div className="mb-4" data-tour="plan-metrics-info">
+        <div className="bg-gray-50 p-3 rounded-md">
+          <p className="text-sm text-gray-700">Performance Metrics:</p>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-2">
+            <div>
+              <p className="text-xs font-medium text-gray-900">Total Plans</p>
+              <p className="text-xs text-gray-600">All trade plans created</p>
+            </div>
+            <div>
+              <p className="text-xs font-medium text-gray-900">
+                Executed Plans
+              </p>
+              <p className="text-xs text-gray-600">
+                Plans that led to actual trades
+              </p>
+            </div>
+            <div>
+              <p className="text-xs font-medium text-gray-900">Success Rate</p>
+              <p className="text-xs text-gray-600">
+                Percentage of profitable executed plans
+              </p>
+            </div>
+            <div>
+              <p className="text-xs font-medium text-gray-900">Avg R:R Ratio</p>
+              <p className="text-xs text-gray-600">
+                Average reward vs risk ratio of plans
+              </p>
+            </div>
+          </div>
         </div>
       </div>
 
