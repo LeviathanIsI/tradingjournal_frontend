@@ -3,16 +3,6 @@ import { useNavigate, useLocation } from "react-router-dom";
 
 const AuthContext = createContext(null);
 
-const defaultTourStatus = {
-  dashboardTourCompleted: false,
-  communityNavTourCompleted: false,
-  tradePlanningTourCompleted: false,
-  profileTourCompleted: false,
-  featuredTourCompleted: false,
-  leaderboardTourCompleted: false,
-  reviewsTourCompleted: false,
-};
-
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -22,10 +12,6 @@ export const AuthProvider = ({ children }) => {
   const updateUser = (userData) => {
     const updatedUser = {
       ...userData,
-      tourStatus: {
-        ...defaultTourStatus,
-        ...(userData.tourStatus || {}),
-      },
       preferences: {
         ...(userData.preferences || {}),
       },
@@ -72,7 +58,7 @@ export const AuthProvider = ({ children }) => {
     if (token && storedUser) {
       try {
         const parsedUser = JSON.parse(storedUser);
-        updateUser(parsedUser); // Use updateUser to ensure proper tour status
+        updateUser(parsedUser);
         validateAuth();
       } catch (error) {
         console.error("Error parsing stored user:", error);
@@ -85,13 +71,8 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (userData) => {
     localStorage.setItem("token", userData.token);
-    // Ensure proper tour status initialization during login
     const userDataToStore = {
       ...userData,
-      tourStatus: {
-        ...defaultTourStatus,
-        ...(userData.tourStatus || {}),
-      },
     };
     localStorage.setItem("user", JSON.stringify(userDataToStore));
     setUser(userDataToStore);

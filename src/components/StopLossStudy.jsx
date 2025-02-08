@@ -580,9 +580,7 @@ const StopLossStudy = ({ trades, user, stats, experienceLevel }) => {
 
   return (
     <div
-      className="bg-white p-4 rounded shadow h-full"
-      data-tour="exit-analysis"
-    >
+      className="bg-white p-4 rounded shadow h-full">
       <div className="grid grid-cols-2 gap-4">
         {/* Left Side - Exit Analysis */}
         <div>

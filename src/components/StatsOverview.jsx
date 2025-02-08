@@ -3,10 +3,8 @@ import React from "react";
 const StatsOverview = ({ user, stats, formatCurrency }) => {
   return (
     <div
-      className="grid grid-cols-1 md:grid-cols-3 gap-4"
-      data-tour="stats-overview"
-    >
-      <div className="bg-white p-4 rounded shadow" data-tour="starting-capital">
+      className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="bg-white p-4 rounded shadow">
         <div className="flex justify-between">
           <div>
             <h3 className="text-sm text-black">Starting Capital</h3>

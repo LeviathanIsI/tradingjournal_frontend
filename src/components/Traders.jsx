@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Search, UserCheck, UserPlus } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
-import TradersTour from "./TradersTour";
 
 const Traders = () => {
   const [traders, setTraders] = useState([]);
@@ -92,10 +91,9 @@ const Traders = () => {
     );
 
   return (
-    <div className="space-y-6 p-6" data-tour="traders-content">
-      <TradersTour />
+    <div className="space-y-6 p-6">
       {/* Search Bar */}
-      <div className="relative max-w-md mx-auto" data-tour="traders-search">
+      <div className="relative max-w-md mx-auto">
         <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
         <input
           type="text"
@@ -111,9 +109,7 @@ const Traders = () => {
         {filteredTraders.map((trader) => (
           <div
             key={trader._id}
-            className="bg-white rounded-lg shadow p-6"
-            data-tour="trader-card"
-          >
+            className="bg-white rounded-lg shadow p-6">
             <div className="flex justify-between items-start mb-4">
               <Link to={`/community/profile/${trader.username}`}>
                 <h3 className="text-lg font-medium text-gray-900 hover:text-blue-600">
@@ -156,9 +152,7 @@ const Traders = () => {
             </div>
 
             <div
-              className="mt-4 pt-4 border-t grid grid-cols-3 gap-4"
-              data-tour="trader-stats"
-            >
+              className="mt-4 pt-4 border-t grid grid-cols-3 gap-4">
               <div className="text-center">
                 <p className="text-lg font-semibold text-gray-900">
                   {trader.stats?.totalTrades || 0}

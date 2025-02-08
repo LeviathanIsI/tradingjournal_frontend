@@ -13,7 +13,6 @@ import {
 import YourReviews from "./YourReviews";
 import ProfileSettings from "./ProfileSettings";
 import ProfileStats from "./ProfileStats";
-import ProfileTour from "./ProfileTour";
 import Network from "./Network";
 
 const Profile = () => {
@@ -108,16 +107,10 @@ const Profile = () => {
   const isFollowing = profile.user.followers?.includes(currentUser?._id);
 
   return (
-    <div
-      className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8"
-      data-tour="profile-content"
-    >
-      <ProfileTour />
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       {/* Profile Header */}
       <div
-        className="bg-white rounded-lg shadow p-6 mb-6"
-        data-tour="profile-header"
-      >
+        className="bg-white rounded-lg shadow p-6 mb-6">
         <div className="flex justify-between items-start">
           <div>
             <h1 className="text-2xl font-bold text-gray-900">
@@ -159,9 +152,7 @@ const Profile = () => {
 
         {/* Stats */}
         <div
-          className="grid grid-cols-4 gap-4 mt-6 pt-6 border-t"
-          data-tour="profile-stats"
-        >
+          className="grid grid-cols-4 gap-4 mt-6 pt-6 border-t">
           <div className="text-center">
             <p className="text-2xl font-bold text-gray-900">
               {profile.stats?.totalTrades || 0}
@@ -192,7 +183,7 @@ const Profile = () => {
       {/* Content Tabs */}
       <div className="bg-white rounded-lg shadow">
         <div className="border-b border-gray-200">
-          <nav className="flex gap-4 px-6" data-tour="profile-tabs">
+          <nav className="flex gap-4 px-6">
             <button
               onClick={() => setActiveTab("reviews")}
               className={`px-3 py-4 text-sm font-medium border-b-2 ${

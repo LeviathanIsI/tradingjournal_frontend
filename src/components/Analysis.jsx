@@ -5,13 +5,13 @@ import StreakAndDrawdown from "./StreakAndDrawdown";
 
 const Analysis = ({ trades, activeChart, setActiveChart }) => {
   return (
-    <div className="bg-white p-6 rounded shadow" data-tour="performance-charts">
+    <div className="bg-white p-6 rounded shadow">
       <div className="min-h-[500px] flex flex-col">
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-lg font-semibold text-gray-900">
             Performance Analysis
           </h2>
-          <div className="flex gap-2" data-tour="chart-controls">
+          <div className="flex gap-2">
             <button
               onClick={() => setActiveChart("pnl")}
               className={`px-3 py-1 rounded-lg ${

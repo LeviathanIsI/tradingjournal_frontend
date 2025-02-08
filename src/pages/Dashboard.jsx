@@ -8,7 +8,6 @@ import { useAuth } from "../context/AuthContext";
 import ReviewModal from "../components/ReviewModal";
 import ImportTradeModal from "../components/ImportTradeModal";
 import DashboardNav from "../components/DashboardNav";
-import DashboardTour from "../components/DashboardTour";
 import { formatInTimeZone } from "date-fns-tz";
 import Overview from "../components/Overview";
 import TradeJournal from "../components/TradeJournal";
@@ -196,7 +195,6 @@ const Dashboard = () => {
 
   return (
     <div className="w-full p-6 text-black">
-      <DashboardTour />
       <DashboardNav />
       <div className="p-6 bg-gray-50">
         <StatsOverview

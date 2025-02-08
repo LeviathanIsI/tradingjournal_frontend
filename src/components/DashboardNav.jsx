@@ -40,9 +40,7 @@ const DashboardNav = () => {
 
   return (
     <div
-      className="bg-white border-b border-gray-200"
-      data-tour="dashboard-nav"
-    >
+      className="bg-white border-b border-gray-200">
       <div className="flex justify-center space-x-8">
         {navItems.map((item) => {
           const Icon = item.icon;

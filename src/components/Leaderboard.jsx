@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Trophy, TrendingUp, Target, LineChart } from "lucide-react";
-import LeaderboardTour from "./LeadboardTour";
 
 const Leaderboard = () => {
   const [traders, setTraders] = useState([]);
@@ -72,13 +71,12 @@ const Leaderboard = () => {
     );
 
   return (
-    <div className="space-y-6 p-6" data-tour="leaderboard-content">
+    <div className="space-y-6 p-6">
       {/* Header */}
       <div className="flex justify-between items-center">
         <h2 className="text-2xl font-bold text-gray-900">Trader Leaderboard</h2>
         <div className="flex gap-4">
           <select
-            data-tour="leaderboard-timeframe"
             value={timeFrame}
             onChange={(e) => setTimeFrame(e.target.value)}
             className="px-3 py-2 border border-gray-300 rounded-lg text-sm"
@@ -90,7 +88,6 @@ const Leaderboard = () => {
             <option value="year">This Year</option>
           </select>
           <select
-            data-tour="leaderboard-metrics"
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value)}
             className="px-3 py-2 border border-gray-300 rounded-lg text-sm"
@@ -104,9 +101,7 @@ const Leaderboard = () => {
 
       {/* Stats Cards */}
       <div
-        className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8"
-        data-tour="top-stats"
-      >
+        className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
         <div className="bg-blue-50 p-6 rounded-lg">
           <div className="flex items-center gap-2 mb-2">
             <Trophy className="h-5 w-5 text-blue-600" />
@@ -163,10 +158,7 @@ const Leaderboard = () => {
 
       {/* Leaderboard Table */}
       <div
-        className="bg-white rounded-lg shadow overflow-hidden"
-        data-tour="leaderboard-table"
-      >
-        <LeaderboardTour />
+        className="bg-white rounded-lg shadow overflow-hidden">
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
             <tr>
