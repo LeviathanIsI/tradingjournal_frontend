@@ -31,6 +31,7 @@ const ProfileSettings = ({
     startingCapital: currentSettings?.preferences?.startingCapital || "",
     defaultCurrency: currentSettings?.preferences?.defaultCurrency || "USD",
     timeZone: currentSettings?.preferences?.timeZone || "UTC",
+    experienceLevel: currentSettings?.preferences?.experienceLevel || "",
   });
 
   const timeZones = [
@@ -140,9 +141,11 @@ const ProfileSettings = ({
         },
         body: JSON.stringify({
           preferences: {
-            startingCapital: accountForm.startingCapital,
+            ...user.preferences,
+            startingCapital: Number(accountForm.startingCapital),
             defaultCurrency: accountForm.defaultCurrency,
             timeZone: accountForm.timeZone,
+            experienceLevel: accountForm.experienceLevel,
           },
         }),
       });
@@ -152,7 +155,12 @@ const ProfileSettings = ({
       }
 
       const data = await response.json();
-      await onSettingsSubmit(data.data);
+
+      updateUser({
+        ...user,
+        preferences: data.data,
+      });
+      
       setSuccess("Account settings updated successfully");
     } catch (error) {
       setError("Error saving settings: " + error.message);
@@ -425,6 +433,27 @@ const ProfileSettings = ({
                   </option>
                 ))}
               </select>
+              <div>
+                <label className="block text-sm font-medium text-gray-700">
+                  Experience Level
+                </label>
+                <select
+                  name="experienceLevel"
+                  value={accountForm.experienceLevel}
+                  onChange={handleAccountChange}
+                  className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                >
+                  <option value="auto">Auto-calculate from trades</option>
+                  <option value="beginner">Beginner</option>
+                  <option value="intermediate">Intermediate</option>
+                  <option value="advanced">Advanced</option>
+                </select>
+                <p className="mt-1 text-sm text-gray-500">
+                  {accountForm.experienceLevel === "auto"
+                    ? "Experience level will be calculated automatically based on your last 90 days of trading performance (requires at least 10 trades)"
+                    : "Manually set experience level will override automatic calculation"}
+                </p>
+              </div>
             </div>
 
             <div className="flex justify-end">

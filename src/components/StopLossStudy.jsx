@@ -1,6 +1,6 @@
 import React, { useMemo, useState, useEffect } from "react";
 
-const StopLossStudy = ({ trades, user, stats }) => {
+const StopLossStudy = ({ trades, user, stats, experienceLevel }) => {
   const [planEntry, setPlanEntry] = useState("");
   const [planShares, setPlanShares] = useState("");
   const [plannedRisk, setPlannedRisk] = useState(null);
@@ -9,6 +9,119 @@ const StopLossStudy = ({ trades, user, stats }) => {
   const RISK_PERCENTAGE = 10; // 10% account risk
   const STOP_LOSS_PERCENTAGE = 5; // 5% below entry
   const REWARD_MULTIPLIER = 3; // 3x risk for reward (1:3 ratio)
+
+  const getExperienceFactors = () => {
+    // Initialize result object with common properties
+    let result = {
+      stopLossMultiplier: 1.2, // Default to beginner values
+      targetMultiplier: 0.8,
+      holdTimeAdjustment: 0.8,
+      displayLevel: "Unknown",
+      explanation: "Calculating experience level...",
+    };
+
+    // If user has explicitly set their experience level and it's not auto
+    if (
+      user?.preferences?.experienceLevel &&
+      user.preferences.experienceLevel !== "auto"
+    ) {
+      const effectiveExperience = user.preferences.experienceLevel;
+      return {
+        ...result,
+        stopLossMultiplier:
+          effectiveExperience === "beginner"
+            ? 1.2
+            : effectiveExperience === "intermediate"
+            ? 1.0
+            : 0.8,
+        targetMultiplier:
+          effectiveExperience === "beginner"
+            ? 0.8
+            : effectiveExperience === "intermediate"
+            ? 1.0
+            : 1.2,
+        holdTimeAdjustment:
+          effectiveExperience === "beginner"
+            ? 0.8
+            : effectiveExperience === "intermediate"
+            ? 1.0
+            : 1.2,
+        displayLevel:
+          effectiveExperience.charAt(0).toUpperCase() +
+          effectiveExperience.slice(1), // Capitalize first letter
+        explanation: `Manually set to ${effectiveExperience}`,
+      };
+    }
+
+    // For auto mode, calculate based on trade history
+    const recentTrades =
+      trades?.filter((trade) => {
+        const tradeDate = new Date(trade.exitDate);
+        const daysDiff = (new Date() - tradeDate) / (1000 * 60 * 60 * 24);
+        return daysDiff <= 90;
+      }) || [];
+
+    // If in auto mode but not enough trades
+    if (recentTrades.length < 10) {
+      return {
+        ...result,
+        displayLevel: "Auto Mode",
+        explanation: `Need at least 10 trades to calculate (currently have ${recentTrades.length})`,
+      };
+    }
+
+    // Calculate metrics from recent trades
+    const winRate =
+      recentTrades.filter((t) => t.profitLoss.realized > 0).length /
+      recentTrades.length;
+    const avgProfit =
+      recentTrades.reduce((acc, t) => acc + t.profitLoss.realized, 0) /
+      recentTrades.length;
+    const consistencyScore =
+      recentTrades
+        .map((t) => t.profitLoss.realized)
+        .reduce((acc, curr, _, arr) => {
+          const mean = arr.reduce((sum, val) => sum + val, 0) / arr.length;
+          return acc + Math.pow(curr - mean, 2);
+        }, 0) / recentTrades.length;
+
+    // Determine experience level based on multiple factors
+    let inferredExperience;
+    if (winRate >= 0.6 && avgProfit > 0 && consistencyScore < 100) {
+      inferredExperience = "advanced";
+    } else if (winRate >= 0.45 && avgProfit > 0) {
+      inferredExperience = "intermediate";
+    } else {
+      inferredExperience = "beginner";
+    }
+
+    return {
+      stopLossMultiplier:
+        inferredExperience === "beginner"
+          ? 1.2
+          : inferredExperience === "intermediate"
+          ? 1.0
+          : 0.8,
+      targetMultiplier:
+        inferredExperience === "beginner"
+          ? 0.8
+          : inferredExperience === "intermediate"
+          ? 1.0
+          : 1.2,
+      holdTimeAdjustment:
+        inferredExperience === "beginner"
+          ? 0.8
+          : inferredExperience === "intermediate"
+          ? 1.0
+          : 1.2,
+      displayLevel: `Auto Mode (${
+        inferredExperience.charAt(0).toUpperCase() + inferredExperience.slice(1)
+      })`,
+      explanation: `Calculated from ${
+        recentTrades.length
+      } trades in last 90 days (Win Rate: ${(winRate * 100).toFixed(1)}%)`,
+    };
+  };
 
   const accountBalance =
     (user?.preferences?.startingCapital || 0) + (stats?.totalProfit || 0);
@@ -104,6 +217,7 @@ const StopLossStudy = ({ trades, user, stats }) => {
           timingQuality,
         };
       }
+
       return {
         volatility: null,
         momentum: null,
@@ -259,6 +373,32 @@ const StopLossStudy = ({ trades, user, stats }) => {
         const isNearClose = timeOfExit >= 15.5; // After 3:30 PM
         const isNearOpen = timeOfExit <= 10; // Before 10:00 AM
 
+        const missedOpportunities = tradesWithTimings.reduce(
+          (acc, trade) => {
+            const exitPrice = trade.exitPrice;
+            const optimalPrice =
+              trade.type === "LONG" ? trade.postExitHigh : trade.postExitLow;
+            const missedAmount = Math.abs(optimalPrice - exitPrice);
+            const missedPercent = (missedAmount / exitPrice) * 100;
+
+            return {
+              count: acc.count + (missedPercent > 2 ? 1 : 0),
+              totalMissed: acc.totalMissed + missedAmount,
+              instances: [
+                ...acc.instances,
+                {
+                  symbol: trade.symbol,
+                  missed: missedAmount,
+                  percent: missedPercent,
+                },
+              ]
+                .sort((a, b) => b.missed - a.missed)
+                .slice(0, 3),
+            };
+          },
+          { count: 0, totalMissed: 0, instances: [] }
+        );
+
         const priceImprovement =
           trade.type === "LONG"
             ? ((trade.postExitHigh - trade.exitPrice) / trade.exitPrice) * 100
@@ -313,25 +453,35 @@ const StopLossStudy = ({ trades, user, stats }) => {
 
     // More granular hold time suggestions
     if (quickMoveRate > 0.6) {
-      suggestedHold = "3-8 minutes";
-      holdContext = "Very quick moves, tight exits recommended";
-    } else if (avgTimeToOptimal <= 10 && favorableTimingRate > 0.7) {
-      suggestedHold = "5-12 minutes";
-      holdContext = "Fast directional moves, quick targets";
-    } else if (avgTimeToOptimal <= 15 && favorableTimingRate > 0.6) {
-      suggestedHold = "10-15 minutes";
-      holdContext = "Strong momentum, allow small pullbacks";
-    } else if (avgTimeToOptimal <= 20 && favorableTimingRate > 0.5) {
-      suggestedHold = "15-25 minutes";
-      holdContext = "Moderate momentum, be patient";
-    } else if (avgTimeToOptimal <= 30) {
-      suggestedHold = "20-35 minutes";
-      holdContext = `Slower moves, avg gain ${avgImprovement.toFixed(1)}%`;
-    } else {
-      suggestedHold = "30-60 minutes";
-      holdContext = `Trending move, ${
-        favorableTimingRate > 0.5 ? "steady trend" : "watch for reversals"
+      holdContext = `Based on your last ${
+        timingAnalysis.count
+      } trades, you're seeing quick price movements within 3-8 minutes. ${
+        missedOpportunities.count > 0
+          ? `You've missed potential gains of $${missedOpportunities.totalMissed.toFixed(
+              2
+            )} by exiting too early in ${missedOpportunities.count} trades.`
+          : "Your exit timing has been effective."
       }`;
+    } else if (avgTimeToOptimal <= 15) {
+      holdContext = `Your trades typically reach optimal prices within 15 minutes. Notable examples include ${missedOpportunities.instances
+        .map((i) => `${i.symbol} (${i.percent.toFixed(1)}% potential)`)
+        .join(
+          ", "
+        )}. Consider giving trades more room to develop while maintaining your stop loss discipline.`;
+    }
+
+    if (quickMoveRate > 0.6) {
+      suggestedHold = "3-8";
+    } else if (avgTimeToOptimal <= 10 && favorableTimingRate > 0.7) {
+      suggestedHold = "5-12";
+    } else if (avgTimeToOptimal <= 15 && favorableTimingRate > 0.6) {
+      suggestedHold = "10-15";
+    } else if (avgTimeToOptimal <= 20 && favorableTimingRate > 0.5) {
+      suggestedHold = "15-25";
+    } else if (avgTimeToOptimal <= 30) {
+      suggestedHold = "20-35";
+    } else {
+      suggestedHold = "30-60";
     }
 
     // Time of day adjustments
@@ -372,6 +522,19 @@ const StopLossStudy = ({ trades, user, stats }) => {
 
     finalTarget = (Number(finalTarget) * targetMultiplier).toFixed(2);
 
+    const expFactors = getExperienceFactors();
+    finalStopLoss = (
+      Number(finalStopLoss) * expFactors.stopLossMultiplier
+    ).toFixed(2);
+    finalTarget = (Number(finalTarget) * expFactors.targetMultiplier).toFixed(
+      2
+    );
+    suggestedHold =
+      suggestedHold
+        .split("-")
+        .map((t) => (Number(t) * expFactors.holdTimeAdjustment).toFixed(0))
+        .join("-") + " minutes";
+
     return {
       suggestedStopLoss: finalStopLoss,
       suggestedTarget: finalTarget,
@@ -379,6 +542,8 @@ const StopLossStudy = ({ trades, user, stats }) => {
       baseTarget: suggestedTarget,
       suggestedHoldTime: suggestedHold,
       holdTimeContext: holdContext,
+      experienceLevel: expFactors.displayLevel,
+      experienceContext: expFactors.explanation,
     };
   }, [trades]);
 
@@ -485,6 +650,15 @@ const StopLossStudy = ({ trades, user, stats }) => {
                   )}
                   <p className="text-xs text-gray-500 mt-1">
                     Optimal hold duration based on price movement analysis
+                  </p>
+                </div>
+                <div>
+                  <p className="text-xs text-gray-500 mb-1">Experience Level</p>
+                  <p className="text-lg font-bold text-purple-600">
+                    {analysis?.experienceLevel || "Unknown"}
+                  </p>
+                  <p className="text-xs text-gray-500 mt-1">
+                    {analysis?.experienceContext || ""}
                   </p>
                 </div>
               </>

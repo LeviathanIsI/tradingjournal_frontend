@@ -1,5 +1,12 @@
-import React from "react";
-import { Pencil, Trash2, BookOpen, X } from "lucide-react";
+import React, { useState, useMemo } from "react";
+import {
+  Pencil,
+  Trash2,
+  BookOpen,
+  X,
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react";
 
 const TradeJournal = ({
   trades,
@@ -18,6 +25,175 @@ const TradeJournal = ({
   setSelectedTradeForReview,
   setIsReviewModalOpen,
 }) => {
+  // Pagination and display settings
+  const [currentPage, setCurrentPage] = useState(1);
+  const [entriesPerPage, setEntriesPerPage] = useState(10);
+  const [timeFilter, setTimeFilter] = useState("all");
+  const [customDateRange, setCustomDateRange] = useState({
+    start: "",
+    end: "",
+  });
+
+  // Filter trades based on time period
+  const filteredTrades = useMemo(() => {
+    const now = new Date();
+    const startOfDay = new Date(now.setHours(0, 0, 0, 0));
+    const startOfWeek = new Date(now.setDate(now.getDate() - now.getDay()));
+    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+    const startOfYear = new Date(now.getFullYear(), 0, 1);
+
+    return trades.filter((trade) => {
+      const tradeDate = new Date(trade.entryDate);
+      switch (timeFilter) {
+        case "day":
+          return tradeDate >= startOfDay;
+        case "week":
+          return tradeDate >= startOfWeek;
+        case "month":
+          return tradeDate >= startOfMonth;
+        case "year":
+          return tradeDate >= startOfYear;
+        case "custom":
+          if (!customDateRange.start || !customDateRange.end) return true;
+          const start = new Date(customDateRange.start + "T00:00:00");
+          const end = new Date(customDateRange.end + "T23:59:59.999");
+          const tzOffset = new Date().getTimezoneOffset() * 60000;
+          const startTimestamp = start.getTime() - tzOffset;
+          const endTimestamp = end.getTime() - tzOffset;
+          const tradeDateTimestamp = tradeDate.getTime();
+
+          return (
+            tradeDateTimestamp >= startTimestamp &&
+            tradeDateTimestamp <= endTimestamp
+          );
+        default:
+          return true;
+      }
+    });
+  }, [trades, timeFilter, customDateRange]);
+
+  // Calculate pagination
+  const totalPages = Math.ceil(filteredTrades.length / entriesPerPage);
+  const indexOfLastTrade = currentPage * entriesPerPage;
+  const indexOfFirstTrade = indexOfLastTrade - entriesPerPage;
+  const currentTrades = filteredTrades.slice(
+    indexOfFirstTrade,
+    indexOfLastTrade
+  );
+
+  // Pagination controls
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
+
+  // Additional controls UI
+  const renderControls = () => (
+    <div className="flex flex-wrap justify-between items-center mb-4 gap-4">
+      <div className="flex items-center gap-4">
+        <select
+          value={timeFilter}
+          onChange={(e) => {
+            setTimeFilter(e.target.value);
+            setCurrentPage(1);
+          }}
+          className="border rounded px-3 py-2 text-sm"
+        >
+          <option value="all">All Time</option>
+          <option value="day">Today</option>
+          <option value="week">This Week</option>
+          <option value="month">This Month</option>
+          <option value="year">This Year</option>
+          <option value="custom">Custom Range</option>
+        </select>
+
+        {timeFilter === "custom" && (
+          <div className="flex items-center gap-2">
+            <input
+              type="date"
+              value={customDateRange.start}
+              onChange={(e) =>
+                setCustomDateRange((prev) => ({
+                  ...prev,
+                  start: e.target.value,
+                }))
+              }
+              className="border rounded px-3 py-2 text-sm"
+            />
+            <span>to</span>
+            <input
+              type="date"
+              value={customDateRange.end}
+              onChange={(e) =>
+                setCustomDateRange((prev) => ({ ...prev, end: e.target.value }))
+              }
+              className="border rounded px-3 py-2 text-sm"
+            />
+          </div>
+        )}
+
+        <select
+          value={entriesPerPage}
+          onChange={(e) => {
+            setEntriesPerPage(Number(e.target.value));
+            setCurrentPage(1);
+          }}
+          className="border rounded px-3 py-2 text-sm"
+        >
+          <option value={5}>5 per page</option>
+          <option value={10}>10 per page</option>
+          <option value={25}>25 per page</option>
+          <option value={50}>50 per page</option>
+          <option value={filteredTrades.length}>All</option>
+        </select>
+      </div>
+
+      <div className="text-sm text-gray-600">
+        Showing {indexOfFirstTrade + 1} to{" "}
+        {Math.min(indexOfLastTrade, filteredTrades.length)} of{" "}
+        {filteredTrades.length} entries
+      </div>
+    </div>
+  );
+
+  // Pagination UI
+  const renderPagination = () => (
+    <div className="flex justify-between items-center mt-4">
+      <button
+        onClick={() => handlePageChange(currentPage - 1)}
+        disabled={currentPage === 1}
+        className="flex items-center gap-1 px-3 py-2 rounded border enabled:hover:bg-gray-50 disabled:opacity-50"
+      >
+        <ChevronLeft className="h-4 w-4" />
+        Previous
+      </button>
+
+      <div className="flex items-center gap-2">
+        {Array.from({ length: totalPages }, (_, i) => i + 1).map((number) => (
+          <button
+            key={number}
+            onClick={() => handlePageChange(number)}
+            className={`px-3 py-2 rounded border ${
+              currentPage === number
+                ? "bg-blue-600 text-white"
+                : "hover:bg-gray-50"
+            }`}
+          >
+            {number}
+          </button>
+        ))}
+      </div>
+
+      <button
+        onClick={() => handlePageChange(currentPage + 1)}
+        disabled={currentPage === totalPages}
+        className="flex items-center gap-1 px-3 py-2 rounded border enabled:hover:bg-gray-50 disabled:opacity-50"
+      >
+        Next
+        <ChevronRight className="h-4 w-4" />
+      </button>
+    </div>
+  );
+
   return (
     <div className="space-y-4">
       <div className="bg-blue-50 p-3 rounded-md">
@@ -88,6 +264,8 @@ const TradeJournal = ({
           </div>
         </div>
 
+        {renderControls()}
+
         <div className="overflow-x-auto">
           <table className="min-w-full">
             <thead>
@@ -96,11 +274,10 @@ const TradeJournal = ({
                   <div className="flex justify-center">
                     <input
                       type="checkbox"
-                      checked={
-                        selectedTrades.size === trades.length &&
-                        trades.length > 0
-                      }
-                      onChange={handleSelectAll}
+                      checked={currentTrades.every((trade) =>
+                        selectedTrades.has(trade._id)
+                      )}
+                      onChange={() => handleSelectAll(currentTrades)}
                       className="w-4 h-4 rounded border-gray-300"
                     />
                   </div>
@@ -115,14 +292,16 @@ const TradeJournal = ({
               </tr>
             </thead>
             <tbody>
-              {trades.length === 0 ? (
+              {currentTrades.length === 0 ? (
                 <tr className="text-black text-center">
                   <td colSpan="8" className="py-4">
-                    No trades yet
+                    {filteredTrades.length === 0
+                      ? "No trades found for the selected period"
+                      : "No trades on this page"}
                   </td>
                 </tr>
               ) : (
-                trades.map((trade) => (
+                currentTrades.map((trade) => (
                   <tr key={trade._id} className="border-b hover:bg-gray-50">
                     <td className="w-12 py-3 px-4">
                       <div className="flex justify-center">
@@ -192,6 +371,7 @@ const TradeJournal = ({
             </tbody>
           </table>
         </div>
+        {renderPagination()}
       </div>
     </div>
   );

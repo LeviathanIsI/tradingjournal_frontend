@@ -107,13 +107,19 @@ const Dashboard = () => {
     setSelectedTrades(newSelected);
   };
 
-  const handleSelectAll = () => {
-    if (selectedTrades.size === trades.length) {
-      setSelectedTrades(new Set());
-    } else {
-      setSelectedTrades(new Set(trades.map((trade) => trade._id)));
-    }
-  };
+  const handleSelectAll = (currentTrades) => {
+  const areAllSelected = currentTrades.every(trade => selectedTrades.has(trade._id));
+  
+  if (areAllSelected) {
+    const newSelected = new Set(selectedTrades);
+    currentTrades.forEach(trade => newSelected.delete(trade._id));
+    setSelectedTrades(newSelected);
+  } else {
+    const newSelected = new Set(selectedTrades);
+    currentTrades.forEach(trade => newSelected.add(trade._id));
+    setSelectedTrades(newSelected);
+  }
+};
 
   const handleBulkDelete = async () => {
     if (selectedTrades.size === 0) return;

@@ -26,6 +26,9 @@ export const AuthProvider = ({ children }) => {
         ...defaultTourStatus,
         ...(userData.tourStatus || {}),
       },
+      preferences: {
+        ...(userData.preferences || {}),
+      },
     };
     setUser(updatedUser);
     localStorage.setItem("user", JSON.stringify(updatedUser));
