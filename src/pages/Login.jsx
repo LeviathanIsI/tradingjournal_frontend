@@ -101,6 +101,20 @@ const Login = () => {
             {loading ? "Signing in..." : "Sign in"}
           </button>
         </form>
+        <div className="flex justify-between items-center mt-4">
+          <button
+            onClick={() => navigate("/signup")}
+            className="text-sm text-blue-600 hover:text-blue-800"
+          >
+            Create an account
+          </button>
+          <button
+            onClick={() => navigate("/forgot-password")}
+            className="text-sm text-blue-600 hover:text-blue-800"
+          >
+            Forgot your password?
+          </button>
+        </div>
       </div>
     </div>
   );

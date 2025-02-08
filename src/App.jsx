@@ -18,6 +18,7 @@ import Dashboard from "./pages/Dashboard";
 import TradePlanning from "./pages/TradePlanning";
 import Community from "./pages/Community";
 import Traders from "./components/Traders";
+import ForgotPassword from "./pages/ForgotPassword";
 
 const ProtectedRoute = ({ children }) => {
   const { user } = useAuth();
@@ -97,6 +98,7 @@ function AppRoutes() {
           </ProtectedRoute>
         }
       />
+      <Route path="/forgot-password" element={<ForgotPassword />} />
     </Routes>
   );
 }
@@ -105,10 +107,10 @@ function App() {
   return (
     <Router>
       <AuthProvider>
-          <div className="w-screen min-h-screen bg-white">
-            <Navbar />
-            <AppRoutes />
-          </div>
+        <div className="w-screen min-h-screen bg-white">
+          <Navbar />
+          <AppRoutes />
+        </div>
       </AuthProvider>
     </Router>
   );
