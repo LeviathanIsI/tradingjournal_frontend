@@ -18,6 +18,7 @@ import Dashboard from "./pages/Dashboard";
 import TradePlanning from "./pages/TradePlanning";
 import Community from "./pages/Community";
 import Traders from "./components/Traders";
+import TourProvider from "./context/TourContext";
 
 const ProtectedRoute = ({ children }) => {
   const { user } = useAuth();
@@ -105,10 +106,12 @@ function App() {
   return (
     <Router>
       <AuthProvider>
-        <div className="w-screen min-h-screen bg-white">
-          <Navbar />
-          <AppRoutes />
-        </div>
+        <TourProvider>
+          <div className="w-screen min-h-screen bg-white">
+            <Navbar />
+            <AppRoutes />
+          </div>
+        </TourProvider>
       </AuthProvider>
     </Router>
   );

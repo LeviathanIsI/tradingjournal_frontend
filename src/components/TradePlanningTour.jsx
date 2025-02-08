@@ -2,14 +2,15 @@
 import React, { useState, useEffect } from "react";
 import Joyride, { STATUS } from "react-joyride";
 import { useAuth } from "../context/AuthContext";
+import { useTour } from "../context/TourContext";
 import { tourStyles } from "./tourStyles";
 
 const TradePlanningTour = () => {
   const { user, updateUser } = useAuth();
+  const { activeTour, setActiveTour } = useTour();
   const [runTour, setRunTour] = useState(false);
   const [steps, setSteps] = useState([]);
 
-  // Define steps once all elements are mounted
   useEffect(() => {
     const timer = setTimeout(() => {
       setSteps([
@@ -21,14 +22,20 @@ const TradePlanningTour = () => {
           disableBeacon: true,
         },
         {
-          target: '[data-tour="plan-stats"]',
-          content: "Track your planning effectiveness with key metrics.",
-          placement: "bottom",
-        },
-        {
           target: '[data-tour="plan-management"]',
           content:
             "Switch between list and grid views, update plan statuses, and track execution.",
+          placement: "bottom",
+        },
+        {
+          target: '[data-tour="plan-metrics-info"]',
+          content:
+            "Understand your planning metrics and performance indicators.",
+          placement: "bottom",
+        },
+        {
+          target: '[data-tour="plan-stats"]',
+          content: "Track your planning effectiveness with key metrics.",
           placement: "bottom",
         },
         {
@@ -43,7 +50,7 @@ const TradePlanningTour = () => {
           placement: "top",
         },
       ]);
-    }, 500); // Wait for elements to mount
+    }, 500);
 
     return () => clearTimeout(timer);
   }, []);
@@ -52,22 +59,19 @@ const TradePlanningTour = () => {
     if (
       user &&
       !user.tourStatus?.tradePlanningTourCompleted &&
+      !activeTour &&
       steps.length > 0
     ) {
+      setActiveTour("tradePlanning");
       const timer = setTimeout(() => {
         setRunTour(true);
       }, 1000);
       return () => clearTimeout(timer);
     }
-  }, [user, steps]);
+  }, [user, activeTour, steps]);
 
   const handleJoyrideCallback = async (data) => {
-    const { status, type } = data;
-
-    // Handle step transitions
-    if (type === "step:after") {
-      // Add any specific step handling if needed
-    }
+    const { status } = data;
 
     if ([STATUS.FINISHED, STATUS.SKIPPED].includes(status)) {
       try {
@@ -97,10 +101,11 @@ const TradePlanningTour = () => {
         console.error("Error completing tour:", error);
       }
       setRunTour(false);
+      setActiveTour(null);
     }
   };
 
-  // Don't render the tour if no steps are available
+  if (activeTour !== "tradePlanning") return null;
   if (steps.length === 0) return null;
 
   return (
@@ -115,7 +120,6 @@ const TradePlanningTour = () => {
       scrollOffset={100}
       disableOverlayClose
       disableCloseOnEsc
-      spotlightClicks={true}
       floaterProps={{
         disableAnimation: true,
       }}

@@ -2,10 +2,12 @@
 import React, { useState, useEffect } from "react";
 import Joyride, { STATUS } from "react-joyride";
 import { useAuth } from "../context/AuthContext";
+import { useTour } from "../context/TourContext";
 import { tourStyles } from "./tourStyles";
 
 const LeaderboardTour = () => {
   const { user, updateUser } = useAuth();
+  const { activeTour, setActiveTour } = useTour();
   const [runTour, setRunTour] = useState(false);
 
   const steps = [
@@ -15,13 +17,6 @@ const LeaderboardTour = () => {
         "Welcome to the Leaderboard! Track top performers and measure your progress.",
       placement: "top",
       disableBeacon: true,
-    },
-    {
-      target: '[data-tour="leaderboard-overview"]',
-      content:
-        "See the community's best traders and their performance metrics.",
-      placement: "bottom",
-      scrollToSteps: true,
     },
     {
       target: '[data-tour="leaderboard-timeframe"]',
@@ -40,13 +35,6 @@ const LeaderboardTour = () => {
       content:
         "View the current top traders in different performance categories.",
       placement: "top",
-      scrollToSteps: true,
-    },
-    {
-      target: '[data-tour="your-rank"]',
-      content:
-        "Track your own ranking and see how you compare to other traders.",
-      placement: "bottom",
     },
     {
       target: '[data-tour="leaderboard-table"]',
@@ -55,29 +43,17 @@ const LeaderboardTour = () => {
       placement: "top",
       scrollToSteps: true,
     },
-    {
-      target: '[data-tour="trader-profile-link"]',
-      content:
-        "Click on any trader to view their detailed profile and trading history.",
-      placement: "right",
-    },
-    {
-      target: '[data-tour="rankings-history"]',
-      content:
-        "Track how rankings change over time and identify consistent performers.",
-      placement: "top",
-      scrollToSteps: true,
-    },
   ];
 
   useEffect(() => {
-    if (user && !user.tourStatus?.leaderboardTourCompleted) {
+    if (user && !user.tourStatus?.leaderboardTourCompleted && !activeTour) {
+      setActiveTour("leaderboard");
       const timer = setTimeout(() => {
         setRunTour(true);
       }, 1000);
       return () => clearTimeout(timer);
     }
-  }, [user]);
+  }, [user, activeTour]);
 
   const handleJoyrideCallback = async (data) => {
     const { status } = data;
@@ -107,8 +83,11 @@ const LeaderboardTour = () => {
         console.error("Error completing tour:", error);
       }
       setRunTour(false);
+      setActiveTour(null);
     }
   };
+
+  if (activeTour !== "leaderboard") return null;
 
   return (
     <Joyride

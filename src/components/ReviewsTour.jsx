@@ -2,42 +2,37 @@
 import React, { useState, useEffect } from "react";
 import Joyride, { STATUS } from "react-joyride";
 import { useAuth } from "../context/AuthContext";
+import { useTour } from "../context/TourContext";
 import { tourStyles } from "./tourStyles";
 
 const ReviewsTour = () => {
   const { user, updateUser } = useAuth();
+  const { activeTour, setActiveTour } = useTour();
   const [runTour, setRunTour] = useState(false);
 
   const steps = [
     {
       target: '[data-tour="reviews-content"]',
       content:
-        "Welcome to Trade Reviews! Share and learn from the community's trading experiences.",
+        "Browse through trade reviews from the community. Learn from others' experiences and insights.",
       placement: "top",
       disableBeacon: true,
     },
     {
-      target: '[data-tour="reviews-intro"]',
-      content:
-        "Get insights into different trading strategies and learn from both wins and losses.",
-      placement: "bottom",
-      scrollToSteps: true,
-    },
-    {
       target: '[data-tour="reviews-filters"]',
       content:
-        "Filter reviews by trade type, profit range, and date to find relevant examples.",
-      placement: "bottom",
-    },
-    {
-      target: '[data-tour="reviews-search"]',
-      content: "Search for specific symbols, traders, or strategies.",
+        "Filter reviews by profit type, date, and other criteria to find the most relevant trades.",
       placement: "bottom",
     },
     {
       target: '[data-tour="reviews-sort"]',
       content:
-        "Sort reviews by different metrics like profit, date, or popularity.",
+        "Sort reviews by different metrics like newest, most liked, or highest profit.",
+      placement: "bottom",
+    },
+    {
+      target: '[data-tour="reviews-search"]',
+      content: "Search for specific traders or review content.",
       placement: "bottom",
     },
     {
@@ -47,33 +42,17 @@ const ReviewsTour = () => {
       placement: "top",
       scrollToSteps: true,
     },
-    {
-      target: '[data-tour="review-interactions"]',
-      content:
-        "Engage with reviews through likes, comments, and save them for future reference.",
-      placement: "bottom",
-    },
-    {
-      target: '[data-tour="create-review"]',
-      content: "Share your own trade reviews to contribute to the community.",
-      placement: "left",
-    },
-    {
-      target: '[data-tour="reviews-stats"]',
-      content: "Track review metrics and your contribution to the community.",
-      placement: "bottom",
-      scrollToSteps: true,
-    },
   ];
 
   useEffect(() => {
-    if (user && !user.tourStatus?.reviewsTourCompleted) {
+    if (user && !user.tourStatus?.reviewsTourCompleted && !activeTour) {
+      setActiveTour("reviews");
       const timer = setTimeout(() => {
         setRunTour(true);
       }, 1000);
       return () => clearTimeout(timer);
     }
-  }, [user]);
+  }, [user, activeTour]);
 
   const handleJoyrideCallback = async (data) => {
     const { status } = data;
@@ -103,8 +82,11 @@ const ReviewsTour = () => {
         console.error("Error completing tour:", error);
       }
       setRunTour(false);
+      setActiveTour(null);
     }
   };
+
+  if (activeTour !== "reviews") return null;
 
   return (
     <Joyride

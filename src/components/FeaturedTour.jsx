@@ -2,10 +2,12 @@
 import React, { useState, useEffect } from "react";
 import Joyride, { STATUS } from "react-joyride";
 import { useAuth } from "../context/AuthContext";
+import { useTour } from "../context/TourContext";
 import { tourStyles } from "./tourStyles";
 
 const FeaturedTour = () => {
   const { user, updateUser } = useAuth();
+  const { activeTour, setActiveTour } = useTour();
   const [runTour, setRunTour] = useState(false);
 
   const steps = [
@@ -17,64 +19,35 @@ const FeaturedTour = () => {
       disableBeacon: true,
     },
     {
-      target: '[data-tour="featured-intro"]',
+      target: '[data-tour="featured-header"]',
       content:
-        "Discover high-quality trade reviews selected for their educational value.",
+        "These reviews are selected daily based on quality and educational value.",
       placement: "bottom",
-      scrollToSteps: true,
-    },
-    {
-      target: '[data-tour="featured-filters"]',
-      content:
-        "Filter featured content by trading style, profit range, or market conditions.",
-      placement: "bottom",
-    },
-    {
-      target: '[data-tour="featured-categories"]',
-      content:
-        "Browse reviews by category - strategy breakdowns, risk management, or psychology lessons.",
-      placement: "right",
     },
     {
       target: '[data-tour="featured-review"]',
       content:
-        "Each featured review provides detailed analysis and key trading lessons.",
+        "Each featured review provides detailed analysis and valuable trading lessons.",
       placement: "top",
       scrollToSteps: true,
-    },
-    {
-      target: '[data-tour="review-metrics"]',
-      content: "See why this review was featured and what makes it valuable.",
-      placement: "bottom",
     },
     {
       target: '[data-tour="review-interactions"]',
-      content: "Engage with reviews through likes, comments, and bookmarks.",
-      placement: "left",
-    },
-    {
-      target: '[data-tour="featured-trader"]',
-      content: "Learn about the featured trader and their trading style.",
-      placement: "right",
-      scrollToSteps: true,
-    },
-    {
-      target: '[data-tour="featured-archives"]',
       content:
-        "Access previously featured reviews organized by date and category.",
-      placement: "top",
-      scrollToSteps: true,
+        "Engage with reviews through likes and comments to discuss insights with other traders.",
+      placement: "bottom",
     },
   ];
 
   useEffect(() => {
-    if (user && !user.tourStatus?.featuredTourCompleted) {
+    if (user && !user.tourStatus?.featuredTourCompleted && !activeTour) {
+      setActiveTour("featured");
       const timer = setTimeout(() => {
         setRunTour(true);
       }, 1000);
       return () => clearTimeout(timer);
     }
-  }, [user]);
+  }, [user, activeTour]);
 
   const handleJoyrideCallback = async (data) => {
     const { status } = data;
@@ -104,8 +77,11 @@ const FeaturedTour = () => {
         console.error("Error completing tour:", error);
       }
       setRunTour(false);
+      setActiveTour(null);
     }
   };
+
+  if (activeTour !== "featured") return null;
 
   return (
     <Joyride

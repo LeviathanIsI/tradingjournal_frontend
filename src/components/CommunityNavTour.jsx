@@ -2,10 +2,12 @@
 import React, { useState, useEffect } from "react";
 import Joyride, { STATUS } from "react-joyride";
 import { useAuth } from "../context/AuthContext";
+import { useTour } from "../context/TourContext";
 import { tourStyles } from "./tourStyles";
 
 const CommunityNavTour = () => {
   const { user, updateUser } = useAuth();
+  const { activeTour, setActiveTour } = useTour();
   const [runTour, setRunTour] = useState(false);
 
   const steps = [
@@ -49,23 +51,17 @@ const CommunityNavTour = () => {
       content: "View and manage your trading profile, stats, and network.",
       placement: "bottom",
     },
-    {
-      target: '[data-tour="community-network"]',
-      content:
-        "Build your trading network and follow traders with similar strategies.",
-      placement: "top",
-      scrollToSteps: true,
-    },
   ];
 
   useEffect(() => {
-    if (user && !user.tourStatus?.communityNavTourCompleted) {
+    if (user && !user.tourStatus?.communityNavTourCompleted && !activeTour) {
+      setActiveTour("community");
       const timer = setTimeout(() => {
         setRunTour(true);
       }, 1000);
       return () => clearTimeout(timer);
     }
-  }, [user]);
+  }, [user, activeTour]);
 
   const handleJoyrideCallback = async (data) => {
     const { status } = data;
@@ -95,8 +91,11 @@ const CommunityNavTour = () => {
         console.error("Error completing tour:", error);
       }
       setRunTour(false);
+      setActiveTour(null);
     }
   };
+
+  if (activeTour !== "community") return null;
 
   return (
     <Joyride

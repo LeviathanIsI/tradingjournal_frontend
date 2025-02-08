@@ -2,10 +2,12 @@
 import React, { useState, useEffect } from "react";
 import Joyride, { STATUS } from "react-joyride";
 import { useAuth } from "../context/AuthContext";
+import { useTour } from "../context/TourContext";
 import { tourStyles } from "./tourStyles";
 
 const ProfileTour = () => {
   const { user, updateUser } = useAuth();
+  const { activeTour, setActiveTour } = useTour();
   const [runTour, setRunTour] = useState(false);
 
   const steps = [
@@ -21,16 +23,10 @@ const ProfileTour = () => {
       content:
         "Your profile overview including trading style and experience level.",
       placement: "bottom",
-      scrollToSteps: true,
     },
     {
       target: '[data-tour="profile-stats"]',
       content: "View your key performance metrics and trading statistics.",
-      placement: "bottom",
-    },
-    {
-      target: '[data-tour="profile-bio"]',
-      content: "Share your trading journey and strategy with the community.",
       placement: "bottom",
     },
     {
@@ -41,39 +37,21 @@ const ProfileTour = () => {
       scrollToSteps: true,
     },
     {
-      target: '[data-tour="profile-network"]',
-      content:
-        "Manage your connections with other traders and see who follows you.",
-      placement: "bottom",
-    },
-    {
       target: '[data-tour="profile-settings"]',
       content: "Customize your profile settings and notification preferences.",
       placement: "left",
     },
-    {
-      target: '[data-tour="trading-history"]',
-      content:
-        "Review your complete trading history and performance analytics.",
-      placement: "top",
-      scrollToSteps: true,
-    },
-    {
-      target: '[data-tour="achievement-badges"]',
-      content: "Track your trading achievements and milestones.",
-      placement: "bottom",
-      scrollToSteps: true,
-    },
   ];
 
   useEffect(() => {
-    if (user && !user.tourStatus?.profileTourCompleted) {
+    if (user && !user.tourStatus?.profileTourCompleted && !activeTour) {
+      setActiveTour("profile");
       const timer = setTimeout(() => {
         setRunTour(true);
       }, 1000);
       return () => clearTimeout(timer);
     }
-  }, [user]);
+  }, [user, activeTour]);
 
   const handleJoyrideCallback = async (data) => {
     const { status } = data;
@@ -103,8 +81,11 @@ const ProfileTour = () => {
         console.error("Error completing tour:", error);
       }
       setRunTour(false);
+      setActiveTour(null);
     }
   };
+
+  if (activeTour !== "profile") return null;
 
   return (
     <Joyride

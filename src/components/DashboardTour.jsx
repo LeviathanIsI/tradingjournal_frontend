@@ -2,14 +2,15 @@
 import React, { useState, useEffect } from "react";
 import Joyride, { STATUS } from "react-joyride";
 import { useAuth } from "../context/AuthContext";
+import { useTour } from "../context/TourContext";
 import { tourStyles } from "./tourStyles";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const DashboardTour = () => {
   const { user, updateUser } = useAuth();
+  const { activeTour, setActiveTour } = useTour();
   const [runTour, setRunTour] = useState(false);
   const navigate = useNavigate();
-  const location = useLocation();
 
   const steps = [
     {
@@ -33,57 +34,49 @@ const DashboardTour = () => {
     },
     {
       target: '[href="/dashboard/journal"]',
-      content:
-        "Track all your trades in the journal. Add new trades, review past ones, and analyze your performance.",
+      content: "Track all your trades in the journal.",
       placement: "bottom",
       spotlightClicks: true,
     },
     {
       target: '[href="/dashboard/analysis"]',
-      content:
-        "Dive deep into your trading patterns with advanced charts and analytics.",
+      content: "Dive deep into your trading patterns.",
       placement: "bottom",
       spotlightClicks: true,
     },
     {
       target: '[href="/dashboard/planning"]',
-      content:
-        "Plan your trades using AI-powered insights based on your trading history.",
+      content: "Plan your trades using AI-powered insights.",
       placement: "bottom",
       spotlightClicks: true,
     },
   ];
 
   useEffect(() => {
-    if (user && !user.tourStatus?.dashboardTourCompleted) {
-      // Ensure we start at overview
-      if (location.pathname !== "/dashboard/overview") {
-        navigate("/dashboard/overview");
-      }
+    if (user && !user.tourStatus?.dashboardTourCompleted && !activeTour) {
+      setActiveTour("dashboard");
       const timer = setTimeout(() => {
         setRunTour(true);
       }, 1000);
       return () => clearTimeout(timer);
     }
-  }, [user, location.pathname, navigate]);
+  }, [user, activeTour]);
 
   const handleJoyrideCallback = async (data) => {
     const { status, type, index } = data;
 
-    // Handle step changes
     if (type === "step:after") {
-      // Navigate based on step index if needed
       switch (index) {
-        case 2: // After Overview tab explanation
+        case 2:
           navigate("/dashboard/overview");
           break;
-        case 3: // After Journal tab explanation
+        case 3:
           navigate("/dashboard/journal");
           break;
-        case 4: // After Analysis tab explanation
+        case 4:
           navigate("/dashboard/analysis");
           break;
-        case 5: // After Planning tab explanation
+        case 5:
           navigate("/dashboard/planning");
           break;
         default:
@@ -116,8 +109,11 @@ const DashboardTour = () => {
         console.error("Error completing tour:", error);
       }
       setRunTour(false);
+      setActiveTour(null);
     }
   };
+
+  if (activeTour !== "dashboard") return null;
 
   return (
     <Joyride

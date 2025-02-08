@@ -1,8 +1,17 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import PropTypes from "prop-types";
 
 const AuthContext = createContext(null);
+
+const defaultTourStatus = {
+  dashboardTourCompleted: false,
+  communityNavTourCompleted: false,
+  tradePlanningTourCompleted: false,
+  profileTourCompleted: false,
+  featuredTourCompleted: false,
+  leaderboardTourCompleted: false,
+  reviewsTourCompleted: false,
+};
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
@@ -13,7 +22,10 @@ export const AuthProvider = ({ children }) => {
   const updateUser = (userData) => {
     const updatedUser = {
       ...userData,
-      hasCompletedTour: userData.hasCompletedTour ?? false,
+      tourStatus: {
+        ...defaultTourStatus,
+        ...(userData.tourStatus || {}),
+      },
     };
     setUser(updatedUser);
     localStorage.setItem("user", JSON.stringify(updatedUser));
@@ -50,15 +62,19 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // Initial auth check
   useEffect(() => {
     const token = localStorage.getItem("token");
     const storedUser = localStorage.getItem("user");
 
     if (token && storedUser) {
-      const parsedUser = JSON.parse(storedUser);
-      setUser(parsedUser);
-      validateAuth();
+      try {
+        const parsedUser = JSON.parse(storedUser);
+        updateUser(parsedUser); // Use updateUser to ensure proper tour status
+        validateAuth();
+      } catch (error) {
+        console.error("Error parsing stored user:", error);
+        setLoading(false);
+      }
     } else {
       setLoading(false);
     }
@@ -66,9 +82,13 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (userData) => {
     localStorage.setItem("token", userData.token);
+    // Ensure proper tour status initialization during login
     const userDataToStore = {
       ...userData,
-      hasCompletedTour: userData.hasCompletedTour || false,
+      tourStatus: {
+        ...defaultTourStatus,
+        ...(userData.tourStatus || {}),
+      },
     };
     localStorage.setItem("user", JSON.stringify(userDataToStore));
     setUser(userDataToStore);
@@ -101,3 +121,5 @@ export const useAuth = () => {
   }
   return context;
 };
+
+export default AuthProvider;
