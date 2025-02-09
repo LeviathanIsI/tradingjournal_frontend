@@ -5,10 +5,13 @@ const StopLossStudy = ({ trades, user, stats, experienceLevel }) => {
   const [planShares, setPlanShares] = useState("");
   const [plannedRisk, setPlannedRisk] = useState(null);
   const [plannedReward, setPlannedReward] = useState(null);
+  const [supportPrice, setSupportPrice] = useState("");
+  const [resistancePrice, setResistancePrice] = useState("");
+  const [useSupRes, setUseSupRes] = useState(false);
 
-  const RISK_PERCENTAGE = 10; // 10% account risk
-  const STOP_LOSS_PERCENTAGE = 5; // 5% below entry
-  const REWARD_MULTIPLIER = 3; // 3x risk for reward (1:3 ratio)
+  const RISK_PERCENTAGE = 10;
+  const STOP_LOSS_PERCENTAGE = 5;
+  const REWARD_MULTIPLIER = 3;
 
   const getExperienceFactors = () => {
     // Initialize result object with common properties
@@ -550,37 +553,68 @@ const StopLossStudy = ({ trades, user, stats, experienceLevel }) => {
   useEffect(() => {
     if (planEntry) {
       const entry = Number(planEntry);
-      const stopPrice = entry * (1 - STOP_LOSS_PERCENTAGE / 100); // 5% below entry
-      const riskAmount = entry - stopPrice; // Distance to stop
-      const targetPrice = entry + riskAmount * REWARD_MULTIPLIER; // 3x risk for reward
+      let stopPrice, targetPrice;
+
+      if (useSupRes && supportPrice && resistancePrice) {
+        // If using support/resistance and both values are provided
+        const support = Number(supportPrice);
+        const resistance = Number(resistancePrice);
+
+        // Calculate stop based on support level if it's a long trade
+        // or resistance level if it's a short trade
+        const isLongTrade = entry <= resistance;
+        stopPrice = isLongTrade ? support : resistance;
+
+        // Ensure minimum stop distance is respected
+        const minimumStopPrice = entry * (1 - STOP_LOSS_PERCENTAGE / 100);
+        if (isLongTrade) {
+          stopPrice = Math.max(stopPrice, minimumStopPrice);
+        } else {
+          stopPrice = Math.min(
+            stopPrice,
+            entry * (1 + STOP_LOSS_PERCENTAGE / 100)
+          );
+        }
+
+        // Calculate target based on resistance for longs or support for shorts
+        targetPrice = isLongTrade ? resistance : support;
+
+        // Ensure minimum reward-to-risk ratio
+        const riskAmount = Math.abs(entry - stopPrice);
+        const minTarget = isLongTrade
+          ? entry + riskAmount * REWARD_MULTIPLIER
+          : entry - riskAmount * REWARD_MULTIPLIER;
+
+        targetPrice = isLongTrade
+          ? Math.max(targetPrice, minTarget)
+          : Math.min(targetPrice, minTarget);
+      } else {
+        // Use original calculation if not using support/resistance
+        stopPrice = entry * (1 - STOP_LOSS_PERCENTAGE / 100);
+        const riskAmount = entry - stopPrice;
+        targetPrice = entry + riskAmount * REWARD_MULTIPLIER;
+      }
 
       // Calculate per-share values
       const riskPerShare = Number(Math.abs(entry - stopPrice).toFixed(2));
       const rewardPerShare = Number(Math.abs(targetPrice - entry).toFixed(2));
 
-      // Calculate maximum position size (10% of account)
+      // Calculate position size
       const maxPositionValue = accountBalance * (RISK_PERCENTAGE / 100);
       const calculatedShares = Math.floor(maxPositionValue / entry);
 
-      // Update shares
       setPlanShares(calculatedShares.toString());
-
-      // Calculate risk/reward based on calculated shares
-      const actualRisk = (calculatedShares * riskPerShare).toFixed(2);
-      const actualReward = (calculatedShares * rewardPerShare).toFixed(2);
-
-      setPlannedRisk(actualRisk);
-      setPlannedReward(actualReward);
+      setPlannedRisk((calculatedShares * riskPerShare).toFixed(2));
+      setPlannedReward((calculatedShares * rewardPerShare).toFixed(2));
     } else {
       setPlannedRisk(null);
       setPlannedReward(null);
       setPlanShares("");
     }
-  }, [planEntry, accountBalance]);
+  }, [planEntry, accountBalance, supportPrice, resistancePrice, useSupRes]);
 
   return (
-    <div
-      className="bg-white p-4 rounded shadow h-full">
+    <div className="bg-white p-4 rounded shadow h-full">
       <div className="grid grid-cols-2 gap-4">
         {/* Left Side - Exit Analysis */}
         <div>
@@ -674,8 +708,14 @@ const StopLossStudy = ({ trades, user, stats, experienceLevel }) => {
                 • Maximum position: 10% of account ($
                 {(accountBalance * (RISK_PERCENTAGE / 100)).toFixed(2)})
               </li>
-              <li>• Stop loss: Fixed 5% below entry price</li>
-              <li>• Target: 3x distance to stop (1:3 ratio)</li>
+              <li>
+                • Stop loss: Fixed 5% below entry price
+                {useSupRes ? " or support/resistance level" : ""}
+              </li>
+              <li>
+                • Target: 3x distance to stop (1:3 ratio)
+                {useSupRes ? " or support/resistance level" : ""}
+              </li>
             </ul>
           </div>
           <div className="space-y-4">
@@ -692,6 +732,50 @@ const StopLossStudy = ({ trades, user, stats, experienceLevel }) => {
                 min="0"
               />
             </div>
+
+            <div className="flex items-center space-x-2 my-2">
+              <input
+                type="checkbox"
+                id="useSupRes"
+                checked={useSupRes}
+                onChange={(e) => setUseSupRes(e.target.checked)}
+                className="custom-checkbox"
+              />
+              <label htmlFor="useSupRes" className="text-sm text-gray-700">
+                Use Support/Resistance Levels
+              </label>
+            </div>
+
+            {useSupRes && (
+              <div className="space-y-3">
+                <div>
+                  <label className="block text-xs text-gray-500 mb-1">
+                    Support Price
+                  </label>
+                  <input
+                    type="number"
+                    value={supportPrice}
+                    onChange={(e) => setSupportPrice(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded"
+                    step="0.01"
+                    min="0"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs text-gray-500 mb-1">
+                    Resistance Price
+                  </label>
+                  <input
+                    type="number"
+                    value={resistancePrice}
+                    onChange={(e) => setResistancePrice(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded"
+                    step="0.01"
+                    min="0"
+                  />
+                </div>
+              </div>
+            )}
 
             {planEntry && (
               <>

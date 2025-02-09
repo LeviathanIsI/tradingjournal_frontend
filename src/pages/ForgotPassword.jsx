@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import SecurityQuestions from "../components/SecurityQuestions";
+import ResetPassword from "../components/ResetPassword";
 
 const ForgotPassword = () => {
   const [step, setStep] = useState(1);

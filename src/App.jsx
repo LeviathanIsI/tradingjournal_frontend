@@ -9,6 +9,7 @@ import {
   useNavigate,
 } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
+import { ToastProvider } from "./context/ToastContext";
 import { useAuth } from "./context/AuthContext";
 import Navbar from "./components/Navbar";
 import Home from "./pages/Home";
@@ -107,13 +108,14 @@ function App() {
   return (
     <Router>
       <AuthProvider>
-        <div className="w-screen min-h-screen bg-white">
-          <Navbar />
-          <AppRoutes />
-        </div>
+        <ToastProvider>
+          <div className="w-screen min-h-screen bg-white">
+            <Navbar />
+            <AppRoutes />
+          </div>
+        </ToastProvider>
       </AuthProvider>
     </Router>
   );
 }
-
 export default App;
