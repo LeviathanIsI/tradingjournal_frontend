@@ -1,4 +1,3 @@
-// src/pages/Home.jsx
 import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
@@ -6,26 +5,27 @@ const Home = () => {
   const { user } = useAuth();
 
   return (
-    <div className="w-screen min-h-[calc(100vh-64px)] bg-white">
+    <div className="w-screen min-h-[calc(100vh-64px)] bg-white dark:bg-gray-900">
       {/* Hero section */}
       <div className="w-full px-4 pt-14">
         <div className="w-full py-32 sm:py-48 lg:py-56">
           <div className="text-center">
-            <h1 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl">
+            <h1 className="text-4xl font-bold tracking-tight text-gray-900 dark:text-gray-100 sm:text-6xl">
               Track Your Trades,
               <br />
               Improve Your
               <br />
               Performance
             </h1>
-            <p className="mt-6 text-lg leading-8 text-gray-600">
+            <p className="mt-6 text-lg leading-8 text-gray-600 dark:text-gray-300">
               A comprehensive trading journal to help you analyze your trades,
               track your performance, and become a better trader.
             </p>
             <div className="mt-10 flex items-center justify-center gap-x-6">
               <Link
                 to="/signup"
-                className="rounded-md bg-blue-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-blue-700"
+                className="rounded-md bg-blue-600 px-3.5 py-2.5 text-sm font-semibold text-white 
+                  shadow-sm hover:bg-blue-700 dark:hover:bg-blue-500"
               >
                 Get started
               </Link>
@@ -35,13 +35,13 @@ const Home = () => {
       </div>
 
       {/* Feature section */}
-      <div className="w-full bg-gray-50 py-24 sm:py-32">
+      <div className="w-full bg-gray-50 dark:bg-gray-800 py-24 sm:py-32">
         <div className="w-full px-4 lg:px-8">
           <div className="text-center">
-            <h2 className="text-base font-semibold leading-7 text-blue-600">
+            <h2 className="text-base font-semibold leading-7 text-blue-600 dark:text-blue-400">
               Track Better
             </h2>
-            <p className="mt-2 text-3xl font-bold tracking-tight text-gray-900">
+            <p className="mt-2 text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-100">
               Everything you need to analyze your trades
             </p>
           </div>
@@ -50,10 +50,10 @@ const Home = () => {
             <div className="grid grid-cols-1 gap-x-8 gap-y-16 lg:grid-cols-3">
               {/* Feature 1 */}
               <div className="flex flex-col">
-                <div className="text-base font-semibold leading-7 text-gray-900">
+                <div className="text-base font-semibold leading-7 text-gray-900 dark:text-gray-100">
                   Comprehensive Trading
                 </div>
-                <div className="mt-2 flex flex-auto flex-col text-base leading-7 text-gray-600">
+                <div className="mt-2 flex flex-auto flex-col text-base leading-7 text-gray-600 dark:text-gray-400">
                   <p>
                     Track entries, exits, position sizes, and strategies. Add
                     notes to document your thought process.
@@ -63,10 +63,10 @@ const Home = () => {
 
               {/* Feature 2 */}
               <div className="flex flex-col">
-                <div className="text-base font-semibold leading-7 text-gray-900">
+                <div className="text-base font-semibold leading-7 text-gray-900 dark:text-gray-100">
                   Performance Analytics
                 </div>
-                <div className="mt-2 flex flex-auto flex-col text-base leading-7 text-gray-600">
+                <div className="mt-2 flex flex-auto flex-col text-base leading-7 text-gray-600 dark:text-gray-400">
                   <p>
                     View detailed statistics and charts. Analyze your win rate,
                     average returns, and risk metrics.
@@ -76,10 +76,10 @@ const Home = () => {
 
               {/* Feature 3 */}
               <div className="flex flex-col">
-                <div className="text-base font-semibold leading-7 text-gray-900">
+                <div className="text-base font-semibold leading-7 text-gray-900 dark:text-gray-100">
                   Journal & Reports
                 </div>
-                <div className="mt-2 flex flex-auto flex-col text-base leading-7 text-gray-600">
+                <div className="mt-2 flex flex-auto flex-col text-base leading-7 text-gray-600 dark:text-gray-400">
                   <p>
                     Keep detailed notes on your trades and generate
                     comprehensive reports to track your progress.

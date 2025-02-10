@@ -124,8 +124,6 @@ const SignUp = () => {
 
     setLoading(true);
 
-    console.log("Sending data:", formData);
-
     try {
       const response = await fetch("http://localhost:5000/api/auth/register", {
         method: "POST",
@@ -136,7 +134,6 @@ const SignUp = () => {
       });
 
       const data = await response.json();
-      console.log("Server response:", data);
 
       if (!response.ok) {
         throw new Error(data.error || "Registration failed");

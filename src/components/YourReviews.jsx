@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
-import { Eye, EyeOff, Edit, MessageCircle, Heart } from "lucide-react";
+import { Eye, EyeOff, Edit, MessageCircle, Heart, Trash2 } from "lucide-react";
 import ReviewModal from "./ReviewModal";
 
 const YourReviews = ({ userId }) => {
@@ -66,6 +66,34 @@ const YourReviews = ({ userId }) => {
     });
     setIsEditModalOpen(true);
     setSelectedReview(review);
+  };
+
+  // Add this function in YourReviews component
+  const handleDelete = async (reviewId) => {
+    if (!window.confirm("Are you sure you want to delete this review?")) {
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        `http://localhost:5000/api/trade-reviews/${reviewId}`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to delete review");
+      }
+
+      // Remove the review from state
+      setReviews(reviews.filter((review) => review._id !== reviewId));
+    } catch (error) {
+      console.error("Error deleting review:", error);
+    }
   };
 
   const handleVisibilityToggle = async (review) => {
@@ -197,6 +225,13 @@ const YourReviews = ({ userId }) => {
                     title="Edit Review"
                   >
                     <Edit className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+                  </button>
+                  <button
+                    onClick={() => handleDelete(review._id)}
+                    className="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded"
+                    title="Delete Review"
+                  >
+                    <Trash2 className="h-5 w-5 text-red-600 dark:text-red-400" />
                   </button>
                 </div>
               )}

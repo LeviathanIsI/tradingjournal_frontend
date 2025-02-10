@@ -1,5 +1,5 @@
-// src/context/ThemeContext.jsx
 import React, { createContext, useContext, useState, useEffect } from "react";
+import { useAuth } from "./AuthContext";
 
 const ThemeContext = createContext(null);
 
@@ -9,10 +9,19 @@ export const THEME_MODES = {
 };
 
 export const ThemeProvider = ({ children }) => {
+  const { user, updateUser } = useAuth();
   const [themeMode, setThemeMode] = useState(() => {
     const savedTheme = localStorage.getItem("theme-mode");
     return savedTheme || THEME_MODES.LIGHT;
   });
+
+  // Sync theme with user preferences when they log in
+  useEffect(() => {
+    if (user?.preferences?.darkMode && themeMode === THEME_MODES.LIGHT) {
+      setThemeMode(THEME_MODES.DARK);
+      localStorage.setItem("theme-mode", THEME_MODES.DARK);
+    }
+  }, [user]);
 
   useEffect(() => {
     document.documentElement.classList.toggle(
@@ -21,12 +30,42 @@ export const ThemeProvider = ({ children }) => {
     );
   }, [themeMode]);
 
-  const toggleTheme = () => {
+  const toggleTheme = async () => {
     const newTheme =
       themeMode === THEME_MODES.LIGHT ? THEME_MODES.DARK : THEME_MODES.LIGHT;
     setThemeMode(newTheme);
     localStorage.setItem("theme-mode", newTheme);
     document.documentElement.classList.toggle("dark");
+
+    // Update user preferences if logged in
+    if (user) {
+      try {
+        const response = await fetch(
+          "http://localhost:5000/api/auth/settings",
+          {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+            body: JSON.stringify({
+              preferences: {
+                ...user.preferences,
+                darkMode: newTheme === THEME_MODES.DARK,
+              },
+            }),
+          }
+        );
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          console.error("Server response error:", errorData);
+          throw new Error(errorData.error || "Failed to update theme");
+        }
+      } catch (error) {
+        console.error("Error updating theme preference:", error);
+      }
+    }
   };
 
   return (

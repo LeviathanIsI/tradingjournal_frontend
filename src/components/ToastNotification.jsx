@@ -3,11 +3,9 @@ import React, { useEffect } from "react";
 
 const ToastNotification = ({ message, type = "success", onClose }) => {
   useEffect(() => {
-    console.log("Toast mounted with message:", message);
 
     // Auto-hide after 5 seconds
     const timer = setTimeout(() => {
-      console.log("Auto-closing toast");
       onClose();
     }, 5000);
 

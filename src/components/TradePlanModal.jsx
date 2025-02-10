@@ -132,10 +132,11 @@ const TradePlanModal = ({ isOpen, onClose, onSubmit, plan }) => {
                 </label>
                 <input
                   type="text"
+                  autocomplete="off"
                   name="ticker"
                   value={formData.ticker}
                   onChange={handleChange}
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                  className="peer w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                   required
                 />
               </div>
@@ -266,6 +267,7 @@ const TradePlanModal = ({ isOpen, onClose, onSubmit, plan }) => {
                   </label>
                   <input
                     type="number"
+                    autocomplete="off"
                     name="quality.float"
                     value={formData.quality.float || ""}
                     onChange={handleChange}
@@ -278,6 +280,7 @@ const TradePlanModal = ({ isOpen, onClose, onSubmit, plan }) => {
                   </label>
                   <input
                     type="text"
+                    autocomplete="off"
                     name="quality.supportArea"
                     value={formData.quality.supportArea || ""}
                     onChange={handleChange}
@@ -290,6 +293,7 @@ const TradePlanModal = ({ isOpen, onClose, onSubmit, plan }) => {
                   </label>
                   <input
                     type="number"
+                    autocomplete="off"
                     name="quality.catalystRating"
                     value={formData.quality.catalystRating || ""}
                     onChange={handleChange}
@@ -334,6 +338,7 @@ const TradePlanModal = ({ isOpen, onClose, onSubmit, plan }) => {
                   </label>
                   <input
                     type="number"
+                    autocomplete="off"
                     name="execution.entry"
                     value={formData.execution.entry || ""}
                     onChange={handleChange}
@@ -347,6 +352,7 @@ const TradePlanModal = ({ isOpen, onClose, onSubmit, plan }) => {
                   </label>
                   <input
                     type="number"
+                    autocomplete="off"
                     name="execution.profitTarget"
                     value={formData.execution.profitTarget || ""}
                     onChange={handleChange}
@@ -360,6 +366,7 @@ const TradePlanModal = ({ isOpen, onClose, onSubmit, plan }) => {
                   </label>
                   <input
                     type="number"
+                    autocomplete="off"
                     name="execution.stopLoss"
                     value={formData.execution.stopLoss || ""}
                     onChange={handleChange}
@@ -377,6 +384,7 @@ const TradePlanModal = ({ isOpen, onClose, onSubmit, plan }) => {
               </label>
               <textarea
                 name="notes"
+                autocomplete="off"
                 value={formData.notes || ""}
                 onChange={handleChange}
                 rows="3"

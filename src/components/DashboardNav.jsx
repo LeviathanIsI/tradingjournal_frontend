@@ -28,7 +28,7 @@ const DashboardNav = () => {
       icon: LineChart,
     },
     {
-      label: "Planning",
+      label: "Entry/Exit Analysis",
       path: "/dashboard/planning",
       icon: Target,
     },
