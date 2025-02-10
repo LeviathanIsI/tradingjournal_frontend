@@ -120,13 +120,24 @@ const PublicReviews = () => {
     fetchReviews();
   }, []);
 
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div>Error loading reviews: {error}</div>;
-  if (!reviews.length) return <div>No public reviews available yet.</div>;
+  if (loading)
+    return <div className="text-gray-900 dark:text-gray-100">Loading...</div>;
+  if (error)
+    return (
+      <div className="text-red-600 dark:text-red-400">
+        Error loading reviews: {error}
+      </div>
+    );
+  if (!reviews.length)
+    return (
+      <div className="text-gray-900 dark:text-gray-100">
+        No public reviews available yet.
+      </div>
+    );
 
   return (
     <div className="space-y-6">
-      <h2 className="text-xl font-semibold text-gray-900">
+      <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
         Public Trade Reviews
       </h2>
 
@@ -142,18 +153,21 @@ const PublicReviews = () => {
 
       <div className="grid gap-6">
         {filteredAndSortedReviews.map((review) => (
-          <div key={review._id} className="bg-white rounded-lg shadow p-6">
+          <div
+            key={review._id}
+            className="bg-white dark:bg-gray-800 rounded-lg shadow p-6"
+          >
             <div className="flex justify-between items-start mb-4">
               <div>
-                <h3 className="text-lg font-medium text-gray-900">
+                <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">
                   {review.trade?.symbol || "Unknown"} -{" "}
                   {review.trade?.type || "Unknown"}
                 </h3>
-                <p className="text-sm text-gray-500">
+                <p className="text-sm text-gray-500 dark:text-gray-400">
                   by{" "}
                   <Link
                     to={`/community/profile/${review.user.username}`}
-                    className="text-blue-600 hover:text-blue-700"
+                    className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300"
                   >
                     {review.user.username}
                   </Link>{" "}
@@ -164,8 +178,8 @@ const PublicReviews = () => {
                 <div
                   className={`px-3 py-1 rounded-full text-sm ${
                     review.trade.profitLoss.realized >= 0
-                      ? "bg-green-100 text-green-800"
-                      : "bg-red-100 text-red-800"
+                      ? "bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300"
+                      : "bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300"
                   }`}
                 >
                   {formatCurrency(review.trade.profitLoss.realized)}
@@ -175,55 +189,73 @@ const PublicReviews = () => {
 
             <div className="grid grid-cols-2 gap-6">
               <div>
-                <h4 className="font-medium text-gray-700 mb-2">
+                <h4 className="font-medium text-gray-700 dark:text-gray-300 mb-2">
                   What Went Well
                 </h4>
-                <p className="text-gray-600">{review.whatWentWell}</p>
+                <p className="text-gray-600 dark:text-gray-400">
+                  {review.whatWentWell}
+                </p>
               </div>
               <div>
-                <h4 className="font-medium text-gray-700 mb-2">
+                <h4 className="font-medium text-gray-700 dark:text-gray-300 mb-2">
                   What Went Wrong
                 </h4>
-                <p className="text-gray-600">{review.whatWentWrong}</p>
+                <p className="text-gray-600 dark:text-gray-400">
+                  {review.whatWentWrong}
+                </p>
               </div>
               <div className="col-span-2">
-                <h4 className="font-medium text-gray-700 mb-2">
+                <h4 className="font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Lessons Learned
                 </h4>
-                <p className="text-gray-600">{review.lessonLearned}</p>
+                <p className="text-gray-600 dark:text-gray-400">
+                  {review.lessonLearned}
+                </p>
               </div>
               <div className="col-span-2">
-                <h4 className="font-medium text-gray-700 mb-2">
+                <h4 className="font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Future Adjustments
                 </h4>
-                <p className="text-gray-600">{review.futureAdjustments}</p>
+                <p className="text-gray-600 dark:text-gray-400">
+                  {review.futureAdjustments}
+                </p>
               </div>
             </div>
 
-            <div className="mt-4 pt-4 border-t">
-              <h4 className="font-medium text-gray-700 mb-2">Trade Details</h4>
+            <div className="mt-4 pt-4 border-t dark:border-gray-700">
+              <h4 className="font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Trade Details
+              </h4>
               <div className="grid grid-cols-4 gap-4 text-sm">
                 <div>
-                  <span className="text-gray-500">Entry:</span>
-                  <span className="ml-2 text-gray-900">
+                  <span className="text-gray-500 dark:text-gray-400">
+                    Entry:
+                  </span>
+                  <span className="ml-2 text-gray-900 dark:text-gray-100">
                     ${review.trade.entryPrice}
                   </span>
                 </div>
                 <div>
-                  <span className="text-gray-500">Exit:</span>
-                  <span className="ml-2 text-gray-900">
+                  <span className="text-gray-500 dark:text-gray-400">
+                    Exit:
+                  </span>
+                  <span className="ml-2 text-gray-900 dark:text-gray-100">
                     ${review.trade.exitPrice}
                   </span>
                 </div>
                 <div>
-                  <span className="text-gray-500">Shares:</span>
-                  <span className="ml-2 text-gray-900">
+                  <span className="text-gray-500 dark:text-gray-400">
+                    Shares:
+                  </span>
+                  <span className="ml-2 text-gray-900 dark:text-gray-100">
                     {review.trade.entryQuantity}
                   </span>
                 </div>
                 <div>
-                  <span className="text-gray-500">Session:</span>
-                  <span className="ml-2 text-gray-900">
+                  <span className="text-gray-500 dark:text-gray-400">
+                    Session:
+                  </span>
+                  <span className="ml-2 text-gray-900 dark:text-gray-100">
                     {review.trade.session}
                   </span>
                 </div>

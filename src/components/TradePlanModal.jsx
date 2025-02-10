@@ -109,15 +109,15 @@ const TradePlanModal = ({ isOpen, onClose, onSubmit, plan }) => {
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg w-full max-w-4xl max-h-[90vh] overflow-y-auto">
+      <div className="bg-white dark:bg-gray-800 rounded-lg w-full max-w-4xl max-h-[90vh] overflow-y-auto">
         <div className="p-6">
           <div className="flex justify-between items-center mb-6">
-            <h2 className="text-xl font-semibold text-gray-900">
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
               {plan ? "Edit Trade Plan" : "New Trade Plan"}
             </h2>
             <button
               onClick={onClose}
-              className="text-gray-500 hover:text-gray-700 bg-white p-2 rounded-lg"
+              className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600"
             >
               <X size={24} />
             </button>
@@ -127,7 +127,7 @@ const TradePlanModal = ({ isOpen, onClose, onSubmit, plan }) => {
             {/* Basic Info */}
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   Ticker
                 </label>
                 <input
@@ -135,19 +135,19 @@ const TradePlanModal = ({ isOpen, onClose, onSubmit, plan }) => {
                   name="ticker"
                   value={formData.ticker}
                   onChange={handleChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded bg-white text-gray-900"
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                   required
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   Direction
                 </label>
                 <select
                   name="direction"
                   value={formData.direction}
                   onChange={handleChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded bg-white text-gray-900"
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                   required
                 >
                   <option value="LONG">Long</option>
@@ -159,86 +159,96 @@ const TradePlanModal = ({ isOpen, onClose, onSubmit, plan }) => {
 
             {/* Trade Attributes */}
             <div>
-              <h3 className="text-lg font-medium text-gray-900 mb-3">
+              <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-3">
                 Trade Attributes
               </h3>
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <label className="flex items-center">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                     <input
                       type="checkbox"
                       name="attributes.lowFloat"
                       checked={formData.attributes.lowFloat}
                       onChange={handleChange}
-                      className="appearance-none h-4 w-4 rounded border border-gray-300 bg-white checked:bg-blue-600 checked:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="h-4 w-4 rounded border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-blue-600"
                     />
-                    <span className="ml-2 text-gray-700">Low Float</span>
+                    <span className="ml-2 text-gray-700 dark:text-gray-300">
+                      Low Float
+                    </span>
                   </label>
-                  <label className="flex items-center">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                     <input
                       type="checkbox"
                       name="attributes.upMoreThan10Percent"
                       checked={formData.attributes.upMoreThan10Percent}
                       onChange={handleChange}
-                      className="appearance-none h-4 w-4 rounded border border-gray-300 bg-white checked:bg-blue-600 checked:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="h-4 w-4 rounded border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-blue-600"
                     />
-                    <span className="ml-2 text-gray-700">Up more than 10%</span>
+                    <span className="ml-2 text-gray-700 dark:text-gray-300">
+                      Up more than 10%
+                    </span>
                   </label>
-                  <label className="flex items-center">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                     <input
                       type="checkbox"
                       name="attributes.unusualVolume"
                       checked={formData.attributes.unusualVolume}
                       onChange={handleChange}
-                      className="appearance-none h-4 w-4 rounded border border-gray-300 bg-white checked:bg-blue-600 checked:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="h-4 w-4 rounded border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-blue-600"
                     />
-                    <span className="ml-2 text-gray-700">
+                    <span className="ml-2 text-gray-700 dark:text-gray-300">
                       Have Unusual Volume
                     </span>
                   </label>
-                  <label className="flex items-center">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                     <input
                       type="checkbox"
                       name="attributes.formerRunner"
                       checked={formData.attributes.formerRunner}
                       onChange={handleChange}
-                      className="appearance-none h-4 w-4 rounded border border-gray-300 bg-white checked:bg-blue-600 checked:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="h-4 w-4 rounded border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-blue-600"
                     />
-                    <span className="ml-2 text-gray-700">Former Runner</span>
+                    <span className="ml-2 text-gray-700 dark:text-gray-300">
+                      Former Runner
+                    </span>
                   </label>
                 </div>
                 <div className="space-y-2">
-                  <label className="flex items-center">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                     <input
                       type="checkbox"
                       name="attributes.hasCatalyst"
                       checked={formData.attributes.hasCatalyst}
                       onChange={handleChange}
-                      className="appearance-none h-4 w-4 rounded border border-gray-300 bg-white checked:bg-blue-600 checked:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="h-4 w-4 rounded border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-blue-600"
                     />
-                    <span className="ml-2 text-gray-700">Has Catalyst</span>
+                    <span className="ml-2 text-gray-700 dark:text-gray-300">
+                      Has Catalyst
+                    </span>
                   </label>
-                  <label className="flex items-center">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                     <input
                       type="checkbox"
                       name="attributes.wholeHalfDollarBreak"
                       checked={formData.attributes.wholeHalfDollarBreak}
                       onChange={handleChange}
-                      className="appearance-none h-4 w-4 rounded border border-gray-300 bg-white checked:bg-blue-600 checked:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="h-4 w-4 rounded border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-blue-600"
                     />
-                    <span className="ml-2 text-gray-700">
+                    <span className="ml-2 text-gray-700 dark:text-gray-300">
                       Whole/Half $ Break
                     </span>
                   </label>
-                  <label className="flex items-center">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                     <input
                       type="checkbox"
                       name="attributes.clearSupport"
                       checked={formData.attributes.clearSupport}
                       onChange={handleChange}
-                      className="appearance-none h-4 w-4 rounded border border-gray-300 bg-white checked:bg-blue-600 checked:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="h-4 w-4 rounded border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-blue-600"
                     />
-                    <span className="ml-2 text-gray-700">Clear Support</span>
+                    <span className="ml-2 text-gray-700 dark:text-gray-300">
+                      Clear Support
+                    </span>
                   </label>
                 </div>
               </div>
@@ -246,12 +256,12 @@ const TradePlanModal = ({ isOpen, onClose, onSubmit, plan }) => {
 
             {/* Quality Metrics */}
             <div>
-              <h3 className="text-lg font-medium text-gray-900 mb-3">
+              <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-3">
                 Quality of Setup
               </h3>
               <div className="grid grid-cols-3 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                     Float
                   </label>
                   <input
@@ -259,11 +269,11 @@ const TradePlanModal = ({ isOpen, onClose, onSubmit, plan }) => {
                     name="quality.float"
                     value={formData.quality.float || ""}
                     onChange={handleChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded bg-white text-gray-900"
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                     Support Area
                   </label>
                   <input
@@ -271,11 +281,11 @@ const TradePlanModal = ({ isOpen, onClose, onSubmit, plan }) => {
                     name="quality.supportArea"
                     value={formData.quality.supportArea || ""}
                     onChange={handleChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded bg-white text-gray-900"
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                     Catalyst Rating (1-10)
                   </label>
                   <input
@@ -285,7 +295,7 @@ const TradePlanModal = ({ isOpen, onClose, onSubmit, plan }) => {
                     onChange={handleChange}
                     min="1"
                     max="10"
-                    className="w-full px-3 py-2 border border-gray-300 rounded bg-white text-gray-900"
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                   />
                 </div>
               </div>
@@ -293,14 +303,14 @@ const TradePlanModal = ({ isOpen, onClose, onSubmit, plan }) => {
 
             {/* Setup Grade */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 Setup Grade
               </label>
               <select
                 name="setup.setupGrade"
                 value={formData.setup.setupGrade || ""}
                 onChange={handleChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded bg-white text-gray-900"
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
               >
                 <option value="">Select Grade</option>
                 <option value="A+">A+</option>
@@ -314,12 +324,12 @@ const TradePlanModal = ({ isOpen, onClose, onSubmit, plan }) => {
 
             {/* Execution Plan */}
             <div>
-              <h3 className="text-lg font-medium text-gray-900 mb-3">
+              <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-3">
                 Execution Plan
               </h3>
               <div className="grid grid-cols-3 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                     Entry
                   </label>
                   <input
@@ -328,11 +338,11 @@ const TradePlanModal = ({ isOpen, onClose, onSubmit, plan }) => {
                     value={formData.execution.entry || ""}
                     onChange={handleChange}
                     step="0.01"
-                    className="w-full px-3 py-2 border border-gray-300 rounded bg-white text-gray-900"
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                     Profit Target
                   </label>
                   <input
@@ -341,11 +351,11 @@ const TradePlanModal = ({ isOpen, onClose, onSubmit, plan }) => {
                     value={formData.execution.profitTarget || ""}
                     onChange={handleChange}
                     step="0.01"
-                    className="w-full px-3 py-2 border border-gray-300 rounded bg-white text-gray-900"
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                     Stop Loss
                   </label>
                   <input
@@ -354,7 +364,7 @@ const TradePlanModal = ({ isOpen, onClose, onSubmit, plan }) => {
                     value={formData.execution.stopLoss || ""}
                     onChange={handleChange}
                     step="0.01"
-                    className="w-full px-3 py-2 border border-gray-300 rounded bg-white text-gray-900"
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                   />
                 </div>
               </div>
@@ -362,7 +372,7 @@ const TradePlanModal = ({ isOpen, onClose, onSubmit, plan }) => {
 
             {/* Notes */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 Notes
               </label>
               <textarea
@@ -370,7 +380,7 @@ const TradePlanModal = ({ isOpen, onClose, onSubmit, plan }) => {
                 value={formData.notes || ""}
                 onChange={handleChange}
                 rows="3"
-                className="w-full px-3 py-2 border border-gray-300 rounded bg-white text-gray-900"
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
               />
             </div>
 
@@ -379,14 +389,14 @@ const TradePlanModal = ({ isOpen, onClose, onSubmit, plan }) => {
               <button
                 type="button"
                 onClick={onClose}
-                className="px-4 py-2 border border-gray-300 rounded bg-white text-gray-700 hover:bg-gray-50"
+                className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600"
               >
                 Cancel
               </button>
               <button
                 type="submit"
                 disabled={loading}
-                className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50"
+                className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600"
               >
                 {loading
                   ? plan

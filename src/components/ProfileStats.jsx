@@ -81,7 +81,8 @@ const ProfileStats = ({ userId, trades, stats }) => {
           <select
             value={timeFrame}
             onChange={(e) => setTimeFrame(e.target.value)}
-            className="px-3 py-2 border border-gray-300 rounded-lg text-sm"
+            className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm
+              bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
           >
             <option value="all">All Time</option>
             <option value="year">This Year</option>
@@ -93,50 +94,60 @@ const ProfileStats = ({ userId, trades, stats }) => {
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div className="bg-white rounded-lg shadow p-4">
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4">
           <div className="flex items-center gap-2 mb-2">
-            <CreditCard className="h-5 w-5 text-blue-500" />
-            <h3 className="font-medium">Total P&L</h3>
+            <CreditCard className="h-5 w-5 text-blue-500 dark:text-blue-400" />
+            <h3 className="font-medium text-gray-900 dark:text-gray-100">
+              Total P&L
+            </h3>
           </div>
           <p
             className={`text-2xl font-bold ${
-              stats.totalProfit >= 0 ? "text-green-600" : "text-red-600"
+              stats.totalProfit >= 0
+                ? "text-green-600 dark:text-green-400"
+                : "text-red-600 dark:text-red-400"
             }`}
           >
             ${stats.totalProfit.toFixed(2)}
           </p>
         </div>
 
-        <div className="bg-white rounded-lg shadow p-4">
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4">
           <div className="flex items-center gap-2 mb-2">
-            <TrendingUp className="h-5 w-5 text-green-500" />
-            <h3 className="font-medium">Win Rate</h3>
+            <TrendingUp className="h-5 w-5 text-green-500 dark:text-green-400" />
+            <h3 className="font-medium text-gray-900 dark:text-gray-100">
+              Win Rate
+            </h3>
           </div>
-          <p className="text-2xl font-bold text-gray-900">
+          <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">
             {((stats.winningTrades / stats.totalTrades) * 100).toFixed(1)}%
           </p>
         </div>
 
-        <div className="bg-white rounded-lg shadow p-4">
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4">
           <div className="flex items-center gap-2 mb-2">
-            <ChartBar className="h-5 w-5 text-purple-500" />
-            <h3 className="font-medium">Total Trades</h3>
+            <ChartBar className="h-5 w-5 text-purple-500 dark:text-purple-400" />
+            <h3 className="font-medium text-gray-900 dark:text-gray-100">
+              Total Trades
+            </h3>
           </div>
-          <p className="text-2xl font-bold text-gray-900">
+          <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">
             {stats.totalTrades}
           </p>
         </div>
 
-        <div className="bg-white rounded-lg shadow p-4">
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4">
           <div className="flex items-center gap-2 mb-2">
-            <PieChartIcon className="h-5 w-5 text-orange-500" />
-            <h3 className="font-medium">Avg. Profit per Trade</h3>
+            <PieChartIcon className="h-5 w-5 text-orange-500 dark:text-orange-400" />
+            <h3 className="font-medium text-gray-900 dark:text-gray-100">
+              Avg. Profit per Trade
+            </h3>
           </div>
           <p
             className={`text-2xl font-bold ${
               stats.totalProfit / stats.totalTrades >= 0
-                ? "text-green-600"
-                : "text-red-600"
+                ? "text-green-600 dark:text-green-400"
+                : "text-red-600 dark:text-red-400"
             }`}
           >
             ${(stats.totalProfit / stats.totalTrades).toFixed(2)}
@@ -147,15 +158,23 @@ const ProfileStats = ({ userId, trades, stats }) => {
       {/* Charts */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Monthly P&L Chart */}
-        <div className="bg-white rounded-lg shadow p-4">
-          <h3 className="text-lg font-medium mb-4">Monthly Performance</h3>
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4">
+          <h3 className="text-lg font-medium mb-4 text-gray-900 dark:text-gray-100">
+            Monthly Performance
+          </h3>
           <div className="h-[300px]">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={monthlyPnL}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="month" />
-                <YAxis />
-                <Tooltip />
+                <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+                <XAxis dataKey="month" tick={{ fill: "#6B7280" }} />
+                <YAxis tick={{ fill: "#6B7280" }} />
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: "rgb(31, 41, 55)",
+                    border: "1px solid rgb(55, 65, 81)",
+                    color: "#fff",
+                  }}
+                />
                 <Legend />
                 <Line
                   type="monotone"
@@ -175,8 +194,10 @@ const ProfileStats = ({ userId, trades, stats }) => {
         </div>
 
         {/* Trade Type Distribution */}
-        <div className="bg-white rounded-lg shadow p-4">
-          <h3 className="text-lg font-medium mb-4">Trade Type Distribution</h3>
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4">
+          <h3 className="text-lg font-medium mb-4 text-gray-900 dark:text-gray-100">
+            Trade Type Distribution
+          </h3>
           <div className="h-[300px]">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
@@ -194,8 +215,20 @@ const ProfileStats = ({ userId, trades, stats }) => {
                     />
                   ))}
                 </Pie>
-                <Tooltip />
-                <Legend />
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: "rgb(31, 41, 55)",
+                    border: "1px solid rgb(55, 65, 81)",
+                    color: "#fff",
+                  }}
+                />
+                <Legend
+                  formatter={(value) => (
+                    <span className="text-gray-900 dark:text-gray-100">
+                      {value}
+                    </span>
+                  )}
+                />
               </PieChart>
             </ResponsiveContainer>
           </div>

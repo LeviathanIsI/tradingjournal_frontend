@@ -5,10 +5,10 @@ import StreakAndDrawdown from "./StreakAndDrawdown";
 
 const Analysis = ({ trades, activeChart, setActiveChart }) => {
   return (
-    <div className="bg-white p-6 rounded shadow">
+    <div className="bg-white dark:bg-gray-800 p-6 rounded shadow">
       <div className="min-h-[500px] flex flex-col">
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-lg font-semibold text-gray-900">
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
             Performance Analysis
           </h2>
           <div className="flex gap-2">
@@ -17,7 +17,7 @@ const Analysis = ({ trades, activeChart, setActiveChart }) => {
               className={`px-3 py-1 rounded-lg ${
                 activeChart === "pnl"
                   ? "bg-blue-600 text-white"
-                  : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                  : "bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600"
               }`}
             >
               P/L Chart
@@ -27,7 +27,7 @@ const Analysis = ({ trades, activeChart, setActiveChart }) => {
               className={`px-3 py-1 rounded-lg ${
                 activeChart === "time"
                   ? "bg-blue-600 text-white"
-                  : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                  : "bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600"
               }`}
             >
               Time Analysis
@@ -37,7 +37,7 @@ const Analysis = ({ trades, activeChart, setActiveChart }) => {
               className={`px-3 py-1 rounded-lg ${
                 activeChart === "risk" || activeChart === "streaks"
                   ? "bg-blue-600 text-white"
-                  : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                  : "bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600"
               }`}
             >
               Risk & Streaks

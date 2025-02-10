@@ -11,6 +11,7 @@ import {
 import { AuthProvider } from "./context/AuthContext";
 import { ToastProvider } from "./context/ToastContext";
 import { useAuth } from "./context/AuthContext";
+import { ThemeProvider } from "./context/ThemeContext";
 import Navbar from "./components/Navbar";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
@@ -108,12 +109,14 @@ function App() {
   return (
     <Router>
       <AuthProvider>
-        <ToastProvider>
-          <div className="w-screen min-h-screen bg-white">
-            <Navbar />
-            <AppRoutes />
-          </div>
-        </ToastProvider>
+        <ThemeProvider>
+          <ToastProvider>
+            <div className="w-screen min-h-screen bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100">
+              <Navbar />
+              <AppRoutes />
+            </div>
+          </ToastProvider>
+        </ThemeProvider>
       </AuthProvider>
     </Router>
   );

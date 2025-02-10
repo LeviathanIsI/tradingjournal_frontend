@@ -8,10 +8,14 @@ const StopLossStudy = ({ trades, user, stats, experienceLevel }) => {
   const [supportPrice, setSupportPrice] = useState("");
   const [resistancePrice, setResistancePrice] = useState("");
   const [useSupRes, setUseSupRes] = useState(false);
+  const [calculatedStop, setCalculatedStop] = useState(null);
+  const [calculatedTarget, setCalculatedTarget] = useState(null);
 
   const RISK_PERCENTAGE = 10;
   const STOP_LOSS_PERCENTAGE = 5;
   const REWARD_MULTIPLIER = 3;
+  const SUPPORT_BUFFER = 0.02; // 2% buffer below support
+  const RESISTANCE_BUFFER = 0.02; // 2% buffer below resistance
 
   const getExperienceFactors = () => {
     // Initialize result object with common properties
@@ -556,44 +560,46 @@ const StopLossStudy = ({ trades, user, stats, experienceLevel }) => {
       let stopPrice, targetPrice;
 
       if (useSupRes && supportPrice && resistancePrice) {
-        // If using support/resistance and both values are provided
         const support = Number(supportPrice);
         const resistance = Number(resistancePrice);
 
-        // Calculate stop based on support level if it's a long trade
-        // or resistance level if it's a short trade
-        const isLongTrade = entry <= resistance;
-        stopPrice = isLongTrade ? support : resistance;
+        // Determine if it's a long or short trade based on entry price
+        const isLongTrade = entry < (support + resistance) / 2;
 
-        // Ensure minimum stop distance is respected
-        const minimumStopPrice = entry * (1 - STOP_LOSS_PERCENTAGE / 100);
         if (isLongTrade) {
-          stopPrice = Math.max(stopPrice, minimumStopPrice);
+          // For long trades
+          // Set stop slightly below support
+          stopPrice = support * (1 - SUPPORT_BUFFER);
+          // Set target slightly below resistance
+          targetPrice = resistance * (1 - RESISTANCE_BUFFER);
         } else {
-          stopPrice = Math.min(
-            stopPrice,
-            entry * (1 + STOP_LOSS_PERCENTAGE / 100)
-          );
+          // For short trades
+          // Set stop slightly above resistance
+          stopPrice = resistance * (1 + SUPPORT_BUFFER);
+          // Set target slightly above support
+          targetPrice = support * (1 + RESISTANCE_BUFFER);
         }
 
-        // Calculate target based on resistance for longs or support for shorts
-        targetPrice = isLongTrade ? resistance : support;
-
-        // Ensure minimum reward-to-risk ratio
+        // Ensure minimum risk-reward is maintained
         const riskAmount = Math.abs(entry - stopPrice);
-        const minTarget = isLongTrade
-          ? entry + riskAmount * REWARD_MULTIPLIER
-          : entry - riskAmount * REWARD_MULTIPLIER;
+        const rewardAmount = Math.abs(targetPrice - entry);
 
-        targetPrice = isLongTrade
-          ? Math.max(targetPrice, minTarget)
-          : Math.min(targetPrice, minTarget);
+        // Only adjust target if reward isn't sufficient
+        if (rewardAmount < riskAmount * REWARD_MULTIPLIER) {
+          targetPrice = isLongTrade
+            ? entry + riskAmount * REWARD_MULTIPLIER
+            : entry - riskAmount * REWARD_MULTIPLIER;
+        }
       } else {
-        // Use original calculation if not using support/resistance
+        // Default calculation without support/resistance
         stopPrice = entry * (1 - STOP_LOSS_PERCENTAGE / 100);
         const riskAmount = entry - stopPrice;
         targetPrice = entry + riskAmount * REWARD_MULTIPLIER;
       }
+
+      // Set the calculated values for display
+      setCalculatedStop(stopPrice.toFixed(2));
+      setCalculatedTarget(targetPrice.toFixed(2));
 
       // Calculate per-share values
       const riskPerShare = Number(Math.abs(entry - stopPrice).toFixed(2));
@@ -610,25 +616,29 @@ const StopLossStudy = ({ trades, user, stats, experienceLevel }) => {
       setPlannedRisk(null);
       setPlannedReward(null);
       setPlanShares("");
+      setCalculatedStop(null);
+      setCalculatedTarget(null);
     }
   }, [planEntry, accountBalance, supportPrice, resistancePrice, useSupRes]);
 
   return (
-    <div className="bg-white p-4 rounded shadow h-full">
+    <div className="bg-white dark:bg-gray-800 p-4 rounded shadow h-full">
       <div className="grid grid-cols-2 gap-4">
         {/* Left Side - Exit Analysis */}
         <div>
-          <h3 className="text-sm text-black font-medium">Exit Analysis</h3>
-          <div className="bg-blue-50 p-3 rounded-md mb-4">
-            <p className="text-sm text-blue-700">
+          <h3 className="text-sm text-gray-900 dark:text-gray-100 font-medium">
+            Exit Analysis
+          </h3>
+          <div className="bg-gray-100 dark:bg-gray-700/50 p-3 rounded-md mb-4">
+            <p className="text-sm text-gray-900 dark:text-gray-100">
               Analysis of your trading patterns:
             </p>
-            <ul className="text-xs text-blue-600 mt-2 space-y-1">
+            <ul className="text-xs text-gray-700 dark:text-gray-300 mt-2 space-y-1">
               <li>• Based on your last 90 days of trades</li>
               <li>• Analyzes winning and losing patterns</li>
               <li>• Considers time of day and momentum</li>
             </ul>
-            <p className="text-xs text-blue-600 mt-2 italic">
+            <p className="text-xs text-gray-600 dark:text-gray-400 mt-2 italic">
               Note: Suggestions improve in accuracy as you add more trades to
               your history
             </p>
@@ -636,60 +646,59 @@ const StopLossStudy = ({ trades, user, stats, experienceLevel }) => {
           <div className="grid grid-cols-1 gap-4 mt-2">
             {!trades?.length ? (
               <div className="text-center py-2">
-                <p className="text-sm text-gray-500">
+                <p className="text-sm text-gray-500 dark:text-gray-400">
                   Add trades to see analysis
                 </p>
               </div>
             ) : (
               <>
                 <div>
-                  <p className="text-xs text-gray-500 mb-1">
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">
                     Suggested Stop Loss
                   </p>
-                  <p className="text-lg font-bold text-red-600">
+                  <p className="text-lg font-bold text-red-600 dark:text-red-400">
                     {analysis?.suggestedStopLoss
                       ? `$${analysis.suggestedStopLoss}`
                       : "Insufficient data"}
                   </p>
-                  <p className="text-xs text-gray-500 mt-1">
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                     Recommended stop loss based on historical price reversals
                   </p>
                 </div>
                 <div>
-                  <p className="text-xs text-gray-500 mb-1">
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">
                     Suggested Profit Target
                   </p>
-                  <p className="text-lg font-bold text-green-600">
+                  <p className="text-lg font-bold text-green-600 dark:text-green-400">
                     {analysis?.suggestedTarget
                       ? `$${analysis.suggestedTarget}`
                       : "Insufficient data"}
                   </p>
-                  <p className="text-xs text-gray-500 mt-1">
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                     Target price based on your winning trades' profit patterns
                   </p>
                 </div>
                 <div>
-                  <p className="text-xs text-gray-500 mb-1">
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">
                     Suggested Hold Time
                   </p>
-                  <p className="text-lg font-bold text-blue-600">
+                  <p className="text-lg font-bold text-blue-600 dark:text-blue-400">
                     {analysis?.suggestedHoldTime || "Insufficient data"}
                   </p>
                   {analysis?.holdTimeContext && (
-                    <p className="text-xs text-gray-500 mt-1">
+                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                       {analysis.holdTimeContext}
                     </p>
                   )}
-                  <p className="text-xs text-gray-500 mt-1">
-                    Optimal hold duration based on price movement analysis
-                  </p>
                 </div>
                 <div>
-                  <p className="text-xs text-gray-500 mb-1">Experience Level</p>
-                  <p className="text-lg font-bold text-purple-600">
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">
+                    Experience Level
+                  </p>
+                  <p className="text-lg font-bold text-purple-600 dark:text-purple-400">
                     {analysis?.experienceLevel || "Unknown"}
                   </p>
-                  <p className="text-xs text-gray-500 mt-1">
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                     {analysis?.experienceContext || ""}
                   </p>
                 </div>
@@ -700,10 +709,14 @@ const StopLossStudy = ({ trades, user, stats, experienceLevel }) => {
 
         {/* Right Side - Plan Your Trade */}
         <div>
-          <h4 className="text-sm font-medium mb-3">Plan Your Trade</h4>
-          <div className="bg-blue-50 p-3 rounded-md mb-4">
-            <p className="text-sm text-blue-700 mb-2">Risk Management Rules:</p>
-            <ul className="text-xs text-blue-600 mt-2 space-y-1">
+          <h4 className="text-sm font-medium text-gray-900 dark:text-gray-100 mb-3">
+            Plan Your Trade
+          </h4>
+          <div className="bg-gray-100 dark:bg-gray-700/50 p-3 rounded-md mb-4">
+            <p className="text-sm text-gray-900 dark:text-gray-100 mb-2">
+              Risk Management Rules:
+            </p>
+            <ul className="text-xs text-gray-700 dark:text-gray-300 mt-2 space-y-1">
               <li>
                 • Maximum position: 10% of account ($
                 {(accountBalance * (RISK_PERCENTAGE / 100)).toFixed(2)})
@@ -720,14 +733,14 @@ const StopLossStudy = ({ trades, user, stats, experienceLevel }) => {
           </div>
           <div className="space-y-4">
             <div>
-              <label className="block text-xs text-gray-500 mb-1">
+              <label className="block text-xs text-gray-500 dark:text-gray-400 mb-1">
                 Entry Price
               </label>
               <input
                 type="number"
                 value={planEntry}
                 onChange={(e) => setPlanEntry(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded"
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded"
                 step="0.01"
                 min="0"
               />
@@ -739,9 +752,12 @@ const StopLossStudy = ({ trades, user, stats, experienceLevel }) => {
                 id="useSupRes"
                 checked={useSupRes}
                 onChange={(e) => setUseSupRes(e.target.checked)}
-                className="custom-checkbox"
+                className="h-4 w-4 rounded border-gray-300 dark:border-gray-600 text-blue-600 focus:ring-blue-500"
               />
-              <label htmlFor="useSupRes" className="text-sm text-gray-700">
+              <label
+                htmlFor="useSupRes"
+                className="text-sm text-gray-700 dark:text-gray-300"
+              >
                 Use Support/Resistance Levels
               </label>
             </div>
@@ -749,27 +765,27 @@ const StopLossStudy = ({ trades, user, stats, experienceLevel }) => {
             {useSupRes && (
               <div className="space-y-3">
                 <div>
-                  <label className="block text-xs text-gray-500 mb-1">
+                  <label className="block text-xs text-gray-500 dark:text-gray-400 mb-1">
                     Support Price
                   </label>
                   <input
                     type="number"
                     value={supportPrice}
                     onChange={(e) => setSupportPrice(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded"
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded"
                     step="0.01"
                     min="0"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs text-gray-500 mb-1">
+                  <label className="block text-xs text-gray-500 dark:text-gray-400 mb-1">
                     Resistance Price
                   </label>
                   <input
                     type="number"
                     value={resistancePrice}
                     onChange={(e) => setResistancePrice(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded"
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded"
                     step="0.01"
                     min="0"
                   />
@@ -780,43 +796,39 @@ const StopLossStudy = ({ trades, user, stats, experienceLevel }) => {
             {planEntry && (
               <>
                 <div>
-                  <label className="block text-xs text-gray-500 mb-1">
+                  <label className="block text-xs text-gray-500 dark:text-gray-400 mb-1">
                     Stop Loss Price
                   </label>
-                  <p className="text-sm font-medium text-red-600">
-                    $
-                    {(
-                      Number(planEntry) *
-                      (1 - STOP_LOSS_PERCENTAGE / 100)
-                    ).toFixed(2)}
+                  <p className="text-sm font-medium text-red-600 dark:text-red-400">
+                    ${calculatedStop}
                   </p>
-                  <p className="text-xs text-gray-500 mt-1">
-                    5% below entry price
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                    {useSupRes
+                      ? "Based on support/resistance"
+                      : "5% below entry price"}
                   </p>
                 </div>
                 <div>
-                  <label className="block text-xs text-gray-500 mb-1">
+                  <label className="block text-xs text-gray-500 dark:text-gray-400 mb-1">
                     Target Price
                   </label>
-                  <p className="text-sm font-medium text-green-600">
-                    $
-                    {(
-                      Number(planEntry) +
-                      (Number(planEntry) -
-                        Number(planEntry) * (1 - STOP_LOSS_PERCENTAGE / 100)) *
-                        REWARD_MULTIPLIER
-                    ).toFixed(2)}
+                  <p className="text-sm font-medium text-green-600 dark:text-green-400">
+                    ${calculatedTarget}
                   </p>
-                  <p className="text-xs text-gray-500 mt-1">
-                    3x the distance to stop loss
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                    {useSupRes
+                      ? "Based on support/resistance"
+                      : "3x the distance to stop loss"}
                   </p>
                 </div>
                 <div>
-                  <label className="block text-xs text-gray-500 mb-1">
+                  <label className="block text-xs text-gray-500 dark:text-gray-400 mb-1">
                     Position Size
                   </label>
-                  <p className="text-sm font-medium">{planShares} shares</p>
-                  <p className="text-xs text-gray-500 mt-1">
+                  <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                    {planShares} shares
+                  </p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                     Total position value: $
                     {(Number(planShares) * Number(planEntry)).toFixed(2)}
                   </p>
@@ -825,18 +837,18 @@ const StopLossStudy = ({ trades, user, stats, experienceLevel }) => {
                 {plannedRisk && plannedReward && (
                   <div className="grid grid-cols-2 gap-4 mt-4">
                     <div>
-                      <p className="text-xs text-gray-500 mb-1">
+                      <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">
                         Potential Risk
                       </p>
-                      <p className="text-md font-semibold text-red-600">
+                      <p className="text-md font-semibold text-red-600 dark:text-red-400">
                         ${plannedRisk}
                       </p>
                     </div>
                     <div>
-                      <p className="text-xs text-gray-500 mb-1">
+                      <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">
                         Potential Reward
                       </p>
-                      <p className="text-md font-semibold text-green-600">
+                      <p className="text-md font-semibold text-green-600 dark:text-green-400">
                         ${plannedReward}
                       </p>
                     </div>

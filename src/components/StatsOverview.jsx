@@ -2,26 +2,29 @@ import React from "react";
 
 const StatsOverview = ({ user, stats, formatCurrency }) => {
   return (
-    <div
-      className="grid grid-cols-1 md:grid-cols-3 gap-4">
-      <div className="bg-white p-4 rounded shadow">
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="bg-white dark:bg-gray-800 p-4 rounded shadow">
         <div className="flex justify-between">
           <div>
-            <h3 className="text-sm text-black">Starting Capital</h3>
-            <p className="text-2xl font-bold text-black">
+            <h3 className="text-sm text-gray-600 dark:text-gray-400">
+              Starting Capital
+            </h3>
+            <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">
               {formatCurrency(user?.preferences?.startingCapital || 0)}
             </p>
           </div>
           <div>
-            <h3 className="text-sm text-black">Current Balance</h3>
+            <h3 className="text-sm text-gray-600 dark:text-gray-400">
+              Current Balance
+            </h3>
             <div className="flex items-baseline gap-2">
               <p
                 className={`text-2xl font-bold ${
                   stats?.totalProfit > 0
-                    ? "text-green-600"
+                    ? "text-green-600 dark:text-green-400"
                     : stats?.totalProfit < 0
-                    ? "text-red-600"
-                    : "text-black"
+                    ? "text-red-600 dark:text-red-400"
+                    : "text-gray-900 dark:text-gray-100"
                 }`}
               >
                 {formatCurrency(
@@ -33,10 +36,10 @@ const StatsOverview = ({ user, stats, formatCurrency }) => {
                 <span
                   className={`text-sm ${
                     stats?.totalProfit > 0
-                      ? "text-green-600"
+                      ? "text-green-600 dark:text-green-400"
                       : stats?.totalProfit < 0
-                      ? "text-red-600"
-                      : "text-black"
+                      ? "text-red-600 dark:text-red-400"
+                      : "text-gray-900 dark:text-gray-100"
                   }`}
                 >
                   {(
@@ -52,26 +55,30 @@ const StatsOverview = ({ user, stats, formatCurrency }) => {
         </div>
       </div>
 
-      <div className="bg-white p-4 rounded shadow flex justify-between">
+      <div className="bg-white dark:bg-gray-800 p-4 rounded shadow flex justify-between">
         <div>
-          <h3 className="text-sm text-black">Total Trades</h3>
-          <p className="text-2xl font-bold text-black">
+          <h3 className="text-sm text-gray-600 dark:text-gray-400">
+            Total Trades
+          </h3>
+          <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">
             {stats?.totalTrades || 0}
           </p>
         </div>
         <div>
-          <h3 className="text-sm text-black">Win Rate</h3>
-          <p className="text-2xl font-bold text-black">
+          <h3 className="text-sm text-gray-600 dark:text-gray-400">Win Rate</h3>
+          <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">
             {stats?.winRate?.toFixed(1) || 0}%
           </p>
         </div>
       </div>
 
-      <div className="bg-white p-4 rounded shadow">
-        <h3 className="text-sm text-black">Total P/L</h3>
+      <div className="bg-white dark:bg-gray-800 p-4 rounded shadow">
+        <h3 className="text-sm text-gray-600 dark:text-gray-400">Total P/L</h3>
         <p
           className={`text-2xl font-bold ${
-            (stats?.totalProfit || 0) >= 0 ? "text-green-600" : "text-red-600"
+            (stats?.totalProfit || 0) >= 0
+              ? "text-green-600 dark:text-green-400"
+              : "text-red-600 dark:text-red-400"
           }`}
         >
           {formatCurrency(stats?.totalProfit || 0)}

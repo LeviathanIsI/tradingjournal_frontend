@@ -96,7 +96,7 @@ const TradeJournal = ({
             setTimeFilter(e.target.value);
             setCurrentPage(1);
           }}
-          className="border rounded px-3 py-2 text-sm"
+          className="border border-gray-300 dark:border-gray-600 rounded px-3 py-2 text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
         >
           <option value="all">All Time</option>
           <option value="day">Today</option>
@@ -117,7 +117,7 @@ const TradeJournal = ({
                   start: e.target.value,
                 }))
               }
-              className="border rounded px-3 py-2 text-sm"
+              className="border border-gray-300 dark:border-gray-600 rounded px-3 py-2 text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
             />
             <span>to</span>
             <input
@@ -137,7 +137,7 @@ const TradeJournal = ({
             setEntriesPerPage(Number(e.target.value));
             setCurrentPage(1);
           }}
-          className="border rounded px-3 py-2 text-sm"
+          className="border border-gray-300 dark:border-gray-600 rounded px-3 py-2 text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
         >
           <option value={5}>5 per page</option>
           <option value={10}>10 per page</option>
@@ -161,7 +161,7 @@ const TradeJournal = ({
       <button
         onClick={() => handlePageChange(currentPage - 1)}
         disabled={currentPage === 1}
-        className="flex items-center gap-1 px-3 py-2 rounded border enabled:hover:bg-gray-50 disabled:opacity-50"
+        className="flex items-center gap-1 px-3 py-2 rounded border border-gray-300 dark:border-gray-600 enabled:hover:bg-gray-50 dark:enabled:hover:bg-gray-700 disabled:opacity-50 text-gray-900 dark:text-gray-100"
       >
         <ChevronLeft className="h-4 w-4" />
         Previous
@@ -172,10 +172,10 @@ const TradeJournal = ({
           <button
             key={number}
             onClick={() => handlePageChange(number)}
-            className={`px-3 py-2 rounded border ${
+            className={`px-3 py-2 rounded border border-gray-300 dark:border-gray-600 ${
               currentPage === number
                 ? "bg-blue-600 text-white"
-                : "hover:bg-gray-50"
+                : "hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-900 dark:text-gray-100"
             }`}
           >
             {number}
@@ -196,22 +196,27 @@ const TradeJournal = ({
 
   return (
     <div className="space-y-4">
-      <div className="bg-blue-50 p-3 rounded-md">
-        <p className="text-sm text-blue-700">Trade Journal Features:</p>
-        <ul className="text-xs text-blue-600 mt-2 space-y-1">
+      <div className="bg-gray-100 dark:bg-gray-800 p-3 rounded-md">
+        <p className="text-gray-900 dark:text-gray-100">
+          Trade Journal Features:
+        </p>
+        <ul className="text-gray-700 dark:text-gray-300 mt-2 space-y-1">
           <li>• Add, edit, and review your trades</li>
           <li>• Bulk select and manage multiple trades</li>
           <li>• Track entry/exit prices and P/L</li>
           <li>• Add detailed trade reviews and notes</li>
         </ul>
-        <p className="text-xs text-blue-600 mt-2 italic">
+        <p className="text-gray-600 dark:text-gray-400 mt-2 text-xs italic">
           Pro tip: Use trade reviews to document your thought process and
           improve your strategy
         </p>
       </div>
-      <div className="bg-white p-4 rounded shadow">
+
+      <div className="bg-white dark:bg-gray-800 p-4 rounded shadow">
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-lg font-semibold text-black">Trade Journal</h2>
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+            Trade Journal
+          </h2>
           <div className="flex gap-2">
             {selectedTrades.size > 0 && (
               <button
@@ -245,9 +250,11 @@ const TradeJournal = ({
           </div>
         )}
 
-        <div className="bg-gray-50 p-3 rounded-md mb-4">
-          <p className="text-sm text-gray-600 mb-2">Available Actions:</p>
-          <div className="grid grid-cols-3 gap-4 text-xs text-gray-600">
+        <div className="bg-gray-50 dark:bg-gray-700/50 p-3 rounded-md mb-4">
+          <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
+            Available Actions:
+          </p>
+          <div className="grid grid-cols-3 gap-4 text-xs text-gray-600 dark:text-gray-400">
             <div className="flex items-center gap-2">
               <BookOpen className="h-4 w-4 text-green-600" />
               <span>Add trade review & notes</span>
@@ -268,8 +275,8 @@ const TradeJournal = ({
         <div className="overflow-x-auto">
           <table className="min-w-full">
             <thead>
-              <tr className="border-b">
-                <th className="w-12 py-3 px-4">
+              <tr className="border-b border-gray-200 dark:border-gray-700">
+                <th className="text-left py-3 px-4 text-gray-900 dark:text-gray-100">
                   <div className="flex justify-center">
                     <input
                       type="checkbox"
@@ -281,18 +288,32 @@ const TradeJournal = ({
                     />
                   </div>
                 </th>
-                <th className="text-left py-3 px-4 text-black">Date</th>
-                <th className="text-left py-3 px-4 text-black">Symbol</th>
-                <th className="text-left py-3 px-4 text-black">Type</th>
-                <th className="text-right py-3 px-4 text-black">Entry</th>
-                <th className="text-right py-3 px-4 text-black">Exit</th>
-                <th className="text-right py-3 px-4 text-black">P/L</th>
-                <th className="text-right py-3 px-4 text-black">Actions</th>
+                <th className="text-left py-3 px-4 text-gray-900 dark:text-gray-100">
+                  Date
+                </th>
+                <th className="text-left py-3 px-4 text-gray-900 dark:text-gray-100">
+                  Symbol
+                </th>
+                <th className="text-left py-3 px-4 text-gray-900 dark:text-gray-100">
+                  Type
+                </th>
+                <th className="text-left py-3 px-4 text-gray-900 dark:text-gray-100">
+                  Entry
+                </th>
+                <th className="text-left py-3 px-4 text-gray-900 dark:text-gray-100">
+                  Exit
+                </th>
+                <th className="text-left py-3 px-4 text-gray-900 dark:text-gray-100">
+                  P/L
+                </th>
+                <th className="text-left py-3 px-4 text-gray-900 dark:text-gray-100">
+                  Actions
+                </th>
               </tr>
             </thead>
             <tbody>
               {currentTrades.length === 0 ? (
-                <tr className="text-black text-center">
+                <tr className="text-gray-900 dark:text-gray-100 text-center">
                   <td colSpan="8" className="py-4">
                     {filteredTrades.length === 0
                       ? "No trades found for the selected period"
@@ -301,7 +322,10 @@ const TradeJournal = ({
                 </tr>
               ) : (
                 currentTrades.map((trade) => (
-                  <tr key={trade._id} className="border-b hover:bg-gray-50">
+                  <tr
+                    key={trade._id}
+                    className="border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50"
+                  >
                     <td className="w-12 py-3 px-4">
                       <div className="flex justify-center">
                         <input
@@ -312,15 +336,19 @@ const TradeJournal = ({
                         />
                       </div>
                     </td>
-                    <td className="py-3 px-4 text-black">
+                    <td className="py-3 px-4 text-gray-900 dark:text-gray-100">
                       {formatDate(trade.entryDate)}
                     </td>
-                    <td className="py-3 px-4 text-black">{trade.symbol}</td>
-                    <td className="py-3 px-4 text-black">{trade.type}</td>
-                    <td className="py-3 px-4 text-right text-black">
+                    <td className="py-3 px-4 text-gray-900 dark:text-gray-100">
+                      {trade.symbol}
+                    </td>
+                    <td className="py-3 px-4 text-gray-900 dark:text-gray-100">
+                      {trade.type}
+                    </td>
+                    <td className="py-3 px-4 text-right text-gray-900 dark:text-gray-100">
                       {formatCurrency(trade.entryPrice)}
                     </td>
-                    <td className="py-3 px-4 text-right text-black">
+                    <td className="py-3 px-4 text-right text-gray-900 dark:text-gray-100">
                       {trade.exitPrice ? formatCurrency(trade.exitPrice) : "-"}
                     </td>
                     <td className="py-3 px-4 text-right">
@@ -345,20 +373,20 @@ const TradeJournal = ({
                             setSelectedTradeForReview(trade);
                             setIsReviewModalOpen(true);
                           }}
-                          className="p-1 hover:bg-gray-100 rounded bg-transparent"
+                          className="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded bg-transparent"
                           title="Review Trade"
                         >
                           <BookOpen className="h-4 w-4 text-green-600" />
                         </button>
                         <button
                           onClick={() => handleEditClick(trade)}
-                          className="p-1 hover:bg-gray-100 rounded bg-transparent"
+                          className="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded bg-transparent"
                         >
                           <Pencil className="h-4 w-4 text-blue-600" />
                         </button>
                         <button
                           onClick={() => handleDeleteClick(trade._id)}
-                          className="p-1 hover:bg-gray-100 rounded bg-transparent"
+                          className="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded bg-transparent"
                         >
                           <Trash2 className="h-4 w-4 text-red-600" />
                         </button>

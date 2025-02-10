@@ -23,3 +23,9 @@
 .animate-fade-in {
   animation: fadeIn 0.3s ease-in-out;
 }
+
+input[type="checkbox"] {
+  accent-color: #2563eb;
+  /* Tailwind's blue-600 */
+  border-radius: 2px;
+}

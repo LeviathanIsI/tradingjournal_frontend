@@ -97,24 +97,28 @@ const TimeAnalysis = ({ trades }) => {
             className={`p-4 rounded-lg border cursor-pointer transition-colors
               ${
                 session === selectedSession
-                  ? "border-blue-500 bg-blue-50"
-                  : "border-gray-200 hover:border-blue-300"
+                  ? "border-blue-500 bg-blue-50 dark:bg-blue-900/20 dark:border-blue-400"
+                  : "border-gray-200 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-500"
               }`}
           >
-            <h3 className="text-lg font-medium text-gray-900">{session}</h3>
+            <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">
+              {session}
+            </h3>
             <div className="mt-2 space-y-1">
-              <p className="text-sm text-gray-600">
+              <p className="text-sm text-gray-600 dark:text-gray-400">
                 Trades: <span className="font-medium">{stats.totalTrades}</span>
               </p>
-              <p className="text-sm text-gray-600">
+              <p className="text-sm text-gray-600 dark:text-gray-400">
                 Win Rate:{" "}
                 <span className="font-medium">{stats.winRate.toFixed(1)}%</span>
               </p>
-              <p className="text-sm text-gray-600">
+              <p className="text-sm text-gray-600 dark:text-gray-400">
                 Avg P/L:{" "}
                 <span
                   className={`font-medium ${
-                    stats.avgProfit >= 0 ? "text-green-600" : "text-red-600"
+                    stats.avgProfit >= 0
+                      ? "text-green-600 dark:text-green-400"
+                      : "text-red-600 dark:text-red-400"
                   }`}
                 >
                   ${stats.avgProfit.toFixed(2)}
@@ -126,29 +130,51 @@ const TimeAnalysis = ({ trades }) => {
       </div>
 
       {/* Hourly Performance Chart */}
-      <div className="bg-white p-6 rounded-lg border border-gray-200">
-        <h3 className="text-lg font-medium text-gray-900 mb-2">
+      <div className="bg-white dark:bg-gray-800 p-6 rounded-lg border border-gray-200 dark:border-gray-700">
+        <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">
           Hourly Performance{" "}
           {selectedSession !== "all" && `(${selectedSession})`}
         </h3>
-        <div className="bg-blue-50 p-3 rounded-md mb-4">
-          <p className="text-sm text-blue-700">Understanding the chart:</p>
-          <ul className="text-xs text-blue-600 mt-2 space-y-1">
-            <li>• Purple bars show your win rate for each hour</li>
-            <li>• Green/Red bars show average profit/loss per trade</li>
-            <li>• Click session tabs above to filter by market session</li>
-            <li>• Hover over bars to see detailed statistics</li>
-          </ul>
+        <div className="bg-gray-100 dark:bg-gray-800">
+          <div className="p-3 rounded-md">
+            <p className="text-gray-900 dark:text-gray-100">
+              Understanding the chart:
+            </p>
+            <ul className="text-gray-700 dark:text-gray-300 mt-2 space-y-1">
+              <li>• Purple bars show your win rate for each hour</li>
+              <li>• Green/Red bars show average profit/loss per trade</li>
+              <li>• Click session tabs above to filter by market session</li>
+              <li>• Hover over bars to see detailed statistics</li>
+            </ul>
+          </div>
         </div>
         <div className="h-96">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={filteredTimeData}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="hour" tickFormatter={(hour) => `${hour}:00`} />
-              <YAxis yAxisId="left" orientation="left" stroke="#4338ca" />
-              <YAxis yAxisId="right" orientation="right" stroke="#059669" />
+              <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+              <XAxis
+                dataKey="hour"
+                tickFormatter={(hour) => `${hour}:00`}
+                tick={{ fill: "#6B7280" }}
+              />
+              <YAxis
+                yAxisId="left"
+                orientation="left"
+                stroke="#4338ca"
+                tick={{ fill: "#6B7280" }}
+              />
+              <YAxis
+                yAxisId="right"
+                orientation="right"
+                stroke="#059669"
+                tick={{ fill: "#6B7280" }}
+              />
               <Tooltip
-                contentStyle={{ border: "1px solid #e5e7eb" }}
+                contentStyle={{
+                  backgroundColor: "rgb(31, 41, 55)",
+                  border: "1px solid rgb(55, 65, 81)",
+                  color: "#fff",
+                }}
                 formatter={(value, name) => {
                   if (name === "Win Rate")
                     return [`${value.toFixed(1)}%`, name];

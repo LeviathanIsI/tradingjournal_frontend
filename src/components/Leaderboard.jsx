@@ -63,23 +63,30 @@ const Leaderboard = () => {
 
   if (loading)
     return (
-      <div className="flex justify-center p-8">Loading leaderboard...</div>
+      <div className="flex justify-center p-8 text-gray-900 dark:text-gray-100">
+        Loading leaderboard...
+      </div>
     );
   if (error)
     return (
-      <div className="flex justify-center p-8 text-red-500">Error: {error}</div>
+      <div className="flex justify-center p-8 text-red-500 dark:text-red-400">
+        Error: {error}
+      </div>
     );
 
   return (
     <div className="space-y-6 p-6">
       {/* Header */}
       <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold text-gray-900">Trader Leaderboard</h2>
+        <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+          Trader Leaderboard
+        </h2>
         <div className="flex gap-4">
           <select
             value={timeFrame}
             onChange={(e) => setTimeFrame(e.target.value)}
-            className="px-3 py-2 border border-gray-300 rounded-lg text-sm"
+            className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm 
+              bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
           >
             <option value="all">All Time</option>
             <option value="today">Today</option>
@@ -90,7 +97,8 @@ const Leaderboard = () => {
           <select
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value)}
-            className="px-3 py-2 border border-gray-300 rounded-lg text-sm"
+            className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm 
+              bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
           >
             <option value="totalProfit">Total Profit</option>
             <option value="winRate">Win Rate</option>
@@ -100,29 +108,32 @@ const Leaderboard = () => {
       </div>
 
       {/* Stats Cards */}
-      <div
-        className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <div className="bg-blue-50 p-6 rounded-lg">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div className="bg-blue-50 dark:bg-blue-900/20 p-6 rounded-lg">
           <div className="flex items-center gap-2 mb-2">
-            <Trophy className="h-5 w-5 text-blue-600" />
-            <h3 className="font-medium text-blue-900">Top Profit</h3>
+            <Trophy className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+            <h3 className="font-medium text-blue-900 dark:text-blue-100">
+              Top Profit
+            </h3>
           </div>
-          <p className="text-2xl font-bold text-blue-700">
+          <p className="text-2xl font-bold text-blue-700 dark:text-blue-300">
             {sortedTraders[0]?.stats.totalProfit
               ? formatCurrency(sortedTraders[0].stats.totalProfit)
               : "-"}
           </p>
-          <p className="text-sm text-blue-600">
+          <p className="text-sm text-blue-600 dark:text-blue-400">
             {sortedTraders[0]?.username || "No traders yet"}
           </p>
         </div>
 
-        <div className="bg-green-50 p-6 rounded-lg">
+        <div className="bg-green-50 dark:bg-green-900/20 p-6 rounded-lg">
           <div className="flex items-center gap-2 mb-2">
-            <Target className="h-5 w-5 text-green-600" />
-            <h3 className="font-medium text-green-900">Highest Win Rate</h3>
+            <Target className="h-5 w-5 text-green-600 dark:text-green-400" />
+            <h3 className="font-medium text-green-900 dark:text-green-100">
+              Highest Win Rate
+            </h3>
           </div>
-          <p className="text-2xl font-bold text-green-700">
+          <p className="text-2xl font-bold text-green-700 dark:text-green-300">
             {sortedTraders.sort((a, b) => b.stats.winRate - a.stats.winRate)[0]
               ?.stats.winRate
               ? `${
@@ -132,23 +143,25 @@ const Leaderboard = () => {
                 }%`
               : "-"}
           </p>
-          <p className="text-sm text-green-600">
+          <p className="text-sm text-green-600 dark:text-green-400">
             {sortedTraders.sort((a, b) => b.stats.winRate - a.stats.winRate)[0]
               ?.username || "No traders yet"}
           </p>
         </div>
 
-        <div className="bg-purple-50 p-6 rounded-lg">
+        <div className="bg-purple-50 dark:bg-purple-900/20 p-6 rounded-lg">
           <div className="flex items-center gap-2 mb-2">
-            <LineChart className="h-5 w-5 text-purple-600" />
-            <h3 className="font-medium text-purple-900">Most Active</h3>
+            <LineChart className="h-5 w-5 text-purple-600 dark:text-purple-400" />
+            <h3 className="font-medium text-purple-900 dark:text-purple-100">
+              Most Active
+            </h3>
           </div>
-          <p className="text-2xl font-bold text-purple-700">
+          <p className="text-2xl font-bold text-purple-700 dark:text-purple-300">
             {sortedTraders.sort(
               (a, b) => b.stats.totalTrades - a.stats.totalTrades
             )[0]?.stats.totalTrades || "-"}
           </p>
-          <p className="text-sm text-purple-600">
+          <p className="text-sm text-purple-600 dark:text-purple-400">
             {sortedTraders.sort(
               (a, b) => b.stats.totalTrades - a.stats.totalTrades
             )[0]?.username || "No traders yet"}
@@ -157,41 +170,44 @@ const Leaderboard = () => {
       </div>
 
       {/* Leaderboard Table */}
-      <div
-        className="bg-white rounded-lg shadow overflow-hidden">
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden">
+        <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+          <thead className="bg-gray-50 dark:bg-gray-700">
             <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                 Rank
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                 Trader
               </th>
-              <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                 Total Profit
               </th>
-              <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                 Win Rate
               </th>
-              <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                 Trades
               </th>
             </tr>
           </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
+          <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
             {sortedTraders.map((trader, index) => (
               <tr
                 key={trader._id}
-                className={index % 2 === 0 ? "bg-white" : "bg-gray-50"}
+                className={`${
+                  index % 2 === 0
+                    ? "bg-white dark:bg-gray-800"
+                    : "bg-gray-50 dark:bg-gray-700/50"
+                }`}
               >
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                   {index + 1}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <Link
                     to={`/community/profile/${trader.username}`}
-                    className="text-sm font-medium text-blue-600 hover:text-blue-900"
+                    className="text-sm font-medium text-blue-600 dark:text-blue-400 hover:text-blue-900 dark:hover:text-blue-300"
                   >
                     {trader.username}
                   </Link>
@@ -200,17 +216,17 @@ const Leaderboard = () => {
                   <span
                     className={`font-medium ${
                       trader.stats.totalProfit >= 0
-                        ? "text-green-600"
-                        : "text-red-600"
+                        ? "text-green-600 dark:text-green-400"
+                        : "text-red-600 dark:text-red-400"
                     }`}
                   >
                     {formatCurrency(trader.stats.totalProfit)}
                   </span>
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-right">
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-right text-gray-900 dark:text-gray-100">
                   {trader.stats.winRate}%
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-right">
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-right text-gray-900 dark:text-gray-100">
                   {trader.stats.totalTrades}
                 </td>
               </tr>

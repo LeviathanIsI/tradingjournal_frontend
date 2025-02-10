@@ -14,7 +14,6 @@ import TradeJournal from "../components/TradeJournal";
 import Analysis from "../components/Analysis";
 import Planning from "../components/Planning";
 import StatsOverview from "../components/StatsOverview";
-import TimeAnalysis from "../components/TimeAnalysis";
 
 const Dashboard = () => {
   const { user } = useAuth();
@@ -107,18 +106,20 @@ const Dashboard = () => {
   };
 
   const handleSelectAll = (currentTrades) => {
-  const areAllSelected = currentTrades.every(trade => selectedTrades.has(trade._id));
-  
-  if (areAllSelected) {
-    const newSelected = new Set(selectedTrades);
-    currentTrades.forEach(trade => newSelected.delete(trade._id));
-    setSelectedTrades(newSelected);
-  } else {
-    const newSelected = new Set(selectedTrades);
-    currentTrades.forEach(trade => newSelected.add(trade._id));
-    setSelectedTrades(newSelected);
-  }
-};
+    const areAllSelected = currentTrades.every((trade) =>
+      selectedTrades.has(trade._id)
+    );
+
+    if (areAllSelected) {
+      const newSelected = new Set(selectedTrades);
+      currentTrades.forEach((trade) => newSelected.delete(trade._id));
+      setSelectedTrades(newSelected);
+    } else {
+      const newSelected = new Set(selectedTrades);
+      currentTrades.forEach((trade) => newSelected.add(trade._id));
+      setSelectedTrades(newSelected);
+    }
+  };
 
   const handleBulkDelete = async () => {
     if (selectedTrades.size === 0) return;
@@ -183,7 +184,11 @@ const Dashboard = () => {
   };
 
   if (error) {
-    return <div className="w-full p-6 text-red-600">Error: {error}</div>;
+    return (
+      <div className="w-full p-6 text-red-600 dark:text-red-400">
+        Error: {error}
+      </div>
+    );
   }
 
   const handleImportTrades = async (trades) => {
@@ -194,9 +199,9 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="w-full p-6 text-black">
+    <div className="w-full p-6 text-gray-900 dark:text-gray-100">
       <DashboardNav />
-      <div className="p-6 bg-gray-50">
+      <div className="p-6 bg-gray-50 dark:bg-gray-800">
         <StatsOverview
           user={user}
           stats={stats}

@@ -4,6 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { Menu, X, Settings } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import logo from "../assets/logo.svg";
+import ThemeSwitcher from "./ThemeSwitcher";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -48,6 +49,7 @@ const Navbar = () => {
                 >
                   Community
                 </Link>
+                <ThemeSwitcher />
                 <div className="border-l border-gray-700 h-6 mx-2"></div>
                 <span className="text-gray-300 px-3 py-2 text-sm">
                   Welcome, {user.username}

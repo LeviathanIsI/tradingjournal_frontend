@@ -160,7 +160,7 @@ const ProfileSettings = ({
         ...user,
         preferences: data.data,
       });
-      
+
       setSuccess("Account settings updated successfully");
     } catch (error) {
       setError("Error saving settings: " + error.message);
@@ -188,15 +188,15 @@ const ProfileSettings = ({
   };
 
   return (
-    <div className="bg-white rounded-lg shadow overflow-hidden">
-      <div className="border-b border-gray-200">
+    <div className="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden">
+      <div className="border-b border-gray-200 dark:border-gray-700">
         <nav className="flex gap-4 px-6">
           <button
             onClick={() => setTab("general")}
             className={`px-3 py-4 text-sm font-medium border-b-2 ${
               tab === "general"
-                ? "border-blue-500 text-blue-600"
-                : "border-transparent text-gray-500 hover:border-gray-300"
+                ? "border-blue-500 text-blue-600 dark:text-blue-400"
+                : "border-transparent text-gray-500 dark:text-gray-400 hover:border-gray-300 dark:hover:border-gray-600"
             }`}
           >
             General
@@ -205,8 +205,8 @@ const ProfileSettings = ({
             onClick={() => setTab("password")}
             className={`px-3 py-4 text-sm font-medium border-b-2 ${
               tab === "password"
-                ? "border-blue-500 text-blue-600"
-                : "border-transparent text-gray-500 hover:border-gray-300"
+                ? "border-blue-500 text-blue-600 dark:text-blue-400"
+                : "border-transparent text-gray-500 dark:text-gray-400 hover:border-gray-300 dark:hover:border-gray-600"
             }`}
           >
             Password
@@ -215,8 +215,8 @@ const ProfileSettings = ({
             onClick={() => setTab("account")}
             className={`px-3 py-4 text-sm font-medium border-b-2 ${
               tab === "account"
-                ? "border-blue-500 text-blue-600"
-                : "border-transparent text-gray-500 hover:border-gray-300"
+                ? "border-blue-500 text-blue-600 dark:text-blue-400"
+                : "border-transparent text-gray-500 dark:text-gray-400 hover:border-gray-300 dark:hover:border-gray-600"
             }`}
           >
             Account
@@ -226,14 +226,14 @@ const ProfileSettings = ({
 
       <div className="p-6">
         {error && (
-          <div className="mb-4 p-4 bg-red-50 text-red-700 rounded-md flex items-center gap-2">
+          <div className="mb-4 p-4 bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-400 rounded-md flex items-center gap-2">
             <AlertCircle className="h-5 w-5" />
             {error}
           </div>
         )}
 
         {success && (
-          <div className="mb-4 p-4 bg-green-50 text-green-700 rounded-md">
+          <div className="mb-4 p-4 bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-400 rounded-md">
             {success}
           </div>
         )}
@@ -241,7 +241,7 @@ const ProfileSettings = ({
         {tab === "general" && (
           <form onSubmit={handleGeneralSubmit} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                 Username
               </label>
               <input
@@ -253,12 +253,14 @@ const ProfileSettings = ({
                     username: e.target.value,
                   }))
                 }
-                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                className="mt-1 block w-full rounded-md border border-gray-300 dark:border-gray-600 
+                  px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100
+                  focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                 Email
               </label>
               <input
@@ -267,12 +269,14 @@ const ProfileSettings = ({
                 onChange={(e) =>
                   setGeneralForm((prev) => ({ ...prev, email: e.target.value }))
                 }
-                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                className="mt-1 block w-full rounded-md border border-gray-300 dark:border-gray-600 
+                  px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100
+                  focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                 Trading Style
               </label>
               <select
@@ -283,7 +287,9 @@ const ProfileSettings = ({
                     tradingStyle: e.target.value,
                   }))
                 }
-                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                className="mt-1 block w-full rounded-md border border-gray-300 dark:border-gray-600 
+                  px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100
+                  focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
               >
                 <option value="">Select a style</option>
                 <option value="Day Trader">Day Trader</option>
@@ -294,7 +300,7 @@ const ProfileSettings = ({
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                 Bio
               </label>
               <textarea
@@ -303,7 +309,9 @@ const ProfileSettings = ({
                   setGeneralForm((prev) => ({ ...prev, bio: e.target.value }))
                 }
                 rows={4}
-                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                className="mt-1 block w-full rounded-md border border-gray-300 dark:border-gray-600 
+                  px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100
+                  focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
               />
             </div>
 
@@ -311,7 +319,8 @@ const ProfileSettings = ({
               <button
                 type="submit"
                 disabled={loading}
-                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50"
+                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 
+                  dark:hover:bg-blue-500 disabled:opacity-50"
               >
                 {loading ? "Saving..." : "Save Changes"}
               </button>
@@ -322,7 +331,7 @@ const ProfileSettings = ({
         {tab === "password" && (
           <form onSubmit={handlePasswordSubmit} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                 Current Password
               </label>
               <input
@@ -334,12 +343,14 @@ const ProfileSettings = ({
                     currentPassword: e.target.value,
                   }))
                 }
-                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                className="mt-1 block w-full rounded-md border border-gray-300 dark:border-gray-600 
+                  px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100
+                  focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                 New Password
               </label>
               <input
@@ -351,12 +362,14 @@ const ProfileSettings = ({
                     newPassword: e.target.value,
                   }))
                 }
-                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                className="mt-1 block w-full rounded-md border border-gray-300 dark:border-gray-600 
+                  px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100
+                  focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                 Confirm New Password
               </label>
               <input
@@ -368,7 +381,9 @@ const ProfileSettings = ({
                     confirmPassword: e.target.value,
                   }))
                 }
-                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                className="mt-1 block w-full rounded-md border border-gray-300 dark:border-gray-600 
+                  px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100
+                  focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
               />
             </div>
 
@@ -376,7 +391,8 @@ const ProfileSettings = ({
               <button
                 type="submit"
                 disabled={loading}
-                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50"
+                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 
+                  dark:hover:bg-blue-500 disabled:opacity-50"
               >
                 {loading ? "Updating..." : "Update Password"}
               </button>
@@ -387,7 +403,7 @@ const ProfileSettings = ({
         {tab === "account" && (
           <form onSubmit={handleAccountSubmit} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                 Starting Capital
               </label>
               <input
@@ -398,34 +414,41 @@ const ProfileSettings = ({
                 value={accountForm.startingCapital}
                 onChange={handleAccountChange}
                 placeholder="Enter your starting capital"
-                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                className="mt-1 block w-full rounded-md border border-gray-300 dark:border-gray-600 
+                  px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100
+                  focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                 Default Currency
               </label>
               <select
                 name="defaultCurrency"
                 value={accountForm.defaultCurrency}
                 onChange={handleAccountChange}
-                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                className="mt-1 block w-full rounded-md border border-gray-300 dark:border-gray-600 
+                  px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100
+                  focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
               >
                 <option value="USD">USD</option>
                 <option value="EUR">EUR</option>
                 <option value="GBP">GBP</option>
               </select>
             </div>
+
             <div>
-              <label className="block text-sm font-medium text-gray-700">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                 Time Zone
               </label>
               <select
                 name="timeZone"
                 value={accountForm.timeZone}
                 onChange={handleAccountChange}
-                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                className="mt-1 block w-full rounded-md border border-gray-300 dark:border-gray-600 
+                  px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100
+                  focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
               >
                 {timeZones.map((tz) => (
                   <option key={tz.value} value={tz.value}>
@@ -433,34 +456,38 @@ const ProfileSettings = ({
                   </option>
                 ))}
               </select>
-              <div>
-                <label className="block text-sm font-medium text-gray-700">
-                  Experience Level
-                </label>
-                <select
-                  name="experienceLevel"
-                  value={accountForm.experienceLevel}
-                  onChange={handleAccountChange}
-                  className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
-                >
-                  <option value="auto">Auto-calculate from trades</option>
-                  <option value="beginner">Beginner</option>
-                  <option value="intermediate">Intermediate</option>
-                  <option value="advanced">Advanced</option>
-                </select>
-                <p className="mt-1 text-sm text-gray-500">
-                  {accountForm.experienceLevel === "auto"
-                    ? "Experience level will be calculated automatically based on your last 90 days of trading performance (requires at least 10 trades)"
-                    : "Manually set experience level will override automatic calculation"}
-                </p>
-              </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                Experience Level
+              </label>
+              <select
+                name="experienceLevel"
+                value={accountForm.experienceLevel}
+                onChange={handleAccountChange}
+                className="mt-1 block w-full rounded-md border border-gray-300 dark:border-gray-600 
+                  px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100
+                  focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+              >
+                <option value="auto">Auto-calculate from trades</option>
+                <option value="beginner">Beginner</option>
+                <option value="intermediate">Intermediate</option>
+                <option value="advanced">Advanced</option>
+              </select>
+              <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                {accountForm.experienceLevel === "auto"
+                  ? "Experience level will be calculated automatically based on your last 90 days of trading performance (requires at least 10 trades)"
+                  : "Manually set experience level will override automatic calculation"}
+              </p>
             </div>
 
             <div className="flex justify-end">
               <button
                 type="submit"
                 disabled={loading}
-                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50"
+                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 
+                  dark:hover:bg-blue-500 disabled:opacity-50"
               >
                 {loading ? "Saving..." : "Save Settings"}
               </button>

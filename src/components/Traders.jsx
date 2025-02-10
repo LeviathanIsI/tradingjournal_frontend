@@ -56,7 +56,6 @@ const Traders = () => {
         throw new Error(data.error || "Failed to follow trader");
       }
 
-      // Update the traders list to reflect the new follow state
       setTraders(
         traders.map((trader) => {
           if (trader._id === traderId) {
@@ -84,23 +83,32 @@ const Traders = () => {
   );
 
   if (loading)
-    return <div className="flex justify-center p-8">Loading traders...</div>;
+    return (
+      <div className="flex justify-center p-8 text-gray-900 dark:text-gray-100">
+        Loading traders...
+      </div>
+    );
   if (error)
     return (
-      <div className="flex justify-center p-8 text-red-500">Error: {error}</div>
+      <div className="flex justify-center p-8 text-red-500 dark:text-red-400">
+        Error: {error}
+      </div>
     );
 
   return (
     <div className="space-y-6 p-6">
       {/* Search Bar */}
       <div className="relative max-w-md mx-auto">
-        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
+        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-500 h-5 w-5" />
         <input
           type="text"
           placeholder="Search traders by name or trading style..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg 
+            bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 
+            focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent
+            placeholder-gray-500 dark:placeholder-gray-400"
         />
       </div>
 
@@ -109,10 +117,11 @@ const Traders = () => {
         {filteredTraders.map((trader) => (
           <div
             key={trader._id}
-            className="bg-white rounded-lg shadow p-6">
+            className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 border border-gray-200 dark:border-gray-700"
+          >
             <div className="flex justify-between items-start mb-4">
               <Link to={`/community/profile/${trader.username}`}>
-                <h3 className="text-lg font-medium text-gray-900 hover:text-blue-600">
+                <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 hover:text-blue-600 dark:hover:text-blue-400">
                   {trader.username}
                 </h3>
               </Link>
@@ -121,8 +130,8 @@ const Traders = () => {
                   onClick={() => handleFollow(trader._id)}
                   className={`flex items-center gap-1 px-3 py-1 rounded-full text-sm ${
                     trader.followers.includes(user._id)
-                      ? "bg-gray-100 text-gray-600 hover:bg-gray-200"
-                      : "bg-blue-50 text-blue-600 hover:bg-blue-100"
+                      ? "bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600"
+                      : "bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/50"
                   }`}
                 >
                   {trader.followers.includes(user._id) ? (
@@ -142,34 +151,41 @@ const Traders = () => {
 
             <div className="space-y-2">
               {trader.tradingStyle && (
-                <p className="text-sm text-gray-600">
+                <p className="text-sm text-gray-600 dark:text-gray-400">
                   Trading Style: {trader.tradingStyle}
                 </p>
               )}
               {trader.bio && (
-                <p className="text-sm text-gray-600">{trader.bio}</p>
+                <p className="text-sm text-gray-600 dark:text-gray-400">
+                  {trader.bio}
+                </p>
               )}
             </div>
 
-            <div
-              className="mt-4 pt-4 border-t grid grid-cols-3 gap-4">
+            <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700 grid grid-cols-3 gap-4">
               <div className="text-center">
-                <p className="text-lg font-semibold text-gray-900">
+                <p className="text-lg font-semibold text-gray-900 dark:text-gray-100">
                   {trader.stats?.totalTrades || 0}
                 </p>
-                <p className="text-xs text-gray-500">Trades</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">
+                  Trades
+                </p>
               </div>
               <div className="text-center">
-                <p className="text-lg font-semibold text-gray-900">
+                <p className="text-lg font-semibold text-gray-900 dark:text-gray-100">
                   {trader.followers?.length || 0}
                 </p>
-                <p className="text-xs text-gray-500">Followers</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">
+                  Followers
+                </p>
               </div>
               <div className="text-center">
-                <p className="text-lg font-semibold text-gray-900">
+                <p className="text-lg font-semibold text-gray-900 dark:text-gray-100">
                   {trader.stats?.winRate ? `${trader.stats.winRate}%` : "0%"}
                 </p>
-                <p className="text-xs text-gray-500">Win Rate</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">
+                  Win Rate
+                </p>
               </div>
             </div>
           </div>

@@ -1,4 +1,3 @@
-// src/components/FeaturedReviews.jsx
 import { useState, useEffect } from "react";
 import { Star, Link as LinkIcon } from "lucide-react";
 import { Link } from "react-router-dom";
@@ -44,14 +43,14 @@ const FeaturedReviews = () => {
 
   if (loading) {
     return (
-      <div className="bg-white rounded-lg shadow-lg p-6 mb-6">
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 mb-6">
         <div className="flex items-center gap-2 mb-4">
           <Star className="h-5 w-5 text-yellow-400 fill-current" />
-          <h2 className="text-lg font-semibold text-gray-900">
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
             Featured Reviews
           </h2>
         </div>
-        <div className="flex justify-center py-8">
+        <div className="flex justify-center py-8 text-gray-600 dark:text-gray-400">
           Loading featured reviews...
         </div>
       </div>
@@ -61,17 +60,15 @@ const FeaturedReviews = () => {
   if (error || !featuredReviews.length) return null;
 
   return (
-    <div
-      className="bg-white rounded-lg shadow-lg p-6 mb-6">
-      <div
-        className="flex items-center justify-between mb-4">
+    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 mb-6">
+      <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
           <Star className="h-5 w-5 text-yellow-400 fill-current" />
-          <h2 className="text-lg font-semibold text-gray-900">
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
             Featured Reviews
           </h2>
         </div>
-        <p className="text-sm text-gray-500">
+        <p className="text-sm text-gray-500 dark:text-gray-400">
           Top reviews from {new Date().toLocaleDateString()}
         </p>
       </div>
@@ -80,17 +77,18 @@ const FeaturedReviews = () => {
         {featuredReviews.map((review) => (
           <div
             key={review._id}
-            className="border-b border-gray-200 last:border-0 pb-6 last:pb-0">
+            className="border-b border-gray-200 dark:border-gray-700 last:border-0 pb-6 last:pb-0"
+          >
             <div className="flex justify-between items-start mb-4">
               <div>
-                <h3 className="text-lg font-medium text-gray-900">
+                <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">
                   {review.trade.symbol} - {review.trade.type}
                 </h3>
-                <p className="text-sm text-gray-500">
+                <p className="text-sm text-gray-500 dark:text-gray-400">
                   by{" "}
                   <Link
                     to={`/community/profile/${review.user.username}`}
-                    className="text-blue-600 hover:text-blue-700"
+                    className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300"
                   >
                     {review.user.username}
                   </Link>{" "}
@@ -100,8 +98,8 @@ const FeaturedReviews = () => {
               <div
                 className={`px-3 py-1 rounded-full text-sm ${
                   review.trade.profitLoss.realized >= 0
-                    ? "bg-green-100 text-green-800"
-                    : "bg-red-100 text-red-800"
+                    ? "bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300"
+                    : "bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300"
                 }`}
               >
                 {formatCurrency(review.trade.profitLoss.realized)}
@@ -110,49 +108,63 @@ const FeaturedReviews = () => {
 
             <div className="grid grid-cols-2 gap-4 mb-4">
               <div>
-                <h4 className="text-sm font-medium text-gray-700 mb-1">
+                <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   What Went Well
                 </h4>
-                <p className="text-sm text-gray-600">{review.whatWentWell}</p>
+                <p className="text-sm text-gray-600 dark:text-gray-400">
+                  {review.whatWentWell}
+                </p>
               </div>
               <div>
-                <h4 className="text-sm font-medium text-gray-700 mb-1">
+                <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   What Went Wrong
                 </h4>
-                <p className="text-sm text-gray-600">{review.whatWentWrong}</p>
+                <p className="text-sm text-gray-600 dark:text-gray-400">
+                  {review.whatWentWrong}
+                </p>
               </div>
             </div>
 
             <div className="mb-4">
-              <h4 className="text-sm font-medium text-gray-700 mb-1">
+              <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 Lesson Learned
               </h4>
-              <p className="text-sm text-gray-600">{review.lessonLearned}</p>
+              <p className="text-sm text-gray-600 dark:text-gray-400">
+                {review.lessonLearned}
+              </p>
             </div>
 
-            <div className="bg-gray-50 p-3 rounded-lg mb-4">
+            <div className="bg-gray-50 dark:bg-gray-700/50 p-3 rounded-lg mb-4">
               <div className="grid grid-cols-4 gap-4 text-sm">
                 <div>
-                  <span className="text-gray-500">Entry:</span>
-                  <span className="ml-2 font-medium">
+                  <span className="text-gray-500 dark:text-gray-400">
+                    Entry:
+                  </span>
+                  <span className="ml-2 font-medium text-gray-900 dark:text-gray-100">
                     ${review.trade.entryPrice}
                   </span>
                 </div>
                 <div>
-                  <span className="text-gray-500">Exit:</span>
-                  <span className="ml-2 font-medium">
+                  <span className="text-gray-500 dark:text-gray-400">
+                    Exit:
+                  </span>
+                  <span className="ml-2 font-medium text-gray-900 dark:text-gray-100">
                     ${review.trade.exitPrice}
                   </span>
                 </div>
                 <div>
-                  <span className="text-gray-500">Shares:</span>
-                  <span className="ml-2 font-medium">
+                  <span className="text-gray-500 dark:text-gray-400">
+                    Shares:
+                  </span>
+                  <span className="ml-2 font-medium text-gray-900 dark:text-gray-100">
                     {review.trade.entryQuantity}
                   </span>
                 </div>
                 <div>
-                  <span className="text-gray-500">Session:</span>
-                  <span className="ml-2 font-medium">
+                  <span className="text-gray-500 dark:text-gray-400">
+                    Session:
+                  </span>
+                  <span className="ml-2 font-medium text-gray-900 dark:text-gray-100">
                     {review.trade.session}
                   </span>
                 </div>
