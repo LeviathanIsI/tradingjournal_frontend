@@ -723,11 +723,11 @@ const StopLossStudy = ({ trades, user, stats, experienceLevel }) => {
               </li>
               <li>
                 • Stop loss: Fixed 5% below entry price
-                {useSupRes ? " or support/resistance level" : ""}
+                {useSupRes ? " or 2% below support level" : ""}
               </li>
               <li>
                 • Target: 3x distance to stop (1:3 ratio)
-                {useSupRes ? " or support/resistance level" : ""}
+                {useSupRes ? " or 2 % below resistance level" : ""}
               </li>
             </ul>
           </div>
