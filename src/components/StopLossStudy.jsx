@@ -563,33 +563,11 @@ const StopLossStudy = ({ trades, user, stats, experienceLevel }) => {
         const support = Number(supportPrice);
         const resistance = Number(resistancePrice);
 
-        // Determine if it's a long or short trade based on entry price
-        const isLongTrade = entry < (support + resistance) / 2;
+        // Stop loss should be 2% below support
+        stopPrice = support * (1 - SUPPORT_BUFFER);
 
-        if (isLongTrade) {
-          // For long trades
-          // Set stop slightly below support
-          stopPrice = support * (1 - SUPPORT_BUFFER);
-          // Set target slightly below resistance
-          targetPrice = resistance * (1 - RESISTANCE_BUFFER);
-        } else {
-          // For short trades
-          // Set stop slightly above resistance
-          stopPrice = resistance * (1 + SUPPORT_BUFFER);
-          // Set target slightly above support
-          targetPrice = support * (1 + RESISTANCE_BUFFER);
-        }
-
-        // Ensure minimum risk-reward is maintained
-        const riskAmount = Math.abs(entry - stopPrice);
-        const rewardAmount = Math.abs(targetPrice - entry);
-
-        // Only adjust target if reward isn't sufficient
-        if (rewardAmount < riskAmount * REWARD_MULTIPLIER) {
-          targetPrice = isLongTrade
-            ? entry + riskAmount * REWARD_MULTIPLIER
-            : entry - riskAmount * REWARD_MULTIPLIER;
-        }
+        // Target price should be 2% below resistance
+        targetPrice = resistance * (1 - RESISTANCE_BUFFER);
       } else {
         // Default calculation without support/resistance
         stopPrice = entry * (1 - STOP_LOSS_PERCENTAGE / 100);
@@ -597,9 +575,13 @@ const StopLossStudy = ({ trades, user, stats, experienceLevel }) => {
         targetPrice = entry + riskAmount * REWARD_MULTIPLIER;
       }
 
+      // Ensure valid calculations
+      stopPrice = stopPrice.toFixed(2);
+      targetPrice = targetPrice.toFixed(2);
+
       // Set the calculated values for display
-      setCalculatedStop(stopPrice.toFixed(2));
-      setCalculatedTarget(targetPrice.toFixed(2));
+      setCalculatedStop(stopPrice);
+      setCalculatedTarget(targetPrice);
 
       // Calculate per-share values
       const riskPerShare = Number(Math.abs(entry - stopPrice).toFixed(2));
