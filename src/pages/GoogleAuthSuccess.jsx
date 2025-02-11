@@ -22,7 +22,7 @@ const GoogleAuthSuccess = () => {
 
     if (!token) {
       setStatus("No token found");
-      console.log("No token found, redirecting to login");
+      console.log("❌ No token found, redirecting to login");
       setTimeout(() => navigate("/login"), 2000);
       return;
     }
@@ -30,41 +30,41 @@ const GoogleAuthSuccess = () => {
     const handleGoogleSuccess = async () => {
       try {
         setStatus("Making request to server...");
-        console.log("Making request to Google success endpoint");
+        console.log("📡 Making request to Google success endpoint");
 
         const response = await fetch(
-          `${
-            import.meta.env.VITE_API_URL
-          }/api/auth/google/success?token=${token}`,
+          `${import.meta.env.VITE_API_URL}/api/auth/google/success`,
           {
+            method: "POST", // ✅ Ensure correct HTTP method (some servers expect POST)
             credentials: "include",
             headers: {
               Accept: "application/json",
               "Content-Type": "application/json",
             },
+            body: JSON.stringify({ token }), // ✅ Send token in body instead of query param
           }
         );
 
         setStatus(`Server responded with status: ${response.status}`);
-        console.log("Server response status:", response.status);
+        console.log("✅ Server response status:", response.status);
 
         if (!response.ok) {
           throw new Error(`Server responded with status: ${response.status}`);
         }
 
         const data = await response.json();
-        console.log("Response data:", data);
+        console.log("✅ Response data:", data);
 
         if (data.success) {
           setStatus("Logging in...");
-          console.log("Calling login with data:", data.data);
+          console.log("🔐 Calling login with data:", data.data);
           await login(data.data);
           navigate("/dashboard");
         } else {
           throw new Error(data.error || "Login failed");
         }
       } catch (error) {
-        console.error("Error in Google success:", error);
+        console.error("❌ Error in Google success:", error);
         setStatus(`Error: ${error.message}`);
         setTimeout(() => navigate("/login"), 2000);
       }
