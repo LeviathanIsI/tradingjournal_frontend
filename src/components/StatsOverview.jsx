@@ -2,8 +2,8 @@ import React from "react";
 
 const StatsOverview = ({ user, stats, formatCurrency }) => {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-      <div className="bg-white dark:bg-gray-800 p-4 rounded shadow">
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 bg-transparent">
+      <div className="bg-white dark:bg-gray-900 p-4 rounded shadow">
         <div className="flex justify-between">
           <div>
             <h3 className="text-sm text-gray-600 dark:text-gray-400">
@@ -55,7 +55,7 @@ const StatsOverview = ({ user, stats, formatCurrency }) => {
         </div>
       </div>
 
-      <div className="bg-white dark:bg-gray-800 p-4 rounded shadow flex justify-between">
+      <div className="bg-white dark:bg-gray-900 p-4 rounded shadow flex justify-between">
         <div>
           <h3 className="text-sm text-gray-600 dark:text-gray-400">
             Total Trades
@@ -72,7 +72,7 @@ const StatsOverview = ({ user, stats, formatCurrency }) => {
         </div>
       </div>
 
-      <div className="bg-white dark:bg-gray-800 p-4 rounded shadow">
+      <div className="bg-white dark:bg-gray-900 p-4 rounded shadow">
         <h3 className="text-sm text-gray-600 dark:text-gray-400">Total P/L</h3>
         <p
           className={`text-2xl font-bold ${
