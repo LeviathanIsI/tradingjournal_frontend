@@ -21,6 +21,7 @@ import TradePlanning from "./pages/TradePlanning";
 import Community from "./pages/Community";
 import Traders from "./components/Traders";
 import ForgotPassword from "./pages/ForgotPassword";
+import GoogleAuthSuccess from "./pages/GoogleAuthSuccess";
 
 const ProtectedRoute = ({ children }) => {
   const { user } = useAuth();
@@ -101,6 +102,7 @@ function AppRoutes() {
         }
       />
       <Route path="/forgot-password" element={<ForgotPassword />} />
+      <Route path="/auth/google/success" element={<GoogleAuthSuccess />} />
     </Routes>
   );
 }

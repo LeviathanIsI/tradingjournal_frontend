@@ -722,12 +722,14 @@ const StopLossStudy = ({ trades, user, stats, experienceLevel }) => {
                 {(accountBalance * (RISK_PERCENTAGE / 100)).toFixed(2)})
               </li>
               <li>
-                • Stop loss: Fixed 5% below entry price
-                {useSupRes ? " or 2% below support level" : ""}
+                {useSupRes
+                  ? "• Stop loss: 2% below support level"
+                  : "• Stop loss: Fixed 5% below entry price"}
               </li>
               <li>
-                • Target: 3x distance to stop (1:3 ratio)
-                {useSupRes ? " or 2 % below resistance level" : ""}
+                {useSupRes
+                  ? "• Target: 2% below resistance level"
+                  : "• Target: 3x distance to stop (1:3 ratio)"}
               </li>
             </ul>
           </div>

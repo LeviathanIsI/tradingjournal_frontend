@@ -267,6 +267,7 @@ const TradeModal = ({ isOpen, onClose, onSubmit, trade, userTimeZone }) => {
                 </label>
                 <input
                   type="text"
+                  autocomplete="off"
                   name="symbol"
                   value={formData.symbol}
                   onChange={handleChange}
@@ -324,6 +325,7 @@ const TradeModal = ({ isOpen, onClose, onSubmit, trade, userTimeZone }) => {
                   </label>
                   <input
                     type="number"
+                    autocomplete="off"
                     name="entryQuantity"
                     value={formData.entryQuantity}
                     onChange={handleChange}
@@ -340,6 +342,7 @@ const TradeModal = ({ isOpen, onClose, onSubmit, trade, userTimeZone }) => {
                   </label>
                   <input
                     type="number"
+                    autocomplete="off"
                     name="entryPrice"
                     value={formData.entryPrice}
                     onChange={handleChange}
@@ -380,6 +383,7 @@ const TradeModal = ({ isOpen, onClose, onSubmit, trade, userTimeZone }) => {
                   </label>
                   <input
                     type="number"
+                    autocomplete="off"
                     name="exitQuantity"
                     value={formData.exitQuantity}
                     onChange={handleChange}
@@ -395,6 +399,7 @@ const TradeModal = ({ isOpen, onClose, onSubmit, trade, userTimeZone }) => {
                   </label>
                   <input
                     type="number"
+                    autocomplete="off"
                     name="exitPrice"
                     value={formData.exitPrice}
                     onChange={handleChange}
@@ -433,6 +438,7 @@ const TradeModal = ({ isOpen, onClose, onSubmit, trade, userTimeZone }) => {
                   </label>
                   <input
                     type="number"
+                    autocomplete="off"
                     name="postExitHigh"
                     value={formData.postExitHigh}
                     onChange={handleChange}
@@ -447,6 +453,7 @@ const TradeModal = ({ isOpen, onClose, onSubmit, trade, userTimeZone }) => {
                   </label>
                   <input
                     type="number"
+                    autocomplete="off"
                     name="postExitLow"
                     value={formData.postExitLow}
                     onChange={handleChange}
@@ -583,6 +590,7 @@ const TradeModal = ({ isOpen, onClose, onSubmit, trade, userTimeZone }) => {
                   </label>
                   <input
                     type="number"
+                    autocomplete="off"
                     name="mentalState.focus"
                     value={formData.mentalState?.focus || ""}
                     onChange={handleChange}
@@ -678,6 +686,7 @@ const TradeModal = ({ isOpen, onClose, onSubmit, trade, userTimeZone }) => {
                   </label>
                   <input
                     type="text"
+                    autocomplete="off"
                     name="strategy"
                     value={formData.strategy}
                     onChange={handleChange}
@@ -692,6 +701,7 @@ const TradeModal = ({ isOpen, onClose, onSubmit, trade, userTimeZone }) => {
                   </label>
                   <textarea
                     name="notes"
+                    autocomplete="off"
                     value={formData.notes}
                     onChange={handleChange}
                     rows="3"

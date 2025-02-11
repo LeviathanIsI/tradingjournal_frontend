@@ -1,12 +1,13 @@
-// src/pages/Login.jsx
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import GoogleButton from "../components/GoogleButton";
 
 const Login = () => {
   const [formData, setFormData] = useState({
     email: "",
     password: "",
+    rememberMe: false,
   });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -14,9 +15,11 @@ const Login = () => {
   const { login } = useAuth();
 
   const handleChange = (e) => {
+    const value =
+      e.target.type === "checkbox" ? e.target.checked : e.target.value;
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value,
+      [e.target.name]: value,
     });
   };
 
@@ -31,7 +34,11 @@ const Login = () => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({
+          email: formData.email,
+          password: formData.password,
+          rememberMe: formData.rememberMe,
+        }),
       });
 
       const data = await response.json();
@@ -40,7 +47,7 @@ const Login = () => {
         throw new Error(data.error || "Login failed");
       }
 
-      login(data.data);
+      login(data.data, formData.rememberMe);
       navigate("/dashboard");
     } catch (err) {
       setError(err.message);
@@ -78,7 +85,7 @@ const Login = () => {
             />
           </div>
 
-          <div className="mb-6">
+          <div className="mb-4">
             <label htmlFor="password" className="block text-sm mb-1 text-black">
               Password
             </label>
@@ -93,6 +100,19 @@ const Login = () => {
             />
           </div>
 
+          <div className="mb-6">
+            <label className="flex items-center">
+              <input
+                type="checkbox"
+                name="rememberMe"
+                checked={formData.rememberMe}
+                onChange={handleChange}
+                className="mr-2"
+              />
+              <span className="text-sm text-black">Remember me for 5 days</span>
+            </label>
+          </div>
+
           <button
             type="submit"
             disabled={loading}
@@ -101,6 +121,36 @@ const Login = () => {
             {loading ? "Signing in..." : "Sign in"}
           </button>
         </form>
+
+        <div className="mt-4">
+          <div className="relative">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-gray-300"></div>
+            </div>
+            <div className="relative flex justify-center text-sm">
+              <span className="px-2 bg-white text-gray-500">
+                Or continue with
+              </span>
+            </div>
+          </div>
+
+          <div className="mt-4">
+            <GoogleButton
+              onClick={() => {
+                const googleAuthUrl = "http://localhost:5000/api/auth/google";
+
+                // Try both methods
+                try {
+                  window.location.assign(googleAuthUrl);
+                } catch (error) {
+                  console.error("Error redirecting:", error);
+                  window.location.href = googleAuthUrl;
+                }
+              }}
+              variant="signin"
+            />
+          </div>
+        </div>
         <div className="flex justify-between items-center mt-4">
           <button
             onClick={() => navigate("/signup")}

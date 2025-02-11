@@ -60,6 +60,31 @@ const PublicReviews = () => {
       });
     }
 
+    if (filters.timeFrame !== "all") {
+      const now = new Date();
+      let startDate;
+
+      switch (filters.timeFrame) {
+        case "today":
+          startDate = new Date(now.setHours(0, 0, 0, 0));
+          break;
+        case "week":
+          startDate = new Date(now.setDate(now.getDate() - 7));
+          break;
+        case "month":
+          startDate = new Date(now.setMonth(now.getMonth() - 1));
+          break;
+        default:
+          startDate = null;
+      }
+
+      if (startDate) {
+        filtered = filtered.filter(
+          (review) => new Date(review.createdAt) >= startDate
+        );
+      }
+    }
+
     // Apply sorting
     switch (currentSort) {
       case "newest":
@@ -166,10 +191,14 @@ const PublicReviews = () => {
                 <p className="text-sm text-gray-500 dark:text-gray-400">
                   by{" "}
                   <Link
-                    to={`/community/profile/${review.user.username}`}
+                    to={
+                      review.user
+                        ? `/community/profile/${review.user.username}`
+                        : "#"
+                    }
                     className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300"
                   >
-                    {review.user.username}
+                    {review.user?.username || "Unknown User"}
                   </Link>{" "}
                   • {new Date(review.createdAt).toLocaleDateString()}
                 </p>

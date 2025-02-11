@@ -210,6 +210,10 @@ const SignUp = () => {
     </div>
   );
 
+   const handleGoogleSignup = () => {
+    window.location.href = "http://localhost:5000/api/auth/google";
+  };
+
   return (
     <div className="min-h-[calc(100vh-64px)] bg-white flex items-center justify-center py-12">
       <div className="w-full max-w-md px-8">
@@ -341,6 +345,31 @@ const SignUp = () => {
             </p>
           </div>
         </form>
+        {/* 🚀 Google Sign Up */}
+        <div className="mt-6">
+          <button
+            type="button"
+            onClick={handleGoogleSignup}
+            className="w-full bg-red-500 text-white py-3 rounded-md hover:bg-red-600 shadow-sm text-sm font-medium flex items-center justify-center"
+          >
+            <svg
+              className="w-5 h-5 mr-2"
+              viewBox="0 0 48 48"
+              version="1.1"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                fill="#4285F4"
+                d="M46.1,24.6c0-1.6-0.1-3.1-0.4-4.6H24v9.3h12.6c-0.6,3-2.3,5.5-4.7,7.2v6h7.6C43.7,38.9,46.1,32.4,46.1,24.6z"
+              ></path>
+              <path
+                fill="#34A853"
+                d="M24,46c6.5,0,11.9-2.1,15.9-5.6L32.3,34c-2.3,1.5-5.2,2.4-8.3,2.4c-6.4,0-11.8-4.3-13.7-10.1H2.7v6.2C6.8,40,14.9,46,24,46z"
+              ></path>
+            </svg>
+            Sign up with Google
+          </button>
+        </div>
       </div>
     </div>
   );
