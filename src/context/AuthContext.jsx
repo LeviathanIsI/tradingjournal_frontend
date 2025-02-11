@@ -78,7 +78,7 @@ export const AuthProvider = ({ children }) => {
 
     try {
       const response = await fetch(
-        "${import.meta.env.VITE_API_URL}/api/auth/validate",
+        `${import.meta.env.VITE_API_URL}/api/auth/validate`,
         {
           headers: {
             Authorization: `Bearer ${token}`,

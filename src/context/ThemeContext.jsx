@@ -41,7 +41,7 @@ export const ThemeProvider = ({ children }) => {
     if (user) {
       try {
         const response = await fetch(
-          "${import.meta.env.VITE_API_URL}/api/auth/settings",
+          `${import.meta.env.VITE_API_URL}/api/auth/settings`,
           {
             method: "PUT",
             headers: {

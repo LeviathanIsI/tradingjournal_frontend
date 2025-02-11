@@ -33,12 +33,12 @@ const TradeAnalysis = ({ trades }) => {
         const token = localStorage.getItem("token");
         const [patternsRes, timeRes] = await Promise.all([
           fetch(
-            "${import.meta.env.VITE_API_URL}/api/trades/analysis/patterns",
+            `${import.meta.env.VITE_API_URL}/api/trades/analysis/patterns`,
             {
               headers: { Authorization: `Bearer ${token}` },
             }
           ),
-          fetch("${import.meta.env.VITE_API_URL}/api/trades/analysis/time", {
+          fetch(`${import.meta.env.VITE_API_URL}/api/trades/analysis/time`, {
             headers: { Authorization: `Bearer ${token}` },
           }),
         ]);

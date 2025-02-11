@@ -23,7 +23,7 @@ const ResetPassword = ({ onSuccess, onError }) => {
     try {
       const resetToken = localStorage.getItem("resetToken");
       const response = await fetch(
-        "${import.meta.env.VITE_API_URL}/api/auth/reset-password",
+        `${import.meta.env.VITE_API_URL}/api/auth/reset-password`,
         {
           method: "POST",
           headers: {

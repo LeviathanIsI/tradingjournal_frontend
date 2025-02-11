@@ -58,7 +58,7 @@ const ProfileSettings = ({
     try {
       const token = localStorage.getItem("token");
       const response = await fetch(
-        "${import.meta.env.VITE_API_URL}/api/auth/profile/update",
+        `${import.meta.env.VITE_API_URL}/api/auth/profile/update`,
         {
           method: "PUT",
           headers: {
@@ -100,7 +100,7 @@ const ProfileSettings = ({
     try {
       const token = localStorage.getItem("token");
       const response = await fetch(
-        "${import.meta.env.VITE_API_URL}/api/auth/set-password",
+        `${import.meta.env.VITE_API_URL}/api/auth/set-password`,
         {
           method: "PUT",
           headers: {
@@ -162,7 +162,7 @@ const ProfileSettings = ({
     try {
       const token = localStorage.getItem("token");
       const response = await fetch(
-        "${import.meta.env.VITE_API_URL}/api/auth/settings",
+        `${import.meta.env.VITE_API_URL}/api/auth/settings`,
         {
           method: "PUT",
           headers: {

@@ -14,7 +14,7 @@ const StreakAndDrawdown = ({ trades }) => {
             headers: { Authorization: `Bearer ${token}` },
           }),
           fetch(
-            "${import.meta.env.VITE_API_URL}/api/trades/analysis/drawdown",
+            `${import.meta.env.VITE_API_URL}/api/trades/analysis/drawdown`,
             {
               headers: { Authorization: `Bearer ${token}` },
             }

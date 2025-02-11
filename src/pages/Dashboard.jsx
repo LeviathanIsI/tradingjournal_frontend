@@ -49,7 +49,7 @@ const Dashboard = () => {
   const handleReviewSubmit = async (reviewData) => {
     try {
       const response = await fetch(
-        "${import.meta.env.VITE_API_URL}/api/trade-reviews",
+        `${import.meta.env.VITE_API_URL}/api/trade-reviews`,
         {
           method: "POST",
           headers: {
@@ -140,7 +140,7 @@ const Dashboard = () => {
 
     try {
       const response = await fetch(
-        "${import.meta.env.VITE_API_URL}/api/trades/bulk-delete",
+        `${import.meta.env.VITE_API_URL}/api/trades/bulk-delete`,
         {
           method: "POST",
           headers: {

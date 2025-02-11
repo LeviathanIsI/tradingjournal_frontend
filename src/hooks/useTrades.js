@@ -15,7 +15,7 @@ export const useTrades = () => {
       }
 
       const response = await fetch(
-        "${import.meta.env.VITE_API_URL}/api/trades",
+        `${import.meta.env.VITE_API_URL}/api/trades`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -46,7 +46,7 @@ export const useTrades = () => {
       }
 
       const response = await fetch(
-        "${import.meta.env.VITE_API_URL}/api/trades/stats",
+        `${import.meta.env.VITE_API_URL}/api/trades/stats`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -77,7 +77,7 @@ export const useTrades = () => {
       }
 
       const response = await fetch(
-        "${import.meta.env.VITE_API_URL}/api/trades",
+        `${import.meta.env.VITE_API_URL}/api/trades`,
         {
           method: "POST",
           headers: {

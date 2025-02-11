@@ -15,7 +15,7 @@ const SecurityQuestions = ({ securityData, onSuccess, onError }) => {
 
     try {
       const response = await fetch(
-        "${import.meta.env.VITE_API_URL}/api/auth/forgot-password/verify",
+        `${import.meta.env.VITE_API_URL}/api/auth/forgot-password/verify`,
         {
           method: "POST",
           headers: {

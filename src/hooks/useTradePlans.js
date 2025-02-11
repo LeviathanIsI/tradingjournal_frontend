@@ -14,7 +14,7 @@ export const useTradePlans = () => {
   const fetchTradePlans = async () => {
     const token = localStorage.getItem("token");
     const response = await fetch(
-      "${import.meta.env.VITE_API_URL}/api/trade-plans",
+      `${import.meta.env.VITE_API_URL}/api/trade-plans`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -76,7 +76,7 @@ export const useTradePlans = () => {
     try {
       const token = localStorage.getItem("token");
       const response = await fetch(
-        "${import.meta.env.VITE_API_URL}/api/trade-plans",
+        `${import.meta.env.VITE_API_URL}/api/trade-plans`,
         {
           method: "POST",
           headers: {
