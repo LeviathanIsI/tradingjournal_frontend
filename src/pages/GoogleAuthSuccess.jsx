@@ -9,7 +9,7 @@ const GoogleAuthSuccess = () => {
   const [status, setStatus] = useState("Initializing...");
 
   useEffect(() => {
-    const token = searchParams.get("token"); // 🔹 Ensure we're fetching the correct token
+    const token = searchParams.get("token");
     console.log("✅ Token in URL:", token);
 
     if (!token) {

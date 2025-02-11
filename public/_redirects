@@ -1,1 +1,4 @@
 /* /index.html 200
+
+# Redirect www to non-www
+https://www.rivyl.app/* https://rivyl.app/:splat 301!
