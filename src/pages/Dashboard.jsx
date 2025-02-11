@@ -204,7 +204,7 @@ const Dashboard = () => {
   return (
     <div className="w-full p-6 text-gray-900 dark:text-gray-100">
       <DashboardNav />
-      <div className="p-6 bg-gray-50 dark:bg-gray-800">
+      <div className="p-6 bg-transparent">
         <StatsOverview
           user={user}
           stats={stats}
