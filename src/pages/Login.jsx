@@ -30,7 +30,7 @@ const Login = () => {
 
     try {
       const response = await fetch(
-        "${import.meta.env.VITE_API_URL}/api/auth/login",
+        '${import.meta.env.VITE_API_URL}/api/auth/login',
         {
           method: "POST",
           headers: {
@@ -141,7 +141,7 @@ const Login = () => {
             <GoogleButton
               onClick={() => {
                 const googleAuthUrl =
-                  "${import.meta.env.VITE_API_URL}/api/auth/google";
+                  `${import.meta.env.VITE_API_URL}/api/auth/google`;
 
                 // Try both methods
                 try {
