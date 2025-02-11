@@ -103,6 +103,7 @@ function AppRoutes() {
       />
       <Route path="/forgot-password" element={<ForgotPassword />} />
       <Route path="/auth/google/success" element={<GoogleAuthSuccess />} />
+      <Route path="/auth/google/callback" element={<GoogleAuthSuccess />} />
     </Routes>
   );
 }
