@@ -15,7 +15,7 @@ import { ThemeProvider } from "./context/ThemeContext";
 import Navbar from "./components/Navbar";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
-import SignUp from "./pages/SignUp";
+import SignUp from "./pages/SignUp.jsx";
 import Dashboard from "./pages/Dashboard";
 import TradePlanning from "./pages/TradePlanning";
 import Community from "./pages/Community";

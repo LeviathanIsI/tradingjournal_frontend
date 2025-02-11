@@ -12,7 +12,7 @@ const ReviewInteractions = ({ review, onUpdate }) => {
     try {
       const token = localStorage.getItem("token");
       const response = await fetch(
-        `http://localhost:5000/api/trade-reviews/${review._id}/like`,
+        `${import.meta.env.VITE_API_URL}/api/trade-reviews/${review._id}/like`,
         {
           method: "POST",
           headers: {
@@ -37,7 +37,9 @@ const ReviewInteractions = ({ review, onUpdate }) => {
     try {
       const token = localStorage.getItem("token");
       const response = await fetch(
-        `http://localhost:5000/api/trade-reviews/${review._id}/comments`,
+        `${import.meta.env.VITE_API_URL}/api/trade-reviews/${
+          review._id
+        }/comments`,
         {
           method: "POST",
           headers: {
@@ -62,7 +64,9 @@ const ReviewInteractions = ({ review, onUpdate }) => {
     try {
       const token = localStorage.getItem("token");
       const response = await fetch(
-        `http://localhost:5000/api/trade-reviews/${review._id}/comments/${commentId}`,
+        `${import.meta.env.VITE_API_URL}/api/trade-reviews/${
+          review._id
+        }/comments/${commentId}`,
         {
           method: "DELETE",
           headers: {

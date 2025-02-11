@@ -58,7 +58,7 @@ const ProfileSettings = ({
     try {
       const token = localStorage.getItem("token");
       const response = await fetch(
-        "http://localhost:5000/api/auth/profile/update",
+        "${import.meta.env.VITE_API_URL}/api/auth/profile/update",
         {
           method: "PUT",
           headers: {
@@ -100,7 +100,7 @@ const ProfileSettings = ({
     try {
       const token = localStorage.getItem("token");
       const response = await fetch(
-        "http://localhost:5000/api/auth/set-password",
+        "${import.meta.env.VITE_API_URL}/api/auth/set-password",
         {
           method: "PUT",
           headers: {
@@ -161,22 +161,25 @@ const ProfileSettings = ({
 
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch("http://localhost:5000/api/auth/settings", {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          preferences: {
-            ...user.preferences,
-            startingCapital: Number(accountForm.startingCapital),
-            defaultCurrency: accountForm.defaultCurrency,
-            timeZone: accountForm.timeZone,
-            experienceLevel: accountForm.experienceLevel,
+      const response = await fetch(
+        "${import.meta.env.VITE_API_URL}/api/auth/settings",
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
           },
-        }),
-      });
+          body: JSON.stringify({
+            preferences: {
+              ...user.preferences,
+              startingCapital: Number(accountForm.startingCapital),
+              defaultCurrency: accountForm.defaultCurrency,
+              timeZone: accountForm.timeZone,
+              experienceLevel: accountForm.experienceLevel,
+            },
+          }),
+        }
+      );
 
       if (!response.ok) {
         throw new Error("Failed to update settings");

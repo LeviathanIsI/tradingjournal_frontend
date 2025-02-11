@@ -13,7 +13,7 @@ const FeaturedReviews = () => {
       try {
         setLoading(true);
         const response = await fetch(
-          "http://localhost:5000/api/trade-reviews/featured"
+          "${import.meta.env.VITE_API_URL}/api/trade-reviews/featured"
         );
         const data = await response.json();
 

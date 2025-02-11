@@ -32,7 +32,7 @@ const Profile = () => {
       setLoading(true);
       const token = localStorage.getItem("token");
       const response = await fetch(
-        `http://localhost:5000/api/auth/profile/${username}`,
+        `${import.meta.env.VITE_API_URL}/api/auth/profile/${username}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -69,7 +69,7 @@ const Profile = () => {
     try {
       const token = localStorage.getItem("token");
       const response = await fetch(
-        `http://localhost:5000/api/auth/follow/${profile.user._id}`,
+        `${import.meta.env.VITE_API_URL}/api/auth/follow/${profile.user._id}`,
         {
           method: "POST",
           headers: {

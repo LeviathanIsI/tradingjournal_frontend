@@ -48,14 +48,17 @@ const Dashboard = () => {
 
   const handleReviewSubmit = async (reviewData) => {
     try {
-      const response = await fetch("http://localhost:5000/api/trade-reviews", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-        body: JSON.stringify(reviewData),
-      });
+      const response = await fetch(
+        "${import.meta.env.VITE_API_URL}/api/trade-reviews",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+          body: JSON.stringify(reviewData),
+        }
+      );
 
       if (response.ok) {
         setIsReviewModalOpen(false);
@@ -137,7 +140,7 @@ const Dashboard = () => {
 
     try {
       const response = await fetch(
-        "http://localhost:5000/api/trades/bulk-delete",
+        "${import.meta.env.VITE_API_URL}/api/trades/bulk-delete",
         {
           method: "POST",
           headers: {

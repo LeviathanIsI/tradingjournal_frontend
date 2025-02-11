@@ -33,7 +33,9 @@ const GoogleAuthSuccess = () => {
         console.log("Making request to Google success endpoint");
 
         const response = await fetch(
-          `http://localhost:5000/api/auth/google/success?token=${token}`,
+          `${
+            import.meta.env.VITE_API_URL
+          }/api/auth/google/success?token=${token}`,
           {
             credentials: "include",
             headers: {

@@ -125,7 +125,7 @@ const PublicReviews = () => {
       try {
         setLoading(true);
         const response = await fetch(
-          "http://localhost:5000/api/trade-reviews/public"
+          "${import.meta.env.VITE_API_URL}/api/trade-reviews/public"
         );
         const data = await response.json();
 

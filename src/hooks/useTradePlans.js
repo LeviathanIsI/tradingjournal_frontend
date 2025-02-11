@@ -13,11 +13,14 @@ export const useTradePlans = () => {
 
   const fetchTradePlans = async () => {
     const token = localStorage.getItem("token");
-    const response = await fetch("http://localhost:5000/api/trade-plans", {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    const response = await fetch(
+      "${import.meta.env.VITE_API_URL}/api/trade-plans",
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
 
     if (!response.ok) {
       throw new Error("Failed to fetch trade plans");
@@ -72,14 +75,17 @@ export const useTradePlans = () => {
   const addTradePlan = async (planData) => {
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch("http://localhost:5000/api/trade-plans", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(planData),
-      });
+      const response = await fetch(
+        "${import.meta.env.VITE_API_URL}/api/trade-plans",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(planData),
+        }
+      );
 
       if (!response.ok) {
         const errorData = await response.json();
@@ -99,7 +105,7 @@ export const useTradePlans = () => {
     try {
       const token = localStorage.getItem("token");
       const response = await fetch(
-        `http://localhost:5000/api/trade-plans/${id}`,
+        `${import.meta.env.VITE_API_URL}/api/trade-plans/${id}`,
         {
           method: "PUT",
           headers: {
@@ -128,7 +134,7 @@ export const useTradePlans = () => {
     try {
       const token = localStorage.getItem("token");
       const response = await fetch(
-        `http://localhost:5000/api/trade-plans/${id}`,
+        `${import.meta.env.VITE_API_URL}/api/trade-plans/${id}`,
         {
           method: "DELETE",
           headers: {

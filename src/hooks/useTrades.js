@@ -14,12 +14,15 @@ export const useTrades = () => {
         throw new Error("No authentication token found");
       }
 
-      const response = await fetch("http://localhost:5000/api/trades", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      });
+      const response = await fetch(
+        "${import.meta.env.VITE_API_URL}/api/trades",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
       if (!response.ok) {
         const errorData = await response.json();
@@ -42,12 +45,15 @@ export const useTrades = () => {
         throw new Error("No authentication token found");
       }
 
-      const response = await fetch("http://localhost:5000/api/trades/stats", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      });
+      const response = await fetch(
+        "${import.meta.env.VITE_API_URL}/api/trades/stats",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
       if (!response.ok) {
         const errorData = await response.json();
@@ -70,14 +76,17 @@ export const useTrades = () => {
         throw new Error("No authentication token found");
       }
 
-      const response = await fetch("http://localhost:5000/api/trades", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(tradeData),
-      });
+      const response = await fetch(
+        "${import.meta.env.VITE_API_URL}/api/trades",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(tradeData),
+        }
+      );
 
       if (!response.ok) {
         const errorData = await response.json();
@@ -103,7 +112,7 @@ export const useTrades = () => {
       }
 
       const response = await fetch(
-        `http://localhost:5000/api/trades/${tradeId}`,
+        `${import.meta.env.VITE_API_URL}/api/trades/${tradeId}`,
         {
           method: "PUT",
           headers: {
@@ -138,7 +147,7 @@ export const useTrades = () => {
       }
 
       const response = await fetch(
-        `http://localhost:5000/api/trades/${tradeId}`,
+        `${import.meta.env.VITE_API_URL}/api/trades/${tradeId}`,
         {
           method: "DELETE",
           headers: {
@@ -182,14 +191,17 @@ export const useTrades = () => {
 
   const importTrades = async (trades) => {
     try {
-      const response = await fetch("http://localhost:5000/api/trades/import", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-        body: JSON.stringify({ trades }),
-      });
+      const response = await fetch(
+        "${import.meta.env.VITE_API_URL}/api/trades/import",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+          body: JSON.stringify({ trades }),
+        }
+      );
 
       if (!response.ok) {
         const data = await response.json();

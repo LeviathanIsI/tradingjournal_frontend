@@ -28,7 +28,7 @@ const YourReviews = ({ userId }) => {
       setLoading(true);
       const token = localStorage.getItem("token");
       const response = await fetch(
-        `http://localhost:5000/api/trade-reviews/user/${userId}`,
+        `${import.meta.env.VITE_API_URL}/api/trade-reviews/user/${userId}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -76,7 +76,7 @@ const YourReviews = ({ userId }) => {
 
     try {
       const response = await fetch(
-        `http://localhost:5000/api/trade-reviews/${reviewId}`,
+        `${import.meta.env.VITE_API_URL}/api/trade-reviews/${reviewId}`,
         {
           method: "DELETE",
           headers: {
@@ -99,7 +99,7 @@ const YourReviews = ({ userId }) => {
   const handleVisibilityToggle = async (review) => {
     try {
       const response = await fetch(
-        `http://localhost:5000/api/trade-reviews/${review._id}`,
+        `${import.meta.env.VITE_API_URL}/api/trade-reviews/${review._id}`,
         {
           method: "PATCH",
           headers: {
@@ -127,7 +127,9 @@ const YourReviews = ({ userId }) => {
     try {
       const token = localStorage.getItem("token");
       const response = await fetch(
-        `http://localhost:5000/api/trade-reviews/${selectedReview._id}`,
+        `${import.meta.env.VITE_API_URL}/api/trade-reviews/${
+          selectedReview._id
+        }`,
         {
           method: "PUT",
           headers: {

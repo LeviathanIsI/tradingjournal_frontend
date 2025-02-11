@@ -15,11 +15,14 @@ const Traders = () => {
       try {
         setLoading(true);
         const token = localStorage.getItem("token");
-        const response = await fetch("http://localhost:5000/api/auth/traders", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const response = await fetch(
+          "${import.meta.env.VITE_API_URL}/api/auth/traders",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
         const data = await response.json();
 
         if (!response.ok) {
@@ -42,7 +45,7 @@ const Traders = () => {
     try {
       const token = localStorage.getItem("token");
       const response = await fetch(
-        `http://localhost:5000/api/auth/follow/${traderId}`,
+        `${import.meta.env.VITE_API_URL}/api/auth/follow/${traderId}`,
         {
           method: "POST",
           headers: {

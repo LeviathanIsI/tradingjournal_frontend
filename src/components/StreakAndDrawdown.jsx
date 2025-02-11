@@ -10,12 +10,15 @@ const StreakAndDrawdown = ({ trades }) => {
         const token = localStorage.getItem("token");
         // Fetch both stats in parallel
         const [streakResponse, drawdownResponse] = await Promise.all([
-          fetch("http://localhost:5000/api/trades/analysis/streaks", {
+          fetch("${import.meta.env.VITE_API_URL}/api/trades/analysis/streaks", {
             headers: { Authorization: `Bearer ${token}` },
           }),
-          fetch("http://localhost:5000/api/trades/analysis/drawdown", {
-            headers: { Authorization: `Bearer ${token}` },
-          }),
+          fetch(
+            "${import.meta.env.VITE_API_URL}/api/trades/analysis/drawdown",
+            {
+              headers: { Authorization: `Bearer ${token}` },
+            }
+          ),
         ]);
 
         const [streakData, drawdownData] = await Promise.all([

@@ -29,8 +29,8 @@ const TradeReview = ({ trade, review, onSubmit, onClose }) => {
     try {
       const token = localStorage.getItem("token");
       const url = review
-        ? `http://localhost:5000/api/trade-reviews/${review._id}`
-        : "http://localhost:5000/api/trade-reviews";
+        ? `${import.meta.env.VITE_API_URL}/api/trade-reviews/${review._id}`
+        : "${import.meta.env.VITE_API_URL}/api/trade-reviews";
 
       const response = await fetch(url, {
         method: review ? "PATCH" : "POST",

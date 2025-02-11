@@ -15,7 +15,7 @@ const Network = ({ userId }) => {
       try {
         setLoading(true);
         const response = await fetch(
-          `http://localhost:5000/api/auth/network/${userId}`,
+          `${import.meta.env.VITE_API_URL}/api/auth/network/${userId}`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,
