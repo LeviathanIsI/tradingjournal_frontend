@@ -1,4 +1,3 @@
-// src/components/TradeReview.jsx
 import { useState, useEffect } from "react";
 
 const TradeReview = ({ trade, review, onSubmit, onClose }) => {
@@ -52,9 +51,16 @@ const TradeReview = ({ trade, review, onSubmit, onClose }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form
+      onSubmit={handleSubmit}
+      className="space-y-4 p-6 bg-white dark:bg-gray-900 rounded-lg shadow-lg"
+    >
+      <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
+        Trade Review
+      </h2>
+
       <div>
-        <label className="block text-sm font-medium text-gray-700">
+        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
           What I Learned
         </label>
         <textarea
@@ -62,13 +68,13 @@ const TradeReview = ({ trade, review, onSubmit, onClose }) => {
           onChange={(e) =>
             setFormData((prev) => ({ ...prev, lessonLearned: e.target.value }))
           }
-          className="mt-1 w-full border border-gray-300 rounded-md shadow-sm p-2"
+          className="mt-1 w-full border border-gray-300 dark:border-gray-700 rounded-md shadow-sm p-2 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100"
           rows="3"
         />
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700">
+        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
           What Went Well
         </label>
         <textarea
@@ -76,13 +82,13 @@ const TradeReview = ({ trade, review, onSubmit, onClose }) => {
           onChange={(e) =>
             setFormData((prev) => ({ ...prev, whatWentWell: e.target.value }))
           }
-          className="mt-1 w-full border border-gray-300 rounded-md shadow-sm p-2"
+          className="mt-1 w-full border border-gray-300 dark:border-gray-700 rounded-md shadow-sm p-2 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100"
           rows="3"
         />
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700">
+        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
           What Went Wrong
         </label>
         <textarea
@@ -90,13 +96,13 @@ const TradeReview = ({ trade, review, onSubmit, onClose }) => {
           onChange={(e) =>
             setFormData((prev) => ({ ...prev, whatWentWrong: e.target.value }))
           }
-          className="mt-1 w-full border border-gray-300 rounded-md shadow-sm p-2"
+          className="mt-1 w-full border border-gray-300 dark:border-gray-700 rounded-md shadow-sm p-2 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100"
           rows="3"
         />
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700">
+        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
           Future Adjustments
         </label>
         <textarea
@@ -107,7 +113,7 @@ const TradeReview = ({ trade, review, onSubmit, onClose }) => {
               futureAdjustments: e.target.value,
             }))
           }
-          className="mt-1 w-full border border-gray-300 rounded-md shadow-sm p-2"
+          className="mt-1 w-full border border-gray-300 dark:border-gray-700 rounded-md shadow-sm p-2 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100"
           rows="3"
         />
       </div>
@@ -120,9 +126,12 @@ const TradeReview = ({ trade, review, onSubmit, onClose }) => {
           onChange={(e) =>
             setFormData((prev) => ({ ...prev, isPublic: e.target.checked }))
           }
-          className="h-4 w-4 text-blue-600 border-gray-300 rounded"
+          className="h-4 w-4 text-blue-600 dark:text-blue-400 border-gray-300 dark:border-gray-600 rounded"
         />
-        <label htmlFor="isPublic" className="ml-2 text-sm text-gray-700">
+        <label
+          htmlFor="isPublic"
+          className="ml-2 text-sm text-gray-700 dark:text-gray-300"
+        >
           Make this review public
         </label>
       </div>
@@ -131,13 +140,13 @@ const TradeReview = ({ trade, review, onSubmit, onClose }) => {
         <button
           type="button"
           onClick={onClose}
-          className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
+          className="px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-md text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
         >
           Cancel
         </button>
         <button
           type="submit"
-          className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+          className="px-4 py-2 bg-blue-600 dark:bg-blue-500 text-white rounded-md hover:bg-blue-700 dark:hover:bg-blue-600"
         >
           Save Review
         </button>
