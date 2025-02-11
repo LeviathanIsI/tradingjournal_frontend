@@ -17,7 +17,7 @@ const ProfileSettings = ({
   const [generalForm, setGeneralForm] = useState({
     username: user.username || "",
     bio: user.bio || "",
-    tradingStyle: user.tradingStyle || "",
+    tradingStyle: user.tradingStyle || "Select a style",
     email: user.email || "",
   });
 
@@ -47,6 +47,13 @@ const ProfileSettings = ({
     setLoading(true);
     setError(null);
     setSuccess(null);
+
+    // Ensure tradingStyle is selected
+    if (!generalForm.tradingStyle || generalForm.tradingStyle.trim() === "") {
+      setError("Please select a valid trading style.");
+      setLoading(false);
+      return;
+    }
 
     try {
       const token = localStorage.getItem("token");
@@ -80,6 +87,7 @@ const ProfileSettings = ({
 
   const handlePasswordSubmit = async (e) => {
     e.preventDefault();
+
     if (passwordForm.newPassword !== passwordForm.confirmPassword) {
       setError("New passwords do not match");
       return;
@@ -92,7 +100,7 @@ const ProfileSettings = ({
     try {
       const token = localStorage.getItem("token");
       const response = await fetch(
-        "http://localhost:5000/api/auth/profile/password",
+        "http://localhost:5000/api/auth/set-password",
         {
           method: "PUT",
           headers: {
@@ -100,7 +108,9 @@ const ProfileSettings = ({
             Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({
-            currentPassword: passwordForm.currentPassword,
+            currentPassword: user.googleAuth
+              ? null
+              : passwordForm.currentPassword,
             newPassword: passwordForm.newPassword,
           }),
         }
@@ -112,7 +122,25 @@ const ProfileSettings = ({
         throw new Error(data.error || "Failed to update password");
       }
 
-      setSuccess("Password updated successfully");
+      setSuccess(
+        user.googleAuth
+          ? "Password set successfully"
+          : "Password updated successfully"
+      );
+
+      // ✅ Update user state properly and force re-render
+      updateUser((prevUser) => ({
+        ...prevUser,
+        googleAuth: false, // Now user has a password
+      }));
+
+      // ✅ Also update local storage immediately
+      const storedUser = JSON.parse(localStorage.getItem("user"));
+      localStorage.setItem(
+        "user",
+        JSON.stringify({ ...storedUser, googleAuth: false })
+      );
+
       setPasswordForm({
         currentPassword: "",
         newPassword: "",
@@ -330,73 +358,132 @@ const ProfileSettings = ({
 
         {tab === "password" && (
           <form onSubmit={handlePasswordSubmit} className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                Current Password
-              </label>
-              <input
-                type="password"
-                value={passwordForm.currentPassword}
-                onChange={(e) =>
-                  setPasswordForm((prev) => ({
-                    ...prev,
-                    currentPassword: e.target.value,
-                  }))
-                }
-                className="mt-1 block w-full rounded-md border border-gray-300 dark:border-gray-600 
-                  px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100
-                  focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
-              />
-            </div>
+            {user.googleAuth ? (
+              <>
+                <p className="text-gray-600 dark:text-gray-400">
+                  You signed up using Google. Set a password below to enable
+                  regular login.
+                </p>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                    Set New Password
+                  </label>
+                  <input
+                    type="password"
+                    value={passwordForm.newPassword}
+                    onChange={(e) =>
+                      setPasswordForm((prev) => ({
+                        ...prev,
+                        newPassword: e.target.value,
+                      }))
+                    }
+                    className="mt-1 block w-full rounded-md border border-gray-300 dark:border-gray-600 
+              px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100
+              focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                  />
+                </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                New Password
-              </label>
-              <input
-                type="password"
-                value={passwordForm.newPassword}
-                onChange={(e) =>
-                  setPasswordForm((prev) => ({
-                    ...prev,
-                    newPassword: e.target.value,
-                  }))
-                }
-                className="mt-1 block w-full rounded-md border border-gray-300 dark:border-gray-600 
-                  px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100
-                  focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
-              />
-            </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                    Confirm New Password
+                  </label>
+                  <input
+                    type="password"
+                    value={passwordForm.confirmPassword}
+                    onChange={(e) =>
+                      setPasswordForm((prev) => ({
+                        ...prev,
+                        confirmPassword: e.target.value,
+                      }))
+                    }
+                    className="mt-1 block w-full rounded-md border border-gray-300 dark:border-gray-600 
+              px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100
+              focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                  />
+                </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                Confirm New Password
-              </label>
-              <input
-                type="password"
-                value={passwordForm.confirmPassword}
-                onChange={(e) =>
-                  setPasswordForm((prev) => ({
-                    ...prev,
-                    confirmPassword: e.target.value,
-                  }))
-                }
-                className="mt-1 block w-full rounded-md border border-gray-300 dark:border-gray-600 
-                  px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100
-                  focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
-              />
-            </div>
+                <div className="flex justify-end">
+                  <button
+                    type="submit"
+                    disabled={loading}
+                    className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 
+              dark:hover:bg-blue-500 disabled:opacity-50"
+                  >
+                    {loading ? "Updating..." : "Set Password"}
+                  </button>
+                </div>
+              </>
+            ) : (
+              <>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                    Current Password
+                  </label>
+                  <input
+                    type="password"
+                    value={passwordForm.currentPassword}
+                    onChange={(e) =>
+                      setPasswordForm((prev) => ({
+                        ...prev,
+                        currentPassword: e.target.value,
+                      }))
+                    }
+                    className="mt-1 block w-full rounded-md border border-gray-300 dark:border-gray-600 
+              px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100
+              focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                  />
+                </div>
 
-            <div className="flex justify-end">
-              <button
-                type="submit"
-                disabled={loading}
-                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 
-                  dark:hover:bg-blue-500 disabled:opacity-50"
-              >
-                {loading ? "Updating..." : "Update Password"}
-              </button>
-            </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                    New Password
+                  </label>
+                  <input
+                    type="password"
+                    value={passwordForm.newPassword}
+                    onChange={(e) =>
+                      setPasswordForm((prev) => ({
+                        ...prev,
+                        newPassword: e.target.value,
+                      }))
+                    }
+                    className="mt-1 block w-full rounded-md border border-gray-300 dark:border-gray-600 
+              px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100
+              focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                    Confirm New Password
+                  </label>
+                  <input
+                    type="password"
+                    value={passwordForm.confirmPassword}
+                    onChange={(e) =>
+                      setPasswordForm((prev) => ({
+                        ...prev,
+                        confirmPassword: e.target.value,
+                      }))
+                    }
+                    className="mt-1 block w-full rounded-md border border-gray-300 dark:border-gray-600 
+              px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100
+              focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                  />
+                </div>
+
+                <div className="flex justify-end">
+                  <button
+                    type="submit"
+                    disabled={loading}
+                    className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 
+              dark:hover:bg-blue-500 disabled:opacity-50"
+                  >
+                    {loading ? "Updating..." : "Update Password"}
+                  </button>
+                </div>
+              </>
+            )}
           </form>
         )}
 

@@ -59,6 +59,7 @@ export const AuthProvider = ({ children }) => {
   const updateUser = (userData) => {
     const updatedUser = {
       ...userData,
+      googleAuth: !!userData.googleAuth,
       preferences: {
         ...(userData.preferences || {}),
       },
