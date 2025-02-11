@@ -30,7 +30,10 @@ const Login = () => {
 
     try {
       const response = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/auth/login`,
+        `${import.meta.env.VITE_API_URL}/api/auth/login`.replace(
+          /([^:]\/)\/+/g,
+          "$1"
+        ),
         {
           method: "POST",
           headers: {
@@ -140,8 +143,9 @@ const Login = () => {
           <div className="mt-4">
             <GoogleButton
               onClick={() => {
-                const googleAuthUrl =
-                  `${import.meta.env.VITE_API_URL}/api/auth/google`;
+                const googleAuthUrl = `${
+                  import.meta.env.VITE_API_URL
+                }/api/auth/google`.replace(/([^:]\/)\/+/g, "$1");
 
                 // Try both methods
                 try {
