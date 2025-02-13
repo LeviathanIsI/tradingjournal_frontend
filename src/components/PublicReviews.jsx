@@ -22,6 +22,48 @@ const PublicReviews = () => {
     { value: "username", label: "Username" },
   ];
   const [searchQuery, setSearchQuery] = useState("");
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [deleteLoading, setDeleteLoading] = useState(false);
+  const [deleteAnswers, setDeleteAnswers] = useState({
+    answer1: "",
+    answer2: "",
+    answer3: "",
+  });
+
+  const handleDeleteAccount = async () => {
+    try {
+      setDeleteLoading(true);
+      const token = localStorage.getItem("token");
+
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/api/auth/delete-account`,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            answers: user.googleAuth ? null : deleteAnswers,
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.error || "Failed to delete account");
+      }
+
+      // Clear auth and redirect
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      window.location.href = "/";
+    } catch (error) {
+      setError(error.message);
+    } finally {
+      setDeleteLoading(false);
+    }
+  };
 
   const formatCurrency = (value) => {
     return new Intl.NumberFormat("en-US", {

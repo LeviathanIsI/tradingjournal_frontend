@@ -13,6 +13,50 @@ const ProfileSettings = ({
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
   const { updateUser } = useAuth();
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [deleteLoading, setDeleteLoading] = useState(false);
+  const [deleteAnswers, setDeleteAnswers] = useState({
+    answer1: "",
+    answer2: "",
+    answer3: "",
+  });
+
+  const handleDeleteAccount = async () => {
+    try {
+      setDeleteLoading(true);
+      const token = localStorage.getItem("token");
+
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/api/auth/delete-account`,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            answers: user.googleAuth ? null : deleteAnswers,
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.error || "Failed to delete account");
+      }
+
+      // Clear local storage and log out
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+
+      // Redirect to home
+      window.location.href = "/";
+    } catch (error) {
+      setError(error.message);
+    } finally {
+      setDeleteLoading(false);
+    }
+  };
 
   const [generalForm, setGeneralForm] = useState({
     username: user.username || "",
@@ -571,6 +615,128 @@ const ProfileSettings = ({
                   : "Manually set experience level will override automatic calculation"}
               </p>
             </div>
+
+            <div className="mt-8 pt-8 border-t border-gray-200 dark:border-gray-700">
+              <div className="space-y-3">
+                <h3 className="text-lg font-medium text-red-600 dark:text-red-400">
+                  Delete Account
+                </h3>
+                <p className="text-sm text-gray-500 dark:text-gray-400">
+                  Warning: This action cannot be undone. This will permanently
+                  delete your account and remove your access to the system.
+                </p>
+                <button
+                  type="button"
+                  onClick={() => setShowDeleteConfirm(true)}
+                  className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 
+        dark:hover:bg-red-500 transition-colors"
+                >
+                  Delete Account
+                </button>
+              </div>
+            </div>
+
+            {showDeleteConfirm && (
+              <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+                <div className="bg-white dark:bg-gray-800 rounded-lg max-w-md w-full p-6">
+                  <h3 className="text-lg font-medium text-red-600 dark:text-red-400 mb-4">
+                    Delete Account
+                  </h3>
+
+                  {!user.googleAuth ? (
+                    <>
+                      <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
+                        Please verify your identity by answering your security
+                        questions:
+                      </p>
+                      <div className="space-y-4 mb-6">
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                            {user.securityQuestions?.question1?.question}
+                          </label>
+                          <input
+                            type="text"
+                            value={deleteAnswers.answer1}
+                            onChange={(e) =>
+                              setDeleteAnswers((prev) => ({
+                                ...prev,
+                                answer1: e.target.value,
+                              }))
+                            }
+                            className="mt-1 block w-full rounded-md border border-gray-300 dark:border-gray-600 
+                  px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                            {user.securityQuestions?.question2?.question}
+                          </label>
+                          <input
+                            type="text"
+                            value={deleteAnswers.answer2}
+                            onChange={(e) =>
+                              setDeleteAnswers((prev) => ({
+                                ...prev,
+                                answer2: e.target.value,
+                              }))
+                            }
+                            className="mt-1 block w-full rounded-md border border-gray-300 dark:border-gray-600 
+                  px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                            {user.securityQuestions?.question3?.question}
+                          </label>
+                          <input
+                            type="text"
+                            value={deleteAnswers.answer3}
+                            onChange={(e) =>
+                              setDeleteAnswers((prev) => ({
+                                ...prev,
+                                answer3: e.target.value,
+                              }))
+                            }
+                            className="mt-1 block w-full rounded-md border border-gray-300 dark:border-gray-600 
+                  px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                          />
+                        </div>
+                      </div>
+                    </>
+                  ) : (
+                    <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">
+                      This action cannot be undone. Your account will be
+                      permanently deleted.
+                    </p>
+                  )}
+
+                  <div className="flex justify-end space-x-3">
+                    <button
+                      onClick={() => {
+                        setShowDeleteConfirm(false);
+                        setDeleteAnswers({
+                          answer1: "",
+                          answer2: "",
+                          answer3: "",
+                        });
+                      }}
+                      className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 
+            hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      onClick={handleDeleteAccount}
+                      disabled={deleteLoading}
+                      className="px-4 py-2 text-sm font-medium text-white bg-red-600 
+            hover:bg-red-700 rounded-md disabled:opacity-50"
+                    >
+                      {deleteLoading ? "Deleting..." : "Delete Account"}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
 
             <div className="flex justify-end">
               <button

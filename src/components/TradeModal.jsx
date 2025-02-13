@@ -585,20 +585,72 @@ const TradeModal = ({ isOpen, onClose, onSubmit, trade, userTimeZone }) => {
               </h3>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm text-gray-700 dark:text-gray-300 mb-1">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                     Focus Level (1-10)
                   </label>
-                  <input
-                    type="number"
-                    autocomplete="off"
-                    name="mentalState.focus"
-                    value={formData.mentalState?.focus || ""}
-                    onChange={handleChange}
-                    min="1"
-                    max="10"
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded 
-  bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
-                  />
+                  <div className="flex items-center space-x-2">
+                    {/* Decrement Button */}
+                    <button
+                      type="button"
+                      className="px-2 py-1 border rounded bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-black dark:text-white"
+                      onClick={() =>
+                        setFormData({
+                          ...formData,
+                          mentalState: {
+                            ...formData.mentalState,
+                            focus: Math.max(
+                              1,
+                              (parseInt(formData.mentalState?.focus) || 1) - 1
+                            ),
+                          },
+                        })
+                      }
+                    >
+                      -
+                    </button>
+
+                    {/* Dropdown Select */}
+                    <select
+                      name="mentalState.focus"
+                      value={formData.mentalState?.focus || ""}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          mentalState: {
+                            ...formData.mentalState,
+                            focus: Number(e.target.value),
+                          },
+                        })
+                      }
+                      className="border rounded px-2 py-1 bg-white dark:bg-gray-800 text-black dark:text-white"
+                    >
+                      {[...Array(10).keys()].map((num) => (
+                        <option key={num + 1} value={num + 1}>
+                          {num + 1}
+                        </option>
+                      ))}
+                    </select>
+
+                    {/* Increment Button */}
+                    <button
+                      type="button"
+                      className="px-2 py-1 border rounded bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-black dark:text-white"
+                      onClick={() =>
+                        setFormData({
+                          ...formData,
+                          mentalState: {
+                            ...formData.mentalState,
+                            focus: Math.min(
+                              10,
+                              (parseInt(formData.mentalState?.focus) || 1) + 1
+                            ),
+                          },
+                        })
+                      }
+                    >
+                      +
+                    </button>
+                  </div>
                 </div>
                 <div>
                   <label className="block text-sm text-gray-700 dark:text-gray-300 mb-1">
