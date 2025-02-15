@@ -61,16 +61,19 @@ const ResetPassword = ({ onSuccess, onError }) => {
   };
 
   return (
-    <div className="w-full max-w-md mx-auto">
+    <div className="w-full max-w-md mx-auto px-4 sm:px-0">
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700">
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
             New Password
           </label>
           <input
             type="password"
             required
-            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-black shadow-sm focus:border-blue-500 focus:ring-blue-500"
+            className="mt-1 block w-full rounded-md border border-gray-300 dark:border-gray-600 
+            px-3 py-2.5 sm:py-2 text-gray-900 dark:text-gray-100 
+            bg-white dark:bg-gray-700
+            shadow-sm focus:border-blue-500 focus:ring-blue-500"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             minLength={6}
@@ -78,13 +81,16 @@ const ResetPassword = ({ onSuccess, onError }) => {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700">
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
             Confirm New Password
           </label>
           <input
             type="password"
             required
-            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-black shadow-sm focus:border-blue-500 focus:ring-blue-500"
+            className="mt-1 block w-full rounded-md border border-gray-300 dark:border-gray-600 
+            px-3 py-2.5 sm:py-2 text-gray-900 dark:text-gray-100 
+            bg-white dark:bg-gray-700
+            shadow-sm focus:border-blue-500 focus:ring-blue-500"
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
             minLength={6}
@@ -94,7 +100,8 @@ const ResetPassword = ({ onSuccess, onError }) => {
         <button
           type="submit"
           disabled={loading}
-          className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 disabled:opacity-50"
+          className="w-full bg-blue-600 text-white py-2.5 sm:py-2 px-4 rounded-md 
+          hover:bg-blue-700 disabled:opacity-50 text-sm sm:text-base font-medium"
         >
           {loading ? "Resetting..." : "Reset Password"}
         </button>

@@ -1,4 +1,3 @@
-// src/pages/TradePlanning.jsx
 import React, { useState } from "react";
 import {
   Plus,
@@ -26,7 +25,6 @@ const TradePlanning = () => {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState(null);
-  const [view, setView] = useState("list");
   const [expandedPlanId, setExpandedPlanId] = useState(null);
 
   const handleNewPlan = () => {
@@ -41,7 +39,6 @@ const TradePlanning = () => {
     } else {
       success = await addTradePlan(formData);
     }
-
     if (success) {
       setIsModalOpen(false);
     }
@@ -53,539 +50,259 @@ const TradePlanning = () => {
     }
   };
 
-  const handleStatusChange = async (planId, newStatus) => {
-    await updateTradePlan(planId, { status: newStatus });
+  const handleStatusChange = async (id, newStatus) => {
+    await updateTradePlan(id, { status: newStatus });
   };
 
-  const renderListView = () => (
-    <table className="min-w-full">
-      <thead>
-        <tr className="border-b dark:border-gray-700">
-          <th className="w-8"></th>
-          <th className="text-left py-3 px-4 text-gray-500 dark:text-gray-400">
-            Date
-          </th>
-          <th className="text-left py-3 px-4 text-gray-500 dark:text-gray-400">
-            Symbol
-          </th>
-          <th className="text-left py-3 px-4 text-gray-500 dark:text-gray-400">
-            Direction
-          </th>
-          <th className="text-left py-3 px-4 text-gray-500 dark:text-gray-400">
-            Entry
-          </th>
-          <th className="text-left py-3 px-4 text-gray-500 dark:text-gray-400">
-            Profit Target
-          </th>
-          <th className="text-left py-3 px-4 text-gray-500 dark:text-gray-400">
-            Stop Loss
-          </th>
-          <th className="text-center py-3 px-4 text-gray-500 dark:text-gray-400">
-            Status
-          </th>
-          <th className="text-right py-3 px-4 text-gray-500 dark:text-gray-400">
-            Actions
-          </th>
-        </tr>
-      </thead>
-      <tbody>
-        {tradePlans.map((plan) => (
-          <React.Fragment key={plan._id}>
-            <tr
-              className="border-b dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800/50 cursor-pointer"
-              onClick={() =>
-                setExpandedPlanId(expandedPlanId === plan._id ? null : plan._id)
-              }
-            >
-              <td className="py-3 px-2 text-gray-500 dark:text-gray-400">
-                {expandedPlanId === plan._id ? (
-                  <ChevronDown size={16} />
-                ) : (
-                  <ChevronRight size={16} />
-                )}
-              </td>
-              <td className="py-3 px-4 text-gray-900 dark:text-gray-100">
-                {new Date(plan.createdAt).toLocaleDateString()}
-              </td>
-              <td className="py-3 px-4 text-gray-900 dark:text-gray-100">
-                {plan.ticker}
-              </td>
-              <td className="py-3 px-4 text-gray-900 dark:text-gray-100">
-                {plan.direction}
-              </td>
-              <td className="py-3 px-4 text-gray-900 dark:text-gray-100">
-                {plan.execution?.entry ? `$${plan.execution.entry}` : "N/A"}
-              </td>
-              <td className="py-3 px-4 text-gray-900 dark:text-gray-100">
-                {plan.execution?.profitTarget
-                  ? `$${plan.execution.profitTarget}`
-                  : "N/A"}
-              </td>
-              <td className="py-3 px-4 text-gray-900 dark:text-gray-100">
-                {plan.execution?.stopLoss
-                  ? `$${plan.execution.stopLoss}`
-                  : "N/A"}
-              </td>
-              <td className="py-3 px-4 text-center">
-                <select
-                  value={plan.status}
-                  onChange={(e) => {
-                    e.stopPropagation();
-                    handleStatusChange(plan._id, e.target.value);
-                  }}
-                  className="px-2 py-1 text-sm border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200"
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  <option value="PLANNED">Planned</option>
-                  <option value="EXECUTED">Executed</option>
-                  <option value="CANCELLED">Cancelled</option>
-                </select>
-              </td>
-              <td
-                className="py-3 px-4 text-right"
-                onClick={(e) => e.stopPropagation()}
-              >
-                <div className="flex justify-end gap-2">
-                  <button
-                    onClick={() => {
-                      setSelectedPlan(plan);
-                      setIsModalOpen(true);
-                    }}
-                    className="p-1 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 bg-white dark:bg-gray-700 rounded border border-gray-200 dark:border-gray-600"
-                  >
-                    <Pencil size={16} />
-                  </button>
-                  <button
-                    onClick={() => handleDelete(plan._id)}
-                    className="p-1 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 bg-white dark:bg-gray-700 rounded border border-gray-200 dark:border-gray-600"
-                  >
-                    <Trash2 size={16} />
-                  </button>
-                </div>
-              </td>
-            </tr>
-            {expandedPlanId === plan._id && (
-              <tr className="bg-gray-50 dark:bg-gray-800/50">
-                <td colSpan="9">
-                  <div className="px-4 py-3 grid grid-cols-3 gap-6">
-                    {/* Trade Attributes */}
-                    <div className="space-y-3">
-                      <h4 className="font-medium text-gray-900 dark:text-gray-100">
-                        Trade Attributes
-                      </h4>
-                      <div className="space-y-1">
-                        {Object.entries(plan.attributes).map(([key, value]) => (
-                          <div key={key} className="flex items-center">
-                            <span
-                              className={`flex-shrink-0 w-4 h-4 flex items-center justify-center ${
-                                value
-                                  ? "text-green-600 dark:text-green-400"
-                                  : "text-gray-400 dark:text-gray-500"
-                              }`}
-                            >
-                              {value ? "✓" : "×"}
-                            </span>
-                            <span className="ml-2 text-sm text-gray-600 dark:text-gray-300">
-                              {key
-                                .replace(/([A-Z])/g, " $1")
-                                .replace(/^./, (str) => str.toUpperCase())}
-                            </span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
+  const toggleExpand = (planId) => {
+    setExpandedPlanId(expandedPlanId === planId ? null : planId);
+  };
 
-                    {/* Quality Metrics */}
-                    <div className="space-y-3">
-                      <h4 className="font-medium text-gray-900 dark:text-gray-100">
-                        Quality Metrics
-                      </h4>
-                      <div className="space-y-1">
-                        <div className="flex justify-between text-sm">
-                          <span className="text-gray-600 dark:text-gray-400">
-                            Float:
-                          </span>
-                          <span className="text-gray-900 dark:text-gray-100">
-                            {plan.quality?.float || "N/A"}
-                          </span>
-                        </div>
-                        <div className="flex justify-between text-sm">
-                          <span className="text-gray-600 dark:text-gray-400">
-                            Support Area:
-                          </span>
-                          <span className="text-gray-900 dark:text-gray-100">
-                            {plan.quality?.supportArea || "N/A"}
-                          </span>
-                        </div>
-                        <div className="flex justify-between text-sm">
-                          <span className="text-gray-600 dark:text-gray-400">
-                            Catalyst Rating:
-                          </span>
-                          <span className="text-gray-900 dark:text-gray-100">
-                            {plan.quality?.catalystRating || "N/A"}
-                          </span>
-                        </div>
-                        <div className="flex justify-between text-sm">
-                          <span className="text-gray-600 dark:text-gray-400">
-                            Setup Grade:
-                          </span>
-                          <span className="text-gray-900 dark:text-gray-100">
-                            {plan.setup?.setupGrade || "N/A"}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Execution Plan */}
-                    <div className="space-y-3">
-                      <h4 className="font-medium text-gray-900 dark:text-gray-100">
-                        Execution Plan
-                      </h4>
-                      <div className="space-y-1">
-                        <div className="flex justify-between text-sm">
-                          <span className="text-gray-600 dark:text-gray-400">
-                            Entry:
-                          </span>
-                          <span className="text-gray-900 dark:text-gray-100">
-                            ${plan.execution?.entry || "N/A"}
-                          </span>
-                        </div>
-                        <div className="flex justify-between text-sm">
-                          <span className="text-gray-600 dark:text-gray-400">
-                            Profit Target:
-                          </span>
-                          <span className="text-gray-900 dark:text-gray-100">
-                            ${plan.execution?.profitTarget || "N/A"}
-                          </span>
-                        </div>
-                        <div className="flex justify-between text-sm">
-                          <span className="text-gray-600 dark:text-gray-400">
-                            Stop Loss:
-                          </span>
-                          <span className="text-gray-900 dark:text-gray-100">
-                            ${plan.execution?.stopLoss || "N/A"}
-                          </span>
-                        </div>
-                      </div>
-
-                      {plan.notes && (
-                        <div className="mt-4">
-                          <h4 className="font-medium text-gray-900 dark:text-gray-100 mb-1">
-                            Notes
-                          </h4>
-                          <p className="text-sm text-gray-600 dark:text-gray-400">
-                            {plan.notes}
-                          </p>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </td>
-              </tr>
-            )}
-          </React.Fragment>
-        ))}
-      </tbody>
-    </table>
+  const renderExpandedDetails = (plan) => (
+    <tr className="bg-gray-50 dark:bg-gray-800/50">
+      <td colSpan="9" className="p-4">
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <h4 className="font-medium text-gray-900 dark:text-gray-100 mb-2">
+              Analysis
+            </h4>
+            <p className="text-gray-600 dark:text-gray-400">
+              {plan.analysis || "No analysis provided"}
+            </p>
+          </div>
+          <div>
+            <h4 className="font-medium text-gray-900 dark:text-gray-100 mb-2">
+              Notes
+            </h4>
+            <p className="text-gray-600 dark:text-gray-400">
+              {plan.notes || "No notes provided"}
+            </p>
+          </div>
+        </div>
+      </td>
+    </tr>
   );
 
-  const renderGridView = () => (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+  const renderMobileView = () => (
+    <div className="space-y-4">
       {tradePlans.map((plan) => (
         <div
           key={plan._id}
-          className="border dark:border-gray-700 rounded-lg p-4 hover:shadow-md bg-white dark:bg-gray-800"
+          className="bg-white dark:bg-gray-800 rounded-lg shadow p-4 space-y-3"
         >
-          <div className="flex justify-between items-start mb-2">
+          <div className="flex justify-between items-start">
             <div>
               <h3 className="font-medium text-gray-900 dark:text-gray-100">
                 {plan.ticker}
               </h3>
               <p className="text-sm text-gray-500 dark:text-gray-400">
-                {plan.direction}
-              </p>
-              <p className="text-xs text-gray-400 dark:text-gray-500">
                 {new Date(plan.createdAt).toLocaleDateString()}
               </p>
             </div>
+            <div className="flex gap-2">
+              <button
+                onClick={() => {
+                  setSelectedPlan(plan);
+                  setIsModalOpen(true);
+                }}
+                className="p-2 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded"
+              >
+                <Pencil size={18} />
+              </button>
+              <button
+                onClick={() => handleDelete(plan._id)}
+                className="p-2 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded"
+              >
+                <Trash2 size={18} />
+              </button>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-3 text-sm">
+            <div>
+              <p className="text-gray-500 dark:text-gray-400">Direction</p>
+              <p className="font-medium text-gray-900 dark:text-gray-100">
+                {plan.direction}
+              </p>
+            </div>
+            <div>
+              <p className="text-gray-500 dark:text-gray-400">Entry</p>
+              <p className="font-medium text-gray-900 dark:text-gray-100">
+                {plan.execution?.entry ? `$${plan.execution.entry}` : "N/A"}
+              </p>
+            </div>
+            <div>
+              <p className="text-gray-500 dark:text-gray-400">Profit Target</p>
+              <p className="font-medium text-gray-900 dark:text-gray-100">
+                {plan.execution?.profitTarget
+                  ? `$${plan.execution.profitTarget}`
+                  : "N/A"}
+              </p>
+            </div>
+            <div>
+              <p className="text-gray-500 dark:text-gray-400">Stop Loss</p>
+              <p className="font-medium text-gray-900 dark:text-gray-100">
+                {plan.execution?.stopLoss
+                  ? `$${plan.execution.stopLoss}`
+                  : "N/A"}
+              </p>
+            </div>
+          </div>
+
+          <div className="pt-2">
             <select
               value={plan.status}
               onChange={(e) => handleStatusChange(plan._id, e.target.value)}
-              className="px-2 py-1 text-sm border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200"
+              className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200"
             >
               <option value="PLANNED">Planned</option>
               <option value="EXECUTED">Executed</option>
               <option value="CANCELLED">Cancelled</option>
             </select>
           </div>
-
-          <div className="space-y-2 mb-4">
-            <div className="grid grid-cols-3 gap-2 text-sm">
-              <div>
-                <span className="text-gray-500 dark:text-gray-400">Entry:</span>
-                <p className="font-medium text-gray-900 dark:text-gray-100">
-                  {plan.execution && plan.execution.entry !== undefined
-                    ? `$${plan.execution.entry}`
-                    : "N/A"}
-                </p>
-              </div>
-              <div>
-                <span className="text-gray-500 dark:text-gray-400">
-                  Profit Target:
-                </span>
-                <p className="font-medium text-gray-900 dark:text-gray-100">
-                  {plan.execution && plan.execution.profitTarget !== undefined
-                    ? `$${plan.execution.profitTarget}`
-                    : "N/A"}
-                </p>
-              </div>
-              <div>
-                <span className="text-gray-500 dark:text-gray-400">
-                  Stop Loss:
-                </span>
-                <p className="font-medium text-gray-900 dark:text-gray-100">
-                  {plan.execution && plan.execution.stopLoss !== undefined
-                    ? `$${plan.execution.stopLoss}`
-                    : "N/A"}
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <div className="flex justify-end gap-2">
-            <button
-              onClick={() => {
-                setSelectedPlan(plan);
-                setIsModalOpen(true);
-              }}
-              className="p-1 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 bg-white dark:bg-gray-700 rounded border border-gray-200 dark:border-gray-600"
-            >
-              <Pencil size={16} />
-            </button>
-            <button
-              onClick={() => handleDelete(plan._id)}
-              className="p-1 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 bg-white dark:bg-gray-700 rounded border border-gray-200 dark:border-gray-600"
-            >
-              <Trash2 size={16} />
-            </button>
-          </div>
         </div>
       ))}
     </div>
   );
 
+  const renderDesktopView = () => (
+    <div className="overflow-x-auto">
+      <table className="min-w-full">
+        <thead>
+          <tr className="border-b dark:border-gray-700">
+            <th className="w-8"></th>
+            <th className="text-left py-3 px-4 text-gray-500 dark:text-gray-400">
+              Date
+            </th>
+            <th className="text-left py-3 px-4 text-gray-500 dark:text-gray-400">
+              Symbol
+            </th>
+            <th className="text-left py-3 px-4 text-gray-500 dark:text-gray-400">
+              Direction
+            </th>
+            <th className="text-left py-3 px-4 text-gray-500 dark:text-gray-400">
+              Entry
+            </th>
+            <th className="text-left py-3 px-4 text-gray-500 dark:text-gray-400">
+              Profit Target
+            </th>
+            <th className="text-left py-3 px-4 text-gray-500 dark:text-gray-400">
+              Stop Loss
+            </th>
+            <th className="text-center py-3 px-4 text-gray-500 dark:text-gray-400">
+              Status
+            </th>
+            <th className="text-right py-3 px-4 text-gray-500 dark:text-gray-400">
+              Actions
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {tradePlans.map((plan) => (
+            <>
+              <tr
+                key={plan._id}
+                className="border-b dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800/50 cursor-pointer"
+                onClick={() => toggleExpand(plan._id)}
+              >
+                <td className="py-3 px-2 text-gray-500 dark:text-gray-400">
+                  <button className="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded">
+                    {expandedPlanId === plan._id ? (
+                      <ChevronDown size={16} />
+                    ) : (
+                      <ChevronRight size={16} />
+                    )}
+                  </button>
+                </td>
+                <td className="py-3 px-4 text-gray-900 dark:text-gray-100">
+                  {new Date(plan.createdAt).toLocaleDateString()}
+                </td>
+                <td className="py-3 px-4 text-gray-900 dark:text-gray-100">
+                  {plan.ticker}
+                </td>
+                <td className="py-3 px-4 text-gray-900 dark:text-gray-100">
+                  {plan.direction}
+                </td>
+                <td className="py-3 px-4 text-gray-900 dark:text-gray-100">
+                  {plan.execution?.entry ? `$${plan.execution.entry}` : "N/A"}
+                </td>
+                <td className="py-3 px-4 text-gray-900 dark:text-gray-100">
+                  {plan.execution?.profitTarget
+                    ? `$${plan.execution.profitTarget}`
+                    : "N/A"}
+                </td>
+                <td className="py-3 px-4 text-gray-900 dark:text-gray-100">
+                  {plan.execution?.stopLoss
+                    ? `$${plan.execution.stopLoss}`
+                    : "N/A"}
+                </td>
+                <td className="py-3 px-4 text-center">
+                  <select
+                    value={plan.status}
+                    onChange={(e) => {
+                      e.stopPropagation();
+                      handleStatusChange(plan._id, e.target.value);
+                    }}
+                    className="px-2 py-1 text-sm border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200"
+                  >
+                    <option value="PLANNED">Planned</option>
+                    <option value="EXECUTED">Executed</option>
+                    <option value="CANCELLED">Cancelled</option>
+                  </select>
+                </td>
+                <td className="py-3 px-4 text-right">
+                  <div className="flex justify-end gap-2">
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setSelectedPlan(plan);
+                        setIsModalOpen(true);
+                      }}
+                      className="p-1 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded"
+                    >
+                      <Pencil size={16} />
+                    </button>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDelete(plan._id);
+                      }}
+                      className="p-1 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded"
+                    >
+                      <Trash2 size={16} />
+                    </button>
+                  </div>
+                </td>
+              </tr>
+              {expandedPlanId === plan._id && renderExpandedDetails(plan)}
+            </>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+
   return (
-    <div className="p-6">
-      {/* Header */}
+    <div className="p-4 sm:p-6 md:p-8 max-w-7xl mx-auto">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+        <h1 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-gray-100">
           Trade Planning
         </h1>
-        <div className="flex items-center space-x-4">
-          <div className="flex border border-gray-300 dark:border-gray-600 rounded-lg">
-            <button
-              onClick={() => setView("list")}
-              className={`p-2 rounded-l-lg ${
-                view === "list"
-                  ? "bg-blue-600 text-white"
-                  : "bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600"
-              }`}
-            >
-              <List size={20} />
-            </button>
-            <button
-              onClick={() => setView("grid")}
-              className={`p-2 rounded-r-lg border-l border-gray-300 dark:border-gray-600 ${
-                view === "grid"
-                  ? "bg-blue-600 text-white"
-                  : "bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600"
-              }`}
-            >
-              <FileText size={20} />
-            </button>
-          </div>
-          <button
-            onClick={handleNewPlan}
-            className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-          >
-            <Plus size={20} />
-            New Plan
-          </button>
-        </div>
+        <button
+          onClick={handleNewPlan}
+          className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+        >
+          <Plus size={18} className="mr-2" />
+          New Plan
+        </button>
       </div>
 
-      {/* Info Section */}
-      <div className="space-y-4 mb-6">
-        {/* Main Info Box */}
-        <div className="bg-gray-100 dark:bg-gray-800 p-3 rounded-md">
-          <p className="text-gray-900 dark:text-gray-100">
-            Trade Planning Features:
-          </p>
-          <ul className="text-gray-700 dark:text-gray-300 mt-2 space-y-1">
-            <li>• Create detailed trade plans before entering positions</li>
-            <li>• Track execution quality with built-in checklists</li>
-            <li>• Monitor your planning success rate and patterns</li>
-            <li>• Review and update plan statuses as trades progress</li>
-          </ul>
-          <p className="text-gray-600 dark:text-gray-400 mt-2 text-xs italic">
-            Pro tip: Create plans in advance during your pre-market routine
-          </p>
-        </div>
+      {/* Mobile view */}
+      <div className="sm:hidden">{renderMobileView()}</div>
 
-        {/* Stats Info Box */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="bg-gray-100 dark:bg-gray-800 p-4 rounded-lg">
-            <div className="flex items-start gap-2">
-              <FileText className="h-5 w-5 text-gray-500 dark:text-gray-400" />
-              <div>
-                <h4 className="text-sm font-medium text-gray-900 dark:text-gray-100">
-                  Plan Management
-                </h4>
-                <ul className="text-xs text-gray-600 dark:text-gray-400 mt-1 space-y-1">
-                  <li>
-                    • Switch between list and grid views for different
-                    perspectives
-                  </li>
-                  <li>• Click row arrows to see detailed plan information</li>
-                  <li>• Update plan status as your trade progresses</li>
-                  <li>• Track execution metrics and notes for each plan</li>
-                </ul>
-              </div>
-            </div>
-          </div>
+      {/* Desktop view */}
+      <div className="hidden sm:block">{renderDesktopView()}</div>
 
-          <div className="bg-gray-100 dark:bg-gray-800 p-4 rounded-lg">
-            <div className="flex items-start gap-2">
-              <Target className="h-5 w-5 text-gray-500 dark:text-gray-400 mt-0.5" />
-              <div>
-                <h4 className="text-sm font-medium text-gray-900 dark:text-gray-100">
-                  Success Metrics
-                </h4>
-                <ul className="text-xs text-gray-600 dark:text-gray-400 mt-1 space-y-1">
-                  <li>
-                    • Monitor your planning consistency with total plans count
-                  </li>
-                  <li>• Track execution rate of planned trades</li>
-                  <li>• Measure success rate of executed plans</li>
-                  <li>• Calculate average risk-reward ratios across plans</li>
-                </ul>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Performance Metrics */}
-      <div className="mb-4">
-        <div className="bg-gray-100 dark:bg-gray-800 p-3 rounded-md">
-          <p className="text-sm text-gray-900 dark:text-gray-100">
-            Performance Metrics:
-          </p>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-2">
-            <div>
-              <p className="text-xs font-medium text-gray-900 dark:text-gray-100">
-                Total Plans
-              </p>
-              <p className="text-xs text-gray-600 dark:text-gray-400">
-                All trade plans created
-              </p>
-            </div>
-            <div>
-              <p className="text-xs font-medium text-gray-900 dark:text-gray-100">
-                Executed Plans
-              </p>
-              <p className="text-xs text-gray-600 dark:text-gray-400">
-                Plans that led to actual trades
-              </p>
-            </div>
-            <div>
-              <p className="text-xs font-medium text-gray-900 dark:text-gray-100">
-                Success Rate
-              </p>
-              <p className="text-xs text-gray-600 dark:text-gray-400">
-                Percentage of profitable executed plans
-              </p>
-            </div>
-            <div>
-              <p className="text-xs font-medium text-gray-900 dark:text-gray-100">
-                Avg R:R Ratio
-              </p>
-              <p className="text-xs text-gray-600 dark:text-gray-400">
-                Average reward vs risk ratio of plans
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Quick Stats */}
-      <div className="p-6">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-          <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow">
-            <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">
-              Total Plans
-            </h3>
-            <p className="text-2xl font-semibold text-gray-900 dark:text-gray-100">
-              {stats?.totalPlans || 0}
-            </p>
-          </div>
-          <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow">
-            <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">
-              Executed Plans
-            </h3>
-            <p className="text-2xl font-semibold text-gray-900 dark:text-gray-100">
-              {stats?.executedPlans || 0}
-            </p>
-          </div>
-          <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow">
-            <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">
-              Success Rate
-            </h3>
-            <p className="text-2xl font-semibold text-gray-900 dark:text-gray-100">
-              {stats?.successfulPlans
-                ? ((stats.successfulPlans / stats.executedPlans) * 100).toFixed(
-                    1
-                  )
-                : "0"}
-              %
-            </p>
-          </div>
-          <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow">
-            <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">
-              Avg R:R Ratio
-            </h3>
-            <p className="text-2xl font-semibold text-gray-900 dark:text-gray-100">
-              {stats?.averageRR?.toFixed(2) || "0:0"}
-            </p>
-          </div>
-        </div>
-
-        {/* Plans List/Grid */}
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow">
-          <div className="p-4 border-b border-gray-200 dark:border-gray-700">
-            <h2 className="text-lg font-medium text-gray-900 dark:text-gray-100">
-              Recent Plans
-            </h2>
-          </div>
-          <div className="p-4">
-            {loading ? (
-              <div className="text-center text-gray-500 dark:text-gray-400 py-8">
-                Loading...
-              </div>
-            ) : tradePlans?.length > 0 ? (
-              view === "list" ? (
-                renderListView()
-              ) : (
-                renderGridView()
-              )
-            ) : (
-              <div className="text-center text-gray-500 dark:text-gray-400 py-8">
-                No trade plans yet. Click "New Plan" to create one.
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
       <TradePlanModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}

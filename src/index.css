@@ -29,3 +29,21 @@ input[type="checkbox"] {
   /* Tailwind's blue-600 */
   border-radius: 2px;
 }
+
+:root {
+  --tooltip-bg: #ffffff;
+  --tooltip-border: #e5e7eb;
+  --tooltip-text: #111827;
+}
+
+.dark {
+  --tooltip-bg: rgb(31, 41, 55);
+  --tooltip-border: rgb(55, 65, 81);
+  --tooltip-text: #ffffff;
+}
+
+@layer utilities {
+  .overflow-hidden {
+    overflow: hidden !important;
+  }
+}

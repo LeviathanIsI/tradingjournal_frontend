@@ -10,13 +10,16 @@ const ThemeSwitcher = () => {
     <div className="flex items-center">
       <button
         onClick={toggleTheme}
-        className="p-1.5 rounded-md text-gray-300 hover:text-white hover:bg-gray-700 transition-colors"
-        aria-label="Toggle theme"
+        className="p-2 sm:p-1.5 rounded-md text-gray-300 hover:text-white hover:bg-gray-700 
+        active:bg-gray-600 transition-colors"
+        aria-label={`Switch to ${
+          themeMode === THEME_MODES.LIGHT ? "dark" : "light"
+        } mode`}
       >
         {themeMode === THEME_MODES.LIGHT ? (
-          <Moon className="w-4 h-4" />
+          <Moon className="w-5 h-5 sm:w-4 sm:h-4" />
         ) : (
-          <Sun className="w-4 h-4" />
+          <Sun className="w-5 h-5 sm:w-4 sm:h-4" />
         )}
       </button>
     </div>

@@ -306,34 +306,34 @@ const ProfitLossChart = ({ trades }) => {
   }, [chartData]);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
         Profit/Loss Over Time
       </h2>
 
-      <div className="bg-gray-100 dark:bg-gray-800 space-y-6">
-        <div className="p-3 rounded-md">
-          <p className="text-gray-900 dark:text-gray-100">Chart features:</p>
-          <ul className="text-gray-700 dark:text-gray-300 mt-2 space-y-1">
-            <li>• View performance in dollars or percentage gains</li>
-            <li>• Switch between daily, weekly, monthly, or yearly views</li>
-            <li>• Click any point to see trades from that period</li>
-            <li>• Track cumulative profit/loss over your selected timeframe</li>
-          </ul>
-        </div>
+      <div className="bg-gray-100 dark:bg-gray-800 p-3 rounded-md">
+        <p className="text-sm sm:text-base text-gray-900 dark:text-gray-100">
+          Chart features:
+        </p>
+        <ul className="text-xs sm:text-sm text-gray-700 dark:text-gray-300 mt-2 space-y-1">
+          <li>• View performance in dollars or percentage gains</li>
+          <li>• Switch between daily, weekly, monthly, or yearly views</li>
+          <li>• Click any point to see trades from that period</li>
+          <li>• Track cumulative profit/loss over your selected timeframe</li>
+        </ul>
       </div>
 
-      <div className="flex justify-between items-center mb-4">
-        <div className="flex items-center space-x-4">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 sm:gap-0">
+        <div className="w-full sm:w-auto flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4">
           <button
             onClick={() => setShowTrades(!showTrades)}
             disabled={!selectedDate}
-            className={`flex items-center gap-2 px-3 py-1 text-sm bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded text-gray-900 dark:text-gray-100
-              ${
-                !selectedDate
-                  ? "opacity-50 cursor-not-allowed"
-                  : "hover:bg-gray-50 dark:hover:bg-gray-700"
-              }`}
+            className={`flex items-center gap-2 px-3 py-2 sm:py-1 text-sm bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded w-full sm:w-auto justify-center sm:justify-start text-gray-900 dark:text-gray-100
+            ${
+              !selectedDate
+                ? "opacity-50 cursor-not-allowed"
+                : "hover:bg-gray-50 dark:hover:bg-gray-700"
+            }`}
           >
             <Table size={16} />
             {showTrades ? "Hide Trades" : "Show Trades"}
@@ -344,11 +344,12 @@ const ProfitLossChart = ({ trades }) => {
             </span>
           )}
         </div>
-        <div className="flex items-center space-x-4">
+
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4 w-full sm:w-auto">
           <div className="flex border border-gray-300 dark:border-gray-700 rounded-lg">
             <button
               onClick={() => setDisplayMode("currency")}
-              className={`px-3 py-1 text-sm rounded-l-lg ${
+              className={`flex-1 sm:flex-none px-3 py-2 sm:py-1 text-sm rounded-l-lg ${
                 displayMode === "currency"
                   ? "bg-blue-600 text-white"
                   : "bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
@@ -358,7 +359,7 @@ const ProfitLossChart = ({ trades }) => {
             </button>
             <button
               onClick={() => setDisplayMode("percentage")}
-              className={`px-3 py-1 text-sm rounded-r-lg border-l border-gray-300 dark:border-gray-700 ${
+              className={`flex-1 sm:flex-none px-3 py-2 sm:py-1 text-sm rounded-r-lg border-l border-gray-300 dark:border-gray-700 ${
                 displayMode === "percentage"
                   ? "bg-blue-600 text-white"
                   : "bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
@@ -367,12 +368,13 @@ const ProfitLossChart = ({ trades }) => {
               Percent
             </button>
           </div>
-          <div className="flex space-x-2">
+
+          <div className="grid grid-cols-2 sm:flex gap-2 w-full sm:w-auto">
             {Object.entries(TIMEFRAMES).map(([key, label]) => (
               <button
                 key={key}
                 onClick={() => setTimeframe(key)}
-                className={`px-3 py-1 rounded text-sm ${
+                className={`px-3 py-2 sm:py-1 rounded text-sm ${
                   timeframe === key
                     ? "bg-blue-600 text-white"
                     : "bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700"
@@ -385,7 +387,7 @@ const ProfitLossChart = ({ trades }) => {
         </div>
       </div>
 
-      <div style={{ width: "100%", height: "600px", minHeight: "600px" }}>
+      <div className="h-[400px] sm:h-[600px]">
         <ResponsiveContainer width="100%" height="100%">
           <LineChart
             data={chartData}
@@ -462,10 +464,10 @@ const ProfitLossChart = ({ trades }) => {
       </div>
 
       {showTrades && selectedDate && (
-        <div className="border-t dark:border-gray-700 pt-6">
+        <div className="border-t dark:border-gray-700 pt-4 sm:pt-6">
           {filteredTrades.length > 0 ? (
             <div>
-              <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">
+              <h3 className="text-base sm:text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">
                 Trades for {timeframe === "WEEK" ? "Week of " : ""}
                 {timeframe === "MONTH"
                   ? new Date(selectedDate).toLocaleDateString(undefined, {
@@ -476,10 +478,14 @@ const ProfitLossChart = ({ trades }) => {
                   ? new Date(selectedDate).getFullYear()
                   : selectedDate}
               </h3>
-              <TradesTable trades={filteredTrades} />
+              <div className="overflow-x-auto -mx-4 sm:mx-0">
+                <div className="inline-block min-w-full align-middle">
+                  <TradesTable trades={filteredTrades} />
+                </div>
+              </div>
             </div>
           ) : (
-            <div className="text-center text-gray-500 dark:text-gray-400 py-4">
+            <div className="text-center text-sm text-gray-500 dark:text-gray-400 py-4">
               No trades found for {timeframe === "WEEK" ? "Week of " : ""}
               {timeframe === "MONTH"
                 ? new Date(selectedDate).toLocaleDateString(undefined, {

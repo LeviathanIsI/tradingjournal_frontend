@@ -72,7 +72,7 @@ const Network = ({ userId }) => {
 
   if (!networkData.length) {
     return (
-      <div className="text-center p-8 bg-white dark:bg-gray-800 rounded-lg shadow">
+      <div className="text-center p-6 sm:p-8 bg-white dark:bg-gray-800 rounded-lg shadow">
         <UserX className="h-12 w-12 mx-auto mb-4 text-gray-400 dark:text-gray-500" />
         <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">
           No Connections Yet
@@ -88,31 +88,29 @@ const Network = ({ userId }) => {
 
   return (
     <div className="space-y-4">
-      <div className="flex justify-between items-center">
-        <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
+      <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-0 sm:justify-between">
+        <h2 className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-gray-100">
           {isViewingOwnProfile ? "Your Network" : "Network"}
         </h2>
-        <div className="flex gap-2">
-          <select
-            value={filter}
-            onChange={(e) => setFilter(e.target.value)}
-            className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-sm
-              bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
-          >
-            <option value="all">All Connections</option>
-            <option value="followers">Followers</option>
-            <option value="following">Following</option>
-          </select>
-        </div>
+        <select
+          value={filter}
+          onChange={(e) => setFilter(e.target.value)}
+          className="w-full sm:w-auto px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-sm
+            bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+        >
+          <option value="all">All Connections</option>
+          <option value="followers">Followers</option>
+          <option value="following">Following</option>
+        </select>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {filteredNetworkData.map((connection) => (
           <div
             key={connection._id}
             className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow"
           >
-            <div className="flex items-start justify-between mb-4">
+            <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-2 sm:gap-0 mb-4">
               <div>
                 <Link
                   to={`/community/profile/${connection.username}`}
@@ -124,7 +122,7 @@ const Network = ({ userId }) => {
                   {connection.tradingStyle || "Trader"}
                 </p>
                 {isViewingOwnProfile && (
-                  <div className="flex gap-2 mt-1">
+                  <div className="flex flex-wrap gap-2 mt-1">
                     {connection.relationship.isFollower && (
                       <span className="text-xs bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300 px-2 py-1 rounded">
                         Follows you
@@ -162,18 +160,18 @@ const Network = ({ userId }) => {
 
             <div className="grid grid-cols-3 gap-2 text-center">
               <div className="bg-gray-50 dark:bg-gray-700/50 p-2 rounded">
-                <p className="text-sm text-gray-600 dark:text-gray-400">
+                <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
                   Trades
                 </p>
-                <p className="font-semibold text-gray-900 dark:text-gray-100">
+                <p className="text-sm sm:text-base font-semibold text-gray-900 dark:text-gray-100">
                   {connection.stats.totalTrades}
                 </p>
               </div>
               <div className="bg-gray-50 dark:bg-gray-700/50 p-2 rounded">
-                <p className="text-sm text-gray-600 dark:text-gray-400">
+                <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
                   Win Rate
                 </p>
-                <p className="font-semibold text-gray-900 dark:text-gray-100">
+                <p className="text-sm sm:text-base font-semibold text-gray-900 dark:text-gray-100">
                   {(
                     (connection.stats.winningTrades /
                       connection.stats.totalTrades) *
@@ -183,10 +181,10 @@ const Network = ({ userId }) => {
                 </p>
               </div>
               <div className="bg-gray-50 dark:bg-gray-700/50 p-2 rounded">
-                <p className="text-sm text-gray-600 dark:text-gray-400">
+                <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
                   Followers
                 </p>
-                <p className="font-semibold text-gray-900 dark:text-gray-100">
+                <p className="text-sm sm:text-base font-semibold text-gray-900 dark:text-gray-100">
                   {connection.followers?.length || 0}
                 </p>
               </div>

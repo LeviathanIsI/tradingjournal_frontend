@@ -43,7 +43,7 @@ const FeaturedReviews = () => {
 
   if (loading) {
     return (
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 mb-6">
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-4 sm:p-6 mb-4 sm:mb-6">
         <div className="flex items-center gap-2 mb-4">
           <Star className="h-5 w-5 text-yellow-400 fill-current" />
           <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
@@ -60,8 +60,8 @@ const FeaturedReviews = () => {
   if (error || !featuredReviews.length) return null;
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 mb-6">
-      <div className="flex items-center justify-between mb-4">
+    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-4 sm:p-6 mb-4 sm:mb-6">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-4 mb-4">
         <div className="flex items-center gap-2">
           <Star className="h-5 w-5 text-yellow-400 fill-current" />
           <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
@@ -79,7 +79,7 @@ const FeaturedReviews = () => {
             key={review._id}
             className="border-b border-gray-200 dark:border-gray-700 last:border-0 pb-6 last:pb-0"
           >
-            <div className="flex justify-between items-start mb-4">
+            <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-2 sm:gap-4 mb-4">
               <div>
                 <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">
                   {review.trade.symbol} - {review.trade.type}
@@ -100,13 +100,13 @@ const FeaturedReviews = () => {
                   review.trade.profitLoss.realized >= 0
                     ? "bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300"
                     : "bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300"
-                }`}
+                } self-start sm:self-center`}
               >
                 {formatCurrency(review.trade.profitLoss.realized)}
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-4 mb-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
               <div>
                 <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   What Went Well
@@ -135,36 +135,36 @@ const FeaturedReviews = () => {
             </div>
 
             <div className="bg-gray-50 dark:bg-gray-700/50 p-3 rounded-lg mb-4">
-              <div className="grid grid-cols-4 gap-4 text-sm">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 text-sm">
                 <div>
-                  <span className="text-gray-500 dark:text-gray-400">
+                  <span className="block sm:inline text-gray-500 dark:text-gray-400">
                     Entry:
                   </span>
-                  <span className="ml-2 font-medium text-gray-900 dark:text-gray-100">
+                  <span className="sm:ml-2 font-medium text-gray-900 dark:text-gray-100">
                     ${review.trade.entryPrice}
                   </span>
                 </div>
                 <div>
-                  <span className="text-gray-500 dark:text-gray-400">
+                  <span className="block sm:inline text-gray-500 dark:text-gray-400">
                     Exit:
                   </span>
-                  <span className="ml-2 font-medium text-gray-900 dark:text-gray-100">
+                  <span className="sm:ml-2 font-medium text-gray-900 dark:text-gray-100">
                     ${review.trade.exitPrice}
                   </span>
                 </div>
                 <div>
-                  <span className="text-gray-500 dark:text-gray-400">
+                  <span className="block sm:inline text-gray-500 dark:text-gray-400">
                     Shares:
                   </span>
-                  <span className="ml-2 font-medium text-gray-900 dark:text-gray-100">
+                  <span className="sm:ml-2 font-medium text-gray-900 dark:text-gray-100">
                     {review.trade.entryQuantity}
                   </span>
                 </div>
                 <div>
-                  <span className="text-gray-500 dark:text-gray-400">
+                  <span className="block sm:inline text-gray-500 dark:text-gray-400">
                     Session:
                   </span>
-                  <span className="ml-2 font-medium text-gray-900 dark:text-gray-100">
+                  <span className="sm:ml-2 font-medium text-gray-900 dark:text-gray-100">
                     {review.trade.session}
                   </span>
                 </div>

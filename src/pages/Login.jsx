@@ -63,20 +63,20 @@ const Login = () => {
   };
 
   return (
-    <div className="w-screen h-[calc(100vh-64px)] bg-white flex items-center justify-center">
-      <div className="w-96">
-        <h2 className="text-2xl font-semibold mb-6 text-black">
+    <div className="min-h-screen pt-16 px-4 sm:px-6 bg-white flex items-center justify-center">
+      <div className="w-full max-w-md mx-auto">
+        <h2 className="text-xl sm:text-2xl font-semibold mb-4 sm:mb-6 text-black">
           Sign in to your account
         </h2>
 
         {error && (
-          <div className="bg-red-50 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4">
-            <span className="block">{error}</span>
+          <div className="bg-red-50 border border-red-400 text-red-700 px-3 sm:px-4 py-2 sm:py-3 rounded relative mb-4">
+            <span className="block text-sm">{error}</span>
           </div>
         )}
 
-        <form onSubmit={handleSubmit}>
-          <div className="mb-4">
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
             <label htmlFor="email" className="block text-sm mb-1 text-black">
               Email address
             </label>
@@ -85,13 +85,13 @@ const Login = () => {
               name="email"
               type="email"
               required
-              className="w-full px-3 py-2 bg-white border border-gray-300 text-black"
+              className="w-full px-3 py-2 bg-white border border-gray-300 text-black rounded-md text-sm sm:text-base"
               value={formData.email}
               onChange={handleChange}
             />
           </div>
 
-          <div className="mb-4">
+          <div>
             <label htmlFor="password" className="block text-sm mb-1 text-black">
               Password
             </label>
@@ -100,13 +100,13 @@ const Login = () => {
               name="password"
               type="password"
               required
-              className="w-full px-3 py-2 bg-white border border-gray-300 text-black"
+              className="w-full px-3 py-2 bg-white border border-gray-300 text-black rounded-md text-sm sm:text-base"
               value={formData.password}
               onChange={handleChange}
             />
           </div>
 
-          <div className="mb-6">
+          <div>
             <label className="flex items-center">
               <input
                 type="checkbox"
@@ -122,13 +122,13 @@ const Login = () => {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 disabled:opacity-50"
+            className="w-full bg-blue-600 text-white py-2.5 rounded-md hover:bg-blue-700 disabled:opacity-50 text-sm sm:text-base font-medium"
           >
             {loading ? "Signing in..." : "Sign in"}
           </button>
         </form>
 
-        <div className="mt-4">
+        <div className="mt-6">
           <div className="relative">
             <div className="absolute inset-0 flex items-center">
               <div className="w-full border-t border-gray-300"></div>
@@ -146,8 +146,6 @@ const Login = () => {
                 const googleAuthUrl = `${
                   import.meta.env.VITE_API_URL
                 }/api/auth/google`.replace(/([^:]\/)\/+/g, "$1");
-
-                // Try both methods
                 try {
                   window.location.assign(googleAuthUrl);
                 } catch (error) {
@@ -159,7 +157,8 @@ const Login = () => {
             />
           </div>
         </div>
-        <div className="flex justify-between items-center mt-4">
+
+        <div className="flex flex-col sm:flex-row justify-between items-center gap-4 sm:gap-0 mt-6">
           <button
             onClick={() => navigate("/signup")}
             className="text-sm text-blue-600 hover:text-blue-800"

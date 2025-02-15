@@ -203,8 +203,8 @@ const PublicReviews = () => {
     );
 
   return (
-    <div className="space-y-6">
-      <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
+    <div className="space-y-4 sm:space-y-6">
+      <h2 className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-gray-100">
         Public Trade Reviews
       </h2>
 
@@ -218,19 +218,19 @@ const PublicReviews = () => {
         setSearchQuery={setSearchQuery}
       />
 
-      <div className="grid gap-6">
+      <div className="grid gap-4 sm:gap-6">
         {filteredAndSortedReviews.map((review) => (
           <div
             key={review._id}
-            className="bg-white dark:bg-gray-800 rounded-lg shadow p-6"
+            className="bg-white dark:bg-gray-800 rounded-lg shadow p-4 sm:p-6"
           >
-            <div className="flex justify-between items-start mb-4">
+            <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-2 sm:gap-0 mb-4">
               <div>
-                <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">
+                <h3 className="text-base sm:text-lg font-medium text-gray-900 dark:text-gray-100">
                   {review.trade?.symbol || "Unknown"} -{" "}
                   {review.trade?.type || "Unknown"}
                 </h3>
-                <p className="text-sm text-gray-500 dark:text-gray-400">
+                <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">
                   by{" "}
                   <Link
                     to={
@@ -247,7 +247,7 @@ const PublicReviews = () => {
               </div>
               {review.trade?.profitLoss?.realized !== undefined && (
                 <div
-                  className={`px-3 py-1 rounded-full text-sm ${
+                  className={`self-start sm:self-center px-3 py-1 rounded-full text-sm ${
                     review.trade.profitLoss.realized >= 0
                       ? "bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300"
                       : "bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300"
@@ -258,12 +258,12 @@ const PublicReviews = () => {
               )}
             </div>
 
-            <div className="grid grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
               <div>
                 <h4 className="font-medium text-gray-700 dark:text-gray-300 mb-2">
                   What Went Well
                 </h4>
-                <p className="text-gray-600 dark:text-gray-400">
+                <p className="text-sm text-gray-600 dark:text-gray-400">
                   {review.whatWentWell}
                 </p>
               </div>
@@ -271,23 +271,23 @@ const PublicReviews = () => {
                 <h4 className="font-medium text-gray-700 dark:text-gray-300 mb-2">
                   What Went Wrong
                 </h4>
-                <p className="text-gray-600 dark:text-gray-400">
+                <p className="text-sm text-gray-600 dark:text-gray-400">
                   {review.whatWentWrong}
                 </p>
               </div>
-              <div className="col-span-2">
+              <div className="col-span-1 sm:col-span-2">
                 <h4 className="font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Lessons Learned
                 </h4>
-                <p className="text-gray-600 dark:text-gray-400">
+                <p className="text-sm text-gray-600 dark:text-gray-400">
                   {review.lessonLearned}
                 </p>
               </div>
-              <div className="col-span-2">
+              <div className="col-span-1 sm:col-span-2">
                 <h4 className="font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Future Adjustments
                 </h4>
-                <p className="text-gray-600 dark:text-gray-400">
+                <p className="text-sm text-gray-600 dark:text-gray-400">
                   {review.futureAdjustments}
                 </p>
               </div>
@@ -297,36 +297,36 @@ const PublicReviews = () => {
               <h4 className="font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Trade Details
               </h4>
-              <div className="grid grid-cols-4 gap-4 text-sm">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 text-sm">
                 <div>
-                  <span className="text-gray-500 dark:text-gray-400">
+                  <span className="block sm:inline text-gray-500 dark:text-gray-400">
                     Entry:
                   </span>
-                  <span className="ml-2 text-gray-900 dark:text-gray-100">
+                  <span className="sm:ml-2 text-gray-900 dark:text-gray-100">
                     ${review.trade.entryPrice}
                   </span>
                 </div>
                 <div>
-                  <span className="text-gray-500 dark:text-gray-400">
+                  <span className="block sm:inline text-gray-500 dark:text-gray-400">
                     Exit:
                   </span>
-                  <span className="ml-2 text-gray-900 dark:text-gray-100">
+                  <span className="sm:ml-2 text-gray-900 dark:text-gray-100">
                     ${review.trade.exitPrice}
                   </span>
                 </div>
                 <div>
-                  <span className="text-gray-500 dark:text-gray-400">
+                  <span className="block sm:inline text-gray-500 dark:text-gray-400">
                     Shares:
                   </span>
-                  <span className="ml-2 text-gray-900 dark:text-gray-100">
+                  <span className="sm:ml-2 text-gray-900 dark:text-gray-100">
                     {review.trade.entryQuantity}
                   </span>
                 </div>
                 <div>
-                  <span className="text-gray-500 dark:text-gray-400">
+                  <span className="block sm:inline text-gray-500 dark:text-gray-400">
                     Session:
                   </span>
-                  <span className="ml-2 text-gray-900 dark:text-gray-100">
+                  <span className="sm:ml-2 text-gray-900 dark:text-gray-100">
                     {review.trade.session}
                   </span>
                 </div>

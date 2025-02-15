@@ -5,27 +5,27 @@ const Home = () => {
   const { user } = useAuth();
 
   return (
-    <div className="w-screen min-h-[calc(100vh-64px)] bg-white dark:bg-gray-900">
+    <div className="min-h-screen pt-16 bg-white dark:bg-gray-900">
       {/* Hero section */}
-      <div className="w-full px-4 pt-14">
-        <div className="w-full py-32 sm:py-48 lg:py-56">
+      <div className="px-4 sm:px-6 lg:px-8">
+        <div className="py-20 sm:py-32 lg:py-40">
           <div className="text-center">
-            <h1 className="text-4xl font-bold tracking-tight text-gray-900 dark:text-gray-100 sm:text-6xl">
+            <h1 className="text-3xl sm:text-4xl lg:text-6xl font-bold tracking-tight text-gray-900 dark:text-gray-100">
               Track Your Trades,
               <br />
               Improve Your
               <br />
               Performance
             </h1>
-            <p className="mt-6 text-lg leading-8 text-gray-600 dark:text-gray-300">
+            <p className="mt-4 sm:mt-6 text-base sm:text-lg leading-relaxed text-gray-600 dark:text-gray-300 max-w-2xl mx-auto px-4">
               A comprehensive trading journal to help you analyze your trades,
               track your performance, and become a better trader.
             </p>
-            <div className="mt-10 flex items-center justify-center gap-x-6">
+            <div className="mt-8 sm:mt-10 flex items-center justify-center gap-x-4 sm:gap-x-6">
               <Link
                 to="/signup"
-                className="rounded-md bg-blue-600 px-3.5 py-2.5 text-sm font-semibold text-white 
-                  shadow-sm hover:bg-blue-700 dark:hover:bg-blue-500"
+                className="rounded-md bg-blue-600 px-4 sm:px-3.5 py-2.5 text-sm sm:text-base font-semibold text-white 
+                  shadow-sm hover:bg-blue-700 dark:hover:bg-blue-500 w-full sm:w-auto max-w-[200px]"
               >
                 Get started
               </Link>
@@ -35,57 +35,46 @@ const Home = () => {
       </div>
 
       {/* Feature section */}
-      <div className="w-full bg-gray-50 dark:bg-gray-800 py-24 sm:py-32">
-        <div className="w-full px-4 lg:px-8">
+      <div className="bg-gray-50 dark:bg-gray-800 py-16 sm:py-24">
+        <div className="px-4 sm:px-6 lg:px-8">
           <div className="text-center">
-            <h2 className="text-base font-semibold leading-7 text-blue-600 dark:text-blue-400">
+            <h2 className="text-sm sm:text-base font-semibold leading-7 text-blue-600 dark:text-blue-400">
               Track Better
             </h2>
-            <p className="mt-2 text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-100">
+            <p className="mt-2 text-2xl sm:text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-100 px-4">
               Everything you need to analyze your trades
             </p>
           </div>
 
-          <div className="mt-16 sm:mt-20 lg:mt-24">
-            <div className="grid grid-cols-1 gap-x-8 gap-y-16 lg:grid-cols-3">
-              {/* Feature 1 */}
-              <div className="flex flex-col">
-                <div className="text-base font-semibold leading-7 text-gray-900 dark:text-gray-100">
-                  Comprehensive Trading
+          <div className="mt-12 sm:mt-16 lg:mt-20">
+            <div className="grid grid-cols-1 gap-y-8 sm:gap-y-12 lg:gap-y-16 lg:grid-cols-3 lg:gap-x-8">
+              {/* Feature Cards */}
+              {[
+                {
+                  title: "Comprehensive Trading",
+                  description:
+                    "Track entries, exits, position sizes, and strategies. Add notes to document your thought process.",
+                },
+                {
+                  title: "Performance Analytics",
+                  description:
+                    "View detailed statistics and charts. Analyze your win rate, average returns, and risk metrics.",
+                },
+                {
+                  title: "Journal & Reports",
+                  description:
+                    "Keep detailed notes on your trades and generate comprehensive reports to track your progress.",
+                },
+              ].map((feature, index) => (
+                <div key={index} className="flex flex-col p-4 sm:p-6">
+                  <div className="text-base sm:text-lg font-semibold leading-7 text-gray-900 dark:text-gray-100">
+                    {feature.title}
+                  </div>
+                  <div className="mt-2 flex flex-auto flex-col text-sm sm:text-base leading-relaxed text-gray-600 dark:text-gray-400">
+                    <p>{feature.description}</p>
+                  </div>
                 </div>
-                <div className="mt-2 flex flex-auto flex-col text-base leading-7 text-gray-600 dark:text-gray-400">
-                  <p>
-                    Track entries, exits, position sizes, and strategies. Add
-                    notes to document your thought process.
-                  </p>
-                </div>
-              </div>
-
-              {/* Feature 2 */}
-              <div className="flex flex-col">
-                <div className="text-base font-semibold leading-7 text-gray-900 dark:text-gray-100">
-                  Performance Analytics
-                </div>
-                <div className="mt-2 flex flex-auto flex-col text-base leading-7 text-gray-600 dark:text-gray-400">
-                  <p>
-                    View detailed statistics and charts. Analyze your win rate,
-                    average returns, and risk metrics.
-                  </p>
-                </div>
-              </div>
-
-              {/* Feature 3 */}
-              <div className="flex flex-col">
-                <div className="text-base font-semibold leading-7 text-gray-900 dark:text-gray-100">
-                  Journal & Reports
-                </div>
-                <div className="mt-2 flex flex-auto flex-col text-base leading-7 text-gray-600 dark:text-gray-400">
-                  <p>
-                    Keep detailed notes on your trades and generate
-                    comprehensive reports to track your progress.
-                  </p>
-                </div>
-              </div>
+              ))}
             </div>
           </div>
         </div>

@@ -167,23 +167,25 @@ const YourReviews = ({ userId }) => {
 
   if (loading)
     return (
-      <div className="flex justify-center p-8 text-gray-900 dark:text-gray-100">
+      <div className="flex justify-center p-4 sm:p-8 text-base sm:text-lg text-gray-900 dark:text-gray-100">
         Loading reviews...
       </div>
     );
+
   if (error)
     return (
-      <div className="flex justify-center p-8 text-red-500 dark:text-red-400">
+      <div className="flex justify-center p-4 sm:p-8 text-base sm:text-lg text-red-500 dark:text-red-400">
         Error: {error}
       </div>
     );
+
   if (!reviews.length)
     return (
-      <div className="flex flex-col items-center justify-center p-8 space-y-4">
-        <p className="text-lg text-gray-600 dark:text-gray-300">
+      <div className="flex flex-col items-center justify-center p-4 sm:p-8 text-center space-y-3 sm:space-y-4">
+        <p className="text-base sm:text-lg text-gray-600 dark:text-gray-300">
           No reviews yet
         </p>
-        <p className="text-sm text-gray-500 dark:text-gray-400">
+        <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 px-4">
           {isOwnProfile
             ? "Start reviewing your trades to track your progress!"
             : "This trader hasn't published any reviews yet."}
@@ -192,92 +194,95 @@ const YourReviews = ({ userId }) => {
     );
 
   return (
-    <div className="space-y-6">
-      <div className="grid gap-6">
+    <div className="space-y-4 sm:space-y-6">
+      <div className="grid gap-4 sm:gap-6">
         {reviews.map((review) => (
           <div
             key={review._id}
-            className="bg-white dark:bg-gray-800 rounded-lg shadow p-6"
+            className="bg-white dark:bg-gray-800 rounded-lg shadow p-4 sm:p-6"
           >
             <div className="flex justify-between items-start mb-4">
               <div>
-                <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">
+                <h3 className="text-base sm:text-lg font-medium text-gray-900 dark:text-gray-100">
                   {review.trade.symbol} - {review.trade.type}
                 </h3>
-                <p className="text-sm text-gray-500 dark:text-gray-400">
+                <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">
                   {formatDate(review.createdAt)}
                 </p>
               </div>
               {isOwnProfile && (
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1 sm:gap-2">
                   <button
                     onClick={() => handleVisibilityToggle(review)}
-                    className="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded"
+                    className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded"
                     title={review.isPublic ? "Make Private" : "Make Public"}
                   >
                     {review.isPublic ? (
-                      <Eye className="h-5 w-5 text-green-600 dark:text-green-400" />
+                      <Eye className="h-4 w-4 sm:h-5 sm:w-5 text-green-600 dark:text-green-400" />
                     ) : (
-                      <EyeOff className="h-5 w-5 text-gray-400 dark:text-gray-500" />
+                      <EyeOff className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400 dark:text-gray-500" />
                     )}
                   </button>
                   <button
                     onClick={() => handleEditClick(review)}
-                    className="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded"
+                    className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded"
                     title="Edit Review"
                   >
-                    <Edit className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+                    <Edit className="h-4 w-4 sm:h-5 sm:w-5 text-blue-600 dark:text-blue-400" />
                   </button>
                   <button
                     onClick={() => handleDelete(review._id)}
-                    className="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded"
+                    className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded"
                     title="Delete Review"
                   >
-                    <Trash2 className="h-5 w-5 text-red-600 dark:text-red-400" />
+                    <Trash2 className="h-4 w-4 sm:h-5 sm:w-5 text-red-600 dark:text-red-400" />
                   </button>
                 </div>
               )}
             </div>
 
-            <div className="grid grid-cols-2 gap-6 mb-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 mb-4">
               <div>
-                <h4 className="font-medium text-gray-700 dark:text-gray-300 mb-2">
+                <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   What Went Well
                 </h4>
-                <p className="text-gray-600 dark:text-gray-400">
+                <p className="text-sm text-gray-600 dark:text-gray-400">
                   {review.whatWentWell}
                 </p>
               </div>
               <div>
-                <h4 className="font-medium text-gray-700 dark:text-gray-300 mb-2">
+                <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   What Went Wrong
                 </h4>
-                <p className="text-gray-600 dark:text-gray-400">
+                <p className="text-sm text-gray-600 dark:text-gray-400">
                   {review.whatWentWrong}
                 </p>
               </div>
-              <div className="col-span-2">
-                <h4 className="font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <div className="col-span-1 sm:col-span-2">
+                <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Lessons Learned
                 </h4>
-                <p className="text-gray-600 dark:text-gray-400">
+                <p className="text-sm text-gray-600 dark:text-gray-400">
                   {review.lessonLearned}
                 </p>
               </div>
               {review.futureAdjustments && (
-                <div className="col-span-2">
-                  <h4 className="font-medium text-gray-700 dark:text-gray-300 mb-2">
+                <div className="col-span-1 sm:col-span-2">
+                  <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     Future Adjustments
                   </h4>
-                  <p className="text-gray-600 dark:text-gray-400">
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
                     {review.futureAdjustments}
                   </p>
                 </div>
               )}
             </div>
 
-            <div className="flex items-center justify-between pt-4 border-t dark:border-gray-700">
-              <div className="flex items-center gap-4 text-gray-500 dark:text-gray-400 text-sm">
+            <div
+              className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-0 
+            pt-4 border-t dark:border-gray-700"
+            >
+              <div className="flex items-center gap-4 text-gray-500 dark:text-gray-400 text-xs sm:text-sm">
                 <div className="flex items-center gap-1">
                   <Heart className="h-4 w-4" />
                   <span>{review.likes?.length || 0} likes</span>
@@ -288,7 +293,7 @@ const YourReviews = ({ userId }) => {
                 </div>
               </div>
               <div
-                className={`px-3 py-1 rounded-full text-sm ${
+                className={`px-3 py-1 rounded-full text-xs sm:text-sm w-fit ${
                   review.trade.profitLoss.realized >= 0
                     ? "bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300"
                     : "bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300"

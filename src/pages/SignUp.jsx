@@ -125,13 +125,16 @@ const SignUp = () => {
     setLoading(true);
 
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/register`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      });
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/api/auth/register`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(formData),
+        }
+      );
 
       const data = await response.json();
 
@@ -210,98 +213,82 @@ const SignUp = () => {
     </div>
   );
 
-   const handleGoogleSignup = () => {
+  const handleGoogleSignup = () => {
     window.location.href = `${import.meta.env.VITE_API_URL}/api/auth/google`;
   };
 
   return (
-    <div className="min-h-[calc(100vh-64px)] bg-white flex items-center justify-center py-12">
-      <div className="w-full max-w-md px-8">
-        <h2 className="text-2xl font-semibold mb-8 text-black text-center">
+    <div className="min-h-screen pt-16 px-4 sm:px-6 bg-white flex items-center justify-center py-8 sm:py-12">
+      <div className="w-full max-w-md">
+        <h2 className="text-xl sm:text-2xl font-semibold mb-6 sm:mb-8 text-black text-center">
           Create your account
         </h2>
 
         {error && (
-          <div className="bg-red-50 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-6">
+          <div className="bg-red-50 border border-red-400 text-red-700 px-3 sm:px-4 py-2 sm:py-3 rounded-md mb-6">
             <span className="block text-sm">{error}</span>
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-8">
+        <form onSubmit={handleSubmit} className="space-y-6 sm:space-y-8">
           {/* Account Information Section */}
-          <div className="space-y-6">
-            <h3 className="text-lg font-medium text-gray-900">
+          <div className="space-y-4 sm:space-y-6">
+            <h3 className="text-base sm:text-lg font-medium text-gray-900">
               Account Information
             </h3>
-            <div className="grid grid-cols-1 gap-6">
+            <div className="grid grid-cols-1 gap-4 sm:gap-6">
               <div>
-                <label
-                  htmlFor="username"
-                  className="block text-sm font-medium text-gray-700"
-                >
+                <label className="block text-sm font-medium text-gray-700 mb-1">
                   Username
                 </label>
                 <input
-                  id="username"
                   name="username"
                   type="text"
                   required
-                  className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-black shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                  className="block w-full rounded-md border border-gray-300 px-3 py-2 text-black shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm"
                   value={formData.username}
                   onChange={handleChange}
                 />
               </div>
 
               <div>
-                <label
-                  htmlFor="email"
-                  className="block text-sm font-medium text-gray-700"
-                >
+                <label className="block text-sm font-medium text-gray-700 mb-1">
                   Email address
                 </label>
                 <input
-                  id="email"
                   name="email"
                   type="email"
                   required
-                  className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-black shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                  className="block w-full rounded-md border border-gray-300 px-3 py-2 text-black shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm"
                   value={formData.email}
                   onChange={handleChange}
                 />
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label
-                    htmlFor="password"
-                    className="block text-sm font-medium text-gray-700"
-                  >
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
                     Password
                   </label>
                   <input
-                    id="password"
                     name="password"
                     type="password"
                     required
-                    className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-black shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                    className="block w-full rounded-md border border-gray-300 px-3 py-2 text-black shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm"
                     value={formData.password}
                     onChange={handleChange}
                   />
                 </div>
 
                 <div>
-                  <label
-                    htmlFor="confirmPassword"
-                    className="block text-sm font-medium text-gray-700"
-                  >
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
                     Confirm Password
                   </label>
                   <input
-                    id="confirmPassword"
                     name="confirmPassword"
                     type="password"
                     required
-                    className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-black shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                    className="block w-full rounded-md border border-gray-300 px-3 py-2 text-black shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm"
                     value={formData.confirmPassword}
                     onChange={handleChange}
                   />
@@ -311,12 +298,12 @@ const SignUp = () => {
           </div>
 
           {/* Security Questions Section */}
-          <div className="space-y-6">
-            <div className="border-t border-gray-200 pt-6">
-              <h3 className="text-lg font-medium text-gray-900 mb-4">
+          <div className="space-y-4 sm:space-y-6">
+            <div className="border-t border-gray-200 pt-4 sm:pt-6">
+              <h3 className="text-base sm:text-lg font-medium text-gray-900 mb-2 sm:mb-4">
                 Security Questions
               </h3>
-              <p className="text-sm text-gray-500 mb-6">
+              <p className="text-xs sm:text-sm text-gray-500 mb-4 sm:mb-6">
                 Choose three different security questions to help protect your
                 account
               </p>
@@ -324,38 +311,27 @@ const SignUp = () => {
             </div>
           </div>
 
-          <div className="pt-6">
+          <div className="pt-4 sm:pt-6">
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-blue-600 text-white py-3 rounded-md hover:bg-blue-700 disabled:opacity-50 shadow-sm text-sm font-medium"
+              className="w-full bg-blue-600 text-white py-2.5 sm:py-3 rounded-md hover:bg-blue-700 disabled:opacity-50 shadow-sm text-sm font-medium"
             >
               {loading ? "Creating account..." : "Create account"}
             </button>
-
-            <p className="mt-4 text-center text-sm text-gray-600">
-              Already have an account?{" "}
-              <button
-                type="button"
-                onClick={() => navigate("/login")}
-                className="text-blue-600 hover:text-blue-800 font-medium"
-              >
-                Sign in
-              </button>
-            </p>
           </div>
         </form>
-        {/* 🚀 Google Sign Up */}
-        <div className="mt-6">
+
+        {/* Google Sign Up */}
+        <div className="mt-4">
           <button
             type="button"
             onClick={handleGoogleSignup}
-            className="w-full bg-red-500 text-white py-3 rounded-md hover:bg-red-600 shadow-sm text-sm font-medium flex items-center justify-center"
+            className="w-full bg-red-500 text-white py-2.5 sm:py-3 rounded-md hover:bg-red-600 shadow-sm text-sm font-medium flex items-center justify-center"
           >
             <svg
-              className="w-5 h-5 mr-2"
+              className="w-4 h-4 sm:w-5 sm:h-5 mr-2"
               viewBox="0 0 48 48"
-              version="1.1"
               xmlns="http://www.w3.org/2000/svg"
             >
               <path
@@ -370,6 +346,17 @@ const SignUp = () => {
             Sign up with Google
           </button>
         </div>
+
+        <p className="mt-4 text-center text-sm text-gray-600">
+          Already have an account?{" "}
+          <button
+            type="button"
+            onClick={() => navigate("/login")}
+            className="text-blue-600 hover:text-blue-800 font-medium"
+          >
+            Sign in
+          </button>
+        </p>
       </div>
     </div>
   );

@@ -62,13 +62,19 @@ const GoogleAuthSuccess = () => {
   }, [searchParams, login, navigate]);
 
   return (
-    <div className="w-screen h-screen flex items-center justify-center">
-      <div className="text-center">
-        <h2 className="text-2xl font-semibold mb-4">Google Sign-In</h2>
-        <p className="mb-4">{status}</p>
-        <pre className="mt-4 text-sm text-gray-600">
-          Token: {searchParams.get("token") ? "✅ Present" : "❌ Missing"}
-        </pre>
+    <div className="min-h-screen pt-16 px-4 sm:px-6 flex items-center justify-center bg-white dark:bg-gray-900">
+      <div className="text-center w-full max-w-sm mx-auto">
+        <h2 className="text-xl sm:text-2xl font-semibold mb-3 sm:mb-4 text-gray-900 dark:text-gray-100">
+          Google Sign-In
+        </h2>
+        <p className="mb-3 sm:mb-4 text-sm sm:text-base text-gray-700 dark:text-gray-300">
+          {status}
+        </p>
+        <div className="mt-4 p-3 sm:p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+          <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
+            Token: {searchParams.get("token") ? "✅ Present" : "❌ Missing"}
+          </p>
+        </div>
       </div>
     </div>
   );

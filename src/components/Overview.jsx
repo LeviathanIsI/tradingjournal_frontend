@@ -22,12 +22,12 @@ const TradingInsights = ({ trades, stats }) => {
   };
 
   return (
-    <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
+    <div className="bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-lg shadow">
       <div className="mb-4">
-        <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+        <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-gray-100">
           Trading Insights
         </h3>
-        <p className="text-sm text-gray-500 dark:text-gray-400">
+        <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">
           Personalized analysis of your trading patterns
         </p>
       </div>
@@ -37,36 +37,36 @@ const TradingInsights = ({ trades, stats }) => {
           Add more trades to see personalized insights
         </p>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
           {insights.map((insight, index) => {
             const Icon = icons[insight.icon];
             return (
               <div
                 key={index}
-                className={`flex items-start space-x-2 p-4 rounded-lg border
-                  ${
-                    insight.color === "green"
-                      ? "border-green-100 dark:border-green-900 bg-green-50 dark:bg-green-900/20"
-                      : insight.color === "yellow"
-                      ? "border-yellow-100 dark:border-yellow-900 bg-yellow-50 dark:bg-yellow-900/20"
-                      : insight.color === "red"
-                      ? "border-red-100 dark:border-red-900 bg-red-50 dark:bg-red-900/20"
-                      : "border-blue-100 dark:border-blue-900 bg-blue-50 dark:bg-blue-900/20"
-                  }`}
+                className={`flex items-start space-x-2 p-3 sm:p-4 rounded-lg border
+                ${
+                  insight.color === "green"
+                    ? "border-green-100 dark:border-green-900 bg-green-50 dark:bg-green-900/20"
+                    : insight.color === "yellow"
+                    ? "border-yellow-100 dark:border-yellow-900 bg-yellow-50 dark:bg-yellow-900/20"
+                    : insight.color === "red"
+                    ? "border-red-100 dark:border-red-900 bg-red-50 dark:bg-red-900/20"
+                    : "border-blue-100 dark:border-blue-900 bg-blue-50 dark:bg-blue-900/20"
+                }`}
               >
                 <Icon
-                  className={`h-5 w-5 mt-0.5
-                  ${
-                    insight.color === "green"
-                      ? "text-green-500 dark:text-green-400"
-                      : insight.color === "yellow"
-                      ? "text-yellow-500 dark:text-yellow-400"
-                      : insight.color === "red"
-                      ? "text-red-500 dark:text-red-400"
-                      : "text-blue-500 dark:text-blue-400"
-                  }`}
+                  className={`h-5 w-5 mt-0.5 flex-shrink-0
+                ${
+                  insight.color === "green"
+                    ? "text-green-500 dark:text-green-400"
+                    : insight.color === "yellow"
+                    ? "text-yellow-500 dark:text-yellow-400"
+                    : insight.color === "red"
+                    ? "text-red-500 dark:text-red-400"
+                    : "text-blue-500 dark:text-blue-400"
+                }`}
                 />
-                <p className="text-sm text-gray-900 dark:text-gray-100">
+                <p className="text-xs sm:text-sm text-gray-900 dark:text-gray-100">
                   {insight.message}
                 </p>
               </div>
@@ -131,81 +131,81 @@ const Overview = ({ trades, stats }) => {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       {/* Quick Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+        <div className="bg-white dark:bg-gray-800 p-3 sm:p-4 rounded-lg shadow">
           <div className="flex items-center justify-between mb-2">
-            <h3 className="text-sm font-medium text-gray-600 dark:text-gray-400">
+            <h3 className="text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-400">
               Best Winning Streak
             </h3>
             <Award className="h-4 w-4 text-blue-600 dark:text-blue-400" />
           </div>
-          <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+          <div className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-gray-100">
             {bestStreak}
           </div>
           <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-            Consecutive winning trades
+            Consecutive wins
           </p>
         </div>
 
-        <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow">
+        <div className="bg-white dark:bg-gray-800 p-3 sm:p-4 rounded-lg shadow">
           <div className="flex items-center justify-between mb-2">
-            <h3 className="text-sm font-medium text-gray-600 dark:text-gray-400">
+            <h3 className="text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-400">
               Largest Win
             </h3>
             <ArrowUpRight className="h-4 w-4 text-green-600 dark:text-green-400" />
           </div>
-          <div className="text-2xl font-bold text-green-600 dark:text-green-400">
+          <div className="text-xl sm:text-2xl font-bold text-green-600 dark:text-green-400">
             {formatCurrency(largestWin)}
           </div>
           <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-            Your best performing trade
+            Best trade
           </p>
         </div>
 
-        <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow">
+        <div className="bg-white dark:bg-gray-800 p-3 sm:p-4 rounded-lg shadow">
           <div className="flex items-center justify-between mb-2">
-            <h3 className="text-sm font-medium text-gray-600 dark:text-gray-400">
+            <h3 className="text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-400">
               Largest Loss
             </h3>
             <ArrowDownRight className="h-4 w-4 text-red-600 dark:text-red-400" />
           </div>
-          <div className="text-2xl font-bold text-red-600 dark:text-red-400">
+          <div className="text-xl sm:text-2xl font-bold text-red-600 dark:text-red-400">
             {formatCurrency(Math.abs(largestLoss))}
           </div>
           <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-            Your biggest drawdown
+            Biggest loss
           </p>
         </div>
 
-        <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow">
+        <div className="bg-white dark:bg-gray-800 p-3 sm:p-4 rounded-lg shadow">
           <div className="flex items-center justify-between mb-2">
-            <h3 className="text-sm font-medium text-gray-600 dark:text-gray-400">
+            <h3 className="text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-400">
               Win/Loss Ratio
             </h3>
             <TrendingUp className="h-4 w-4 text-blue-600 dark:text-blue-400" />
           </div>
-          <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+          <div className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-gray-100">
             {calculateWinLossRatio()}
           </div>
           <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-            Ratio of winning to losing trades
+            Win/Loss ratio
           </p>
         </div>
       </div>
 
       {/* Recent Activity */}
-      <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
+      <div className="bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-lg shadow">
         <div className="mb-4">
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+          <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-gray-100">
             Recent Activity
           </h3>
-          <p className="text-sm text-gray-500 dark:text-gray-400">
+          <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">
             Your last 5 trades
           </p>
         </div>
-        <div className="space-y-4">
+        <div className="space-y-3 sm:space-y-4">
           {recentTrades.length === 0 ? (
             <div className="text-center py-4 text-gray-500 dark:text-gray-400">
               No recent trades to display
@@ -216,7 +216,7 @@ const Overview = ({ trades, stats }) => {
                 key={trade._id}
                 className="flex items-center justify-between border-b border-gray-200 dark:border-gray-700 pb-2"
               >
-                <div className="flex items-center space-x-4">
+                <div className="flex items-center space-x-3 sm:space-x-4">
                   <div
                     className={`w-2 h-2 rounded-full ${
                       trade.profitLoss?.realized >= 0
@@ -225,16 +225,16 @@ const Overview = ({ trades, stats }) => {
                     }`}
                   />
                   <div>
-                    <p className="font-medium text-gray-900 dark:text-gray-100">
+                    <p className="text-sm sm:text-base font-medium text-gray-900 dark:text-gray-100">
                       {trade.symbol}
                     </p>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                    <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">
                       {new Date(trade.entryDate).toLocaleDateString()}
                     </p>
                   </div>
                 </div>
                 <div
-                  className={`font-medium ${
+                  className={`text-sm sm:text-base font-medium ${
                     trade.profitLoss?.realized >= 0
                       ? "text-green-600 dark:text-green-400"
                       : "text-red-600 dark:text-red-400"

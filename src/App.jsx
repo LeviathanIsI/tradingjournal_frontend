@@ -114,9 +114,11 @@ function App() {
       <AuthProvider>
         <ThemeProvider>
           <ToastProvider>
-            <div className="w-screen min-h-screen bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100">
+            <div className="min-h-screen min-w-[320px] bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100">
               <Navbar />
-              <AppRoutes />
+              <div className="pt-16">
+                <AppRoutes />
+              </div>
             </div>
           </ToastProvider>
         </ThemeProvider>

@@ -112,12 +112,12 @@ const Profile = () => {
   const isFollowing = profile.user.followers?.includes(currentUser?._id);
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-8">
       {/* Profile Header */}
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 mb-6">
-        <div className="flex justify-between items-start">
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4 sm:p-6 mb-4 sm:mb-6">
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4 sm:gap-0">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+            <h1 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-gray-100">
               {profile.user.username}
             </h1>
             <p className="text-sm text-gray-500 dark:text-gray-400">
@@ -132,7 +132,7 @@ const Profile = () => {
           {!isOwnProfile && (
             <button
               onClick={handleFollow}
-              className={`flex items-center gap-2 px-4 py-2 rounded-md ${
+              className={`flex items-center justify-center gap-2 px-4 py-2 rounded-md w-full sm:w-auto ${
                 isFollowing
                   ? "bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600"
                   : "bg-blue-600 text-white hover:bg-blue-700 dark:hover:bg-blue-500"
@@ -154,32 +154,36 @@ const Profile = () => {
         </div>
 
         {/* Stats */}
-        <div className="grid grid-cols-4 gap-4 mt-6 pt-6 border-t dark:border-gray-700">
-          <div className="text-center">
-            <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-6 pt-6 border-t dark:border-gray-700">
+          <div className="text-center p-2 sm:p-0">
+            <p className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-gray-100">
               {profile.stats?.totalTrades || 0}
             </p>
-            <p className="text-sm text-gray-500 dark:text-gray-400">Trades</p>
+            <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">
+              Trades
+            </p>
           </div>
-          <div className="text-center">
-            <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+          <div className="text-center p-2 sm:p-0">
+            <p className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-gray-100">
               {profile.stats?.winRate?.toFixed(1) || 0}%
             </p>
-            <p className="text-sm text-gray-500 dark:text-gray-400">Win Rate</p>
+            <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">
+              Win Rate
+            </p>
           </div>
-          <div className="text-center">
-            <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+          <div className="text-center p-2 sm:p-0">
+            <p className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-gray-100">
               {profile.user.followers?.length || 0}
             </p>
-            <p className="text-sm text-gray-500 dark:text-gray-400">
+            <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">
               Followers
             </p>
           </div>
-          <div className="text-center">
-            <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+          <div className="text-center p-2 sm:p-0">
+            <p className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-gray-100">
               {profile.user.following?.length || 0}
             </p>
-            <p className="text-sm text-gray-500 dark:text-gray-400">
+            <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">
               Following
             </p>
           </div>
@@ -188,58 +192,58 @@ const Profile = () => {
 
       {/* Content Tabs */}
       <div className="bg-white dark:bg-gray-800 rounded-lg shadow">
-        <div className="border-b border-gray-200 dark:border-gray-700">
-          <nav className="flex gap-4 px-6">
+        <div className="border-b border-gray-200 dark:border-gray-700 overflow-x-auto">
+          <nav className="flex gap-2 sm:gap-4 px-2 sm:px-6 min-w-max">
             <button
               onClick={() => setActiveTab("reviews")}
-              className={`px-3 py-4 text-sm font-medium border-b-2 ${
+              className={`px-2 sm:px-3 py-4 text-xs sm:text-sm font-medium border-b-2 whitespace-nowrap ${
                 activeTab === "reviews"
                   ? "border-blue-500 text-blue-600 dark:text-blue-400"
                   : "border-transparent text-gray-500 dark:text-gray-400 hover:border-gray-300 dark:hover:border-gray-600"
               }`}
             >
-              <PenLine className="h-4 w-4 inline mr-2" />
+              <PenLine className="h-4 w-4 inline mr-1 sm:mr-2" />
               Reviews
             </button>
             <button
               onClick={() => setActiveTab("stats")}
-              className={`px-3 py-4 text-sm font-medium border-b-2 ${
+              className={`px-2 sm:px-3 py-4 text-xs sm:text-sm font-medium border-b-2 whitespace-nowrap ${
                 activeTab === "stats"
                   ? "border-blue-500 text-blue-600 dark:text-blue-400"
                   : "border-transparent text-gray-500 dark:text-gray-400 hover:border-gray-300 dark:hover:border-gray-600"
               }`}
             >
-              <ChartLine className="h-4 w-4 inline mr-2" />
+              <ChartLine className="h-4 w-4 inline mr-1 sm:mr-2" />
               Stats
             </button>
             <button
               onClick={() => setActiveTab("network")}
-              className={`px-3 py-4 text-sm font-medium border-b-2 ${
+              className={`px-2 sm:px-3 py-4 text-xs sm:text-sm font-medium border-b-2 whitespace-nowrap ${
                 activeTab === "network"
                   ? "border-blue-500 text-blue-600 dark:text-blue-400"
                   : "border-transparent text-gray-500 dark:text-gray-400 hover:border-gray-300 dark:hover:border-gray-600"
               }`}
             >
-              <Users className="h-4 w-4 inline mr-2" />
+              <Users className="h-4 w-4 inline mr-1 sm:mr-2" />
               Network
             </button>
             {isOwnProfile && (
               <button
                 onClick={() => setActiveTab("settings")}
-                className={`px-3 py-4 text-sm font-medium border-b-2 ${
+                className={`px-2 sm:px-3 py-4 text-xs sm:text-sm font-medium border-b-2 whitespace-nowrap ${
                   activeTab === "settings"
                     ? "border-blue-500 text-blue-600 dark:text-blue-400"
                     : "border-transparent text-gray-500 dark:text-gray-400 hover:border-gray-300 dark:hover:border-gray-600"
                 }`}
               >
-                <Settings className="h-4 w-4 inline mr-2" />
+                <Settings className="h-4 w-4 inline mr-1 sm:mr-2" />
                 Settings
               </button>
             )}
           </nav>
         </div>
 
-        <div className="p-6">
+        <div className="p-3 sm:p-6">
           {activeTab === "reviews" && <YourReviews userId={profile.user._id} />}
           {activeTab === "stats" && (
             <ProfileStats

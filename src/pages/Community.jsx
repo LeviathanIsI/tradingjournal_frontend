@@ -9,74 +9,61 @@ import Network from "../components/Network";
 
 const Community = () => {
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col min-h-screen pt-16">
+      {" "}
+      {/* Added pt-16 for fixed navbar */}
       <CommunityNav />
-      <div className="p-6 bg-gray-50 dark:bg-gray-900">
-        <div className="bg-gray-100 dark:bg-gray-800 p-4 rounded-lg">
-          <p className="text-sm text-gray-900 dark:text-gray-100">
+      {/* Info Section */}
+      <div className="px-3 sm:px-6 py-3 sm:py-4 bg-gray-50 dark:bg-gray-900">
+        <div className="bg-gray-100 dark:bg-gray-800 p-3 sm:p-6 rounded-lg">
+          <p className="text-sm sm:text-base font-medium text-gray-900 dark:text-gray-100">
             Community Features:
           </p>
-          <ul className="text-xs text-gray-700 dark:text-gray-300 mt-2 space-y-1">
-            <li>• Share and learn from other traders' experiences</li>
-            <li>• Connect with traders who match your style</li>
-            <li>• Track your rankings and performance</li>
-            <li>• Access featured content from top traders</li>
+          <ul className="text-xs sm:text-sm text-gray-700 dark:text-gray-300 mt-2 space-y-2">
+            <li className="flex items-start">
+              <span className="mr-2 flex-shrink-0 text-gray-400">•</span>
+              <span>Share and learn from other traders' experiences</span>
+            </li>
+            <li className="flex items-start">
+              <span className="mr-2 flex-shrink-0 text-gray-400">•</span>
+              <span>Connect with traders who match your style</span>
+            </li>
+            <li className="flex items-start">
+              <span className="mr-2 flex-shrink-0 text-gray-400">•</span>
+              <span>Track your rankings and performance</span>
+            </li>
+            <li className="flex items-start">
+              <span className="mr-2 flex-shrink-0 text-gray-400">•</span>
+              <span>Access featured content from top traders</span>
+            </li>
           </ul>
-          <p className="text-xs text-gray-600 dark:text-gray-400 mt-2 italic">
+          <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 mt-3 italic">
             Pro tip: Engage with the community to accelerate your learning
           </p>
         </div>
       </div>
-      <div className="w-full p-6 dark:bg-gray-900">
+      {/* Routes Section */}
+      <div className="flex-1 w-full px-3 sm:px-6 py-3 sm:py-4 dark:bg-gray-900">
         <Routes>
-          <Route
-            path="reviews"
-            element={
-              <div>
-                <PublicReviews />
-              </div>
-            }
-          />
-          <Route
-            path="traders"
-            element={
-              <div>
-                <Traders />
-              </div>
-            }
-          />
-          <Route
-            path="leaderboard"
-            element={
-              <div>
-                <Leaderboard />
-              </div>
-            }
-          />
-          <Route
-            path="featured"
-            element={
-              <div>
-                <FeaturedReviews />
-              </div>
-            }
-          />
-          <Route
-            path="profile/:username"
-            element={
-              <div>
-                <Profile />
-              </div>
-            }
-          />
-          <Route
-            path="network"
-            element={
-              <div>
-                <Network />
-              </div>
-            }
-          />
+          {/* Route components with consistent padding/margin handling */}
+          {[
+            { path: "reviews", Component: PublicReviews },
+            { path: "traders", Component: Traders },
+            { path: "leaderboard", Component: Leaderboard },
+            { path: "featured", Component: FeaturedReviews },
+            { path: "profile/:username", Component: Profile },
+            { path: "network", Component: Network },
+          ].map(({ path, Component }) => (
+            <Route
+              key={path}
+              path={path}
+              element={
+                <div className="max-w-full -mx-3 sm:mx-0 overflow-hidden">
+                  <Component />
+                </div>
+              }
+            />
+          ))}
           <Route path="/" element={<Navigate to="reviews" replace />} />
         </Routes>
       </div>

@@ -88,15 +88,16 @@ const TradeJournal = ({
 
   // Additional controls UI
   const renderControls = () => (
-    <div className="flex flex-wrap justify-between items-center mb-4 gap-4">
-      <div className="flex items-center gap-4">
+    <div className="flex flex-col sm:flex-row flex-wrap justify-between items-start sm:items-center gap-3 sm:gap-4 mb-4">
+      <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 w-full sm:w-auto">
         <select
           value={timeFilter}
           onChange={(e) => {
             setTimeFilter(e.target.value);
             setCurrentPage(1);
           }}
-          className="border border-gray-300 dark:border-gray-600 rounded px-3 py-2 text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+          className="w-full sm:w-auto border border-gray-300 dark:border-gray-600 rounded px-3 py-2 text-sm 
+        bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
         >
           <option value="all">All Time</option>
           <option value="day">Today</option>
@@ -107,7 +108,7 @@ const TradeJournal = ({
         </select>
 
         {timeFilter === "custom" && (
-          <div className="flex items-center gap-2">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2">
             <input
               type="date"
               value={customDateRange.start}
@@ -117,16 +118,18 @@ const TradeJournal = ({
                   start: e.target.value,
                 }))
               }
-              className="border border-gray-300 dark:border-gray-600 rounded px-3 py-2 text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+              className="w-full sm:w-auto border border-gray-300 dark:border-gray-600 rounded px-3 py-2 text-sm 
+            bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
             />
-            <span>to</span>
+            <span className="text-gray-600 dark:text-gray-400">to</span>
             <input
               type="date"
               value={customDateRange.end}
               onChange={(e) =>
                 setCustomDateRange((prev) => ({ ...prev, end: e.target.value }))
               }
-              className="border rounded px-3 py-2 text-sm"
+              className="w-full sm:w-auto border border-gray-300 dark:border-gray-600 rounded px-3 py-2 text-sm 
+            bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
             />
           </div>
         )}
@@ -137,7 +140,8 @@ const TradeJournal = ({
             setEntriesPerPage(Number(e.target.value));
             setCurrentPage(1);
           }}
-          className="border border-gray-300 dark:border-gray-600 rounded px-3 py-2 text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+          className="w-full sm:w-auto border border-gray-300 dark:border-gray-600 rounded px-3 py-2 text-sm 
+        bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
         >
           <option value={5}>5 per page</option>
           <option value={10}>10 per page</option>
@@ -147,7 +151,7 @@ const TradeJournal = ({
         </select>
       </div>
 
-      <div className="text-sm text-gray-600">
+      <div className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 w-full sm:w-auto text-center sm:text-right">
         Showing {indexOfFirstTrade + 1} to{" "}
         {Math.min(indexOfLastTrade, filteredTrades.length)} of{" "}
         {filteredTrades.length} entries
@@ -157,26 +161,30 @@ const TradeJournal = ({
 
   // Pagination UI
   const renderPagination = () => (
-    <div className="flex justify-between items-center mt-4">
+    <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mt-4 px-2 sm:px-0">
       <button
         onClick={() => handlePageChange(currentPage - 1)}
         disabled={currentPage === 1}
-        className="flex items-center gap-1 px-3 py-2 rounded border border-gray-300 dark:border-gray-600 enabled:hover:bg-gray-50 dark:enabled:hover:bg-gray-700 disabled:opacity-50 text-gray-900 dark:text-gray-100"
+        className="w-full sm:w-auto flex items-center justify-center gap-1 px-3 py-2 rounded 
+      border border-gray-300 dark:border-gray-600 
+      enabled:hover:bg-gray-50 dark:enabled:hover:bg-gray-700 
+      disabled:opacity-50 text-sm text-gray-900 dark:text-gray-100"
       >
         <ChevronLeft className="h-4 w-4" />
         Previous
       </button>
 
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-1 sm:gap-2 overflow-x-auto no-scrollbar">
         {Array.from({ length: totalPages }, (_, i) => i + 1).map((number) => (
           <button
             key={number}
             onClick={() => handlePageChange(number)}
-            className={`px-3 py-2 rounded border border-gray-300 dark:border-gray-600 ${
-              currentPage === number
-                ? "bg-blue-600 text-white"
-                : "hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-900 dark:text-gray-100"
-            }`}
+            className={`min-w-[2.5rem] px-3 py-2 rounded border text-sm
+          ${
+            currentPage === number
+              ? "bg-blue-600 text-white border-blue-600"
+              : "border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-900 dark:text-gray-100"
+          }`}
           >
             {number}
           </button>
@@ -186,7 +194,10 @@ const TradeJournal = ({
       <button
         onClick={() => handlePageChange(currentPage + 1)}
         disabled={currentPage === totalPages}
-        className="flex items-center gap-1 px-3 py-2 rounded border enabled:hover:bg-gray-50 disabled:opacity-50"
+        className="w-full sm:w-auto flex items-center justify-center gap-1 px-3 py-2 rounded 
+      border border-gray-300 dark:border-gray-600 
+      enabled:hover:bg-gray-50 dark:enabled:hover:bg-gray-700 
+      disabled:opacity-50 text-sm text-gray-900 dark:text-gray-100"
       >
         Next
         <ChevronRight className="h-4 w-4" />
@@ -196,33 +207,36 @@ const TradeJournal = ({
 
   return (
     <div className="space-y-4">
+      {/* Features Info */}
       <div className="bg-gray-100 dark:bg-gray-800 p-3 rounded-md">
-        <p className="text-gray-900 dark:text-gray-100">
+        <p className="text-sm text-gray-900 dark:text-gray-100">
           Trade Journal Features:
         </p>
-        <ul className="text-gray-700 dark:text-gray-300 mt-2 space-y-1">
+        <ul className="text-xs sm:text-sm text-gray-700 dark:text-gray-300 mt-2 space-y-1">
           <li>• Add, edit, and review your trades</li>
           <li>• Bulk select and manage multiple trades</li>
           <li>• Track entry/exit prices and P/L</li>
           <li>• Add detailed trade reviews and notes</li>
         </ul>
-        <p className="text-gray-600 dark:text-gray-400 mt-2 text-xs italic">
+        <p className="text-xs italic text-gray-600 dark:text-gray-400 mt-2">
           Pro tip: Use trade reviews to document your thought process and
           improve your strategy
         </p>
       </div>
 
-      <div className="bg-white dark:bg-gray-800 p-4 rounded shadow">
-        <div className="flex justify-between items-center mb-4">
+      <div className="bg-white dark:bg-gray-800 p-3 sm:p-4 rounded shadow">
+        {/* Header Section */}
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4 mb-4">
           <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
             Trade Journal
           </h2>
-          <div className="flex gap-2">
+          <div className="flex gap-2 w-full sm:w-auto">
             {selectedTrades.size > 0 && (
               <button
                 onClick={handleBulkDelete}
                 disabled={isDeleting}
-                className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 disabled:bg-red-400 flex items-center gap-2"
+                className="flex-1 sm:flex-none bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 
+                disabled:bg-red-400 flex items-center justify-center gap-2 text-sm"
               >
                 {isDeleting
                   ? "Deleting..."
@@ -231,30 +245,35 @@ const TradeJournal = ({
             )}
             <button
               onClick={handleAddTradeClick}
-              className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+              className="flex-1 sm:flex-none bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 text-sm"
             >
               Add Trade
             </button>
           </div>
         </div>
 
+        {/* Error Message */}
         {bulkDeleteError && (
-          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-4 flex justify-between items-center">
+          <div
+            className="bg-red-50 border border-red-200 text-red-700 px-3 sm:px-4 py-3 rounded mb-4 
+          flex justify-between items-center text-sm"
+          >
             <span>{bulkDeleteError}</span>
             <button
               onClick={() => setBulkDeleteError(null)}
-              className="text-red-500 hover:text-red-700"
+              className="p-1 text-red-500 hover:text-red-700"
             >
               <X className="h-4 w-4" />
             </button>
           </div>
         )}
 
+        {/* Actions Info */}
         <div className="bg-gray-50 dark:bg-gray-700/50 p-3 rounded-md mb-4">
-          <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
+          <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 mb-2">
             Available Actions:
           </p>
-          <div className="grid grid-cols-3 gap-4 text-xs text-gray-600 dark:text-gray-400">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-4 text-xs text-gray-600 dark:text-gray-400">
             <div className="flex items-center gap-2">
               <BookOpen className="h-4 w-4 text-green-600" />
               <span>Add trade review & notes</span>
@@ -272,131 +291,135 @@ const TradeJournal = ({
 
         {renderControls()}
 
-        <div className="overflow-x-auto">
-          <table className="min-w-full">
-            <thead>
-              <tr className="border-b border-gray-200 dark:border-gray-700">
-                <th className="text-left py-3 px-4 text-gray-900 dark:text-gray-100">
-                  <div className="flex justify-center">
-                    <input
-                      type="checkbox"
-                      checked={currentTrades.every((trade) =>
-                        selectedTrades.has(trade._id)
-                      )}
-                      onChange={() => handleSelectAll(currentTrades)}
-                      className="w-4 h-4 rounded border-gray-300"
-                    />
-                  </div>
-                </th>
-                <th className="text-left py-3 px-4 text-gray-900 dark:text-gray-100">
-                  Date
-                </th>
-                <th className="text-left py-3 px-4 text-gray-900 dark:text-gray-100">
-                  Symbol
-                </th>
-                <th className="text-left py-3 px-4 text-gray-900 dark:text-gray-100">
-                  Type
-                </th>
-                <th className="text-left py-3 px-4 text-gray-900 dark:text-gray-100">
-                  Entry
-                </th>
-                <th className="text-left py-3 px-4 text-gray-900 dark:text-gray-100">
-                  Exit
-                </th>
-                <th className="text-left py-3 px-4 text-gray-900 dark:text-gray-100">
-                  P/L
-                </th>
-                <th className="text-left py-3 px-4 text-gray-900 dark:text-gray-100">
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {currentTrades.length === 0 ? (
-                <tr className="text-gray-900 dark:text-gray-100 text-center">
-                  <td colSpan="8" className="py-4">
-                    {filteredTrades.length === 0
-                      ? "No trades found for the selected period"
-                      : "No trades on this page"}
-                  </td>
+        <div className="overflow-x-auto -mx-3 sm:mx-0">
+          <div className="inline-block min-w-full align-middle">
+            <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+              <thead>
+                <tr className="bg-gray-50 dark:bg-gray-700/50">
+                  <th className="w-12 p-3 sm:p-4">
+                    <div className="flex justify-center">
+                      <input
+                        type="checkbox"
+                        checked={currentTrades.every((trade) =>
+                          selectedTrades.has(trade._id)
+                        )}
+                        onChange={() => handleSelectAll(currentTrades)}
+                        className="w-4 h-4 rounded border-gray-300 dark:border-gray-600"
+                      />
+                    </div>
+                  </th>
+                  {[
+                    "Date",
+                    "Symbol",
+                    "Type",
+                    "Entry",
+                    "Exit",
+                    "P/L",
+                    "Actions",
+                  ].map((header) => (
+                    <th
+                      key={header}
+                      className="p-3 sm:p-4 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider"
+                    >
+                      {header}
+                    </th>
+                  ))}
                 </tr>
-              ) : (
-                currentTrades.map((trade) => (
-                  <tr
-                    key={trade._id}
-                    className="border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50"
-                  >
-                    <td className="w-12 py-3 px-4">
-                      <div className="flex justify-center">
-                        <input
-                          type="checkbox"
-                          checked={selectedTrades.has(trade._id)}
-                          onChange={() => handleSelectTrade(trade._id)}
-                          className="w-4 h-4 rounded border-gray-300"
-                        />
-                      </div>
-                    </td>
-                    <td className="py-3 px-4 text-gray-900 dark:text-gray-100">
-                      {formatDate(trade.entryDate)}
-                    </td>
-                    <td className="py-3 px-4 text-gray-900 dark:text-gray-100">
-                      {trade.symbol}
-                    </td>
-                    <td className="py-3 px-4 text-gray-900 dark:text-gray-100">
-                      {trade.type}
-                    </td>
-                    <td className="py-3 px-4 text-right text-gray-900 dark:text-gray-100">
-                      {formatCurrency(trade.entryPrice)}
-                    </td>
-                    <td className="py-3 px-4 text-right text-gray-900 dark:text-gray-100">
-                      {trade.exitPrice ? formatCurrency(trade.exitPrice) : "-"}
-                    </td>
-                    <td className="py-3 px-4 text-right">
-                      {trade.profitLoss?.realized ? (
-                        <span
-                          className={
-                            trade.profitLoss.realized >= 0
-                              ? "text-green-600"
-                              : "text-red-600"
-                          }
-                        >
-                          {formatCurrency(trade.profitLoss.realized)}
-                        </span>
-                      ) : (
-                        "-"
-                      )}
-                    </td>
-                    <td className="py-3 px-4 text-right">
-                      <div className="flex justify-end gap-2">
-                        <button
-                          onClick={() => {
-                            setSelectedTradeForReview(trade);
-                            setIsReviewModalOpen(true);
-                          }}
-                          className="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded bg-transparent"
-                          title="Review Trade"
-                        >
-                          <BookOpen className="h-4 w-4 text-green-600" />
-                        </button>
-                        <button
-                          onClick={() => handleEditClick(trade)}
-                          className="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded bg-transparent"
-                        >
-                          <Pencil className="h-4 w-4 text-blue-600" />
-                        </button>
-                        <button
-                          onClick={() => handleDeleteClick(trade._id)}
-                          className="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded bg-transparent"
-                        >
-                          <Trash2 className="h-4 w-4 text-red-600" />
-                        </button>
-                      </div>
+              </thead>
+              <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+                {currentTrades.length === 0 ? (
+                  <tr>
+                    <td
+                      colSpan="8"
+                      className="p-4 text-sm text-center text-gray-500 dark:text-gray-400"
+                    >
+                      {filteredTrades.length === 0
+                        ? "No trades found for the selected period"
+                        : "No trades on this page"}
                     </td>
                   </tr>
-                ))
-              )}
-            </tbody>
-          </table>
+                ) : (
+                  currentTrades.map((trade) => (
+                    <tr
+                      key={trade._id}
+                      className="hover:bg-gray-50 dark:hover:bg-gray-700/50"
+                    >
+                      <td className="p-3 sm:p-4">
+                        <div className="flex justify-center">
+                          <input
+                            type="checkbox"
+                            checked={selectedTrades.has(trade._id)}
+                            onChange={() => handleSelectTrade(trade._id)}
+                            className="w-4 h-4 rounded border-gray-300 dark:border-gray-600"
+                          />
+                        </div>
+                      </td>
+                      <td className="p-3 sm:p-4 text-sm text-gray-900 dark:text-gray-100 whitespace-nowrap">
+                        {formatDate(trade.entryDate)}
+                      </td>
+                      <td className="p-3 sm:p-4 text-sm text-gray-900 dark:text-gray-100 whitespace-nowrap">
+                        {trade.symbol}
+                      </td>
+                      <td className="p-3 sm:p-4 text-sm text-gray-900 dark:text-gray-100 whitespace-nowrap">
+                        {trade.type}
+                      </td>
+                      <td className="p-3 sm:p-4 text-sm text-gray-900 dark:text-gray-100 text-right whitespace-nowrap">
+                        {formatCurrency(trade.entryPrice)}
+                      </td>
+                      <td className="p-3 sm:p-4 text-sm text-gray-900 dark:text-gray-100 text-right whitespace-nowrap">
+                        {trade.exitPrice
+                          ? formatCurrency(trade.exitPrice)
+                          : "-"}
+                      </td>
+                      <td className="p-3 sm:p-4 text-sm text-right whitespace-nowrap">
+                        {trade.profitLoss?.realized ? (
+                          <span
+                            className={
+                              trade.profitLoss.realized >= 0
+                                ? "text-green-600 dark:text-green-400"
+                                : "text-red-600 dark:text-red-400"
+                            }
+                          >
+                            {formatCurrency(trade.profitLoss.realized)}
+                          </span>
+                        ) : (
+                          "-"
+                        )}
+                      </td>
+                      <td className="p-3 sm:p-4">
+                        <div className="flex justify-end gap-1 sm:gap-2">
+                          <button
+                            onClick={() => {
+                              setSelectedTradeForReview(trade);
+                              setIsReviewModalOpen(true);
+                            }}
+                            className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded"
+                            title="Review Trade"
+                          >
+                            <BookOpen className="h-4 w-4 text-green-600" />
+                          </button>
+                          <button
+                            onClick={() => handleEditClick(trade)}
+                            className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded"
+                            title="Edit Trade"
+                          >
+                            <Pencil className="h-4 w-4 text-blue-600" />
+                          </button>
+                          <button
+                            onClick={() => handleDeleteClick(trade._id)}
+                            className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded"
+                            title="Delete Trade"
+                          >
+                            <Trash2 className="h-4 w-4 text-red-600" />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
         </div>
         {renderPagination()}
       </div>

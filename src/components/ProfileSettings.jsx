@@ -264,11 +264,11 @@ const ProfileSettings = ({
 
   return (
     <div className="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden">
-      <div className="border-b border-gray-200 dark:border-gray-700">
-        <nav className="flex gap-4 px-6">
+      <div className="border-b border-gray-200 dark:border-gray-700 overflow-x-auto">
+        <nav className="flex gap-2 sm:gap-4 px-2 sm:px-6 min-w-max">
           <button
             onClick={() => setTab("general")}
-            className={`px-3 py-4 text-sm font-medium border-b-2 ${
+            className={`px-2 sm:px-3 py-2 sm:py-3 text-xs sm:text-sm font-medium border-b-2 whitespace-nowrap flex items-center justify-center ${
               tab === "general"
                 ? "border-blue-500 text-blue-600 dark:text-blue-400"
                 : "border-transparent text-gray-500 dark:text-gray-400 hover:border-gray-300 dark:hover:border-gray-600"
@@ -278,8 +278,8 @@ const ProfileSettings = ({
           </button>
           <button
             onClick={() => setTab("password")}
-            className={`px-3 py-4 text-sm font-medium border-b-2 ${
-              tab === "password"
+            className={`px-2 sm:px-3 py-2 sm:py-3 text-xs sm:text-sm font-medium border-b-2 whitespace-nowrap flex items-center justify-center ${
+              tab === "general"
                 ? "border-blue-500 text-blue-600 dark:text-blue-400"
                 : "border-transparent text-gray-500 dark:text-gray-400 hover:border-gray-300 dark:hover:border-gray-600"
             }`}
@@ -288,8 +288,8 @@ const ProfileSettings = ({
           </button>
           <button
             onClick={() => setTab("account")}
-            className={`px-3 py-4 text-sm font-medium border-b-2 ${
-              tab === "account"
+            className={`px-2 sm:px-3 py-2 sm:py-3 text-xs sm:text-sm font-medium border-b-2 whitespace-nowrap flex items-center justify-center ${
+              tab === "general"
                 ? "border-blue-500 text-blue-600 dark:text-blue-400"
                 : "border-transparent text-gray-500 dark:text-gray-400 hover:border-gray-300 dark:hover:border-gray-600"
             }`}
@@ -299,16 +299,16 @@ const ProfileSettings = ({
         </nav>
       </div>
 
-      <div className="p-6">
+      <div className="p-4 sm:p-6">
         {error && (
-          <div className="mb-4 p-4 bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-400 rounded-md flex items-center gap-2">
-            <AlertCircle className="h-5 w-5" />
+          <div className="mb-4 p-3 sm:p-4 bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-400 rounded-md flex items-center gap-2 text-sm">
+            <AlertCircle className="h-5 w-5 flex-shrink-0" />
             {error}
           </div>
         )}
 
         {success && (
-          <div className="mb-4 p-4 bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-400 rounded-md">
+          <div className="mb-4 p-3 sm:p-4 bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-400 rounded-md text-sm">
             {success}
           </div>
         )}
@@ -329,8 +329,8 @@ const ProfileSettings = ({
                   }))
                 }
                 className="mt-1 block w-full rounded-md border border-gray-300 dark:border-gray-600 
-                  px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100
-                  focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+        px-3 py-2 sm:py-2 text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100
+        focus:border-blue-500 focus:ring-blue-500"
               />
             </div>
 
@@ -345,8 +345,8 @@ const ProfileSettings = ({
                   setGeneralForm((prev) => ({ ...prev, email: e.target.value }))
                 }
                 className="mt-1 block w-full rounded-md border border-gray-300 dark:border-gray-600 
-                  px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100
-                  focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+        px-3 py-2 sm:py-2 text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100
+        focus:border-blue-500 focus:ring-blue-500"
               />
             </div>
 
@@ -394,8 +394,8 @@ const ProfileSettings = ({
               <button
                 type="submit"
                 disabled={loading}
-                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 
-                  dark:hover:bg-blue-500 disabled:opacity-50"
+                className="px-3 sm:px-4 py-2 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700 
+        dark:hover:bg-blue-500 disabled:opacity-50 w-full sm:w-auto"
               >
                 {loading ? "Saving..." : "Save Changes"}
               </button>
@@ -425,8 +425,8 @@ const ProfileSettings = ({
                       }))
                     }
                     className="mt-1 block w-full rounded-md border border-gray-300 dark:border-gray-600 
-              px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100
-              focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+        px-3 py-2 sm:py-2 text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100
+        focus:border-blue-500 focus:ring-blue-500"
                   />
                 </div>
 
@@ -444,8 +444,8 @@ const ProfileSettings = ({
                       }))
                     }
                     className="mt-1 block w-full rounded-md border border-gray-300 dark:border-gray-600 
-              px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100
-              focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+        px-3 py-2 sm:py-2 text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100
+        focus:border-blue-500 focus:ring-blue-500"
                   />
                 </div>
 
@@ -453,8 +453,8 @@ const ProfileSettings = ({
                   <button
                     type="submit"
                     disabled={loading}
-                    className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 
-              dark:hover:bg-blue-500 disabled:opacity-50"
+                    className="px-3 sm:px-4 py-2 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700 
+        dark:hover:bg-blue-500 disabled:opacity-50 w-full sm:w-auto"
                   >
                     {loading ? "Updating..." : "Set Password"}
                   </button>
@@ -476,8 +476,8 @@ const ProfileSettings = ({
                       }))
                     }
                     className="mt-1 block w-full rounded-md border border-gray-300 dark:border-gray-600 
-              px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100
-              focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+        px-3 py-2 sm:py-2 text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100
+        focus:border-blue-500 focus:ring-blue-500"
                   />
                 </div>
 
@@ -495,8 +495,8 @@ const ProfileSettings = ({
                       }))
                     }
                     className="mt-1 block w-full rounded-md border border-gray-300 dark:border-gray-600 
-              px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100
-              focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+        px-3 py-2 sm:py-2 text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100
+        focus:border-blue-500 focus:ring-blue-500"
                   />
                 </div>
 
@@ -514,8 +514,8 @@ const ProfileSettings = ({
                       }))
                     }
                     className="mt-1 block w-full rounded-md border border-gray-300 dark:border-gray-600 
-              px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100
-              focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+        px-3 py-2 sm:py-2 text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100
+        focus:border-blue-500 focus:ring-blue-500"
                   />
                 </div>
 
@@ -523,8 +523,8 @@ const ProfileSettings = ({
                   <button
                     type="submit"
                     disabled={loading}
-                    className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 
-              dark:hover:bg-blue-500 disabled:opacity-50"
+                    className="px-3 sm:px-4 py-2 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700 
+        dark:hover:bg-blue-500 disabled:opacity-50 w-full sm:w-auto"
                   >
                     {loading ? "Updating..." : "Update Password"}
                   </button>
@@ -549,8 +549,8 @@ const ProfileSettings = ({
                 onChange={handleAccountChange}
                 placeholder="Enter your starting capital"
                 className="mt-1 block w-full rounded-md border border-gray-300 dark:border-gray-600 
-                  px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100
-                  focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+        px-3 py-2 sm:py-2 text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100
+        focus:border-blue-500 focus:ring-blue-500"
               />
             </div>
 
@@ -628,8 +628,8 @@ const ProfileSettings = ({
                 <button
                   type="button"
                   onClick={() => setShowDeleteConfirm(true)}
-                  className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 
-        dark:hover:bg-red-500 transition-colors"
+                  className="w-full sm:w-auto px-4 py-2 sm:py-2.5 text-sm bg-red-600 text-white rounded-md hover:bg-red-700 
+    dark:hover:bg-red-500 transition-colors"
                 >
                   Delete Account
                 </button>
@@ -637,9 +637,9 @@ const ProfileSettings = ({
             </div>
 
             {showDeleteConfirm && (
-              <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-                <div className="bg-white dark:bg-gray-800 rounded-lg max-w-md w-full p-6">
-                  <h3 className="text-lg font-medium text-red-600 dark:text-red-400 mb-4">
+              <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-3 sm:p-4 z-50">
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-3 sm:p-4 z-50">
+                  <h3 className="text-base sm:text-lg font-medium text-red-600 dark:text-red-400 mb-4">
                     Delete Account
                   </h3>
 
@@ -664,7 +664,8 @@ const ProfileSettings = ({
                               }))
                             }
                             className="mt-1 block w-full rounded-md border border-gray-300 dark:border-gray-600 
-                  px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+        px-3 py-2 sm:py-2 text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100
+        focus:border-blue-500 focus:ring-blue-500"
                           />
                         </div>
                         <div>
@@ -681,7 +682,8 @@ const ProfileSettings = ({
                               }))
                             }
                             className="mt-1 block w-full rounded-md border border-gray-300 dark:border-gray-600 
-                  px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+        px-3 py-2 sm:py-2 text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100
+        focus:border-blue-500 focus:ring-blue-500"
                           />
                         </div>
                         <div>
@@ -698,7 +700,8 @@ const ProfileSettings = ({
                               }))
                             }
                             className="mt-1 block w-full rounded-md border border-gray-300 dark:border-gray-600 
-                  px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+        px-3 py-2 sm:py-2 text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100
+        focus:border-blue-500 focus:ring-blue-500"
                           />
                         </div>
                       </div>
@@ -720,16 +723,16 @@ const ProfileSettings = ({
                           answer3: "",
                         });
                       }}
-                      className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 
-            hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md"
+                      className="w-full sm:w-auto px-4 py-2.5 text-sm font-medium text-gray-700 dark:text-gray-300 
+    hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md"
                     >
                       Cancel
                     </button>
                     <button
                       onClick={handleDeleteAccount}
                       disabled={deleteLoading}
-                      className="px-4 py-2 text-sm font-medium text-white bg-red-600 
-            hover:bg-red-700 rounded-md disabled:opacity-50"
+                      className="w-full sm:w-auto px-4 py-2.5 text-sm font-medium text-white bg-red-600 
+    hover:bg-red-700 rounded-md disabled:opacity-50"
                     >
                       {deleteLoading ? "Deleting..." : "Delete Account"}
                     </button>

@@ -239,98 +239,97 @@ const TradeModal = ({ isOpen, onClose, onSubmit, trade, userTimeZone }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
       <div
         ref={modalRef}
-        className="bg-white dark:bg-gray-800 rounded-lg p-6 w-full max-w-6xl max-h-[80vh] overflow-y-auto"
+        className="bg-white dark:bg-gray-800 rounded-lg p-4 sm:p-6 w-full max-w-6xl h-[90vh] sm:max-h-[80vh] 
+        overflow-y-auto"
       >
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
+          <h2 className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-gray-100">
             {trade ? "Edit Trade" : "Add Trade"}
           </h2>
           <button
             onClick={onClose}
-            className="p-2 rounded-full bg-white dark:bg-gray-700 text-gray-500 dark:text-gray-400 
-              hover:bg-gray-100 dark:hover:bg-gray-600"
+            className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-600 
+            text-gray-500 dark:text-gray-400"
           >
-            <X size={24} />
+            <X className="h-5 w-5 sm:h-6 sm:w-6" />
           </button>
         </div>
 
-        <form onSubmit={handleSubmit}>
-          <div className="space-y-4">
-            {/* Basic Info */}
-            <div className="grid grid-cols-4 gap-4">
-              <div>
-                <label className="block text-sm text-gray-700 dark:text-gray-300 mb-1">
-                  Symbol
-                </label>
-                <input
-                  type="text"
-                  autocomplete="off"
-                  name="symbol"
-                  value={formData.symbol}
-                  onChange={handleChange}
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded 
-  bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
-                  required
-                  style={{ textTransform: "uppercase" }}
-                />
-              </div>
+        <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
+          {/* Basic Info */}
+          <div className="grid grid-cols-1 sm:grid-cols-4 gap-3 sm:gap-4">
+            <div>
+              <label className="block text-sm text-gray-700 dark:text-gray-300 mb-1">
+                Symbol
+              </label>
+              <input
+                type="text"
+                autoComplete="off"
+                name="symbol"
+                value={formData.symbol}
+                onChange={handleChange}
+                className="w-full px-3 py-2.5 sm:py-2 border border-gray-300 dark:border-gray-600 rounded 
+                bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                required
+                style={{ textTransform: "uppercase" }}
+              />
+            </div>
 
-              <div>
-                <label className="block text-sm text-gray-700 dark:text-gray-300 mb-1">
-                  Type
-                </label>
-                <select
-                  name="type"
-                  value={formData.type}
-                  onChange={handleChange}
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded 
-  bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
-                  required
-                >
-                  <option value="LONG">Long</option>
-                  <option value="SHORT">Short</option>
-                </select>
-              </div>
+            <div>
+              <label className="block text-sm text-gray-700 dark:text-gray-300 mb-1">
+                Type
+              </label>
+              <select
+                name="type"
+                value={formData.type}
+                onChange={handleChange}
+                className="w-full px-3 py-2.5 sm:py-2 border border-gray-300 dark:border-gray-600 rounded 
+      bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                required
+              >
+                <option value="LONG">Long</option>
+                <option value="SHORT">Short</option>
+              </select>
+            </div>
 
-              <div>
-                <label className="block text-sm text-gray-700 dark:text-gray-300 mb-1">
-                  Trade Type
-                </label>
-                <select
-                  name="tradeType"
-                  value={formData.tradeType}
-                  onChange={handleChange}
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded 
-  bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
-                  required
-                >
-                  <option value="DAY">Day Trade</option>
-                  <option value="SWING">Swing Trade</option>
-                </select>
-              </div>
+            <div>
+              <label className="block text-sm text-gray-700 dark:text-gray-300 mb-1">
+                Trade Type
+              </label>
+              <select
+                name="tradeType"
+                value={formData.tradeType}
+                onChange={handleChange}
+                className="w-full px-3 py-2.5 sm:py-2 border border-gray-300 dark:border-gray-600 rounded 
+      bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                required
+              >
+                <option value="DAY">Day Trade</option>
+                <option value="SWING">Swing Trade</option>
+              </select>
             </div>
 
             {/* Entry Details */}
-            <div className="grid grid-cols-1 gap-4">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+            <div className="grid grid-cols-1 gap-3 sm:gap-4 col-span-1 sm:col-span-4">
+              <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-gray-100">
                 Entry Details
               </h3>
-              <div className="grid grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
                 <div>
                   <label className="block text-sm text-gray-700 dark:text-gray-300 mb-1">
                     Quantity
                   </label>
                   <input
                     type="number"
-                    autocomplete="off"
+                    autoComplete="off"
                     name="entryQuantity"
                     value={formData.entryQuantity}
                     onChange={handleChange}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded 
-  bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                    className="w-full px-3 py-2.5 sm:py-2 border border-gray-300 dark:border-gray-600 rounded 
+          bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                     min="1"
                     required
                   />
@@ -342,12 +341,12 @@ const TradeModal = ({ isOpen, onClose, onSubmit, trade, userTimeZone }) => {
                   </label>
                   <input
                     type="number"
-                    autocomplete="off"
+                    autoComplete="off"
                     name="entryPrice"
                     value={formData.entryPrice}
                     onChange={handleChange}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded 
-  bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                    className="w-full px-3 py-2.5 sm:py-2 border border-gray-300 dark:border-gray-600 rounded 
+          bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                     min="0"
                     step="0.0001"
                     required
@@ -363,8 +362,8 @@ const TradeModal = ({ isOpen, onClose, onSubmit, trade, userTimeZone }) => {
                     name="entryDate"
                     value={formData.entryDate}
                     onChange={handleChange}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded 
-  bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                    className="w-full px-3 py-2.5 sm:py-2 border border-gray-300 dark:border-gray-600 rounded 
+          bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                     required
                   />
                 </div>
@@ -372,23 +371,23 @@ const TradeModal = ({ isOpen, onClose, onSubmit, trade, userTimeZone }) => {
             </div>
 
             {/* Exit Details */}
-            <div className="grid grid-cols-1 gap-4">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+            <div className="grid grid-cols-1 gap-3 sm:gap-4 col-span-1 sm:col-span-4">
+              <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-gray-100">
                 Exit Details
               </h3>
-              <div className="grid grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
                 <div>
                   <label className="block text-sm text-gray-700 dark:text-gray-300 mb-1">
                     Quantity
                   </label>
                   <input
                     type="number"
-                    autocomplete="off"
+                    autoComplete="off"
                     name="exitQuantity"
                     value={formData.exitQuantity}
                     onChange={handleChange}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded 
-  bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                    className="w-full px-3 py-2.5 sm:py-2 border border-gray-300 dark:border-gray-600 rounded 
+          bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                     min="1"
                   />
                 </div>
@@ -399,12 +398,12 @@ const TradeModal = ({ isOpen, onClose, onSubmit, trade, userTimeZone }) => {
                   </label>
                   <input
                     type="number"
-                    autocomplete="off"
+                    autoComplete="off"
                     name="exitPrice"
                     value={formData.exitPrice}
                     onChange={handleChange}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded 
-  bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                    className="w-full px-3 py-2.5 sm:py-2 border border-gray-300 dark:border-gray-600 rounded 
+          bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                     min="0"
                     step="0.0001"
                   />
@@ -419,31 +418,31 @@ const TradeModal = ({ isOpen, onClose, onSubmit, trade, userTimeZone }) => {
                     name="exitDate"
                     value={formData.exitDate}
                     onChange={handleChange}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded 
-  bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                    className="w-full px-3 py-2.5 sm:py-2 border border-gray-300 dark:border-gray-600 rounded 
+          bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                   />
                 </div>
               </div>
             </div>
 
             {/* Post-Exit Analysis */}
-            <div className="grid grid-cols-1 gap-4">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+            <div className="grid grid-cols-1 gap-3 sm:gap-4 col-span-1 sm:col-span-4">
+              <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-gray-100">
                 Post-Exit Price Movement
               </h3>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                 <div>
                   <label className="block text-sm text-gray-700 dark:text-gray-300 mb-1">
                     Stock High After Exit
                   </label>
                   <input
                     type="number"
-                    autocomplete="off"
+                    autoComplete="off"
                     name="postExitHigh"
                     value={formData.postExitHigh}
                     onChange={handleChange}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded 
-  bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                    className="w-full px-3 py-2.5 sm:py-2 border border-gray-300 dark:border-gray-600 rounded 
+          bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                     step="0.0001"
                   />
                 </div>
@@ -453,20 +452,20 @@ const TradeModal = ({ isOpen, onClose, onSubmit, trade, userTimeZone }) => {
                   </label>
                   <input
                     type="number"
-                    autocomplete="off"
+                    autoComplete="off"
                     name="postExitLow"
                     value={formData.postExitLow}
                     onChange={handleChange}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded 
-  bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                    className="w-full px-3 py-2.5 sm:py-2 border border-gray-300 dark:border-gray-600 rounded 
+          bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                     step="0.0001"
                   />
                 </div>
               </div>
             </div>
 
-            <div className="space-y-4 mt-4">
-              <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-4 mt-4 col-span-1 sm:col-span-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                 <div>
                   <label className="block text-sm text-gray-700 dark:text-gray-300 mb-1">
                     Time of Day High
@@ -476,13 +475,14 @@ const TradeModal = ({ isOpen, onClose, onSubmit, trade, userTimeZone }) => {
                     name="postExitAnalysis.timeOfHigh"
                     value={formData.postExitAnalysis?.timeOfHigh || ""}
                     onChange={handleChange}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded 
-  bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                    className="w-full px-3 py-2.5 sm:py-2 border border-gray-300 dark:border-gray-600 rounded 
+          bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                   />
                   <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                     Enter when the stock hit its high
                   </p>
                 </div>
+
                 <div>
                   <label className="block text-sm text-gray-700 dark:text-gray-300 mb-1">
                     Time of Day Low
@@ -492,8 +492,8 @@ const TradeModal = ({ isOpen, onClose, onSubmit, trade, userTimeZone }) => {
                     name="postExitAnalysis.timeOfLow"
                     value={formData.postExitAnalysis?.timeOfLow || ""}
                     onChange={handleChange}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded 
-  bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                    className="w-full px-3 py-2.5 sm:py-2 border border-gray-300 dark:border-gray-600 rounded 
+          bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                   />
                   <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                     Enter when the stock hit its low
@@ -502,7 +502,7 @@ const TradeModal = ({ isOpen, onClose, onSubmit, trade, userTimeZone }) => {
               </div>
 
               <div>
-                <label className="flex items-center">
+                <label className="flex items-center gap-2">
                   <input
                     type="checkbox"
                     name="postExitAnalysis.lowBeforeHigh"
@@ -516,21 +516,20 @@ const TradeModal = ({ isOpen, onClose, onSubmit, trade, userTimeZone }) => {
                       });
                     }}
                     className="h-4 w-4 text-blue-600 bg-white dark:bg-gray-700 rounded 
-                    border-gray-300 dark:border-gray-600 focus:ring-blue-500"
+          border-gray-300 dark:border-gray-600 focus:ring-blue-500"
                   />
-                  <span className="ml-2 text-sm text-gray-700 dark:text-gray-300">
+                  <span className="text-sm text-gray-700 dark:text-gray-300">
                     Low occurred before high
                   </span>
                 </label>
               </div>
             </div>
-
             {/* Pattern and Session */}
-            <div className="border-t dark:border-gray-700 pt-4">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-3">
+            <div className="border-t dark:border-gray-700 pt-4 col-span-1 sm:col-span-4">
+              <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-gray-100 mb-3">
                 Trade Analysis
               </h3>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                 <div>
                   <label className="block text-sm text-gray-700 dark:text-gray-300 mb-1">
                     Pattern
@@ -539,8 +538,8 @@ const TradeModal = ({ isOpen, onClose, onSubmit, trade, userTimeZone }) => {
                     name="pattern"
                     value={formData.pattern || ""}
                     onChange={handleChange}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded 
-  bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                    className="w-full px-3 py-2.5 sm:py-2 border border-gray-300 dark:border-gray-600 rounded 
+          bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                   >
                     <option value="">Select Pattern</option>
                     <option value="Gap Up">Gap Up</option>
@@ -566,8 +565,8 @@ const TradeModal = ({ isOpen, onClose, onSubmit, trade, userTimeZone }) => {
                     name="session"
                     value={formData.session || ""}
                     onChange={handleChange}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded 
-  bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                    className="w-full px-3 py-2.5 sm:py-2 border border-gray-300 dark:border-gray-600 rounded 
+          bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                     required
                   >
                     <option value="Pre-Market">Pre-Market</option>
@@ -579,20 +578,21 @@ const TradeModal = ({ isOpen, onClose, onSubmit, trade, userTimeZone }) => {
             </div>
 
             {/* Mental State */}
-            <div className="border-t dark:border-gray-700 pt-4">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-3">
+            <div className="border-t dark:border-gray-700 pt-4 col-span-1 sm:col-span-4">
+              <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-gray-100 mb-3">
                 Psychology
               </h3>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     Focus Level (1-10)
                   </label>
-                  <div className="flex items-center space-x-2">
+                  <div className="flex items-center gap-2">
                     {/* Decrement Button */}
                     <button
                       type="button"
-                      className="px-2 py-1 border rounded bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-black dark:text-white"
+                      className="p-2 border rounded bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 
+            dark:hover:bg-gray-600 text-black dark:text-white"
                       onClick={() =>
                         setFormData({
                           ...formData,
@@ -622,7 +622,8 @@ const TradeModal = ({ isOpen, onClose, onSubmit, trade, userTimeZone }) => {
                           },
                         })
                       }
-                      className="border rounded px-2 py-1 bg-white dark:bg-gray-800 text-black dark:text-white"
+                      className="flex-1 px-3 py-2 border rounded bg-white dark:bg-gray-800 
+            text-gray-900 dark:text-gray-100"
                     >
                       {[...Array(10).keys()].map((num) => (
                         <option key={num + 1} value={num + 1}>
@@ -634,7 +635,8 @@ const TradeModal = ({ isOpen, onClose, onSubmit, trade, userTimeZone }) => {
                     {/* Increment Button */}
                     <button
                       type="button"
-                      className="px-2 py-1 border rounded bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-black dark:text-white"
+                      className="p-2 border rounded bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 
+            dark:hover:bg-gray-600 text-black dark:text-white"
                       onClick={() =>
                         setFormData({
                           ...formData,
@@ -652,6 +654,7 @@ const TradeModal = ({ isOpen, onClose, onSubmit, trade, userTimeZone }) => {
                     </button>
                   </div>
                 </div>
+
                 <div>
                   <label className="block text-sm text-gray-700 dark:text-gray-300 mb-1">
                     Emotion
@@ -660,8 +663,8 @@ const TradeModal = ({ isOpen, onClose, onSubmit, trade, userTimeZone }) => {
                     name="mentalState.emotion"
                     value={formData.mentalState?.emotion || ""}
                     onChange={handleChange}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded 
-  bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                    className="w-full px-3 py-2.5 sm:py-2 border border-gray-300 dark:border-gray-600 rounded 
+          bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                   >
                     <option value="">Select Emotion</option>
                     <option value="Calm">Calm</option>
@@ -676,15 +679,15 @@ const TradeModal = ({ isOpen, onClose, onSubmit, trade, userTimeZone }) => {
             </div>
 
             {/* Mistakes */}
-            <div className="border-t dark:border-gray-700 pt-4">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-3">
+            <div className="border-t dark:border-gray-700 pt-4 col-span-1 sm:col-span-4">
+              <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-gray-100 mb-3">
                 Trade Review
               </h3>
               <div>
-                <label className="block text-sm text-gray-700 dark:text-gray-300 mb-1">
+                <label className="block text-sm text-gray-700 dark:text-gray-300 mb-2">
                   Mistakes Made
                 </label>
-                <div className="grid grid-cols-2 gap-2">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-2">
                   {[
                     "FOMO",
                     "Sized Too Big",
@@ -697,7 +700,10 @@ const TradeModal = ({ isOpen, onClose, onSubmit, trade, userTimeZone }) => {
                     "Revenge Trading",
                     "Other",
                   ].map((mistake) => (
-                    <label key={mistake} className="flex items-center">
+                    <label
+                      key={mistake}
+                      className="flex items-center gap-2 p-2 hover:bg-gray-50 dark:hover:bg-gray-700/50 rounded"
+                    >
                       <input
                         type="checkbox"
                         name="mistakes"
@@ -718,9 +724,9 @@ const TradeModal = ({ isOpen, onClose, onSubmit, trade, userTimeZone }) => {
                           });
                         }}
                         className="h-4 w-4 text-blue-600 bg-white dark:bg-gray-700 rounded 
-  border-gray-300 dark:border-gray-600 focus:ring-blue-500"
+              border-gray-300 dark:border-gray-600 focus:ring-blue-500"
                       />
-                      <span className="ml-2 text-sm text-gray-900 dark:text-gray-100">
+                      <span className="text-sm text-gray-900 dark:text-gray-100">
                         {mistake}
                       </span>
                     </label>
@@ -730,20 +736,20 @@ const TradeModal = ({ isOpen, onClose, onSubmit, trade, userTimeZone }) => {
             </div>
 
             {/* Additional Info */}
-            <div className="border-t dark:border-gray-700 pt-4">
-              <div className="space-y-4">
+            <div className="border-t dark:border-gray-700 pt-4 col-span-1 sm:col-span-4">
+              <div className="space-y-3 sm:space-y-4">
                 <div>
                   <label className="block text-sm text-gray-700 dark:text-gray-300 mb-1">
                     Strategy
                   </label>
                   <input
                     type="text"
-                    autocomplete="off"
+                    autoComplete="off"
                     name="strategy"
                     value={formData.strategy}
                     onChange={handleChange}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded 
-  bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                    className="w-full px-3 py-2.5 sm:py-2 border border-gray-300 dark:border-gray-600 rounded 
+          bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                   />
                 </div>
 
@@ -753,42 +759,46 @@ const TradeModal = ({ isOpen, onClose, onSubmit, trade, userTimeZone }) => {
                   </label>
                   <textarea
                     name="notes"
-                    autocomplete="off"
+                    autoComplete="off"
                     value={formData.notes}
                     onChange={handleChange}
                     rows="3"
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded 
-  bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                    className="w-full px-3 py-2.5 sm:py-2 border border-gray-300 dark:border-gray-600 rounded 
+          bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                   />
                 </div>
               </div>
             </div>
-          </div>
 
-          <div className="mt-6 flex justify-end space-x-3">
-            <button
-              type="button"
-              onClick={onClose}
-              className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded 
-                  bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 
-                  hover:bg-gray-50 dark:hover:bg-gray-600"
+            {/* Form Buttons */}
+            <div
+              className="mt-4 sm:mt-6 flex flex-col sm:flex-row justify-end gap-3 sm:gap-4 
+  border-t dark:border-gray-700 pt-4 col-span-1 sm:col-span-4"
             >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              disabled={loading}
-              className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 
-                  dark:hover:bg-blue-500 disabled:opacity-50"
-            >
-              {loading
-                ? trade
-                  ? "Updating..."
-                  : "Adding..."
-                : trade
-                ? "Update Trade"
-                : "Add Trade"}
-            </button>
+              <button
+                type="button"
+                onClick={onClose}
+                className="w-full sm:w-auto px-4 py-2.5 sm:py-2 border border-gray-300 dark:border-gray-600 rounded 
+      bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 
+      hover:bg-gray-50 dark:hover:bg-gray-600 text-sm sm:text-base"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full sm:w-auto px-4 py-2.5 sm:py-2 bg-blue-600 text-white rounded 
+      hover:bg-blue-700 dark:hover:bg-blue-500 disabled:opacity-50 text-sm sm:text-base"
+              >
+                {loading
+                  ? trade
+                    ? "Updating..."
+                    : "Adding..."
+                  : trade
+                  ? "Update Trade"
+                  : "Add Trade"}
+              </button>
+            </div>
           </div>
         </form>
       </div>

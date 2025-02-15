@@ -604,15 +604,15 @@ const StopLossStudy = ({ trades, user, stats, experienceLevel }) => {
   }, [planEntry, accountBalance, supportPrice, resistancePrice, useSupRes]);
 
   return (
-    <div className="bg-white dark:bg-gray-800 p-4 rounded shadow h-full">
-      <div className="grid grid-cols-2 gap-4">
+    <div className="bg-white dark:bg-gray-800 p-3 sm:p-4 rounded shadow h-full">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {/* Left Side - Exit Analysis */}
         <div>
-          <h3 className="text-sm text-gray-900 dark:text-gray-100 font-medium">
+          <h3 className="text-sm sm:text-base text-gray-900 dark:text-gray-100 font-medium">
             Exit Analysis
           </h3>
           <div className="bg-gray-100 dark:bg-gray-700/50 p-3 rounded-md mb-4">
-            <p className="text-sm text-gray-900 dark:text-gray-100">
+            <p className="text-xs sm:text-sm text-gray-900 dark:text-gray-100">
               Analysis of your trading patterns:
             </p>
             <ul className="text-xs text-gray-700 dark:text-gray-300 mt-2 space-y-1">
@@ -625,7 +625,8 @@ const StopLossStudy = ({ trades, user, stats, experienceLevel }) => {
               your history
             </p>
           </div>
-          <div className="grid grid-cols-1 gap-4 mt-2">
+
+          <div className="grid grid-cols-1 gap-3 sm:gap-4 mt-2">
             {!trades?.length ? (
               <div className="text-center py-2">
                 <p className="text-sm text-gray-500 dark:text-gray-400">
@@ -638,7 +639,7 @@ const StopLossStudy = ({ trades, user, stats, experienceLevel }) => {
                   <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">
                     Suggested Stop Loss
                   </p>
-                  <p className="text-lg font-bold text-red-600 dark:text-red-400">
+                  <p className="text-base sm:text-lg font-bold text-red-600 dark:text-red-400">
                     {analysis?.suggestedStopLoss
                       ? `$${analysis.suggestedStopLoss}`
                       : "Insufficient data"}
@@ -647,11 +648,12 @@ const StopLossStudy = ({ trades, user, stats, experienceLevel }) => {
                     Recommended stop loss based on historical price reversals
                   </p>
                 </div>
+
                 <div>
                   <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">
                     Suggested Profit Target
                   </p>
-                  <p className="text-lg font-bold text-green-600 dark:text-green-400">
+                  <p className="text-base sm:text-lg font-bold text-green-600 dark:text-green-400">
                     {analysis?.suggestedTarget
                       ? `$${analysis.suggestedTarget}`
                       : "Insufficient data"}
@@ -660,11 +662,12 @@ const StopLossStudy = ({ trades, user, stats, experienceLevel }) => {
                     Target price based on your winning trades' profit patterns
                   </p>
                 </div>
+
                 <div>
                   <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">
                     Suggested Hold Time
                   </p>
-                  <p className="text-lg font-bold text-blue-600 dark:text-blue-400">
+                  <p className="text-base sm:text-lg font-bold text-blue-600 dark:text-blue-400">
                     {analysis?.suggestedHoldTime || "Insufficient data"}
                   </p>
                   {analysis?.holdTimeContext && (
@@ -673,11 +676,12 @@ const StopLossStudy = ({ trades, user, stats, experienceLevel }) => {
                     </p>
                   )}
                 </div>
+
                 <div>
                   <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">
                     Experience Level
                   </p>
-                  <p className="text-lg font-bold text-purple-600 dark:text-purple-400">
+                  <p className="text-base sm:text-lg font-bold text-purple-600 dark:text-purple-400">
                     {analysis?.experienceLevel || "Unknown"}
                   </p>
                   <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
@@ -691,11 +695,11 @@ const StopLossStudy = ({ trades, user, stats, experienceLevel }) => {
 
         {/* Right Side - Plan Your Trade */}
         <div>
-          <h4 className="text-sm font-medium text-gray-900 dark:text-gray-100 mb-3">
+          <h4 className="text-sm sm:text-base font-medium text-gray-900 dark:text-gray-100 mb-3">
             Plan Your Trade
           </h4>
           <div className="bg-gray-100 dark:bg-gray-700/50 p-3 rounded-md mb-4">
-            <p className="text-sm text-gray-900 dark:text-gray-100 mb-2">
+            <p className="text-xs sm:text-sm text-gray-900 dark:text-gray-100 mb-2">
               Risk Management Rules:
             </p>
             <ul className="text-xs text-gray-700 dark:text-gray-300 mt-2 space-y-1">
@@ -715,7 +719,8 @@ const StopLossStudy = ({ trades, user, stats, experienceLevel }) => {
               </li>
             </ul>
           </div>
-          <div className="space-y-4">
+
+          <div className="space-y-3 sm:space-y-4">
             <div>
               <label className="block text-xs text-gray-500 dark:text-gray-400 mb-1">
                 Entry Price
@@ -724,7 +729,8 @@ const StopLossStudy = ({ trades, user, stats, experienceLevel }) => {
                 type="number"
                 value={planEntry}
                 onChange={(e) => setPlanEntry(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded"
+                className="w-full px-3 py-2.5 sm:py-2 border border-gray-300 dark:border-gray-600 
+          bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-md"
                 step="0.01"
                 min="0"
               />
@@ -736,7 +742,8 @@ const StopLossStudy = ({ trades, user, stats, experienceLevel }) => {
                 id="useSupRes"
                 checked={useSupRes}
                 onChange={(e) => setUseSupRes(e.target.checked)}
-                className="h-4 w-4 rounded border-gray-300 dark:border-gray-600 text-blue-600 focus:ring-blue-500"
+                className="h-4 w-4 rounded border-gray-300 dark:border-gray-600 
+          text-blue-600 focus:ring-blue-500"
               />
               <label
                 htmlFor="useSupRes"
@@ -756,7 +763,8 @@ const StopLossStudy = ({ trades, user, stats, experienceLevel }) => {
                     type="number"
                     value={supportPrice}
                     onChange={(e) => setSupportPrice(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded"
+                    className="w-full px-3 py-2.5 sm:py-2 border border-gray-300 dark:border-gray-600 
+              bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-md"
                     step="0.01"
                     min="0"
                   />
@@ -769,7 +777,8 @@ const StopLossStudy = ({ trades, user, stats, experienceLevel }) => {
                     type="number"
                     value={resistancePrice}
                     onChange={(e) => setResistancePrice(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded"
+                    className="w-full px-3 py-2.5 sm:py-2 border border-gray-300 dark:border-gray-600 
+              bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-md"
                     step="0.01"
                     min="0"
                   />
@@ -783,7 +792,7 @@ const StopLossStudy = ({ trades, user, stats, experienceLevel }) => {
                   <label className="block text-xs text-gray-500 dark:text-gray-400 mb-1">
                     Stop Loss Price
                   </label>
-                  <p className="text-sm font-medium text-red-600 dark:text-red-400">
+                  <p className="text-sm sm:text-base font-medium text-red-600 dark:text-red-400">
                     ${calculatedStop}
                   </p>
                   <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
@@ -796,7 +805,7 @@ const StopLossStudy = ({ trades, user, stats, experienceLevel }) => {
                   <label className="block text-xs text-gray-500 dark:text-gray-400 mb-1">
                     Target Price
                   </label>
-                  <p className="text-sm font-medium text-green-600 dark:text-green-400">
+                  <p className="text-sm sm:text-base font-medium text-green-600 dark:text-green-400">
                     ${calculatedTarget}
                   </p>
                   <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
@@ -809,7 +818,7 @@ const StopLossStudy = ({ trades, user, stats, experienceLevel }) => {
                   <label className="block text-xs text-gray-500 dark:text-gray-400 mb-1">
                     Position Size
                   </label>
-                  <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                  <p className="text-sm sm:text-base font-medium text-gray-900 dark:text-gray-100">
                     {planShares} shares
                   </p>
                   <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
@@ -819,12 +828,12 @@ const StopLossStudy = ({ trades, user, stats, experienceLevel }) => {
                 </div>
 
                 {plannedRisk && plannedReward && (
-                  <div className="grid grid-cols-2 gap-4 mt-4">
+                  <div className="grid grid-cols-2 gap-3 sm:gap-4 mt-4">
                     <div>
                       <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">
                         Potential Risk
                       </p>
-                      <p className="text-md font-semibold text-red-600 dark:text-red-400">
+                      <p className="text-sm sm:text-base font-semibold text-red-600 dark:text-red-400">
                         ${plannedRisk}
                       </p>
                     </div>
@@ -832,7 +841,7 @@ const StopLossStudy = ({ trades, user, stats, experienceLevel }) => {
                       <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">
                         Potential Reward
                       </p>
-                      <p className="text-md font-semibold text-green-600 dark:text-green-400">
+                      <p className="text-sm sm:text-base font-semibold text-green-600 dark:text-green-400">
                         ${plannedReward}
                       </p>
                     </div>

@@ -46,13 +46,16 @@ const SecurityQuestions = ({ securityData, onSuccess, onError }) => {
     <form onSubmit={handleSubmit}>
       <div className="space-y-4">
         <div>
-          <label className="block text-sm mb-1 text-black">
+          <label className="block text-sm mb-1 text-gray-900 dark:text-gray-100">
             {securityData.questions.question1}
           </label>
           <input
             type="text"
             required
-            className="w-full px-3 py-2 bg-white border border-gray-300 text-black rounded"
+            className="w-full px-3 py-2.5 sm:py-2 bg-white dark:bg-gray-700 
+            border border-gray-300 dark:border-gray-600 
+            text-gray-900 dark:text-gray-100 
+            rounded-md focus:ring-blue-500 focus:border-blue-500"
             value={answers.answer1}
             onChange={(e) =>
               setAnswers((prev) => ({ ...prev, answer1: e.target.value }))
@@ -61,13 +64,16 @@ const SecurityQuestions = ({ securityData, onSuccess, onError }) => {
         </div>
 
         <div>
-          <label className="block text-sm mb-1 text-black">
+          <label className="block text-sm mb-1 text-gray-900 dark:text-gray-100">
             {securityData.questions.question2}
           </label>
           <input
             type="text"
             required
-            className="w-full px-3 py-2 bg-white border border-gray-300 text-black rounded"
+            className="w-full px-3 py-2.5 sm:py-2 bg-white dark:bg-gray-700 
+            border border-gray-300 dark:border-gray-600 
+            text-gray-900 dark:text-gray-100 
+            rounded-md focus:ring-blue-500 focus:border-blue-500"
             value={answers.answer2}
             onChange={(e) =>
               setAnswers((prev) => ({ ...prev, answer2: e.target.value }))
@@ -76,13 +82,16 @@ const SecurityQuestions = ({ securityData, onSuccess, onError }) => {
         </div>
 
         <div>
-          <label className="block text-sm mb-1 text-black">
+          <label className="block text-sm mb-1 text-gray-900 dark:text-gray-100">
             {securityData.questions.question3}
           </label>
           <input
             type="text"
             required
-            className="w-full px-3 py-2 bg-white border border-gray-300 text-black rounded"
+            className="w-full px-3 py-2.5 sm:py-2 bg-white dark:bg-gray-700 
+            border border-gray-300 dark:border-gray-600 
+            text-gray-900 dark:text-gray-100 
+            rounded-md focus:ring-blue-500 focus:border-blue-500"
             value={answers.answer3}
             onChange={(e) =>
               setAnswers((prev) => ({ ...prev, answer3: e.target.value }))
@@ -93,7 +102,8 @@ const SecurityQuestions = ({ securityData, onSuccess, onError }) => {
         <button
           type="submit"
           disabled={loading}
-          className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 disabled:opacity-50"
+          className="w-full bg-blue-600 text-white py-2.5 sm:py-2 rounded-md 
+          hover:bg-blue-700 disabled:opacity-50 text-sm sm:text-base font-medium"
         >
           {loading ? "Verifying..." : "Verify Answers"}
         </button>

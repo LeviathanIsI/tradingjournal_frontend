@@ -45,15 +45,15 @@ const ForgotPassword = () => {
   };
 
   return (
-    <div className="w-screen h-[calc(100vh-64px)] bg-white flex items-center justify-center">
-      <div className="w-96">
-        <h2 className="text-2xl font-semibold mb-6 text-black">
+    <div className="min-h-screen pt-16 px-4 sm:px-6 bg-white flex items-center justify-center">
+      <div className="w-full max-w-md mx-auto">
+        <h2 className="text-xl sm:text-2xl font-semibold mb-4 sm:mb-6 text-black">
           Reset Password
         </h2>
 
         {error && (
-          <div className="bg-red-50 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4">
-            <span className="block">{error}</span>
+          <div className="bg-red-50 border border-red-400 text-red-700 px-3 sm:px-4 py-2 sm:py-3 rounded relative mb-4">
+            <span className="block text-sm sm:text-base">{error}</span>
           </div>
         )}
 
@@ -67,7 +67,7 @@ const ForgotPassword = () => {
                 id="email"
                 type="email"
                 required
-                className="w-full px-3 py-2 bg-white border border-gray-300 text-black rounded"
+                className="w-full px-3 py-2 bg-white border border-gray-300 text-black rounded text-sm sm:text-base"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
@@ -76,7 +76,7 @@ const ForgotPassword = () => {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 disabled:opacity-50"
+              className="w-full bg-blue-600 text-white py-2 sm:py-3 rounded hover:bg-blue-700 disabled:opacity-50 text-sm sm:text-base"
             >
               {loading ? "Checking..." : "Continue"}
             </button>
@@ -84,7 +84,7 @@ const ForgotPassword = () => {
             <button
               type="button"
               onClick={() => navigate("/login")}
-              className="w-full mt-4 text-blue-600 hover:text-blue-800"
+              className="w-full mt-4 text-blue-600 hover:text-blue-800 text-sm sm:text-base"
             >
               Back to login
             </button>
@@ -95,7 +95,6 @@ const ForgotPassword = () => {
           <SecurityQuestions
             securityData={securityData}
             onSuccess={(resetToken) => {
-              // Store token and move to reset password step
               localStorage.setItem("resetToken", resetToken);
               setStep(3);
             }}

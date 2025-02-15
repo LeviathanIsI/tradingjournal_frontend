@@ -188,8 +188,10 @@ const Dashboard = () => {
 
   if (error) {
     return (
-      <div className="w-full p-6 text-red-600 dark:text-red-400">
-        Error: {error}
+      <div className="w-full min-h-screen pt-16 px-3 sm:px-6 py-3 sm:py-6 flex items-center justify-center text-red-600 dark:text-red-400">
+        <div className="bg-red-50 dark:bg-red-900/30 p-4 rounded-lg">
+          Error: {error}
+        </div>
       </div>
     );
   }
@@ -202,67 +204,82 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="w-full p-6 text-gray-900 dark:text-gray-100">
+    <div className="flex flex-col min-h-screen pt-16">
+      {" "}
+      {/* Added pt-16 for fixed navbar */}
       <DashboardNav />
-      <div className="p-6 bg-transparent">
+      {/* Stats Overview Section */}
+      <div className="px-3 sm:px-6 py-3 sm:py-4 bg-transparent">
         <StatsOverview
           user={user}
           stats={stats}
           formatCurrency={formatCurrency}
         />
       </div>
-
-      <Routes>
-        <Route path="" element={<Navigate to="overview" replace />} />
-        <Route
-          path="overview"
-          element={
-            <Overview
-              trades={trades}
-              stats={stats}
-              formatCurrency={formatCurrency}
+      {/* Main Content */}
+      <div className="flex-1">
+        <Routes>
+          <Route path="" element={<Navigate to="overview" replace />} />
+          {[
+            {
+              path: "overview",
+              element: (
+                <Overview
+                  trades={trades}
+                  stats={stats}
+                  formatCurrency={formatCurrency}
+                />
+              ),
+            },
+            {
+              path: "journal",
+              element: (
+                <TradeJournal
+                  trades={trades}
+                  handleEditClick={handleEditClick}
+                  handleDeleteClick={handleDeleteClick}
+                  handleSelectTrade={handleSelectTrade}
+                  handleSelectAll={handleSelectAll}
+                  handleBulkDelete={handleBulkDelete}
+                  handleAddTradeClick={handleAddTradeClick}
+                  selectedTrades={selectedTrades}
+                  isDeleting={isDeleting}
+                  bulkDeleteError={bulkDeleteError}
+                  setBulkDeleteError={setBulkDeleteError}
+                  formatDate={formatDate}
+                  formatCurrency={formatCurrency}
+                  setSelectedTradeForReview={setSelectedTradeForReview}
+                  setIsReviewModalOpen={setIsReviewModalOpen}
+                />
+              ),
+            },
+            {
+              path: "analysis",
+              element: (
+                <Analysis
+                  trades={trades}
+                  activeChart={activeChart}
+                  setActiveChart={setActiveChart}
+                />
+              ),
+            },
+            {
+              path: "planning",
+              element: <Planning trades={trades} user={user} stats={stats} />,
+            },
+          ].map(({ path, element }) => (
+            <Route
+              key={path}
+              path={path}
+              element={
+                <div className="px-3 sm:px-6 py-3 sm:py-4">{element}</div>
+              }
             />
-          }
-        />
-        <Route
-          path="journal"
-          element={
-            <TradeJournal
-              trades={trades}
-              handleEditClick={handleEditClick}
-              handleDeleteClick={handleDeleteClick}
-              handleSelectTrade={handleSelectTrade}
-              handleSelectAll={handleSelectAll}
-              handleBulkDelete={handleBulkDelete}
-              handleAddTradeClick={handleAddTradeClick}
-              selectedTrades={selectedTrades}
-              isDeleting={isDeleting}
-              bulkDeleteError={bulkDeleteError}
-              setBulkDeleteError={setBulkDeleteError}
-              formatDate={formatDate}
-              formatCurrency={formatCurrency}
-              setSelectedTradeForReview={setSelectedTradeForReview}
-              setIsReviewModalOpen={setIsReviewModalOpen}
-            />
-          }
-        />
-        <Route
-          path="analysis"
-          element={
-            <Analysis
-              trades={trades}
-              activeChart={activeChart}
-              setActiveChart={setActiveChart}
-            />
-          }
-        />
-        <Route
-          path="planning"
-          element={<Planning trades={trades} user={user} stats={stats} />}
-        />
-        <Route path="*" element={<Navigate to="overview" replace />} />
-      </Routes>
-
+          ))}
+          <Route path="*" element={<Navigate to="overview" replace />} />
+        </Routes>
+      </div>
+      {/* Modals */}
       <TradeModal
         isOpen={isTradeModalOpen}
         onClose={handleModalClose}
@@ -284,6 +301,12 @@ const Dashboard = () => {
         onClose={() => setIsImportModalOpen(false)}
         onImport={handleImportTrades}
       />
+      {/* Error Display */}
+      {error && (
+        <div className="fixed bottom-4 left-4 right-4 p-4 bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 rounded-lg shadow-lg">
+          Error: {error}
+        </div>
+      )}
     </div>
   );
 };

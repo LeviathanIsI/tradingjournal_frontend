@@ -51,13 +51,13 @@ const TradeReview = ({ trade, review, onSubmit, onClose }) => {
   };
 
   return (
-    <div className="p-6 bg-white dark:bg-gray-900 rounded-lg shadow-xl">
-      <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-4">
+    <div className="p-4 sm:p-6 bg-white dark:bg-gray-900 rounded-lg shadow-xl">
+      <h2 className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-gray-100 mb-4">
         Trade Review
       </h2>
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
             What I Learned
           </label>
           <textarea
@@ -68,13 +68,14 @@ const TradeReview = ({ trade, review, onSubmit, onClose }) => {
                 lessonLearned: e.target.value,
               }))
             }
-            className="mt-1 w-full border border-gray-300 dark:border-gray-700 rounded-md shadow-sm p-2 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100"
+            className="w-full border border-gray-300 dark:border-gray-700 rounded-md shadow-sm 
+            px-3 py-2.5 sm:py-2 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100"
             rows="3"
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
             What Went Well
           </label>
           <textarea
@@ -82,13 +83,14 @@ const TradeReview = ({ trade, review, onSubmit, onClose }) => {
             onChange={(e) =>
               setFormData((prev) => ({ ...prev, whatWentWell: e.target.value }))
             }
-            className="mt-1 w-full border border-gray-300 dark:border-gray-700 rounded-md shadow-sm p-2 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100"
+            className="w-full border border-gray-300 dark:border-gray-700 rounded-md shadow-sm 
+            px-3 py-2.5 sm:py-2 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100"
             rows="3"
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
             What Went Wrong
           </label>
           <textarea
@@ -99,13 +101,14 @@ const TradeReview = ({ trade, review, onSubmit, onClose }) => {
                 whatWentWrong: e.target.value,
               }))
             }
-            className="mt-1 w-full border border-gray-300 dark:border-gray-700 rounded-md shadow-sm p-2 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100"
+            className="w-full border border-gray-300 dark:border-gray-700 rounded-md shadow-sm 
+            px-3 py-2.5 sm:py-2 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100"
             rows="3"
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
             Future Adjustments
           </label>
           <textarea
@@ -116,12 +119,13 @@ const TradeReview = ({ trade, review, onSubmit, onClose }) => {
                 futureAdjustments: e.target.value,
               }))
             }
-            className="mt-1 w-full border border-gray-300 dark:border-gray-700 rounded-md shadow-sm p-2 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100"
+            className="w-full border border-gray-300 dark:border-gray-700 rounded-md shadow-sm 
+            px-3 py-2.5 sm:py-2 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100"
             rows="3"
           />
         </div>
 
-        <div className="flex items-center">
+        <div className="flex items-center p-2 hover:bg-gray-50 dark:hover:bg-gray-800/50 rounded">
           <input
             type="checkbox"
             id="isPublic"
@@ -139,17 +143,20 @@ const TradeReview = ({ trade, review, onSubmit, onClose }) => {
           </label>
         </div>
 
-        <div className="flex justify-end gap-2">
+        <div className="flex flex-col sm:flex-row justify-end gap-3 sm:gap-2 pt-4 border-t dark:border-gray-700">
           <button
             type="button"
             onClick={onClose}
-            className="px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-md text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
+            className="w-full sm:w-auto px-4 py-2.5 sm:py-2 border border-gray-300 dark:border-gray-700 
+            rounded-md text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 
+            text-sm order-2 sm:order-1"
           >
             Cancel
           </button>
           <button
             type="submit"
-            className="px-4 py-2 bg-blue-600 dark:bg-blue-500 text-white rounded-md hover:bg-blue-700 dark:hover:bg-blue-600"
+            className="w-full sm:w-auto px-4 py-2.5 sm:py-2 bg-blue-600 dark:bg-blue-500 text-white 
+            rounded-md hover:bg-blue-700 dark:hover:bg-blue-600 text-sm order-1 sm:order-2"
           >
             Save Review
           </button>
