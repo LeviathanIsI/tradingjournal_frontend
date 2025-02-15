@@ -10,11 +10,9 @@ const GoogleAuthSuccess = () => {
 
   useEffect(() => {
     const token = searchParams.get("token");
-    console.log("✅ Token in URL:", token);
 
     if (!token) {
       setStatus("❌ No token found, redirecting to login...");
-      console.log("❌ No token found, redirecting to login...");
       setTimeout(() => navigate("/login"), 2000);
       return;
     }
@@ -22,7 +20,6 @@ const GoogleAuthSuccess = () => {
     const handleGoogleSuccess = async () => {
       try {
         setStatus("🔄 Verifying token...");
-        console.log("🔄 Verifying token with backend...");
 
         const response = await fetch(
           `${
@@ -42,7 +39,6 @@ const GoogleAuthSuccess = () => {
         }
 
         const data = await response.json();
-        console.log("✅ Token verification successful:", data);
 
         if (data.success) {
           setStatus("✅ Logging in...");

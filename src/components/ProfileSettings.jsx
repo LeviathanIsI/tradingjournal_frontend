@@ -279,7 +279,7 @@ const ProfileSettings = ({
           <button
             onClick={() => setTab("password")}
             className={`px-2 sm:px-3 py-2 sm:py-3 text-xs sm:text-sm font-medium border-b-2 whitespace-nowrap flex items-center justify-center ${
-              tab === "general"
+              tab === "password"
                 ? "border-blue-500 text-blue-600 dark:text-blue-400"
                 : "border-transparent text-gray-500 dark:text-gray-400 hover:border-gray-300 dark:hover:border-gray-600"
             }`}
@@ -289,7 +289,7 @@ const ProfileSettings = ({
           <button
             onClick={() => setTab("account")}
             className={`px-2 sm:px-3 py-2 sm:py-3 text-xs sm:text-sm font-medium border-b-2 whitespace-nowrap flex items-center justify-center ${
-              tab === "general"
+              tab === "account"
                 ? "border-blue-500 text-blue-600 dark:text-blue-400"
                 : "border-transparent text-gray-500 dark:text-gray-400 hover:border-gray-300 dark:hover:border-gray-600"
             }`}
