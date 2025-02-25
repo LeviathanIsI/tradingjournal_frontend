@@ -120,7 +120,10 @@ const ProfileStats = ({ userId, trades, stats }) => {
             </h3>
           </div>
           <p className="text-lg sm:text-2xl font-bold text-gray-900 dark:text-gray-100">
-            {((stats.winningTrades / stats.totalTrades) * 100).toFixed(1)}%
+            {stats.winningTrades && stats.totalTrades
+              ? ((stats.winningTrades / stats.totalTrades) * 100).toFixed(1)
+              : stats.winRate?.toFixed(1) || "0"}
+            %
           </p>
         </div>
 

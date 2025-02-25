@@ -10,12 +10,13 @@ import {
 
 const TradeJournal = ({
   trades,
-  handleEditClick,
-  handleDeleteClick,
+  handleEditClick={handleEditClick},
+  handleDeleteClick={handleDeleteClick},
   handleSelectTrade,
   handleSelectAll,
   handleBulkDelete,
   handleAddTradeClick,
+  handleAddOptionTradeClick,
   selectedTrades,
   isDeleting,
   bulkDeleteError,
@@ -25,7 +26,6 @@ const TradeJournal = ({
   setSelectedTradeForReview,
   setIsReviewModalOpen,
 }) => {
-  // Pagination and display settings
   const [currentPage, setCurrentPage] = useState(1);
   const [entriesPerPage, setEntriesPerPage] = useState(10);
   const [timeFilter, setTimeFilter] = useState("all");
@@ -33,16 +33,38 @@ const TradeJournal = ({
     start: "",
     end: "",
   });
+  const [activeTradeType, setActiveTradeType] = useState("stock");
 
-  // Filter trades based on time period
+  // Split trades by type first for better performance
+  const tradesByType = useMemo(() => {
+    const stockTrades = [];
+    const optionTrades = [];
+
+    trades.forEach((trade) => {
+      if (trade.contractType) {
+        optionTrades.push(trade);
+      } else {
+        stockTrades.push(trade);
+      }
+    });
+
+    return {
+      stock: stockTrades,
+      option: optionTrades,
+    };
+  }, [trades]);
+
+  // Filter trades based on time period and type
   const filteredTrades = useMemo(() => {
+    const tradesToFilter = tradesByType[activeTradeType];
     const now = new Date();
     const startOfDay = new Date(now.setHours(0, 0, 0, 0));
     const startOfWeek = new Date(now.setDate(now.getDate() - now.getDay()));
     const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
     const startOfYear = new Date(now.getFullYear(), 0, 1);
 
-    return trades.filter((trade) => {
+    return tradesToFilter.filter((trade) => {
+      // Filter based on time period
       const tradeDate = new Date(trade.entryDate);
       switch (timeFilter) {
         case "day":
@@ -70,7 +92,32 @@ const TradeJournal = ({
           return true;
       }
     });
-  }, [trades, timeFilter, customDateRange]);
+  }, [tradesByType, timeFilter, customDateRange, activeTradeType]);
+
+  const getTableHeaders = () => {
+    if (activeTradeType === "stock") {
+      return [
+        { label: "Date", align: "left" },
+        { label: "Symbol", align: "left" },
+        { label: "Type", align: "left" },
+        { label: "Entry", align: "right" },
+        { label: "Exit", align: "right" },
+        { label: "P/L", align: "right" },
+        { label: "Actions", align: "right" },
+      ];
+    }
+    return [
+      { label: "Date", align: "left" },
+      { label: "Symbol", align: "left" },
+      { label: "Strike", align: "right" },
+      { label: "Exp", align: "center" },
+      { label: "Type", align: "left" },
+      { label: "Entry", align: "right" },
+      { label: "Exit", align: "right" },
+      { label: "P/L", align: "right" },
+      { label: "Actions", align: "right" },
+    ];
+  };
 
   // Calculate pagination
   const totalPages = Math.ceil(filteredTrades.length / entriesPerPage);
@@ -84,6 +131,132 @@ const TradeJournal = ({
   // Pagination controls
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
+  };
+
+  const renderTradeRow = (trade) => {
+    const isOptionTrade = trade.contractType; // If it has contractType, it's an option trade
+
+    const baseClasses = {
+      td: "p-3 sm:p-4 text-sm text-gray-900 dark:text-gray-100 whitespace-nowrap",
+      checkbox: "w-4 h-4 rounded border-gray-300 dark:border-gray-600",
+      profitLoss:
+        trade.profitLoss?.realized >= 0
+          ? "text-green-600 dark:text-green-400"
+          : "text-red-600 dark:text-red-400",
+      actionButton: "p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded",
+    };
+
+    // Common columns that appear in both types
+    const commonColumns = (
+      <>
+        <td className="p-3 sm:p-4">
+          <div className="flex justify-center">
+            <input
+              type="checkbox"
+              checked={selectedTrades.has(trade._id)}
+              onChange={() => handleSelectTrade(trade._id)}
+              className={baseClasses.checkbox}
+            />
+          </div>
+        </td>
+        <td className={baseClasses.td}>{formatDate(trade.entryDate)}</td>
+        <td className={baseClasses.td}>{trade.symbol}</td>
+      </>
+    );
+
+    // Action buttons that appear in both types
+    const actionButtons = (
+      <td className="p-3 sm:p-4">
+        <div className="flex justify-end gap-1 sm:gap-2">
+          <button
+            onClick={() => {
+              setSelectedTradeForReview(trade);
+              setIsReviewModalOpen(true);
+            }}
+            className={baseClasses.actionButton}
+            title="Review Trade"
+          >
+            <BookOpen className="h-4 w-4 text-green-600" />
+          </button>
+          <button
+            onClick={() => handleEditClick(trade)}
+            className={baseClasses.actionButton}
+            title="Edit Trade"
+          >
+            <Pencil className="h-4 w-4 text-blue-600" />
+          </button>
+          <button
+            onClick={() => handleDeleteClick(trade)}
+            className={baseClasses.actionButton}
+            title="Delete Trade"
+          >
+            <Trash2 className="h-4 w-4 text-red-600" />
+          </button>
+        </div>
+      </td>
+    );
+
+    if (isOptionTrade) {
+      return (
+        <tr
+          key={trade._id}
+          className="hover:bg-gray-50 dark:hover:bg-gray-700/50"
+        >
+          {commonColumns}
+          <td className={baseClasses.td}>{formatCurrency(trade.strike, 2)}</td>
+          <td className={`${baseClasses.td} text-center`}>
+            {formatDate(trade.expiration, "MM/dd/yy")}
+          </td>
+          <td className={baseClasses.td}>
+            {`${trade.type} ${trade.contractType}`}
+          </td>
+          <td className={`${baseClasses.td} text-right`}>
+            {trade.contracts} @ {formatCurrency(trade.entryPrice, 2)}
+          </td>
+          <td className={`${baseClasses.td} text-right`}>
+            {trade.exitPrice
+              ? `${trade.contracts} @ ${formatCurrency(trade.exitPrice, 2)}`
+              : "-"}
+          </td>
+          <td className={`${baseClasses.td} text-right`}>
+            {trade.profitLoss?.realized ? (
+              <span className={baseClasses.profitLoss}>
+                {formatCurrency(trade.profitLoss.realized, 2)}
+              </span>
+            ) : (
+              "-"
+            )}
+          </td>
+          {actionButtons}
+        </tr>
+      );
+    }
+
+    return (
+      <tr
+        key={trade._id}
+        className="hover:bg-gray-50 dark:hover:bg-gray-700/50"
+      >
+        {commonColumns}
+        <td className={baseClasses.td}>{trade.type}</td>
+        <td className={`${baseClasses.td} text-right`}>
+          {formatCurrency(trade.entryPrice, 6)}
+        </td>
+        <td className={`${baseClasses.td} text-right`}>
+          {trade.exitPrice ? formatCurrency(trade.exitPrice, 6) : "-"}
+        </td>
+        <td className={`${baseClasses.td} text-right`}>
+          {trade.profitLoss?.realized ? (
+            <span className={baseClasses.profitLoss}>
+              {formatCurrency(trade.profitLoss.realized, 6)}
+            </span>
+          ) : (
+            "-"
+          )}
+        </td>
+        {actionButtons}
+      </tr>
+    );
   };
 
   // Additional controls UI
@@ -247,7 +420,13 @@ const TradeJournal = ({
               onClick={handleAddTradeClick}
               className="flex-1 sm:flex-none bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 text-sm"
             >
-              Add Trade
+              Add Stock Trade
+            </button>
+            <button
+              onClick={handleAddOptionTradeClick}
+              className="flex-1 sm:flex-none bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 text-sm"
+            >
+              Add Option Trade
             </button>
           </div>
         </div>
@@ -256,7 +435,7 @@ const TradeJournal = ({
         {bulkDeleteError && (
           <div
             className="bg-red-50 border border-red-200 text-red-700 px-3 sm:px-4 py-3 rounded mb-4 
-          flex justify-between items-center text-sm"
+            flex justify-between items-center text-sm"
           >
             <span>{bulkDeleteError}</span>
             <button
@@ -268,29 +447,40 @@ const TradeJournal = ({
           </div>
         )}
 
-        {/* Actions Info */}
-        <div className="bg-gray-50 dark:bg-gray-700/50 p-3 rounded-md mb-4">
-          <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 mb-2">
-            Available Actions:
-          </p>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-4 text-xs text-gray-600 dark:text-gray-400">
-            <div className="flex items-center gap-2">
-              <BookOpen className="h-4 w-4 text-green-600" />
-              <span>Add trade review & notes</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Pencil className="h-4 w-4 text-blue-600" />
-              <span>Edit trade details</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Trash2 className="h-4 w-4 text-red-600" />
-              <span>Delete trade</span>
-            </div>
-          </div>
+        {/* Trade Type Tabs */}
+        <div className="border-b border-gray-200 dark:border-gray-700 mb-4">
+          <nav className="flex" aria-label="Tabs">
+            <button
+              onClick={() => {
+                setActiveTradeType("stock");
+                setCurrentPage(1);
+              }}
+              className={`${
+                activeTradeType === "stock"
+                  ? "border-blue-500 text-blue-600 dark:text-blue-400"
+                  : "border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 hover:border-gray-300"
+              } px-4 py-2 text-sm font-medium border-b-2`}
+            >
+              Stock Trades ({tradesByType.stock.length})
+            </button>
+            <button
+              onClick={() => {
+                setActiveTradeType("option");
+                setCurrentPage(1);
+              }}
+              className={`${
+                activeTradeType === "option"
+                  ? "border-blue-500 text-blue-600 dark:text-blue-400"
+                  : "border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 hover:border-gray-300"
+              } px-4 py-2 text-sm font-medium border-b-2`}
+            >
+              Option Trades ({tradesByType.option.length})
+            </button>
+          </nav>
         </div>
 
+        {/* Controls and Table */}
         {renderControls()}
-
         <div className="overflow-x-auto -mx-3 sm:mx-0">
           <div className="inline-block min-w-full align-middle">
             <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
@@ -300,28 +490,23 @@ const TradeJournal = ({
                     <div className="flex justify-center">
                       <input
                         type="checkbox"
-                        checked={currentTrades.every((trade) =>
-                          selectedTrades.has(trade._id)
-                        )}
+                        checked={
+                          currentTrades.length > 0 &&
+                          currentTrades.every((trade) =>
+                            selectedTrades.has(trade._id)
+                          )
+                        }
                         onChange={() => handleSelectAll(currentTrades)}
                         className="w-4 h-4 rounded border-gray-300 dark:border-gray-600"
                       />
                     </div>
                   </th>
-                  {[
-                    "Date",
-                    "Symbol",
-                    "Type",
-                    "Entry",
-                    "Exit",
-                    "P/L",
-                    "Actions",
-                  ].map((header) => (
+                  {getTableHeaders().map((header) => (
                     <th
-                      key={header}
-                      className="p-3 sm:p-4 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider"
+                      key={header.label}
+                      className={`p-3 sm:p-4 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider text-${header.align}`}
                     >
-                      {header}
+                      {header.label}
                     </th>
                   ))}
                 </tr>
@@ -330,7 +515,7 @@ const TradeJournal = ({
                 {currentTrades.length === 0 ? (
                   <tr>
                     <td
-                      colSpan="8"
+                      colSpan={activeTradeType === "stock" ? "8" : "10"}
                       className="p-4 text-sm text-center text-gray-500 dark:text-gray-400"
                     >
                       {filteredTrades.length === 0
@@ -339,83 +524,7 @@ const TradeJournal = ({
                     </td>
                   </tr>
                 ) : (
-                  currentTrades.map((trade) => (
-                    <tr
-                      key={trade._id}
-                      className="hover:bg-gray-50 dark:hover:bg-gray-700/50"
-                    >
-                      <td className="p-3 sm:p-4">
-                        <div className="flex justify-center">
-                          <input
-                            type="checkbox"
-                            checked={selectedTrades.has(trade._id)}
-                            onChange={() => handleSelectTrade(trade._id)}
-                            className="w-4 h-4 rounded border-gray-300 dark:border-gray-600"
-                          />
-                        </div>
-                      </td>
-                      <td className="p-3 sm:p-4 text-sm text-gray-900 dark:text-gray-100 whitespace-nowrap">
-                        {formatDate(trade.entryDate)}
-                      </td>
-                      <td className="p-3 sm:p-4 text-sm text-gray-900 dark:text-gray-100 whitespace-nowrap">
-                        {trade.symbol}
-                      </td>
-                      <td className="p-3 sm:p-4 text-sm text-gray-900 dark:text-gray-100 whitespace-nowrap">
-                        {trade.type}
-                      </td>
-                      <td className="p-3 sm:p-4 text-sm text-gray-900 dark:text-gray-100 text-right whitespace-nowrap">
-                        {formatCurrency(trade.entryPrice)}
-                      </td>
-                      <td className="p-3 sm:p-4 text-sm text-gray-900 dark:text-gray-100 text-right whitespace-nowrap">
-                        {trade.exitPrice
-                          ? formatCurrency(trade.exitPrice)
-                          : "-"}
-                      </td>
-                      <td className="p-3 sm:p-4 text-sm text-right whitespace-nowrap">
-                        {trade.profitLoss?.realized ? (
-                          <span
-                            className={
-                              trade.profitLoss.realized >= 0
-                                ? "text-green-600 dark:text-green-400"
-                                : "text-red-600 dark:text-red-400"
-                            }
-                          >
-                            {formatCurrency(trade.profitLoss.realized)}
-                          </span>
-                        ) : (
-                          "-"
-                        )}
-                      </td>
-                      <td className="p-3 sm:p-4">
-                        <div className="flex justify-end gap-1 sm:gap-2">
-                          <button
-                            onClick={() => {
-                              setSelectedTradeForReview(trade);
-                              setIsReviewModalOpen(true);
-                            }}
-                            className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded"
-                            title="Review Trade"
-                          >
-                            <BookOpen className="h-4 w-4 text-green-600" />
-                          </button>
-                          <button
-                            onClick={() => handleEditClick(trade)}
-                            className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded"
-                            title="Edit Trade"
-                          >
-                            <Pencil className="h-4 w-4 text-blue-600" />
-                          </button>
-                          <button
-                            onClick={() => handleDeleteClick(trade._id)}
-                            className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded"
-                            title="Delete Trade"
-                          >
-                            <Trash2 className="h-4 w-4 text-red-600" />
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))
+                  currentTrades.map((trade) => renderTradeRow(trade))
                 )}
               </tbody>
             </table>

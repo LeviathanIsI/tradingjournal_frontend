@@ -1,4 +1,3 @@
-// src/components/ToastNotification.jsx
 import React, { useEffect } from "react";
 
 const ToastNotification = ({ message, type = "success", onClose }) => {
@@ -12,8 +11,8 @@ const ToastNotification = ({ message, type = "success", onClose }) => {
   }, [message, onClose]);
 
   return (
-    <div className="fixed inset-0 pointer-events-none flex items-start justify-center">
-      <div className="fixed top-4 right-4 left-4 sm:left-auto pointer-events-auto z-[9999] animate-fade-in">
+    <div className="fixed inset-0 flex items-center justify-center pointer-events-none z-[9999]">
+      <div className="pointer-events-auto animate-fade-in">
         <div
           className={`
           ${
@@ -23,13 +22,11 @@ const ToastNotification = ({ message, type = "success", onClose }) => {
               ? "bg-red-100 border-red-500 text-red-700"
               : "bg-blue-100 border-blue-500 text-blue-700"
           } 
-          border-l-4 p-3 sm:p-4 rounded shadow-lg w-full sm:w-auto
+          border-l-4 p-4 rounded shadow-lg max-w-md mx-auto
         `}
         >
-          <div className="flex justify-between items-center gap-3 sm:gap-4">
-            <div className="flex-grow font-medium text-sm sm:text-base">
-              {message}
-            </div>
+          <div className="flex justify-between items-center gap-4">
+            <div className="flex-grow font-medium">{message}</div>
             <button
               onClick={onClose}
               className="p-1 text-2xl text-gray-400 hover:text-gray-600 transition-colors"

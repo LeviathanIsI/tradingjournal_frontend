@@ -11,8 +11,16 @@ export const THEME_MODES = {
 export const ThemeProvider = ({ children }) => {
   const { user, updateUser } = useAuth();
   const [themeMode, setThemeMode] = useState(() => {
-    const savedTheme = localStorage.getItem("theme-mode");
-    return savedTheme || THEME_MODES.LIGHT;
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      try {
+        const userData = JSON.parse(storedUser);
+        if (userData?.preferences?.darkMode) {
+          return THEME_MODES.DARK;
+        }
+      } catch (e) {}
+    }
+    return localStorage.getItem("theme-mode") || THEME_MODES.LIGHT;
   });
 
   // Sync theme with user preferences when they log in

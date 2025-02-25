@@ -1,5 +1,4 @@
-// src/App.jsx
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   BrowserRouter as Router,
   Routes,
@@ -22,6 +21,71 @@ import Community from "./pages/Community";
 import Traders from "./components/Traders";
 import ForgotPassword from "./pages/ForgotPassword";
 import GoogleAuthSuccess from "./pages/GoogleAuthSuccess";
+import Pricing from "./components/Pricing";
+import Profile from "./components/Profile";
+
+const SubscriptionRoute = ({ children }) => {
+  const { user, loading, subscription, isSubscriptionLoading } = useAuth();
+  const location = useLocation();
+  const navigate = useNavigate();
+  const [hasSpecialAccess, setHasSpecialAccess] = useState(false);
+  const [accessLoading, setAccessLoading] = useState(true);
+
+  // Check special access whenever user changes
+  useEffect(() => {
+    const checkAccess = async () => {
+      if (!user) return;
+
+      try {
+        setAccessLoading(true);
+        const token = localStorage.getItem("token");
+        const response = await fetch(
+          `${import.meta.env.VITE_API_URL}/api/auth/me/special-access`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+
+        if (response.ok) {
+          const data = await response.json();
+          setHasSpecialAccess(data.hasSpecialAccess);
+        }
+      } catch (error) {
+        console.error("Error checking special access:", error);
+      } finally {
+        setAccessLoading(false);
+      }
+    };
+
+    checkAccess();
+  }, [user]);
+
+  // Show loading state while loading
+  if (loading || isSubscriptionLoading || accessLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="animate-pulse text-lg">Loading...</div>
+      </div>
+    );
+  }
+
+  // Redirect if no user
+  if (!user) {
+    return <Navigate to="/login" state={{ from: location }} replace />;
+  }
+
+  // If user has special access, show protected content
+  if (hasSpecialAccess) {
+    return children;
+  }
+
+  // Check subscription
+  if (!subscription?.active) {
+    return <Navigate to="/pricing" state={{ from: location }} replace />;
+  }
+
+  return children;
+};
 
 const ProtectedRoute = ({ children }) => {
   const { user } = useAuth();
@@ -34,22 +98,36 @@ const ProtectedRoute = ({ children }) => {
   return children;
 };
 
+// Update the PublicRoute component
 const PublicRoute = ({ children }) => {
-  const { user } = useAuth();
+  const { user, subscription, loading, isSubscriptionLoading } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (user) {
-      const from = location.state?.from || "/dashboard";
-      navigate(from, { replace: true });
+    if (!loading && !isSubscriptionLoading && user) {
+      if (subscription?.active) {
+        navigate("/dashboard", { replace: true });
+      } else {
+        navigate(`/profile/${user.username}`, { replace: true });
+      }
     }
-  }, [user, location, navigate]);
+  }, [user, subscription, loading, isSubscriptionLoading, navigate]);
 
-  return !user ? children : null;
+  return !user && !loading ? children : null;
 };
 
+<Route
+  path="/"
+  element={
+    <PublicRoute>
+      <Home />
+    </PublicRoute>
+  }
+/>;
+
 function AppRoutes() {
+  const { user } = useAuth();
   return (
     <Routes>
       <Route path="/" element={<Home />} />
@@ -70,40 +148,57 @@ function AppRoutes() {
         }
       />
       <Route
-        path="/dashboard/*"
+        path="/profile/:username"
         element={
           <ProtectedRoute>
-            <Dashboard />
+            <Profile />
           </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/profile"
+        element={
+          <ProtectedRoute>
+            <Navigate to={`/profile/${user?.username}`} replace />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/dashboard/*"
+        element={
+          <SubscriptionRoute>
+            <Dashboard />
+          </SubscriptionRoute>
         }
       />
       <Route
         path="/trade-planning"
         element={
-          <ProtectedRoute>
+          <SubscriptionRoute>
             <TradePlanning />
-          </ProtectedRoute>
+          </SubscriptionRoute>
         }
       />
       <Route
         path="/community/*"
         element={
-          <ProtectedRoute>
+          <SubscriptionRoute>
             <Community />
-          </ProtectedRoute>
+          </SubscriptionRoute>
         }
       />
       <Route
         path="/traders"
         element={
-          <ProtectedRoute>
+          <SubscriptionRoute>
             <Traders />
-          </ProtectedRoute>
+          </SubscriptionRoute>
         }
       />
       <Route path="/forgot-password" element={<ForgotPassword />} />
       <Route path="/auth/google/success" element={<GoogleAuthSuccess />} />
       <Route path="/auth/google/callback" element={<GoogleAuthSuccess />} />
+      <Route path="/pricing" element={<Pricing />} />
     </Routes>
   );
 }

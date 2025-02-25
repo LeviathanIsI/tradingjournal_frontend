@@ -36,7 +36,6 @@ const StreakAndDrawdown = ({ trades }) => {
         setLoading(false);
       }
     };
-
     fetchStats();
   }, [trades]);
 

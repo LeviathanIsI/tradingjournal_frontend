@@ -348,7 +348,7 @@ const TradeModal = ({ isOpen, onClose, onSubmit, trade, userTimeZone }) => {
                     className="w-full px-3 py-2.5 sm:py-2 border border-gray-300 dark:border-gray-600 rounded 
           bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                     min="0"
-                    step="0.0001"
+                    step="0.000001"
                     required
                   />
                 </div>
@@ -405,7 +405,7 @@ const TradeModal = ({ isOpen, onClose, onSubmit, trade, userTimeZone }) => {
                     className="w-full px-3 py-2.5 sm:py-2 border border-gray-300 dark:border-gray-600 rounded 
           bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                     min="0"
-                    step="0.0001"
+                    step="0.000001"
                   />
                 </div>
 
@@ -443,7 +443,7 @@ const TradeModal = ({ isOpen, onClose, onSubmit, trade, userTimeZone }) => {
                     onChange={handleChange}
                     className="w-full px-3 py-2.5 sm:py-2 border border-gray-300 dark:border-gray-600 rounded 
           bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
-                    step="0.0001"
+                    step="0.000001"
                   />
                 </div>
                 <div>
@@ -458,7 +458,7 @@ const TradeModal = ({ isOpen, onClose, onSubmit, trade, userTimeZone }) => {
                     onChange={handleChange}
                     className="w-full px-3 py-2.5 sm:py-2 border border-gray-300 dark:border-gray-600 rounded 
           bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
-                    step="0.0001"
+                    step="0.000001"
                   />
                 </div>
               </div>
@@ -552,6 +552,9 @@ const TradeModal = ({ isOpen, onClose, onSubmit, trade, userTimeZone }) => {
                     <option value="VWAP Play">VWAP Play</option>
                     <option value="Opening Range">Opening Range</option>
                     <option value="First Pullback">First Pullback</option>
+                    <option value="ABCD Pattern">ABCD Pattern</option>
+                    <option value="1st Green Day">1st Green Day</option>
+                    <option value="1st Red Day">1st Red Day</option>
                     <option value="RCT">RCT</option>
                     <option value="Other">Other</option>
                   </select>

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import { AlertCircle } from "lucide-react";
+import SubscriptionManagement from "./SubscriptionManagement";
 
 const ProfileSettings = ({
   user,
@@ -295,6 +296,16 @@ const ProfileSettings = ({
             }`}
           >
             Account
+          </button>
+          <button
+            onClick={() => setTab("subscription")}
+            className={`px-2 sm:px-3 py-2 sm:py-3 text-xs sm:text-sm font-medium border-b-2 whitespace-nowrap flex items-center justify-center ${
+              tab === "subscription"
+                ? "border-blue-500 text-blue-600 dark:text-blue-400"
+                : "border-transparent text-gray-500 dark:text-gray-400 hover:border-gray-300 dark:hover:border-gray-600"
+            }`}
+          >
+            Subscription
           </button>
         </nav>
       </div>
@@ -753,6 +764,7 @@ const ProfileSettings = ({
             </div>
           </form>
         )}
+        {tab === "subscription" && <SubscriptionManagement />}
       </div>
     </div>
   );

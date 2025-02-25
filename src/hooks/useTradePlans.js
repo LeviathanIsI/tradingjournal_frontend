@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { fetchStats } from "../utils/fetchStats";
 
 export const useTradePlans = () => {
   const [tradePlans, setTradePlans] = useState([]);

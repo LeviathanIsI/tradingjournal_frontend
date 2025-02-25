@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useParams } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import {
@@ -23,16 +23,12 @@ const Profile = () => {
   const [error, setError] = useState(null);
   const [activeTab, setActiveTab] = useState("reviews");
 
-  useEffect(() => {
-    fetchProfile();
-  }, [username]);
-
-  const fetchProfile = async () => {
+  const fetchProfile = useCallback(async (targetUsername) => {
     try {
       setLoading(true);
       const token = localStorage.getItem("token");
       const response = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/auth/profile/${username}`,
+        `${import.meta.env.VITE_API_URL}/api/auth/profile/${targetUsername}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -52,20 +48,42 @@ const Profile = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []); // Memoize fetchProfile
 
-  const handleUserUpdate = (updatedUser) => {
+  useEffect(() => {
+    let isMounted = true;
+
+    const loadProfile = async () => {
+      if (!isMounted) return;
+
+      const targetUsername = username || currentUser?.username;
+      if (targetUsername) {
+        await fetchProfile(targetUsername);
+      }
+    };
+
+    loadProfile();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [username, currentUser?.username, fetchProfile]);
+
+  const handleUserUpdate = useCallback((updatedUser) => {
     setProfile((prev) => ({
       ...prev,
       user: updatedUser,
     }));
-  };
+  }, []);
 
-  const handleSettingsUpdate = async () => {
-    await fetchProfile();
-  };
+  const handleSettingsUpdate = useCallback(async () => {
+    const targetUsername = username || currentUser?.username;
+    if (targetUsername) {
+      await fetchProfile(targetUsername);
+    }
+  }, [username, currentUser?.username, fetchProfile]);
 
-  const handleFollow = async () => {
+  const handleFollow = useCallback(async () => {
     try {
       const token = localStorage.getItem("token");
       const response = await fetch(
@@ -79,12 +97,12 @@ const Profile = () => {
       );
 
       if (response.ok) {
-        fetchProfile();
+        fetchProfile(username);
       }
     } catch (error) {
       console.error("Error following user:", error);
     }
-  };
+  }, [profile?.user?._id, username]);
 
   if (loading) {
     return (

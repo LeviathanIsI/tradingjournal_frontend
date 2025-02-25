@@ -29,7 +29,8 @@ const StatsOverview = ({ user, stats, formatCurrency }) => {
               >
                 {formatCurrency(
                   (user?.preferences?.startingCapital || 0) +
-                    (stats?.totalProfit || 0)
+                    (stats?.totalProfit || 0) +
+                    (stats?.totalOptionProfit || 0)
                 )}
               </p>
               {user?.preferences?.startingCapital > 0 && (
@@ -87,7 +88,9 @@ const StatsOverview = ({ user, stats, formatCurrency }) => {
               : "text-red-600 dark:text-red-400"
           }`}
         >
-          {formatCurrency(stats?.totalProfit || 0)}
+          {formatCurrency(
+            (stats?.totalProfit || 0) + (stats?.totalOptionProfit || 0)
+          )}
         </p>
       </div>
     </div>

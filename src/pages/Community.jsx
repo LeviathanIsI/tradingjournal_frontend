@@ -6,8 +6,19 @@ import Traders from "../components/Traders";
 import Leaderboard from "../components/Leaderboard";
 import Profile from "../components/Profile";
 import Network from "../components/Network";
+import { useAuth } from "../context/AuthContext";
 
 const Community = () => {
+  const { user, loading: authLoading } = useAuth();
+
+  if (authLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="animate-pulse text-lg">Loading...</div>
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-col min-h-screen pt-16">
       {" "}

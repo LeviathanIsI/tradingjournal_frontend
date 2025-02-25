@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import TradePlanModal from "../components/TradePlanModal";
 import { useTradePlans } from "../hooks/useTradePlans";
+import { useAuth } from "../context/AuthContext";
 
 const TradePlanning = () => {
   const {
@@ -26,6 +27,15 @@ const TradePlanning = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState(null);
   const [expandedPlanId, setExpandedPlanId] = useState(null);
+  const { user, loading: authLoading } = useAuth();
+
+  if (authLoading || loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="animate-pulse text-lg">Loading...</div>
+      </div>
+    );
+  }
 
   const handleNewPlan = () => {
     setSelectedPlan(null);
@@ -59,7 +69,7 @@ const TradePlanning = () => {
   };
 
   const renderExpandedDetails = (plan) => (
-    <tr className="bg-gray-50 dark:bg-gray-800/50">
+    <tr key={`${plan._id}-details`} className="bg-gray-50 dark:bg-gray-800/50">
       <td colSpan="9" className="p-4">
         <div className="grid grid-cols-2 gap-4">
           <div>
@@ -199,9 +209,9 @@ const TradePlanning = () => {
         </thead>
         <tbody>
           {tradePlans.map((plan) => (
-            <>
+            // Use React.Fragment with a key instead of empty fragment
+            <React.Fragment key={plan._id}>
               <tr
-                key={plan._id}
                 className="border-b dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800/50 cursor-pointer"
                 onClick={() => toggleExpand(plan._id)}
               >
@@ -275,7 +285,7 @@ const TradePlanning = () => {
                 </td>
               </tr>
               {expandedPlanId === plan._id && renderExpandedDetails(plan)}
-            </>
+            </React.Fragment>
           ))}
         </tbody>
       </table>

@@ -1,8 +1,8 @@
 // src/pages/Dashboard.jsx
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
-import { Pencil, Trash2, BookOpen, Upload, X } from "lucide-react";
 import TradeModal from "../components/TradeModal";
+import OptionTradeModal from "../components/OptionTradeModal";
 import { useTrades } from "../hooks/useTrades";
 import { useAuth } from "../context/AuthContext";
 import ReviewModal from "../components/ReviewModal";
@@ -14,23 +14,15 @@ import TradeJournal from "../components/TradeJournal";
 import Analysis from "../components/Analysis";
 import Planning from "../components/Planning";
 import StatsOverview from "../components/StatsOverview";
+import { useToast } from "../context/ToastContext";
 
 const Dashboard = () => {
-  const { user } = useAuth();
+  const { user, checkSubscriptionStatus, loading: authLoading } = useAuth();
   const userTimeZone = user?.preferences?.timeZone || "UTC";
   const [isTradeModalOpen, setIsTradeModalOpen] = useState(false);
   const [selectedTrade, setSelectedTrade] = useState(null);
-  const {
-    trades,
-    stats,
-    loading,
-    error,
-    addTrade,
-    updateTrade,
-    deleteTrade,
-    fetchTrades,
-    fetchStats,
-  } = useTrades();
+  const [isOptionTradeModalOpen, setIsOptionTradeModalOpen] = useState(false);
+  const [selectedOptionTrade, setSelectedOptionTrade] = useState(null);
   const [activeChart, setActiveChart] = useState("pnl");
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
   const [selectedTradeForReview, setSelectedTradeForReview] = useState(null);
@@ -38,64 +30,181 @@ const Dashboard = () => {
   const [selectedTrades, setSelectedTrades] = useState(new Set());
   const [bulkDeleteError, setBulkDeleteError] = useState(null);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const { showToast } = useToast();
 
-  const formatCurrency = (value) => {
-    return new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: "USD",
-    }).format(value);
+  // Get all trade-related functions from the hook
+  const {
+    trades: allTrades,
+    stats,
+    error,
+    loading: dataLoading,
+    deleteTrade,
+    submitTrade,
+    bulkDeleteTrades,
+    submitTradeReview,
+    importTrades,
+  } = useTrades(user);
+
+  // UI-specific handler functions that call the hook functions
+  const handleEditClick = (trade) => {
+    if (trade.contractType) {
+      setSelectedOptionTrade(trade);
+      setIsOptionTradeModalOpen(true);
+    } else {
+      setSelectedTrade(trade);
+      setIsTradeModalOpen(true);
+    }
+  };
+
+  const handleDeleteClick = async (trade) => {
+    if (!trade || !trade._id) {
+      console.error("❌ Trade or Trade ID is missing!");
+      return;
+    }
+
+    const isOptionTrade = trade.contractType !== undefined;
+
+    if (
+      window.confirm(
+        `Are you sure you want to delete this ${
+          isOptionTrade ? "option" : "regular"
+        } trade?`
+      )
+    ) {
+      const success = await deleteTrade(trade._id, isOptionTrade);
+
+      if (success) {
+        showToast("Trade deleted successfully", "success");
+      } else {
+        showToast(
+          `Failed to delete ${isOptionTrade ? "option" : "regular"} trade`,
+          "error"
+        );
+      }
+    }
+  };
+
+  const handleBulkDelete = async () => {
+    if (selectedTrades.size === 0) return;
+
+    if (
+      !window.confirm(
+        `Are you sure you want to delete ${selectedTrades.size} trades?`
+      )
+    ) {
+      return;
+    }
+
+    setIsDeleting(true);
+    setBulkDeleteError(null);
+
+    const result = await bulkDeleteTrades(selectedTrades);
+
+    if (result.success) {
+      setSelectedTrades(new Set());
+      showToast(
+        `Successfully deleted ${selectedTrades.size} trades`,
+        "success"
+      );
+    } else {
+      setBulkDeleteError(
+        result.error || "Failed to delete trades. Please try again."
+      );
+    }
+
+    setIsDeleting(false);
+  };
+
+  const handleTradeSubmit = async (tradeData) => {
+    try {
+      const success = await submitTrade(tradeData, selectedTrade);
+
+      if (success) {
+        setIsTradeModalOpen(false);
+        setSelectedTrade(null);
+        showToast("Trade saved successfully", "success");
+      } else {
+        showToast("Failed to save trade", "error");
+      }
+    } catch (error) {
+      console.error("Error saving trade:", error);
+      showToast(error.message || "Failed to save trade", "error");
+    }
+  };
+
+  const handleOptionTradeSubmit = async (tradeData) => {
+    try {
+      const success = await submitTrade(tradeData, selectedOptionTrade);
+
+      if (success) {
+        setIsOptionTradeModalOpen(false);
+        setSelectedOptionTrade(null);
+        showToast("Option trade saved successfully", "success");
+      } else {
+        showToast("Failed to save option trade", "error");
+      }
+    } catch (error) {
+      console.error("Error saving option trade:", error);
+      showToast(error.message || "Failed to save option trade", "error");
+    }
   };
 
   const handleReviewSubmit = async (reviewData) => {
-    try {
-      const response = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/trade-reviews`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-          body: JSON.stringify(reviewData),
-        }
-      );
-
-      if (response.ok) {
-        setIsReviewModalOpen(false);
-        setSelectedTradeForReview(null);
-        // Optionally show a success message
-      }
-    } catch (error) {
-      console.error("Error submitting review:", error);
-      // Optionally show an error message
-    }
-  };
-
-  const handleSubmit = async (tradeData) => {
-    let success;
-    if (selectedTrade) {
-      // If we have a selectedTrade, we're editing
-      success = await updateTrade(selectedTrade._id, tradeData);
-    } else {
-      // Otherwise, we're adding a new trade
-      success = await addTrade(tradeData);
-    }
+    const success = await submitTradeReview(reviewData);
 
     if (success) {
-      setIsTradeModalOpen(false);
-      setSelectedTrade(null);
+      setIsReviewModalOpen(false);
+      setSelectedTradeForReview(null);
+      showToast("Review submitted successfully", "success");
+    } else {
+      showToast("Failed to submit review", "error");
     }
   };
 
-  const handleEditClick = (trade) => {
-    setSelectedTrade(trade);
+  const handleImportTrades = async (trades) => {
+    const success = await importTrades(trades);
+
+    if (success) {
+      setIsImportModalOpen(false);
+      showToast("Trades imported successfully", "success");
+    } else {
+      showToast("Failed to import trades", "error");
+    }
+  };
+
+  useEffect(() => {
+    const checkStripeSuccess = async () => {
+      const queryParams = new URLSearchParams(window.location.search);
+      if (queryParams.get("success") === "true") {
+        try {
+          await checkSubscriptionStatus();
+          showToast("Subscription activated successfully!", "success");
+          window.history.replaceState({}, "", "/dashboard");
+          setIsLoading(false);
+        } catch (error) {
+          console.error("Error checking subscription status:", error);
+          showToast(
+            "Error verifying subscription. Please refresh the page.",
+            "error"
+          );
+          setIsLoading(false);
+        }
+      } else {
+        setIsLoading(false);
+      }
+    };
+    checkStripeSuccess();
+  }, [checkSubscriptionStatus, showToast]);
+
+  const handleAddTradeClick = () => {
+    setSelectedTrade(null);
     setIsTradeModalOpen(true);
   };
 
-  const handleDeleteClick = async (tradeId) => {
-    if (window.confirm("Are you sure you want to delete this trade?")) {
-      await deleteTrade(tradeId);
-    }
+  const handleAddOptionTradeClick = () => {
+    setSelectedOptionTrade(null);
+    setIsOptionTradeModalOpen(true);
   };
 
   const handleSelectTrade = (tradeId) => {
@@ -124,58 +233,27 @@ const Dashboard = () => {
     }
   };
 
-  const handleBulkDelete = async () => {
-    if (selectedTrades.size === 0) return;
+  // Utility functions
+  const formatCurrency = (value, maxDecimals = 2) => {
+    if (!value && value !== 0) return "-";
 
-    if (
-      !window.confirm(
-        `Are you sure you want to delete ${selectedTrades.size} trades?`
-      )
-    ) {
-      return;
-    }
+    // Convert to string and remove any existing formatting
+    const numStr = Math.abs(value).toString();
 
-    setIsDeleting(true);
-    setBulkDeleteError(null);
+    // Find the number of actual decimal places
+    const decimalPlaces = numStr.includes(".")
+      ? numStr.split(".")[1].replace(/0+$/, "").length // Remove trailing zeros
+      : 0;
 
-    try {
-      const response = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/trades/bulk-delete`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-          body: JSON.stringify({
-            tradeIds: Array.from(selectedTrades),
-          }),
-        }
-      );
+    // Use the smaller of actual decimal places or maxDecimals
+    const decimals = Math.min(decimalPlaces, maxDecimals);
 
-      if (!response.ok) {
-        throw new Error("Failed to delete trades");
-      }
-
-      // Instead of calling deleteTrade for each trade, just refetch everything
-      await Promise.all([fetchTrades(), fetchStats()]);
-      setSelectedTrades(new Set());
-    } catch (err) {
-      setBulkDeleteError("Failed to delete trades. Please try again.");
-      console.error("Bulk delete error:", err);
-    } finally {
-      setIsDeleting(false);
-    }
-  };
-
-  const handleModalClose = () => {
-    setIsTradeModalOpen(false);
-    setSelectedTrade(null);
-  };
-
-  const handleAddTradeClick = () => {
-    setSelectedTrade(null);
-    setIsTradeModalOpen(true);
+    return new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "USD",
+      minimumFractionDigits: decimals,
+      maximumFractionDigits: decimals,
+    }).format(value);
   };
 
   const formatDate = (dateString) => {
@@ -185,6 +263,14 @@ const Dashboard = () => {
       "MM/dd/yyyy hh:mm a"
     );
   };
+
+  if (authLoading || isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="animate-pulse text-lg">Loading...</div>
+      </div>
+    );
+  }
 
   if (error) {
     return (
@@ -196,17 +282,8 @@ const Dashboard = () => {
     );
   }
 
-  const handleImportTrades = async (trades) => {
-    const success = await importTrades(trades);
-    if (success) {
-      setIsImportModalOpen(false);
-    }
-  };
-
   return (
     <div className="flex flex-col min-h-screen pt-16">
-      {" "}
-      {/* Added pt-16 for fixed navbar */}
       <DashboardNav />
       {/* Stats Overview Section */}
       <div className="px-3 sm:px-6 py-3 sm:py-4 bg-transparent">
@@ -225,7 +302,7 @@ const Dashboard = () => {
               path: "overview",
               element: (
                 <Overview
-                  trades={trades}
+                  trades={allTrades}
                   stats={stats}
                   formatCurrency={formatCurrency}
                 />
@@ -235,13 +312,14 @@ const Dashboard = () => {
               path: "journal",
               element: (
                 <TradeJournal
-                  trades={trades}
+                  trades={allTrades}
                   handleEditClick={handleEditClick}
                   handleDeleteClick={handleDeleteClick}
                   handleSelectTrade={handleSelectTrade}
                   handleSelectAll={handleSelectAll}
                   handleBulkDelete={handleBulkDelete}
                   handleAddTradeClick={handleAddTradeClick}
+                  handleAddOptionTradeClick={handleAddOptionTradeClick}
                   selectedTrades={selectedTrades}
                   isDeleting={isDeleting}
                   bulkDeleteError={bulkDeleteError}
@@ -257,7 +335,7 @@ const Dashboard = () => {
               path: "analysis",
               element: (
                 <Analysis
-                  trades={trades}
+                  trades={allTrades}
                   activeChart={activeChart}
                   setActiveChart={setActiveChart}
                 />
@@ -265,7 +343,9 @@ const Dashboard = () => {
             },
             {
               path: "planning",
-              element: <Planning trades={trades} user={user} stats={stats} />,
+              element: (
+                <Planning trades={allTrades} user={user} stats={stats} />
+              ),
             },
           ].map(({ path, element }) => (
             <Route
@@ -282,9 +362,19 @@ const Dashboard = () => {
       {/* Modals */}
       <TradeModal
         isOpen={isTradeModalOpen}
-        onClose={handleModalClose}
-        onSubmit={handleSubmit}
+        onClose={() => setIsTradeModalOpen(false)}
+        onSubmit={handleTradeSubmit}
         trade={selectedTrade}
+        userTimeZone={userTimeZone}
+      />
+      <OptionTradeModal
+        isOpen={isOptionTradeModalOpen}
+        onClose={() => {
+          setIsOptionTradeModalOpen(false);
+          setSelectedOptionTrade(null);
+        }}
+        onSubmit={handleOptionTradeSubmit}
+        trade={selectedOptionTrade}
         userTimeZone={userTimeZone}
       />
       <ReviewModal
