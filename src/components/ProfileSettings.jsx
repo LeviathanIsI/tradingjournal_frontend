@@ -198,6 +198,7 @@ const ProfileSettings = ({
     }
   };
 
+  // Replace your existing handleAccountSubmit function with this one
   const handleAccountSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -216,29 +217,45 @@ const ProfileSettings = ({
           },
           body: JSON.stringify({
             preferences: {
-              ...user.preferences,
               startingCapital: Number(accountForm.startingCapital),
               defaultCurrency: accountForm.defaultCurrency,
               timeZone: accountForm.timeZone,
               experienceLevel: accountForm.experienceLevel,
+              // Keep any existing preferences from the user object
+              ...(user.preferences?.darkMode !== undefined
+                ? { darkMode: user.preferences.darkMode }
+                : {}),
             },
           }),
         }
       );
 
       if (!response.ok) {
-        throw new Error("Failed to update settings");
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Failed to update settings");
       }
 
       const data = await response.json();
 
-      updateUser({
+      // Update local user state first
+      const updatedUser = {
         ...user,
         preferences: data.data,
-      });
+      };
+
+      // Update user state in context if updateUser is available
+      if (updateUser) {
+        updateUser(updatedUser);
+      }
+
+      // Call onUpdate callback if provided
+      if (onUpdate) {
+        onUpdate(updatedUser);
+      }
 
       setSuccess("Account settings updated successfully");
     } catch (error) {
+      console.error("Settings update error:", error);
       setError("Error saving settings: " + error.message);
     } finally {
       setLoading(false);

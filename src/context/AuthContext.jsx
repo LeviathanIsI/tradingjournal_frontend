@@ -62,6 +62,20 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  // Add updateUser function to allow updating user data
+  const updateUser = (userData) => {
+    if (typeof userData === "function") {
+      // If userData is a function, call it with the previous state
+      setUser((prevUser) => {
+        const newUserData = userData(prevUser);
+        return newUserData;
+      });
+    } else {
+      // Otherwise, just update with the new data
+      setUser(userData);
+    }
+  };
+
   // Debounce function to prevent too many API calls
   const debounce = (func, wait) => {
     let timeout;
@@ -111,7 +125,6 @@ export const AuthProvider = ({ children }) => {
     const timeSinceLastCheck = now - lastSubscriptionCheckRef.current;
 
     if (timeSinceLastCheck < 5000) {
-
       // If we have a pending check, just use that one instead of creating a new one
       if (pendingSubscriptionCheckRef.current) {
         return pendingSubscriptionCheckRef.current;
@@ -222,6 +235,7 @@ export const AuthProvider = ({ children }) => {
         isSubscriptionLoading,
         login,
         logout,
+        updateUser, // Export the updateUser function
         checkSubscriptionStatus,
       }}
     >
