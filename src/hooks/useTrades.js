@@ -49,6 +49,7 @@ export const useTrades = (user) => {
     }
   };
 
+  // Replace your existing fetchTradeStats function with this one
   const fetchTradeStats = async () => {
     try {
       const [tradeStats, optionTradeStats] = await Promise.all([
@@ -56,24 +57,64 @@ export const useTrades = (user) => {
         fetchStats("option-trades"),
       ]);
 
+      // Make sure we handle null response cases
+      const stockStats = tradeStats || {
+        totalTrades: 0,
+        profitableTrades: 0,
+        losingTrades: 0,
+        totalProfit: 0,
+        totalWinAmount: 0,
+        totalLossAmount: 0,
+      };
+      const optionStats = optionTradeStats || {
+        totalTrades: 0,
+        profitableTrades: 0,
+        losingTrades: 0,
+        totalProfit: 0,
+        totalWinAmount: 0,
+        totalLossAmount: 0,
+      };
+
+      // Combine stats from both sources
       const mergedStats = {
         totalTrades:
-          (tradeStats.totalTrades || 0) + (optionTradeStats.totalTrades || 0),
+          (stockStats.totalTrades || 0) + (optionStats.totalTrades || 0),
         totalProfit:
-          (tradeStats.totalProfit || 0) + (optionTradeStats.totalProfit || 0),
+          (stockStats.totalProfit || 0) + (optionStats.totalProfit || 0),
         totalWinAmount:
-          (tradeStats.totalWinAmount || 0) +
-          (optionTradeStats.totalWinAmount || 0),
+          (stockStats.totalWinAmount || 0) + (optionStats.totalWinAmount || 0),
         totalLossAmount:
-          (tradeStats.totalLossAmount || 0) +
-          (optionTradeStats.totalLossAmount || 0),
+          (stockStats.totalLossAmount || 0) +
+          (optionStats.totalLossAmount || 0),
+        profitableTrades:
+          (stockStats.profitableTrades || 0) +
+          (optionStats.profitableTrades || 0),
+        losingTrades:
+          (stockStats.losingTrades || 0) + (optionStats.losingTrades || 0),
       };
+
+      // Calculate combined win rate
+      if (mergedStats.totalTrades > 0) {
+        mergedStats.winRate =
+          (mergedStats.profitableTrades / mergedStats.totalTrades) * 100;
+      } else {
+        mergedStats.winRate = 0;
+      }
+
+      // Calculate combined win/loss ratio
+      if (mergedStats.losingTrades > 0) {
+        mergedStats.winLossRatio =
+          mergedStats.profitableTrades / mergedStats.losingTrades;
+      } else {
+        mergedStats.winLossRatio =
+          mergedStats.profitableTrades > 0 ? mergedStats.profitableTrades : 0;
+      }
 
       setStats(mergedStats);
       return mergedStats;
     } catch (error) {
       console.error("❌ Error fetching stats:", error);
-      return { totalProfit: 0, totalTrades: 0 };
+      return { totalProfit: 0, totalTrades: 0, winRate: 0, winLossRatio: 0 };
     }
   };
 

@@ -184,7 +184,6 @@ export const AuthProvider = ({ children }) => {
       const expirationTime = decoded.exp * 1000;
 
       if (Date.now() >= expirationTime) {
-        console.log("Token expired, logging out");
         logout();
       }
     } catch (error) {
