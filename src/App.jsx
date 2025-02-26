@@ -23,6 +23,7 @@ import ForgotPassword from "./pages/ForgotPassword";
 import GoogleAuthSuccess from "./pages/GoogleAuthSuccess";
 import Pricing from "./components/Pricing";
 import Profile from "./components/Profile";
+import { PrivacyPolicy, TermsOfService } from "./pages/PrivacyPolicy.jsx";
 
 const SubscriptionRoute = ({ children }) => {
   const { user, loading, subscription, isSubscriptionLoading } = useAuth();
@@ -147,6 +148,8 @@ function AppRoutes() {
           </PublicRoute>
         }
       />
+      <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+      <Route path="/terms-of-service" element={<TermsOfService />} />
       <Route
         path="/profile/:username"
         element={

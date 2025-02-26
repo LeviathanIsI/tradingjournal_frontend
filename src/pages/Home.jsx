@@ -79,6 +79,19 @@ const Home = () => {
           </div>
         </div>
       </div>
+
+      {/* Footer */}
+      <footer className="bg-gray-100 dark:bg-gray-900 py-6 text-center">
+        <div className="text-gray-600 dark:text-gray-400 text-sm">
+          <Link to="/privacy-policy" className="hover:underline mx-2">
+            Privacy Policy
+          </Link>
+          |
+          <Link to="/terms-of-service" className="hover:underline mx-2">
+            Terms of Service
+          </Link>
+        </div>
+      </footer>
     </div>
   );
 };
