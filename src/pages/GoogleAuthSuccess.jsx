@@ -13,32 +13,35 @@ const GoogleAuthSuccess = () => {
 
     if (!token) {
       setStatus("❌ No token found, redirecting to login...");
+      console.warn("⚠️ No token found, redirecting...");
       setTimeout(() => navigate("/login"), 2000);
       return;
     }
 
+    const apiUrl = `${
+      import.meta.env.VITE_API_URL
+    }/api/auth/google/success?token=${token}`;
+    console.log("🔍 Checking Google Auth Success:", apiUrl);
+
     const handleGoogleSuccess = async () => {
       try {
         setStatus("🔄 Verifying token...");
+        console.log("🔄 Fetching:", apiUrl);
 
-        const response = await fetch(
-          `${
-            import.meta.env.VITE_API_URL
-          }/api/auth/google/success?token=${token}`,
-          {
-            credentials: "include",
-            headers: {
-              Accept: "application/json",
-              "Content-Type": "application/json",
-            },
-          }
-        );
+        const response = await fetch(apiUrl, {
+          credentials: "include",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+          },
+        });
 
         if (!response.ok) {
           throw new Error(`Server responded with status: ${response.status}`);
         }
 
         const data = await response.json();
+        console.log("✅ API Response:", data);
 
         if (data.success) {
           setStatus("✅ Logging in...");

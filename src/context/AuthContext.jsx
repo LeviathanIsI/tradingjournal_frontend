@@ -235,7 +235,7 @@ export const AuthProvider = ({ children }) => {
         isSubscriptionLoading,
         login,
         logout,
-        updateUser, // Export the updateUser function
+        updateUser,
         checkSubscriptionStatus,
       }}
     >
