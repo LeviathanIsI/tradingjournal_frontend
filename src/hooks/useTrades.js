@@ -149,26 +149,40 @@ export const useTrades = (user) => {
         processedTradeData.status = "OPEN";
       }
 
-      // Clean up the data
+      // Clean up the data - this is where the error occurs
       const cleanedData = {
         ...processedTradeData,
         strategy: processedTradeData.strategy || undefined,
         setupType: processedTradeData.setupType || undefined,
-        greeksAtEntry: Object.fromEntries(
-          Object.entries(processedTradeData.greeksAtEntry || {}).filter(
-            ([_, v]) => v !== ""
-          )
-        ),
-        greeksAtExit: Object.fromEntries(
-          Object.entries(processedTradeData.greeksAtExit || {}).filter(
-            ([_, v]) => v !== ""
-          )
-        ),
-        marketConditions: {
-          ...processedTradeData.marketConditions,
-          vix: processedTradeData.marketConditions.vix || undefined,
-        },
       };
+
+      // Only handle greeks and marketConditions for option trades
+      if (isOptionTrade) {
+        // Handle greeks if they exist
+        if (processedTradeData.greeksAtEntry) {
+          cleanedData.greeksAtEntry = Object.fromEntries(
+            Object.entries(processedTradeData.greeksAtEntry || {}).filter(
+              ([_, v]) => v !== ""
+            )
+          );
+        }
+
+        if (processedTradeData.greeksAtExit) {
+          cleanedData.greeksAtExit = Object.fromEntries(
+            Object.entries(processedTradeData.greeksAtExit || {}).filter(
+              ([_, v]) => v !== ""
+            )
+          );
+        }
+
+        // Handle marketConditions if they exist
+        if (processedTradeData.marketConditions) {
+          cleanedData.marketConditions = {
+            ...processedTradeData.marketConditions,
+            vix: processedTradeData.marketConditions.vix || undefined,
+          };
+        }
+      }
 
       const response = await fetch(endpoint, {
         method,
