@@ -1,5 +1,6 @@
 import { useState, useCallback, useMemo, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
+import { useAI } from "../context/AIContext";
 import { useTrades } from "../hooks/useTrades";
 import {
   Search,
@@ -33,6 +34,7 @@ import {
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import AIResponseCountdown from "./AIResponseCountdown";
+import { useToast } from "../context/ToastContext";
 
 const getEstimatedResponseTime = (tradeType, holdingTimeMs) => {
   let estimatedTime = 30;
@@ -56,15 +58,25 @@ const TradeExecutionReplay = () => {
   const { trades: allTrades } = useTrades(user);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedTrade, setSelectedTrade] = useState(null);
+  const { makeAIRequest, getCachedAnalysis, clearCachedAnalysis } = useAI();
   const [analysis, setAnalysis] = useState(null);
   const [tradeDetails, setTradeDetails] = useState(null);
   const [tradeTimeline, setTradeTimeline] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const { showToast } = useToast();
   const [currentStep, setCurrentStep] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [playbackSpeed, setPlaybackSpeed] = useState(1);
   const [estimatedResponseTime, setEstimatedResponseTime] = useState(30);
+  const [analysisStarted, setAnalysisStarted] = useState(false);
+  const [selectedScenario, setSelectedScenario] = useState({
+    id: "execution-timing",
+    label: "Execution Timing",
+    description: "Analysis of your trade timing",
+    icon: Clock,
+  });
+
   // Filter trades based on search query
   const filteredTrades = useMemo(() => {
     if (!allTrades || allTrades.length === 0) return [];
@@ -110,87 +122,137 @@ const TradeExecutionReplay = () => {
     setIsPlaying(false);
 
     try {
-      const token = localStorage.getItem("token");
       const tradeType = selectedTrade.contractType ? "option" : "stock";
 
+      // First, get the estimated response time (optional)
       try {
-        const estimateResponse = await fetch(
-          `${import.meta.env.VITE_API_URL}/api/ai/trade-execution-estimate`,
+        const estimateData = await makeAIRequest(
+          "trade-execution-estimate",
           {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-            body: JSON.stringify({
-              tradeId: selectedTrade._id,
-              type: tradeType,
-            }),
-          }
+            tradeId: selectedTrade._id,
+            type: tradeType,
+          },
+          null,
+          { suppressToast: true }
         );
 
-        if (estimateResponse.ok) {
-          const estimateData = await estimateResponse.json();
-          if (estimateData.success && estimateData.estimatedSeconds) {
-            setEstimatedResponseTime(estimateData.estimatedSeconds);
-          }
+        if (
+          estimateData &&
+          estimateData.success &&
+          estimateData.estimatedSeconds
+        ) {
+          setEstimatedResponseTime(estimateData.estimatedSeconds);
         }
       } catch (estimateError) {
         console.error("Error fetching estimate:", estimateError);
+        // Continue anyway - this is just for user experience
       }
 
-      const response = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/ai/trade-execution-replay`,
+      // Main analysis request
+      const data = await makeAIRequest(
+        "trade-execution-replay",
         {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({
-            tradeId: selectedTrade._id,
-            type: tradeType,
-          }),
-        }
+          tradeId: selectedTrade._id,
+          type: tradeType,
+        },
+        null,
+        { suppressToast: true }
       );
 
-      if (!response.ok) {
-        throw new Error(`Server error: ${await response.text()}`);
-      }
-
-      const data = await response.json();
-      if (data.success) {
+      if (data && data.success) {
         setAnalysis(data.analysis);
         setTradeDetails(data.tradeDetails);
         setTradeTimeline(data.timeline || []);
+        showToast("Trade execution analysis generated successfully", "success");
 
-        if (data.aiLimits) {
-          updateAILimits(data.aiLimits);
-        }
-
+        // Update estimated time if provided
         if (data.tradeDetails && data.tradeDetails.estimatedSeconds) {
           setEstimatedResponseTime(data.tradeDetails.estimatedSeconds);
         }
+      } else if (data && data.isCreditsError) {
+        // Credit limit error already handled
+        // Just don't show additional errors
       } else {
-        setError(data.error || "Failed to analyze trade execution");
+        // Handle other errors
+        setError(data?.error || "Failed to analyze trade execution");
+        showToast(
+          "Failed to analyze trade execution. Please try again.",
+          "error"
+        );
       }
     } catch (error) {
       console.error("Error analyzing trade execution:", error);
-      setError(error.message);
+      if (!error.isCreditsError) {
+        setError(error.message);
+        showToast(
+          "Failed to analyze trade execution. Please try again.",
+          "error"
+        );
+      }
     } finally {
       setLoading(false);
     }
-  }, [selectedTrade]);
+  }, [selectedTrade, makeAIRequest, showToast]);
+
+  // 3. Predictive Analysis Component (analyzeTrade function)
+  const analyzeTrade = useCallback(async () => {
+    if (!selectedTrade || !selectedScenario) return;
+
+    setLoading(true);
+    setAnalysisStarted(true);
+    setAnalysis(null);
+    setError(null);
+
+    try {
+      const tradeType = selectedTrade.contractType ? "option" : "stock";
+
+      // Use makeAIRequest instead of direct fetch
+      const data = await makeAIRequest(
+        "predictive-analysis",
+        {
+          tradeId: selectedTrade._id,
+          type: tradeType,
+          scenario: selectedScenario.id,
+        },
+        null,
+        { suppressToast: true }
+      );
+
+      if (data && data.success) {
+        setAnalysis(data.analysis);
+        setTradeDetails(data.tradeDetails);
+        showToast("Analysis completed successfully", "success");
+      } else if (data && data.isCreditsError) {
+        // Credit limit errors are already handled
+        setAnalysisStarted(false);
+      } else {
+        // Handle other errors
+        setError(data?.error || "Failed to analyze trade scenarios");
+        showToast("Failed to analyze trade scenarios", "error");
+      }
+    } catch (error) {
+      console.error("Error generating prediction:", error);
+      if (!error.isCreditsError) {
+        const errorMsg = error.message || "An unexpected error occurred";
+        setError(errorMsg);
+        showToast(errorMsg, "error");
+      }
+      setAnalysisStarted(false);
+    } finally {
+      setLoading(false);
+    }
+  }, [selectedTrade, selectedScenario, makeAIRequest, showToast]);
 
   // Reset analysis
-  const resetAnalysis = () => {
+  const resetAnalysis = useCallback(() => {
     setAnalysis(null);
     setTradeDetails(null);
     setTradeTimeline([]);
     setCurrentStep(0);
     setIsPlaying(false);
     setError(null);
-  };
+    setAnalysisStarted(false);
+  }, []);
 
   // Format currency for display
   const formatCurrency = (value) => {

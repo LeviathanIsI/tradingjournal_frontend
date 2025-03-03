@@ -1,14 +1,12 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
 import { useAuth } from "../context/AuthContext";
+import { useAI } from "../context/AIContext";
 import { useTrades } from "../hooks/useTrades";
 import {
-  Calendar,
   Search,
   Loader,
   TrendingUp,
   ArrowRight,
-  Check,
-  X,
   Activity,
   Target,
   AlertTriangle,
@@ -18,16 +16,47 @@ import {
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import AIResponseCountdown from "./AIResponseCountdown";
+import { useToast } from "../context/ToastContext";
+
+const CACHE_KEY_PREFIX = "trade-coaching-";
 
 const SmartTradeCoaching = () => {
-  const { user, updateAILimits } = useAuth();
+  const { user } = useAuth();
+  const { makeAIRequest, getCachedAnalysis, clearCachedAnalysis } = useAI();
   const { trades: allTrades } = useTrades(user);
-  const [loading, setLoading] = useState(false);
+  const { showToast } = useToast();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedTrade, setSelectedTrade] = useState(null);
   const [tradeAnalysis, setTradeAnalysis] = useState(null);
   const [analyzeLoading, setAnalyzeLoading] = useState(false);
   const [estimatedResponseTime, setEstimatedResponseTime] = useState(20);
+  const [selectedScenario, setSelectedScenario] = useState(null);
+
+  // Restore state from localStorage/cache on initial load
+  useEffect(() => {
+    const storedTradeId = localStorage.getItem("selected-trade-id");
+    if (storedTradeId && allTrades?.length > 0) {
+      const trade = allTrades.find((t) => t._id === storedTradeId);
+      if (trade) {
+        setSelectedTrade(trade);
+
+        // Check for cached analysis
+        const cacheKey = `${CACHE_KEY_PREFIX}${storedTradeId}`;
+        const cachedData = getCachedAnalysis(cacheKey);
+
+        if (cachedData) {
+          setTradeAnalysis(cachedData.tradeAnalysis);
+        }
+      }
+    }
+  }, [allTrades, getCachedAnalysis]);
+
+  // Save selected trade to localStorage when it changes
+  useEffect(() => {
+    if (selectedTrade?._id) {
+      localStorage.setItem("selected-trade-id", selectedTrade._id);
+    }
+  }, [selectedTrade]);
 
   // Memoize filtered trades
   const filteredTrades = useMemo(() => {
@@ -52,44 +81,44 @@ const SmartTradeCoaching = () => {
     if (!selectedTrade) return;
 
     setAnalyzeLoading(true);
-    setTradeAnalysis(null);
 
     try {
-      const token = localStorage.getItem("token");
-      const tradeType = selectedTrade.contractType ? "option" : "stock";
+      // Generate cache key for this analysis
+      const cacheKey = `${CACHE_KEY_PREFIX}${selectedTrade._id}`;
 
-      const response = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/ai/analyze-trade/${
-          selectedTrade._id
-        }`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({ type: tradeType }),
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error(`Server error: ${await response.text()}`);
+      // Check if we have a cached result first
+      const cachedData = getCachedAnalysis(cacheKey);
+      if (cachedData) {
+        setTradeAnalysis(cachedData.tradeAnalysis);
+        setAnalyzeLoading(false);
+        return;
       }
 
-      const data = await response.json();
+      const tradeType = selectedTrade.contractType ? "option" : "stock";
+
+      // If no cached result, make the API request
+      const data = await makeAIRequest(
+        `analyze-trade/${selectedTrade._id}`,
+        { type: tradeType },
+        cacheKey // Pass cache key to store the result
+      );
+
       if (data.success) {
         setTradeAnalysis(data.tradeAnalysis);
-
-        if (data.aiLimits) {
-          updateAILimits(data.aiLimits);
-        }
+        showToast("Trade analysis completed successfully", "success");
+      } else if (!data.isCreditsError) {
+        // Only handle non-credit errors
+        showToast("Failed to analyze trade. Please try again.", "error");
       }
     } catch (error) {
       console.error("Error analyzing trade:", error);
+      if (!error.isCreditsError) {
+        showToast("Failed to analyze trade. Please try again.", "error");
+      }
     } finally {
       setAnalyzeLoading(false);
     }
-  }, [selectedTrade]);
+  }, [selectedTrade, makeAIRequest, getCachedAnalysis]);
 
   // Format currency for display
   const formatCurrency = (value) => {
@@ -111,6 +140,22 @@ const SmartTradeCoaching = () => {
       minute: "2-digit",
     });
   };
+
+  const resetAnalysis = useCallback(() => {
+    setTradeAnalysis(null);
+    setAnalyzeLoading(false);
+
+    // Clear cache if needed
+    if (selectedTrade?._id) {
+      const cacheKey = `${CACHE_KEY_PREFIX}${selectedTrade._id}`;
+      clearCachedAnalysis(cacheKey);
+    }
+
+    // Optionally clear localStorage
+    localStorage.removeItem("selected-trade-id");
+
+    showToast("Analysis reset successfully", "success");
+  }, [selectedTrade, clearCachedAnalysis, showToast]);
 
   return (
     <div className="max-w-6xl mx-auto">

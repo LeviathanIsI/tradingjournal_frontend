@@ -8,6 +8,7 @@ import {
   useNavigate,
 } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
+import { AIProvider } from "./context/AIContext"; // Import AIProvider
 import { ToastProvider } from "./context/ToastContext";
 import { useAuth } from "./context/AuthContext";
 import { ThemeProvider } from "./context/ThemeContext";
@@ -122,15 +123,6 @@ const PublicRoute = ({ children }) => {
   return !user && !loading ? children : null;
 };
 
-<Route
-  path="/"
-  element={
-    <PublicRoute>
-      <Home />
-    </PublicRoute>
-  }
-/>;
-
 function AppRoutes() {
   const { user } = useAuth();
   return (
@@ -216,12 +208,16 @@ function App() {
       <AuthProvider>
         <ThemeProvider>
           <ToastProvider>
-            <div className="min-h-screen min-w-[320px] bg-white dark:bg-gray-800/70 text-gray-900 dark:text-gray-100">
-              <Navbar />
-              <div className="pt-16">
-                <AppRoutes />
+            <AIProvider>
+              {" "}
+              {/* Added AIProvider here */}
+              <div className="min-h-screen min-w-[320px] bg-white dark:bg-gray-800/70 text-gray-900 dark:text-gray-100">
+                <Navbar />
+                <div className="pt-16">
+                  <AppRoutes />
+                </div>
               </div>
-            </div>
+            </AIProvider>
           </ToastProvider>
         </ThemeProvider>
       </AuthProvider>

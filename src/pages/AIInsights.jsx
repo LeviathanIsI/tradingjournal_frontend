@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Routes, Route, Navigate, Link, useLocation } from "react-router-dom";
 import WeeklyReview from "../components/WeeklyReview";
 import SmartTradeCoaching from "../components/SmartTradeCoaching";
@@ -7,6 +7,7 @@ import PredictiveAnalysis from "../components/PredictiveAnalysis";
 import TradeExecutionReplay from "../components/TradeExecutionReplay";
 import TradingBotSimulator from "../components/TradingBotSimulator";
 import AICreditsInfo from "../components/AICreditsInfo";
+import { useAI } from "../context/AIContext"; // Change this line - use useAI instead of useAuth
 
 // SubNav component for AI features
 const AISubNav = () => {
@@ -60,6 +61,7 @@ const AISubNav = () => {
 };
 
 const AIInsights = () => {
+
   return (
     <div className="max-w-6xl mx-auto p-6">
       <h2 className="text-2xl font-semibold mb-4 text-gray-900 dark:text-gray-100">

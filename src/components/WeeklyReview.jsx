@@ -1,6 +1,8 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useAuth } from "../context/AuthContext";
+import { useAI } from "../context/AIContext";
 import { useTrades } from "../hooks/useTrades";
+import { useToast } from "../context/ToastContext";
 import {
   Calendar,
   Loader,
@@ -15,77 +17,220 @@ import {
   LineChart,
   AlertTriangle,
   CheckCircle,
+  RefreshCw,
 } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import AIResponseCountdown from "./AIResponseCountdown";
 
+const CACHE_KEY_PREFIX = "weekly-review-";
+
 const WeeklyReview = () => {
-  const { user, updateAILimits } = useAuth();
-  const { trades, fetchTradesForWeek, analyzeTradesForWeek } = useTrades(user);
-  const [selectedWeek, setSelectedWeek] = useState(null);
+  const { user } = useAuth();
+  const {
+    makeAIRequest,
+    getCachedAnalysis,
+    clearCachedAnalysis,
+    clearCacheWithPrefix,
+  } = useAI();
+  const { showToast } = useToast();
+  const { trades, fetchTradesForWeek } = useTrades(user);
+  const [selectedWeek, setSelectedWeek] = useState(() => {
+    return localStorage.getItem("selected-week") || null;
+  });
   const [reviewData, setReviewData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [aiAnalysis, setAiAnalysis] = useState(null);
-  const [estimatedResponseTime, setEstimatedResponseTime] = useState(20);
+  const [estimatedResponseTime] = useState(20);
 
+  // Use refs to track initialization and prevent infinite loops
+  const isInitialized = useRef(false);
+  const isFetchingTrades = useRef(false);
+  const previousSelectedWeek = useRef(selectedWeek);
+
+  // Force reset all states
+  const resetComponent = useCallback(() => {
+    // Clear all states
+    setLoading(false);
+    setAiAnalysis(null);
+    setReviewData(null);
+
+    // Clear the specific cache key if we have a selectedWeek
+    if (selectedWeek) {
+      const cacheKey = `${CACHE_KEY_PREFIX}${selectedWeek}`;
+      clearCachedAnalysis(cacheKey);
+
+      // Also clear localStorage for this week
+      localStorage.removeItem("selected-week");
+    }
+
+    // If available, clear all weekly review caches
+    if (clearCacheWithPrefix) {
+      clearCacheWithPrefix(CACHE_KEY_PREFIX);
+    }
+
+    // Reset refs
+    isInitialized.current = false;
+    isFetchingTrades.current = false;
+
+    // Clear selected week last to avoid triggering another render cycle
+    setSelectedWeek(null);
+
+    // Show toast to confirm reset
+    showToast("Analysis reset successfully", "success");
+  }, [selectedWeek, clearCachedAnalysis, clearCacheWithPrefix, showToast]);
+
+  // Initialize from cache once
+  useEffect(() => {
+    if (isInitialized.current) return;
+
+    const initializeFromCache = async () => {
+      isInitialized.current = true;
+
+      if (selectedWeek) {
+        try {
+          // Check for cached analysis
+          const cacheKey = `${CACHE_KEY_PREFIX}${selectedWeek}`;
+          const cachedData = getCachedAnalysis(cacheKey);
+
+          if (cachedData && cachedData.analysis) {
+            setAiAnalysis(cachedData.analysis);
+          }
+        } catch (error) {
+          console.error("Error initializing from cache:", error);
+          // If there's an error with the cache, reset it
+          clearCachedAnalysis(`${CACHE_KEY_PREFIX}${selectedWeek}`);
+        }
+      }
+    };
+
+    initializeFromCache();
+  }, [selectedWeek, getCachedAnalysis, clearCachedAnalysis]);
+
+  // Save selected week to localStorage when it changes
   useEffect(() => {
     if (selectedWeek) {
-      setLoading(true);
-      fetchTradesForWeek(selectedWeek).then((data) => {
-        setReviewData(data);
-        setLoading(false);
-      });
+      localStorage.setItem("selected-week", selectedWeek);
     }
   }, [selectedWeek]);
 
-  const handleStartReport = async () => {
+  // When selectedWeek changes, fetch trade data - but ONLY when it actually changes
+  useEffect(() => {
+    // Skip if no selected week or if already fetching
+    if (!selectedWeek || isFetchingTrades.current) return;
+
+    // Skip if the selected week hasn't actually changed (prevents needless refetching)
+    if (selectedWeek === previousSelectedWeek.current) return;
+
+    // Update the ref to track the current value
+    previousSelectedWeek.current = selectedWeek;
+
+    const fetchData = async () => {
+      try {
+        // Set flag first to prevent concurrent fetches
+        isFetchingTrades.current = true;
+        setLoading(true);
+
+        const data = await fetchTradesForWeek(selectedWeek);
+        if (data) {
+          setReviewData(data);
+        }
+      } catch (error) {
+        console.error("Error fetching trades:", error);
+        clearCachedAnalysis(`${CACHE_KEY_PREFIX}${selectedWeek}`);
+
+        // Show toast for trade fetch errors
+        showToast("Failed to fetch trade data for the selected week");
+      } finally {
+        // Always clear the flag when done, regardless of success/failure
+        isFetchingTrades.current = false;
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [selectedWeek, fetchTradesForWeek, clearCachedAnalysis, showToast]);
+
+  const handleStartReport = useCallback(async () => {
     if (!selectedWeek) return;
 
-    setLoading(true);
-    setAiAnalysis(null);
-
     try {
-      const weekData = await fetchTradesForWeek(selectedWeek);
-      setReviewData(weekData);
+      setLoading(true);
+      setAiAnalysis(null);
 
-      const token = localStorage.getItem("token");
-      const response = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/ai/analyze-week`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({ week: selectedWeek }),
-        }
-      );
+      // Generate cache key for this analysis
+      const cacheKey = `${CACHE_KEY_PREFIX}${selectedWeek}`;
 
-      if (!response.ok) {
-        throw new Error(`Server error: ${await response.text()}`);
+      // Check if we have a cached result first
+      const cachedData = getCachedAnalysis(cacheKey);
+      if (cachedData && cachedData.analysis) {
+        setAiAnalysis(cachedData.analysis);
+        setLoading(false);
+        return;
       }
 
-      const data = await response.json();
-      if (data.success) {
-        setAiAnalysis(data.analysis);
+      // If no cached result, make the API request
+      // Note: makeAIRequest now handles credit limit errors internally and shows toasts
+      const data = await makeAIRequest(
+        "analyze-week",
+        { week: selectedWeek },
+        cacheKey // Pass cache key to store the result
+      );
 
-        if (data.aiLimits) {
-          updateAILimits(data.aiLimits);
-        }
+      if (data && data.success && data.analysis) {
+        setAiAnalysis(data.analysis);
+        // Show success toast
+        showToast("Analysis generated successfully", "success");
+      } else if (!data.isCreditsError) {
+        throw new Error("Failed to get analysis from AI");
       }
     } catch (error) {
       console.error("Error generating AI report:", error);
+
+      // On error, clear the cache but don't fully reset
+      clearCachedAnalysis(`${CACHE_KEY_PREFIX}${selectedWeek}`);
+
+      // Only show error toast if it's not already handled as a credits error
+      if (!error.isCreditsError) {
+        showToast("Failed to generate analysis. Please try again.");
+      }
     } finally {
       setLoading(false);
+    }
+  }, [
+    selectedWeek,
+    getCachedAnalysis,
+    makeAIRequest,
+    clearCachedAnalysis,
+    showToast,
+  ]);
+
+  // Handle week selection
+  const handleWeekChange = (e) => {
+    const newWeek = e.target.value;
+    if (newWeek !== selectedWeek) {
+      // Clear analysis when changing weeks
+      setAiAnalysis(null);
+      setReviewData(null);
+      setSelectedWeek(newWeek);
     }
   };
 
   return (
     <div className="max-w-4xl mx-auto p-6 bg-white dark:bg-gray-700/60 text-gray-900 dark:text-gray-100 rounded-sm shadow-sm border border-gray-200 dark:border-gray-600/50">
-      <h2 className="text-2xl font-semibold text-gray-900 dark:text-blue-400 mb-4 border-b border-gray-200 dark:border-gray-600/50 pb-2 flex items-center">
-        <BarChart className="mr-2 h-6 w-6 text-blue-600 dark:text-blue-400" />{" "}
-        AI Trading Analysis
+      <h2 className="text-2xl font-semibold text-gray-900 dark:text-blue-400 mb-4 border-b border-gray-200 dark:border-gray-600/50 pb-2 flex items-center justify-between">
+        <div className="flex items-center">
+          <BarChart className="mr-2 h-6 w-6 text-blue-600 dark:text-blue-400" />{" "}
+          AI Trading Analysis
+        </div>
+        <button
+          onClick={resetComponent}
+          className="text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 flex items-center"
+          title="Reset analysis"
+        >
+          <RefreshCw className="h-4 w-4 mr-1" />
+          Reset
+        </button>
       </h2>
 
       <div className="flex flex-wrap items-center gap-4 mb-6">
@@ -97,7 +242,7 @@ const WeeklyReview = () => {
           type="week"
           id="week"
           value={selectedWeek || ""}
-          onChange={(e) => setSelectedWeek(e.target.value)}
+          onChange={handleWeekChange}
           className="px-3 py-2 border border-gray-300 dark:border-gray-600/70 rounded-sm bg-white dark:bg-gray-600/50 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-1 focus:border-blue-400"
         />
         <button
@@ -252,6 +397,7 @@ const WeeklyReview = () => {
                 );
               } catch (error) {
                 console.error("ReactMarkdown rendering error:", error);
+                showToast("Error rendering analysis content");
                 return (
                   <div className="text-red-600 dark:text-red-400">
                     <p>Error rendering markdown. See console for details.</p>

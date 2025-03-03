@@ -1,5 +1,6 @@
 import { useState, useCallback, useMemo, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
+import { useAI } from "../context/AIContext";
 import { useTrades } from "../hooks/useTrades";
 import {
   Search,
@@ -23,30 +24,50 @@ import {
   Crosshair,
 } from "lucide-react";
 import AIResponseCountdown from "./AIResponseCountdown";
+import { useToast } from "../context/ToastContext";
 
 const TradingBotSimulator = () => {
-  const { user, updateAILimits } = useAuth();
+  const { user } = useAuth();
+  const {
+    makeAIRequest,
+    getCachedAnalysis,
+    clearCachedAnalysis,
+    clearCacheWithPrefix,
+  } = useAI();
   const { trades: allTrades } = useTrades(user);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedSymbol, setSelectedSymbol] = useState("");
   const [timeframe, setTimeframe] = useState("Intraday");
+  const { showToast } = useToast();
   const [strategy, setStrategy] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [estimatedResponseTime, setEstimatedResponseTime] = useState(30);
+
+  // Initialize state from localStorage with error handling
   const [simulationData, setSimulationData] = useState(() => {
     try {
       const saved = localStorage.getItem("tradingSimulationData");
-      return saved ? JSON.parse(saved).simulationData : null;
+      if (!saved) return null;
+
+      const parsed = JSON.parse(saved);
+      return parsed.simulationData || null;
     } catch (e) {
+      console.error("Error loading simulation data:", e);
+      localStorage.removeItem("tradingSimulationData");
       return null;
     }
   });
+
   const [tradeHistory, setTradeHistory] = useState(() => {
     try {
       const saved = localStorage.getItem("tradingSimulationData");
-      return saved ? JSON.parse(saved).tradeHistory : null;
+      if (!saved) return null;
+
+      const parsed = JSON.parse(saved);
+      return parsed.tradeHistory || null;
     } catch (e) {
+      console.error("Error loading trade history:", e);
       return null;
     }
   });
@@ -54,13 +75,18 @@ const TradingBotSimulator = () => {
   // Add this effect to save data when it changes
   useEffect(() => {
     if (simulationData && tradeHistory) {
-      localStorage.setItem(
-        "tradingSimulationData",
-        JSON.stringify({
+      try {
+        const dataToSave = {
           simulationData,
           tradeHistory,
-        })
-      );
+        };
+        localStorage.setItem(
+          "tradingSimulationData",
+          JSON.stringify(dataToSave)
+        );
+      } catch (e) {
+        console.error("Error saving simulation data:", e);
+      }
     }
   }, [simulationData, tradeHistory]);
 
@@ -95,59 +121,70 @@ const TradingBotSimulator = () => {
     setTradeHistory(null);
 
     try {
-      const token = localStorage.getItem("token");
-      const response = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/ai/trading-bot-simulator`,
+      // Use makeAIRequest instead of direct fetch
+      const data = await makeAIRequest(
+        "trading-bot-simulator",
         {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({
-            symbol: selectedSymbol,
-            timeframe,
-            strategy,
-          }),
-        }
+          symbol: selectedSymbol,
+          timeframe,
+          strategy,
+        },
+        null,
+        { suppressToast: true }
       );
 
-      if (!response.ok) {
-        throw new Error(`Server error: ${await response.text()}`);
-      }
+      if (data && data.success) {
+        // Ensure we have the expected data structure
+        if (!data.simulation) {
+          throw new Error("Missing simulation data in API response");
+        }
 
-      const data = await response.json();
-
-      if (data.success) {
         setSimulationData(data.simulation);
         setTradeHistory(data.tradeHistory);
 
-        localStorage.setItem(
-          "tradingSimulationData",
-          JSON.stringify({
-            simulationData: data.simulation,
-            tradeHistory: data.tradeHistory,
-          })
-        );
-
-        // Update AI limits if provided
-        if (data.aiLimits) {
-          updateAILimits(data.aiLimits);
+        // Save to localStorage
+        try {
+          localStorage.setItem(
+            "tradingSimulationData",
+            JSON.stringify({
+              simulationData: data.simulation,
+              tradeHistory: data.tradeHistory,
+            })
+          );
+        } catch (e) {
+          console.error("Error saving to localStorage:", e);
         }
 
+        // Set estimated time if provided
         if (data.estimatedSeconds) {
           setEstimatedResponseTime(data.estimatedSeconds);
         }
+
+        showToast("Trading simulation generated successfully", "success");
+      } else if (data && data.isCreditsError) {
+        // Credit limit errors are already handled by makeAIRequest
       } else {
-        setError(data.error || "Failed to generate trading simulation");
+        // Only handle non-credit errors
+        setError(data?.error || "Failed to generate trading simulation");
+        showToast(
+          "Failed to generate trading simulation. Please try again.",
+          "error"
+        );
       }
     } catch (error) {
       console.error("Error generating trading simulation:", error);
-      setError(error.message);
+      // Only show error if it's not a credits error
+      if (!error.isCreditsError) {
+        setError(error.message);
+        showToast(
+          "Failed to generate trading simulation. Please try again.",
+          "error"
+        );
+      }
     } finally {
       setLoading(false);
     }
-  }, [selectedSymbol, timeframe, strategy, updateAILimits]);
+  }, [selectedSymbol, timeframe, strategy, makeAIRequest, showToast]);
 
   // Format currency for display
   const formatCurrency = (value) => {
@@ -158,11 +195,22 @@ const TradingBotSimulator = () => {
     }).format(value);
   };
 
-  const resetSimulation = () => {
+  const resetSimulation = useCallback(() => {
     setSimulationData(null);
     setTradeHistory(null);
+    setError(null);
+    setLoading(false);
+
+    // Clear all related caches
+    if (clearCacheWithPrefix) {
+      clearCacheWithPrefix("trading-bot-simulator");
+    }
+
+    // Clear localStorage
     localStorage.removeItem("tradingSimulationData");
-  };
+
+    showToast("Simulation reset successfully", "success");
+  }, [clearCacheWithPrefix, showToast]);
 
   return (
     <div className="max-w-6xl mx-auto">
@@ -556,6 +604,7 @@ const TradingBotSimulator = () => {
           </div>
         </div>
       )}
+
       {simulationData && (
         <div className="mt-6 flex justify-center">
           <button

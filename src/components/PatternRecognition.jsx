@@ -1,5 +1,6 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
+import { useAI } from "../context/AIContext";
 import {
   Loader,
   BarChart2,
@@ -10,71 +11,113 @@ import {
   Lightbulb,
   ArrowUp,
   ArrowDown,
+  RefreshCw,
 } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import AIResponseCountdown from "./AIResponseCountdown";
+import { useToast } from "../context/ToastContext";
+
+const CACHE_KEY = "pattern-recognition";
 
 const PatternRecognition = () => {
-  const { user, updateAILimits } = useAuth();
-  // CHANGE: Set loading to false initially
+  const { user } = useAuth();
+  const { makeAIRequest, getCachedAnalysis, clearCachedAnalysis } = useAI();
   const [loading, setLoading] = useState(false);
-  // ADD: New state to track if analysis has been requested
   const [analysisStarted, setAnalysisStarted] = useState(false);
   const [patternAnalysis, setPatternAnalysis] = useState(null);
   const [patternData, setPatternData] = useState(null);
+  const { showToast } = useToast();
   const [error, setError] = useState(null);
   const [activeTab, setActiveTab] = useState("symbols");
   const [estimatedResponseTime, setEstimatedResponseTime] = useState(30);
 
+  // Check if there's cached data on component mount
+  useEffect(() => {
+    const checkCache = async () => {
+      try {
+        const hasStarted =
+          localStorage.getItem("pattern-analysis-started") === "true";
+        if (hasStarted) {
+          setAnalysisStarted(true);
+          const cachedData = getCachedAnalysis(CACHE_KEY);
+
+          if (cachedData && cachedData.analysis) {
+            setPatternAnalysis(cachedData.analysis);
+            setPatternData(cachedData.data);
+          } else {
+            // If analysis was started but there's no valid cache, reset the flag
+            localStorage.removeItem("pattern-analysis-started");
+            setAnalysisStarted(false);
+          }
+        }
+      } catch (error) {
+        console.error("Error checking cache:", error);
+        localStorage.removeItem("pattern-analysis-started");
+        setAnalysisStarted(false);
+      }
+    };
+
+    checkCache();
+  }, [getCachedAnalysis]);
+
   const fetchPatternAnalysis = useCallback(async () => {
     try {
       setLoading(true);
-      // ADD: Set analysisStarted to true when fetch begins
       setAnalysisStarted(true);
+      localStorage.setItem("pattern-analysis-started", "true");
+      setError(null);
+      setPatternAnalysis(null);
+      setPatternData(null);
 
-      const token = localStorage.getItem("token");
-
-      const response = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/ai/pattern-analysis`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error(`Server error: ${await response.text()}`);
+      // Check for cached data first
+      const cachedData = getCachedAnalysis(CACHE_KEY);
+      if (cachedData && cachedData.analysis) {
+        setPatternAnalysis(cachedData.analysis);
+        setPatternData(cachedData.data);
+        setLoading(false);
+        return;
       }
 
-      const data = await response.json();
-      if (data.success) {
+      // Use makeAIRequest with suppressToast option
+      const data = await makeAIRequest("pattern-analysis", {}, CACHE_KEY, {
+        suppressToast: true,
+      });
+
+      if (data && data.success) {
         setPatternAnalysis(data.analysis);
         setPatternData(data.data);
-
-        if (data.aiLimits) {
-          updateAILimits(data.aiLimits);
-        }
+        showToast("Pattern analysis generated successfully", "success");
+      } else if (data && data.isCreditsError) {
+        // Credit limit error already handled by AIContext
+        localStorage.removeItem("pattern-analysis-started");
+        setAnalysisStarted(false);
       } else {
-        setError(data.error || "Failed to analyze trading patterns");
+        // Handle other errors
+        setError(data?.error || "Failed to analyze trading patterns");
+        localStorage.removeItem("pattern-analysis-started");
+        setAnalysisStarted(false);
+        showToast(
+          "Failed to analyze trading patterns. Please try again.",
+          "error"
+        );
       }
     } catch (error) {
       console.error("Error fetching pattern analysis:", error);
-      setError(error.message);
+      localStorage.removeItem("pattern-analysis-started");
+      setAnalysisStarted(false);
+
+      if (!error.isCreditsError) {
+        setError(error.message);
+        showToast(
+          "Failed to generate pattern analysis. Please try again.",
+          "error"
+        );
+      }
     } finally {
       setLoading(false);
     }
-  }, [user]);
-
-  // ADD: Function to reset analysis
-  const resetAnalysis = () => {
-    setPatternAnalysis(null);
-    setPatternData(null);
-    setError(null);
-    setAnalysisStarted(false);
-  };
+  }, [makeAIRequest, getCachedAnalysis, showToast]);
 
   // Function to format currency
   const formatCurrency = (value) => {
@@ -95,7 +138,20 @@ const PatternRecognition = () => {
     { id: "holdingTime", label: "Holding Time", icon: TrendingUp },
   ];
 
-  // CHANGE: Completely replace the return statement with this version
+  const resetAnalysis = useCallback(() => {
+    setPatternAnalysis(null);
+    setPatternData(null);
+    setError(null);
+    setAnalysisStarted(false);
+    localStorage.removeItem("pattern-analysis-started");
+
+    // Also clear any cached data
+    if (typeof clearCachedAnalysis === "function") {
+      clearCachedAnalysis(CACHE_KEY);
+    }
+    localStorage.removeItem(CACHE_KEY);
+  }, [clearCachedAnalysis]);
+
   return (
     <div className="max-w-6xl mx-auto">
       <h2 className="text-2xl font-semibold text-gray-900 dark:text-gray-100 mb-6">
@@ -103,7 +159,7 @@ const PatternRecognition = () => {
       </h2>
 
       {/* Show button when analysis hasn't been started */}
-      {!analysisStarted && (
+      {!analysisStarted && !loading && (
         <div className="bg-white dark:bg-gray-700/60 rounded-md border border-gray-200 dark:border-gray-600/50 shadow-sm p-8 text-center mb-6">
           <Lightbulb className="h-12 w-12 mx-auto mb-4 text-blue-400 dark:text-blue-500" />
           <p className="text-lg text-gray-800 dark:text-gray-200 mb-3">
@@ -137,13 +193,22 @@ const PatternRecognition = () => {
       ) : analysisStarted && error ? (
         // Only show error if analysis was started
         <div className="bg-red-50 dark:bg-red-700/30 p-4 rounded-sm border border-red-100 dark:border-red-600/50 text-red-600 dark:text-red-300">
-          {error}
-          <button
-            onClick={resetAnalysis}
-            className="mt-4 px-4 py-2 bg-red-100 dark:bg-red-700/40 text-red-700 dark:text-red-300 rounded-sm"
-          >
-            Try Again
-          </button>
+          <p className="font-medium mb-2">Error:</p>
+          <p className="mb-4">{error}</p>
+          <div className="flex space-x-4">
+            <button
+              onClick={fetchPatternAnalysis}
+              className="px-4 py-2 bg-blue-100 dark:bg-blue-700/40 text-blue-700 dark:text-blue-300 rounded-sm"
+            >
+              Try Again
+            </button>
+            <button
+              onClick={resetAnalysis}
+              className="px-4 py-2 bg-red-100 dark:bg-red-700/40 text-red-700 dark:text-red-300 rounded-sm"
+            >
+              Reset
+            </button>
+          </div>
         </div>
       ) : analysisStarted && patternAnalysis ? (
         // Only show results if analysis was started and completed
@@ -155,7 +220,13 @@ const PatternRecognition = () => {
                 <h3 className="font-semibold text-gray-800 dark:text-gray-200">
                   Performance Metrics
                 </h3>
-                <Lightbulb className="h-5 w-5 text-yellow-500" />
+                <button
+                  onClick={fetchPatternAnalysis}
+                  className="text-blue-500 dark:text-blue-400 hover:text-blue-600 dark:hover:text-blue-300"
+                  title="Refresh analysis"
+                >
+                  <RefreshCw className="h-4 w-4" />
+                </button>
               </div>
 
               {/* Tabs navigation */}
@@ -176,9 +247,9 @@ const PatternRecognition = () => {
                 ))}
               </div>
 
-              {/* Tab content */}
+              {/* Tab content - Check if data exists for each tab */}
               <div className="overflow-y-auto max-h-96">
-                {activeTab === "symbols" && patternData?.symbolStats && (
+                {activeTab === "symbols" && patternData?.symbolStats ? (
                   <div className="space-y-3">
                     {patternData.symbolStats.map((stat, idx) => (
                       <div
@@ -214,9 +285,13 @@ const PatternRecognition = () => {
                       </div>
                     ))}
                   </div>
-                )}
+                ) : activeTab === "symbols" ? (
+                  <div className="p-4 text-center text-gray-500 dark:text-gray-400">
+                    No symbol data available
+                  </div>
+                ) : null}
 
-                {activeTab === "setups" && patternData?.setupStats && (
+                {activeTab === "setups" && patternData?.setupStats ? (
                   <div className="space-y-3">
                     {patternData.setupStats.map((stat, idx) => (
                       <div
@@ -252,9 +327,13 @@ const PatternRecognition = () => {
                       </div>
                     ))}
                   </div>
-                )}
+                ) : activeTab === "setups" ? (
+                  <div className="p-4 text-center text-gray-500 dark:text-gray-400">
+                    No setup data available
+                  </div>
+                ) : null}
 
-                {activeTab === "timeOfDay" && patternData?.timeOfDayStats && (
+                {activeTab === "timeOfDay" && patternData?.timeOfDayStats ? (
                   <div className="space-y-3">
                     {patternData.timeOfDayStats.map((stat, idx) => (
                       <div
@@ -292,9 +371,13 @@ const PatternRecognition = () => {
                       </div>
                     ))}
                   </div>
-                )}
+                ) : activeTab === "timeOfDay" ? (
+                  <div className="p-4 text-center text-gray-500 dark:text-gray-400">
+                    No time of day data available
+                  </div>
+                ) : null}
 
-                {activeTab === "dayOfWeek" && patternData?.dayOfWeekStats && (
+                {activeTab === "dayOfWeek" && patternData?.dayOfWeekStats ? (
                   <div className="space-y-3">
                     {patternData.dayOfWeekStats.map((stat, idx) => (
                       <div
@@ -330,46 +413,54 @@ const PatternRecognition = () => {
                       </div>
                     ))}
                   </div>
-                )}
+                ) : activeTab === "dayOfWeek" ? (
+                  <div className="p-4 text-center text-gray-500 dark:text-gray-400">
+                    No day of week data available
+                  </div>
+                ) : null}
 
                 {activeTab === "holdingTime" &&
-                  patternData?.holdingTimeStats && (
-                    <div className="space-y-3">
-                      {patternData.holdingTimeStats.map((stat, idx) => (
-                        <div
-                          key={idx}
-                          className="p-2 rounded-sm bg-gray-50 dark:bg-gray-600/40 flex justify-between items-center"
-                        >
-                          <div>
-                            <div className="font-medium">{stat.duration}</div>
-                            <div className="text-xs text-gray-500 dark:text-gray-400">
-                              {stat.count} trades
-                            </div>
-                          </div>
-                          <div className="text-right">
-                            <div
-                              className={
-                                parseFloat(stat.winRate) >= 50
-                                  ? "text-green-600 dark:text-green-400 font-semibold"
-                                  : "text-red-600 dark:text-red-400 font-semibold"
-                              }
-                            >
-                              {stat.winRate}% Win
-                            </div>
-                            <div
-                              className={
-                                parseFloat(stat.profit) >= 0
-                                  ? "text-green-600 dark:text-green-400 text-xs"
-                                  : "text-red-600 dark:text-red-400 text-xs"
-                              }
-                            >
-                              {formatCurrency(stat.profit)}
-                            </div>
+                patternData?.holdingTimeStats ? (
+                  <div className="space-y-3">
+                    {patternData.holdingTimeStats.map((stat, idx) => (
+                      <div
+                        key={idx}
+                        className="p-2 rounded-sm bg-gray-50 dark:bg-gray-600/40 flex justify-between items-center"
+                      >
+                        <div>
+                          <div className="font-medium">{stat.duration}</div>
+                          <div className="text-xs text-gray-500 dark:text-gray-400">
+                            {stat.count} trades
                           </div>
                         </div>
-                      ))}
-                    </div>
-                  )}
+                        <div className="text-right">
+                          <div
+                            className={
+                              parseFloat(stat.winRate) >= 50
+                                ? "text-green-600 dark:text-green-400 font-semibold"
+                                : "text-red-600 dark:text-red-400 font-semibold"
+                            }
+                          >
+                            {stat.winRate}% Win
+                          </div>
+                          <div
+                            className={
+                              parseFloat(stat.profit) >= 0
+                                ? "text-green-600 dark:text-green-400 text-xs"
+                                : "text-red-600 dark:text-red-400 text-xs"
+                            }
+                          >
+                            {formatCurrency(stat.profit)}
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : activeTab === "holdingTime" ? (
+                  <div className="p-4 text-center text-gray-500 dark:text-gray-400">
+                    No holding time data available
+                  </div>
+                ) : null}
               </div>
             </div>
           </div>
@@ -445,6 +536,18 @@ const PatternRecognition = () => {
           </div>
         </div>
       ) : null}
+
+      {/* Add a reset button when analysis is complete */}
+      {analysisStarted && patternAnalysis && (
+        <div className="mt-8 text-center">
+          <button
+            onClick={resetAnalysis}
+            className="px-4 py-2 bg-gray-200 dark:bg-gray-600/50 text-gray-700 dark:text-gray-300 rounded-sm border border-gray-300 dark:border-gray-600/70 hover:bg-gray-300 dark:hover:bg-gray-600"
+          >
+            Reset Analysis
+          </button>
+        </div>
+      )}
     </div>
   );
 };

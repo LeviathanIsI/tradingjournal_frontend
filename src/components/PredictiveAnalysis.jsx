@@ -1,6 +1,7 @@
 import { useState, useCallback, useMemo } from "react";
 import { useAuth } from "../context/AuthContext";
 import { useTrades } from "../hooks/useTrades";
+import { useAI } from "../context/AIContext";
 import {
   Search,
   Loader,
@@ -20,6 +21,7 @@ import {
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import AIResponseCountdown from "./AIResponseCountdown";
+import { useToast } from "../context/ToastContext";
 
 const SCENARIOS = [
   {
@@ -57,7 +59,9 @@ const SCENARIOS = [
 const PredictiveAnalysis = () => {
   const { user, updateAILimits } = useAuth();
   const { trades: allTrades } = useTrades(user);
+  const { makeAIRequest, getCachedAnalysis, clearCachedAnalysis } = useAI();
   const [searchQuery, setSearchQuery] = useState("");
+  const { showToast } = useToast();
   const [selectedTrade, setSelectedTrade] = useState(null);
   const [selectedScenario, setSelectedScenario] = useState(SCENARIOS[0]);
   const [analysis, setAnalysis] = useState(null);
@@ -96,47 +100,42 @@ const PredictiveAnalysis = () => {
     setError(null);
 
     try {
-      const token = localStorage.getItem("token");
       const tradeType = selectedTrade.contractType ? "option" : "stock";
 
-      const response = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/ai/predictive-analysis`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({
-            tradeId: selectedTrade._id,
-            type: tradeType,
-            scenario: selectedScenario.id,
-          }),
-        }
-      );
+      // Use makeAIRequest instead of direct fetch
+      const data = await makeAIRequest("predictive-analysis", {
+        tradeId: selectedTrade._id,
+        type: tradeType,
+        scenario: selectedScenario.id,
+      });
 
-      if (!response.ok) {
-        throw new Error(`Server error: ${await response.text()}`);
-      }
-
-      const data = await response.json();
-      if (data.success) {
+      if (data && data.success) {
         setAnalysis(data.analysis);
         setTradeDetails(data.tradeDetails);
+        showToast("Analysis completed successfully", "success");
 
-        if (data.aiLimits) {
-          updateAILimits(data.aiLimits);
-        }
+        // AIContext automatically handles updating AI limits if they're in the response
+      } else if (data && data.isCreditsError) {
+        // Credit limit errors are already handled by makeAIRequest
+        // Just reset the UI state
+        setAnalysisStarted(false);
       } else {
-        setError(data.error || "Failed to analyze trade scenarios");
+        // Handle other errors
+        setError(data?.error || "Failed to analyze trade scenarios");
+        showToast("Failed to analyze trade scenarios", "error");
       }
     } catch (error) {
-      console.error("Error analyzing trade scenarios:", error);
-      setError(error.message);
+      console.error("Error generating prediction:", error);
+      if (!error.isCreditsError) {
+        const errorMsg = error.message || "An unexpected error occurred";
+        setError(errorMsg);
+        showToast(errorMsg, "error");
+      }
+      setAnalysisStarted(false);
     } finally {
       setLoading(false);
     }
-  }, [selectedTrade, selectedScenario]);
+  }, [selectedTrade, selectedScenario, makeAIRequest, showToast]);
 
   // Reset analysis
   const resetAnalysis = () => {
