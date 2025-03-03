@@ -133,26 +133,66 @@ const TradingBotSimulator = () => {
         { suppressToast: true }
       );
 
+      // Enhanced error handling and data validation
       if (data && data.success) {
-        // Ensure we have the expected data structure
-        if (!data.simulation) {
-          throw new Error("Missing simulation data in API response");
+        // First check if we have at least some usable data
+        if (!data.simulation && !data.tradeHistory) {
+          console.error("Missing expected data in API response:", data);
+          throw new Error("API response is missing required data structure");
         }
 
-        setSimulationData(data.simulation);
-        setTradeHistory(data.tradeHistory);
+        // Set simulation data if available, create a minimal structure if not
+        if (data.simulation) {
+          setSimulationData(data.simulation);
+        } else if (data.tradeHistory) {
+          // Create a minimal simulation structure if we at least have trade history
+          setSimulationData({
+            optimalEntryStrategy:
+              "No optimal strategy provided by API. Please try again or check with different parameters.",
+            positionSizing: {
+              recommendation:
+                "Insufficient data for position sizing recommendation.",
+              rationale:
+                "The API response didn't include detailed position sizing information.",
+            },
+            stopLossStrategy: {
+              recommendation:
+                "Implement a standard 2% stop loss until more detailed analysis is available.",
+              rationale:
+                "Using standard risk management practices when specific data is unavailable.",
+            },
+          });
+        }
 
-        // Save to localStorage
-        try {
-          localStorage.setItem(
-            "tradingSimulationData",
-            JSON.stringify({
-              simulationData: data.simulation,
-              tradeHistory: data.tradeHistory,
-            })
-          );
-        } catch (e) {
-          console.error("Error saving to localStorage:", e);
+        // Set trade history if available
+        if (data.tradeHistory) {
+          setTradeHistory(data.tradeHistory);
+        } else if (data.simulation) {
+          // Create a minimal trade history if we at least have simulation data
+          setTradeHistory({
+            totalTrades: 0,
+            winRate: 0,
+            avgWin: 0,
+            avgLoss: 0,
+          });
+        }
+
+        // Only save to localStorage if we have at least one of the data structures
+        if (
+          (data.simulation || setSimulationData) &&
+          (data.tradeHistory || setTradeHistory)
+        ) {
+          try {
+            localStorage.setItem(
+              "tradingSimulationData",
+              JSON.stringify({
+                simulationData: data.simulation || simulationData,
+                tradeHistory: data.tradeHistory || tradeHistory,
+              })
+            );
+          } catch (e) {
+            console.error("Error saving to localStorage:", e);
+          }
         }
 
         // Set estimated time if provided
@@ -164,10 +204,14 @@ const TradingBotSimulator = () => {
       } else if (data && data.isCreditsError) {
         // Credit limit errors are already handled by makeAIRequest
       } else {
-        // Only handle non-credit errors
-        setError(data?.error || "Failed to generate trading simulation");
+        // Handle detailed error information
+        const errorMessage =
+          data?.error || "Failed to generate trading simulation";
+        setError(errorMessage);
+
+        console.error("API Error details:", data);
         showToast(
-          "Failed to generate trading simulation. Please try again.",
+          `Failed to generate trading simulation: ${errorMessage}`,
           "error"
         );
       }
@@ -175,16 +219,26 @@ const TradingBotSimulator = () => {
       console.error("Error generating trading simulation:", error);
       // Only show error if it's not a credits error
       if (!error.isCreditsError) {
-        setError(error.message);
+        setError(error.message || "Unknown error occurred");
         showToast(
-          "Failed to generate trading simulation. Please try again.",
+          `Failed to generate trading simulation: ${
+            error.message || "Unknown error"
+          }`,
           "error"
         );
       }
     } finally {
       setLoading(false);
     }
-  }, [selectedSymbol, timeframe, strategy, makeAIRequest, showToast]);
+  }, [
+    selectedSymbol,
+    timeframe,
+    strategy,
+    makeAIRequest,
+    showToast,
+    simulationData,
+    tradeHistory,
+  ]);
 
   // Format currency for display
   const formatCurrency = (value) => {

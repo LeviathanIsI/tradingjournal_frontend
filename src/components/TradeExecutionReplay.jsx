@@ -160,32 +160,98 @@ const TradeExecutionReplay = () => {
       );
 
       if (data && data.success) {
-        setAnalysis(data.analysis);
-        setTradeDetails(data.tradeDetails);
-        setTradeTimeline(data.timeline || []);
-        showToast("Trade execution analysis generated successfully", "success");
+        // Enhanced data validation and fallback handling
+        // Set analysis with fallback for missing data
+        if (data.analysis) {
+          setAnalysis(data.analysis);
+        } else {
+          console.warn("Missing analysis data in API response");
+          // Create a minimal analysis structure
+          setAnalysis({
+            summary:
+              "The AI couldn't generate a complete analysis for this trade. Please try again or select a different trade.",
+            keyTakeaways: [],
+            improvements: [],
+          });
+        }
+
+        // Set trade details with fallback for missing data
+        if (data.tradeDetails) {
+          setTradeDetails(data.tradeDetails);
+        } else {
+          console.warn("Missing trade details in API response");
+          // Create minimal trade details from selected trade
+          setTradeDetails({
+            symbol: selectedTrade.symbol || selectedTrade.ticker,
+            entryPrice: selectedTrade.entryPrice,
+            exitPrice: selectedTrade.exitPrice,
+            profitLoss: selectedTrade.profitLoss?.realized || 0,
+            tradeType: selectedTrade.contractType ? "Option" : "Stock",
+            decisionTime: "-",
+          });
+        }
+
+        // Set timeline with fallback for missing data
+        if (data.timeline && data.timeline.length > 0) {
+          setTradeTimeline(data.timeline);
+        } else {
+          console.warn("Missing timeline data in API response");
+          // Create a minimal timeline with entry/exit events
+          const minimalTimeline = [
+            {
+              title: "Trade Entry",
+              actionType: "entry",
+              timestamp: selectedTrade.entryDate,
+              description: `Entered ${
+                selectedTrade.symbol || selectedTrade.ticker
+              } at ${selectedTrade.entryPrice}`,
+              insight: "Limited data available for detailed timeline.",
+            },
+          ];
+
+          // Add exit point if trade is closed
+          if (selectedTrade.exitDate) {
+            minimalTimeline.push({
+              title: "Trade Exit",
+              actionType: "exit",
+              timestamp: selectedTrade.exitDate,
+              description: `Exited ${
+                selectedTrade.symbol || selectedTrade.ticker
+              } at ${selectedTrade.exitPrice || "unknown price"}`,
+              insight: "Limited data available for detailed timeline.",
+            });
+          }
+
+          setTradeTimeline(minimalTimeline);
+        }
 
         // Update estimated time if provided
         if (data.tradeDetails && data.tradeDetails.estimatedSeconds) {
           setEstimatedResponseTime(data.tradeDetails.estimatedSeconds);
         }
+
+        showToast("Trade execution analysis generated successfully", "success");
       } else if (data && data.isCreditsError) {
         // Credit limit error already handled
         // Just don't show additional errors
       } else {
         // Handle other errors
-        setError(data?.error || "Failed to analyze trade execution");
+        const errorMessage = data?.error || "Failed to analyze trade execution";
+        console.error("API Error:", data);
+        setError(errorMessage);
         showToast(
-          "Failed to analyze trade execution. Please try again.",
+          `Failed to analyze trade execution: ${errorMessage}`,
           "error"
         );
       }
     } catch (error) {
       console.error("Error analyzing trade execution:", error);
       if (!error.isCreditsError) {
-        setError(error.message);
+        setError(error.message || "An unexpected error occurred");
         showToast(
-          "Failed to analyze trade execution. Please try again.",
+          `Failed to analyze trade execution: ${
+            error.message || "Please try again."
+          }`,
           "error"
         );
       }

@@ -22,7 +22,7 @@ const CACHE_KEY_PREFIX = "trade-coaching-";
 
 const SmartTradeCoaching = () => {
   const { user } = useAuth();
-  const { makeAIRequest, getCachedAnalysis, clearCachedAnalysis } = useAI();
+  const { makeAIRequest, getCachedAnalysis } = useAI();
   const { trades: allTrades } = useTrades(user);
   const { showToast } = useToast();
   const [searchQuery, setSearchQuery] = useState("");
@@ -30,7 +30,6 @@ const SmartTradeCoaching = () => {
   const [tradeAnalysis, setTradeAnalysis] = useState(null);
   const [analyzeLoading, setAnalyzeLoading] = useState(false);
   const [estimatedResponseTime, setEstimatedResponseTime] = useState(20);
-  const [selectedScenario, setSelectedScenario] = useState(null);
 
   // Restore state from localStorage/cache on initial load
   useEffect(() => {
@@ -104,20 +103,20 @@ const SmartTradeCoaching = () => {
       );
 
       if (data.success) {
-        setTradeAnalysis(data.tradeAnalysis);
-        showToast("Trade analysis completed successfully", "success");
-      } else if (!data.isCreditsError) {
-        // Only handle non-credit errors
-        showToast("Failed to analyze trade. Please try again.", "error");
-      }
-    } catch (error) {
-      console.error("Error analyzing trade:", error);
-      if (!error.isCreditsError) {
-        showToast("Failed to analyze trade. Please try again.", "error");
-      }
-    } finally {
-      setAnalyzeLoading(false);
-    }
+    setTradeAnalysis(data.tradeAnalysis);
+    showToast("Trade analysis completed successfully", "success");
+  } else if (!data.isCreditsError) {
+    // Only handle non-credit errors
+    showToast("Failed to analyze trade. Please try again.", "error");
+  }
+} catch (error) {
+  console.error("Error analyzing trade:", error);
+  if (!error.isCreditsError) {
+    showToast("Failed to analyze trade. Please try again.", "error");
+  }
+} finally {
+  setAnalyzeLoading(false);
+}
   }, [selectedTrade, makeAIRequest, getCachedAnalysis]);
 
   // Format currency for display
@@ -140,22 +139,6 @@ const SmartTradeCoaching = () => {
       minute: "2-digit",
     });
   };
-
-  const resetAnalysis = useCallback(() => {
-    setTradeAnalysis(null);
-    setAnalyzeLoading(false);
-
-    // Clear cache if needed
-    if (selectedTrade?._id) {
-      const cacheKey = `${CACHE_KEY_PREFIX}${selectedTrade._id}`;
-      clearCachedAnalysis(cacheKey);
-    }
-
-    // Optionally clear localStorage
-    localStorage.removeItem("selected-trade-id");
-
-    showToast("Analysis reset successfully", "success");
-  }, [selectedTrade, clearCachedAnalysis, showToast]);
 
   return (
     <div className="max-w-6xl mx-auto">
