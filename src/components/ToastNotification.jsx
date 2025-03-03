@@ -17,19 +17,19 @@ const ToastNotification = ({ message, type = "success", onClose }) => {
           className={`
           ${
             type === "success"
-              ? "bg-green-100 border-green-500 text-green-700"
+              ? "bg-green-200 border-green-600 text-green-900 dark:bg-green-700/40 dark:border-green-400 dark:text-green-200"
               : type === "error"
-              ? "bg-red-100 border-red-500 text-red-700"
-              : "bg-blue-100 border-blue-500 text-blue-700"
+              ? "bg-red-200 border-red-600 text-red-900 dark:bg-red-700/40 dark:border-red-400 dark:text-red-200"
+              : "bg-blue-200 border-blue-600 text-blue-900 dark:bg-blue-700/40 dark:border-blue-400 dark:text-blue-200"
           } 
-          border-l-4 p-4 rounded shadow-lg max-w-md mx-auto
+          border-l-4 p-4 rounded-md shadow-lg max-w-md mx-auto transition-all duration-300
         `}
         >
           <div className="flex justify-between items-center gap-4">
             <div className="flex-grow font-medium">{message}</div>
             <button
               onClick={onClose}
-              className="p-1 text-2xl text-gray-400 hover:text-gray-600 transition-colors"
+              className="p-1 text-2xl text-gray-500 hover:text-gray-700 dark:text-gray-300 dark:hover:text-gray-100 transition-colors"
               aria-label="Close notification"
             >
               ×

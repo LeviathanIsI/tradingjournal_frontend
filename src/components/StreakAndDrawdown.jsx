@@ -44,7 +44,7 @@ const StreakAndDrawdown = ({ trades }) => {
 
   return (
     <div className="space-y-4">
-      <div className="bg-gray-100 dark:bg-gray-800 p-3 rounded-md">
+      <div className="bg-gray-100 dark:bg-gray-600/30 p-3 rounded-sm border border-gray-200 dark:border-gray-600/50">
         <p className="text-sm text-gray-900 dark:text-gray-100">
           Understanding your performance patterns:
         </p>
@@ -66,24 +66,24 @@ const StreakAndDrawdown = ({ trades }) => {
             Winning Streaks
           </h3>
           <div className="grid grid-cols-1 gap-3 sm:gap-4">
-            <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-3 sm:p-4">
-              <h4 className="text-xs sm:text-sm font-medium text-gray-500 dark:text-gray-400">
+            <div className="bg-white dark:bg-gray-700/60 rounded-md border border-gray-200 dark:border-gray-600/50 p-3 sm:p-4 shadow-sm">
+              <h4 className="text-xs sm:text-sm font-medium text-gray-500 dark:text-gray-300">
                 Current Win Streak
               </h4>
               <p className="mt-1 text-xl sm:text-2xl font-semibold text-green-600 dark:text-green-400">
                 {stats.currentStreak} days
               </p>
             </div>
-            <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-3 sm:p-4">
-              <h4 className="text-xs sm:text-sm font-medium text-gray-500 dark:text-gray-400">
+            <div className="bg-white dark:bg-gray-700/60 rounded-md border border-gray-200 dark:border-gray-600/50 p-3 sm:p-4 shadow-sm">
+              <h4 className="text-xs sm:text-sm font-medium text-gray-500 dark:text-gray-300">
                 Longest Win Streak
               </h4>
               <p className="mt-1 text-xl sm:text-2xl font-semibold text-gray-900 dark:text-gray-100">
                 {stats.longestStreak} days
               </p>
             </div>
-            <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-3 sm:p-4">
-              <h4 className="text-xs sm:text-sm font-medium text-gray-500 dark:text-gray-400">
+            <div className="bg-white dark:bg-gray-700/60 rounded-md border border-gray-200 dark:border-gray-600/50 p-3 sm:p-4 shadow-sm">
+              <h4 className="text-xs sm:text-sm font-medium text-gray-500 dark:text-gray-300">
                 Average Win Streak
               </h4>
               <p className="mt-1 text-xl sm:text-2xl font-semibold text-gray-900 dark:text-gray-100">
@@ -99,28 +99,28 @@ const StreakAndDrawdown = ({ trades }) => {
             Drawdown Analysis
           </h3>
           <div className="grid grid-cols-1 gap-3 sm:gap-4">
-            <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-3 sm:p-4">
-              <h4 className="text-xs sm:text-sm font-medium text-gray-500 dark:text-gray-400">
+            <div className="bg-white dark:bg-gray-700/60 rounded-md border border-gray-200 dark:border-gray-600/50 p-3 sm:p-4 shadow-sm">
+              <h4 className="text-xs sm:text-sm font-medium text-gray-500 dark:text-gray-300">
                 Max Consecutive Losses
               </h4>
               <p className="mt-1 text-xl sm:text-2xl font-semibold text-red-600 dark:text-red-400">
                 {stats.maxConsecutiveLosses} trades
               </p>
             </div>
-            <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-3 sm:p-4">
-              <h4 className="text-xs sm:text-sm font-medium text-gray-500 dark:text-gray-400">
+            <div className="bg-white dark:bg-gray-700/60 rounded-md border border-gray-200 dark:border-gray-600/50 p-3 sm:p-4 shadow-sm">
+              <h4 className="text-xs sm:text-sm font-medium text-gray-500 dark:text-gray-300">
                 Maximum Drawdown
               </h4>
               <p className="mt-1 text-xl sm:text-2xl font-semibold text-red-600 dark:text-red-400">
                 ${Math.abs(stats.maxDrawdown).toFixed(2)}
               </p>
-              <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mt-1">
+              <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-300 mt-1">
                 {((stats.maxDrawdown / stats.peakEquity) * 100).toFixed(1)}%
                 from peak
               </p>
             </div>
-            <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-3 sm:p-4">
-              <h4 className="text-xs sm:text-sm font-medium text-gray-500 dark:text-gray-400">
+            <div className="bg-white dark:bg-gray-700/60 rounded-md border border-gray-200 dark:border-gray-600/50 p-3 sm:p-4 shadow-sm">
+              <h4 className="text-xs sm:text-sm font-medium text-gray-500 dark:text-gray-300">
                 Current Status
               </h4>
               <div className="mt-1">

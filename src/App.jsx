@@ -20,9 +20,11 @@ import TradePlanning from "./pages/TradePlanning";
 import Community from "./pages/Community";
 import Traders from "./components/Traders";
 import ForgotPassword from "./pages/ForgotPassword";
+import WeeklyReview from "./components/WeeklyReview.jsx";
 import GoogleAuthSuccess from "./pages/GoogleAuthSuccess";
 import Pricing from "./components/Pricing";
 import Profile from "./components/Profile";
+import AIInsights from "./pages/AIInsights";
 import { PrivacyPolicy, TermsOfService } from "./pages/PrivacyPolicy.jsx";
 
 const SubscriptionRoute = ({ children }) => {
@@ -102,14 +104,16 @@ const ProtectedRoute = ({ children }) => {
 // Update the PublicRoute component
 const PublicRoute = ({ children }) => {
   const { user, subscription, loading, isSubscriptionLoading } = useAuth();
-  const location = useLocation();
   const navigate = useNavigate();
 
   useEffect(() => {
     if (!loading && !isSubscriptionLoading && user) {
-      if (subscription?.active) {
+      if (subscription?.active && window.location.pathname !== "/dashboard") {
         navigate("/dashboard", { replace: true });
-      } else {
+      } else if (
+        !subscription?.active &&
+        window.location.pathname !== `/profile/${user.username}`
+      ) {
         navigate(`/profile/${user.username}`, { replace: true });
       }
     }
@@ -212,7 +216,7 @@ function App() {
       <AuthProvider>
         <ThemeProvider>
           <ToastProvider>
-            <div className="min-h-screen min-w-[320px] bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100">
+            <div className="min-h-screen min-w-[320px] bg-white dark:bg-gray-800/70 text-gray-900 dark:text-gray-100">
               <Navbar />
               <div className="pt-16">
                 <AppRoutes />

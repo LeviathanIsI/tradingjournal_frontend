@@ -35,7 +35,7 @@ const CommunityNav = () => {
   };
 
   return (
-    <nav className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 sticky top-0 z-10">
+    <nav className="bg-white dark:bg-gray-700/80 border-b border-gray-200 dark:border-gray-600/50 sticky top-0 z-10">
       <div className="max-w-screen-2xl mx-auto overflow-x-auto scrollbar-none">
         <div className="flex justify-start sm:justify-center min-w-max px-2 sm:px-0">
           {navItems.map((item) => {

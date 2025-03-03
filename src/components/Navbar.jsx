@@ -3,13 +3,18 @@ import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Menu, X, Settings } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
+import { useTheme } from "../context/ThemeContext";
 import logo from "../assets/logo.svg";
 import ThemeSwitcher from "./ThemeSwitcher";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
-  const { user, logout, subscription } = useAuth();
+  const { user, logout, subscription } = useAuth() || {
+    user: null,
+    logout: null,
+    subscription: null,
+  };
   const [hasSpecialAccess, setHasSpecialAccess] = useState(false);
 
   // Check special access
@@ -47,13 +52,15 @@ const Navbar = () => {
   const hasAccess = subscription?.active || hasSpecialAccess;
 
   const handleLogout = () => {
-    logout();
-    navigate("/login");
+    if (logout) {
+      logout();
+      navigate("/login");
+    }
   };
 
   return (
     <>
-      <nav className="bg-gray-800 shadow-lg fixed top-0 w-full z-40">
+      <nav className="bg-gray-700 dark:bg-gray-700 shadow-lg fixed top-0 w-full z-40">
         <div className="max-w-full px-3 sm:px-8">
           <div className="flex items-center justify-between h-16">
             {/* Logo */}
@@ -67,6 +74,9 @@ const Navbar = () => {
             <div className="hidden md:flex md:items-center pr-8">
               {!user ? (
                 <>
+                  {/* Theme Switcher available for non-logged in users */}
+                  <ThemeSwitcher />
+                  <div className="border-l border-gray-700 h-6 mx-2"></div>
                   <Link
                     to="/login"
                     className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm"
@@ -145,8 +155,8 @@ const Navbar = () => {
 
       {/* Mobile Menu Slide-in */}
       <div
-        className={`fixed inset-0 bg-black bg-opacity-50 z-40 transition-opacity duration-300 md:hidden ${
-          isOpen ? "opacity-100" : "opacity-0 pointer-events-none"
+        className={`fixed inset-y-0 right-0 w-64 bg-gray-800/90 transform transition-transform duration-300 ease-in-out ${
+          isOpen ? "translate-x-0" : "translate-x-full"
         }`}
         onClick={() => setIsOpen(false)}
       >
@@ -158,11 +168,9 @@ const Navbar = () => {
         >
           {/* Menu Content */}
           <div className="flex flex-col h-full pt-16">
-            {" "}
-            {/* Added pt-16 to account for navbar */}
             {/* User Welcome */}
             {user && (
-              <div className="px-4 py-3 text-sm text-gray-400 border-b border-gray-800">
+              <div className="px-4 py-3 text-sm text-gray-300 border-b border-gray-700">
                 Welcome, {user.username}
               </div>
             )}
@@ -221,14 +229,14 @@ const Navbar = () => {
                 </div>
               </div>
             </div>
-            {/* Footer Actions */}
-            <div className="border-t border-gray-800">
+            {/* Footer Actions - Theme Switcher for ALL users */}
+            <div className="border-t border-gray-700">
               <div className="px-4 py-4 space-y-4">
                 <ThemeSwitcher />
                 {user && (
                   <button
                     onClick={handleLogout}
-                    className="w-full text-left px-4 py-3 text-gray-300 hover:bg-gray-800 rounded-md transition-colors"
+                    className="w-full text-left px-4 py-3 text-gray-300 hover:bg-gray-700 rounded-md transition-colors"
                   >
                     Logout
                   </button>

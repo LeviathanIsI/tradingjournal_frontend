@@ -22,7 +22,7 @@ const TradingInsights = ({ trades, stats }) => {
   };
 
   return (
-    <div className="bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-lg shadow">
+    <div className="bg-white dark:bg-gray-700/60 p-4 sm:p-6 rounded-md border border-gray-200 dark:border-gray-600/50 shadow-sm">
       <div className="mb-4">
         <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-gray-100">
           Trading Insights
@@ -43,15 +43,15 @@ const TradingInsights = ({ trades, stats }) => {
             return (
               <div
                 key={index}
-                className={`flex items-start space-x-2 p-3 sm:p-4 rounded-lg border
+                className={`flex items-start space-x-2 p-3 sm:p-4 rounded-sm border
                 ${
                   insight.color === "green"
-                    ? "border-green-100 dark:border-green-900 bg-green-50 dark:bg-green-900/20"
+                    ? "border-green-100 dark:border-green-700/50 bg-green-50 dark:bg-green-700/20"
                     : insight.color === "yellow"
-                    ? "border-yellow-100 dark:border-yellow-900 bg-yellow-50 dark:bg-yellow-900/20"
+                    ? "border-yellow-100 dark:border-yellow-700/50 bg-yellow-50 dark:bg-yellow-700/20"
                     : insight.color === "red"
-                    ? "border-red-100 dark:border-red-900 bg-red-50 dark:bg-red-900/20"
-                    : "border-blue-100 dark:border-blue-900 bg-blue-50 dark:bg-blue-900/20"
+                    ? "border-red-100 dark:border-red-700/50 bg-red-50 dark:bg-red-700/20"
+                    : "border-blue-100 dark:border-blue-700/50 bg-blue-50 dark:bg-blue-700/20"
                 }`}
               >
                 <Icon
@@ -134,7 +134,7 @@ const Overview = ({ trades, stats }) => {
     <div className="space-y-4 sm:space-y-6">
       {/* Quick Stats Grid */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-        <div className="bg-white dark:bg-gray-800 p-3 sm:p-4 rounded-lg shadow">
+        <div className="bg-white dark:bg-gray-700/60 p-3 sm:p-4 rounded-md border border-gray-200 dark:border-gray-600/50 shadow-sm">
           <div className="flex items-center justify-between mb-2">
             <h3 className="text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-400">
               Best Winning Streak
@@ -149,7 +149,7 @@ const Overview = ({ trades, stats }) => {
           </p>
         </div>
 
-        <div className="bg-white dark:bg-gray-800 p-3 sm:p-4 rounded-lg shadow">
+        <div className="bg-white dark:bg-gray-700/60 p-3 sm:p-4 rounded-md border border-gray-200 dark:border-gray-600/50 shadow-sm">
           <div className="flex items-center justify-between mb-2">
             <h3 className="text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-400">
               Largest Win
@@ -164,7 +164,7 @@ const Overview = ({ trades, stats }) => {
           </p>
         </div>
 
-        <div className="bg-white dark:bg-gray-800 p-3 sm:p-4 rounded-lg shadow">
+        <div className="bg-white dark:bg-gray-700/60 p-3 sm:p-4 rounded-md border border-gray-200 dark:border-gray-600/50 shadow-sm">
           <div className="flex items-center justify-between mb-2">
             <h3 className="text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-400">
               Largest Loss
@@ -179,7 +179,7 @@ const Overview = ({ trades, stats }) => {
           </p>
         </div>
 
-        <div className="bg-white dark:bg-gray-800 p-3 sm:p-4 rounded-lg shadow">
+        <div className="bg-white dark:bg-gray-700/60 p-3 sm:p-4 rounded-md border border-gray-200 dark:border-gray-600/50 shadow-sm">
           <div className="flex items-center justify-between mb-2">
             <h3 className="text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-400">
               Win/Loss Ratio
@@ -196,7 +196,7 @@ const Overview = ({ trades, stats }) => {
       </div>
 
       {/* Recent Activity */}
-      <div className="bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-lg shadow">
+      <div className="bg-white dark:bg-gray-700/60 p-3 sm:p-4 rounded-md border border-gray-200 dark:border-gray-600/50 shadow-sm">
         <div className="mb-4">
           <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-gray-100">
             Recent Activity

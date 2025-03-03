@@ -47,3 +47,62 @@ input[type="checkbox"] {
     overflow: hidden !important;
   }
 }
+
+/* Apply these styles to all AI-related components */
+
+/* Primary Action Buttons - Darker Blue */
+.primary-action-button,
+button[type="submit"],
+.analyze-button,
+button.analyze-trade,
+button.generate-analysis,
+button.run-predictive-analysis,
+button.generate-trading-simulation,
+button.run-execution-analysis {
+  @apply bg-blue-600 dark:bg-blue-600/90 hover:bg-blue-700 dark:hover:bg-blue-700 cursor-pointer;
+}
+
+/* Ensure all interactive elements have pointer cursor */
+button,
+a,
+.clickable,
+[role="button"],
+.selectable-item,
+.trade-item,
+.scenario-option,
+.timeline-step,
+.filter-option {
+  @apply cursor-pointer;
+}
+
+/* Example updates for specific components */
+
+/* WeeklyReview */
+.weekly-review button.generate-analysis {
+  @apply bg-blue-600 dark:bg-blue-600/90 hover:bg-blue-700 dark:hover:bg-blue-700 cursor-pointer;
+}
+
+/* SmartTradeCoaching */
+.smart-trade-coaching button.analyze-trade {
+  @apply bg-blue-600 dark:bg-blue-600/90 hover:bg-blue-700 dark:hover:bg-blue-700 cursor-pointer;
+}
+
+/* PredictiveAnalysis */
+.predictive-analysis button.run-predictive-analysis {
+  @apply bg-blue-600 dark:bg-blue-600/90 hover:bg-blue-700 dark:hover:bg-blue-700 cursor-pointer;
+}
+
+/* PatternRecognition */
+.pattern-recognition button.analyze-trading-patterns {
+  @apply bg-blue-600 dark:bg-blue-600/90 hover:bg-blue-700 dark:hover:bg-blue-700 cursor-pointer;
+}
+
+/* TradingBotSimulator */
+.trading-bot-simulator button.generate-trading-simulation {
+  @apply bg-blue-600 dark:bg-blue-600/90 hover:bg-blue-700 dark:hover:bg-blue-700 cursor-pointer;
+}
+
+/* TradeExecutionReplay */
+.trade-execution-replay button.run-execution-analysis {
+  @apply bg-blue-600 dark:bg-blue-600/90 hover:bg-blue-700 dark:hover:bg-blue-700 cursor-pointer;
+}

@@ -1,5 +1,5 @@
 // src/hooks/useTrades.js
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { fetchStats } from "../utils/fetchStats";
 
 export const useTrades = (user) => {
@@ -436,7 +436,101 @@ export const useTrades = (user) => {
     loadData();
   }, [user]);
 
-  const allTrades = [...trades.stock, ...trades.options];
+  const fetchTradesForWeek = async (weekString) => {
+    if (!weekString) return null;
+
+    try {
+      // Parse the week string (format: YYYY-W##)
+      const [year, weekNum] = weekString.split("-W");
+
+      // Calculate start and end dates for the selected week
+      const startDate = getDateOfISOWeek(parseInt(weekNum), parseInt(year));
+      const endDate = new Date(startDate);
+      endDate.setDate(startDate.getDate() + 6);
+
+      // Filter trades that fall within the selected week
+      const weekTrades = allTrades.filter((trade) => {
+        const tradeDate = new Date(trade.date);
+        return tradeDate >= startDate && tradeDate <= endDate;
+      });
+
+      return {
+        trades: weekTrades,
+        weekStart: startDate,
+        weekEnd: endDate,
+      };
+    } catch (error) {
+      console.error("Error fetching trades for week:", error);
+      return null;
+    }
+  };
+
+  const getDateOfISOWeek = (week, year) => {
+    const simple = new Date(year, 0, 1 + (week - 1) * 7);
+    const dow = simple.getDay();
+    const ISOweekStart = simple;
+    if (dow <= 4) {
+      ISOweekStart.setDate(simple.getDate() - simple.getDay() + 1);
+    } else {
+      ISOweekStart.setDate(simple.getDate() + 8 - simple.getDay());
+    }
+    return ISOweekStart;
+  };
+
+  const analyzeTradesForWeek = async (weekString) => {
+    const weekData = await fetchTradesForWeek(weekString);
+    if (!weekData) return null;
+
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) throw new Error("No authentication token found");
+
+      const totalTrades = weekData.trades.length;
+      const winningTrades = weekData.trades.filter(
+        (t) =>
+          t.result === "win" ||
+          t.pnl > 0 ||
+          (t.profitLoss && t.profitLoss.realized > 0)
+      ).length;
+
+      const losingTrades = weekData.trades.filter(
+        (t) =>
+          t.result === "loss" ||
+          t.pnl < 0 ||
+          (t.profitLoss && t.profitLoss.realized < 0)
+      ).length;
+
+      const winRate =
+        totalTrades > 0 ? ((winningTrades / totalTrades) * 100).toFixed(2) : 0;
+
+      // Calculate total P&L
+      const totalPnL = weekData.trades.reduce((sum, trade) => {
+        if (trade.pnl) return sum + trade.pnl;
+        if (trade.profitLoss && trade.profitLoss.realized)
+          return sum + trade.profitLoss.realized;
+        return sum;
+      }, 0);
+
+      return {
+        ...weekData,
+        analysis: {
+          totalTrades,
+          winningTrades,
+          losingTrades,
+          winRate,
+          totalPnL,
+        },
+      };
+    } catch (error) {
+      console.error("Error analyzing trades:", error);
+      return weekData;
+    }
+  };
+
+  const allTrades = useMemo(
+    () => [...trades.stock, ...trades.options],
+    [trades.stock, trades.options]
+  );
 
   return {
     trades: allTrades,
@@ -452,5 +546,7 @@ export const useTrades = (user) => {
     bulkDeleteTrades,
     submitTradeReview,
     importTrades,
+    fetchTradesForWeek,
+    analyzeTradesForWeek,
   };
 };

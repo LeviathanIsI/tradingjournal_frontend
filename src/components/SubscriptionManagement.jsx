@@ -67,11 +67,11 @@ const SubscriptionManagement = () => {
 
   if (isSubscriptionLoading && !user?.subscription) {
     return (
-      <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
+      <div className="bg-white dark:bg-gray-700/60 p-6 rounded-md border border-gray-200 dark:border-gray-600/50 shadow-sm">
         <div className="animate-pulse space-y-4">
-          <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/4"></div>
-          <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/2"></div>
-          <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-3/4"></div>
+          <div className="h-4 bg-gray-200 dark:bg-gray-600/50 rounded-sm w-1/4"></div>
+          <div className="h-4 bg-gray-200 dark:bg-gray-600/50 rounded-sm w-1/2"></div>
+          <div className="h-4 bg-gray-200 dark:bg-gray-600/50 rounded-sm w-3/4"></div>
         </div>
       </div>
     );
@@ -244,7 +244,7 @@ const SubscriptionManagement = () => {
 
   return (
     <>
-      <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
+      <div className="bg-white dark:bg-gray-700/60 p-6 rounded-md border border-gray-200 dark:border-gray-600/50 shadow-sm">
         <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
           Subscription Details
         </h3>
@@ -254,13 +254,13 @@ const SubscriptionManagement = () => {
             // Inactive subscription state
             <>
               <div className="flex justify-between items-center">
-                <span className="text-gray-600 dark:text-gray-400">Status</span>
-                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-200">
+                <span className="text-gray-600 dark:text-gray-300">Status</span>
+                <span className="inline-flex items-center px-2.5 py-0.5 rounded-sm text-xs font-medium bg-red-100 text-red-800 dark:bg-red-700/30 dark:text-red-300">
                   Inactive
                 </span>
               </div>
 
-              <div className="mt-4 p-4 bg-blue-50 dark:bg-blue-900/30 rounded-lg">
+              <div className="mt-4 p-4 bg-blue-50 dark:bg-blue-700/30 rounded-sm border border-blue-100 dark:border-blue-700/50">
                 <p className="text-sm text-blue-800 dark:text-blue-200">
                   Your subscription is currently inactive. Subscribe to access
                   all features.
@@ -268,7 +268,7 @@ const SubscriptionManagement = () => {
 
                 <a
                   href="/pricing"
-                  className="mt-3 w-full block px-4 py-2 text-sm text-center text-white bg-blue-600 hover:bg-blue-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                  className="mt-3 w-full block px-4 py-2 text-sm text-center text-white bg-blue-500 hover:bg-blue-600 dark:bg-blue-500/90 dark:hover:bg-blue-500 rounded-sm focus:outline-none focus:ring-1 focus:ring-blue-400 focus:ring-offset-2"
                 >
                   View Plans
                 </a>
@@ -278,7 +278,7 @@ const SubscriptionManagement = () => {
             // Active subscription content
             <>
               <div className="flex justify-between items-center">
-                <span className="text-gray-600 dark:text-gray-400">Plan</span>
+                <span className="text-gray-600 dark:text-gray-300">Plan</span>
                 <div className="flex items-center space-x-2">
                   <span className="font-medium text-gray-900 dark:text-gray-100">
                     {user.subscription.type === "monthly"
@@ -306,14 +306,14 @@ const SubscriptionManagement = () => {
               </div>
 
               <div className="flex justify-between items-center">
-                <span className="text-gray-600 dark:text-gray-400">Status</span>
-                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
+                <span className="text-gray-600 dark:text-gray-300">Status</span>
+                <span className="inline-flex items-center px-2.5 py-0.5 rounded-sm text-xs font-medium bg-green-100 text-green-800 dark:bg-green-700/30 dark:text-green-300">
                   Active
                 </span>
               </div>
 
               <div className="flex justify-between items-center">
-                <span className="text-gray-600 dark:text-gray-400">
+                <span className="text-gray-600 dark:text-gray-300">
                   Next billing date
                 </span>
                 <span className="text-gray-900 dark:text-gray-100">
@@ -322,14 +322,14 @@ const SubscriptionManagement = () => {
               </div>
 
               {user.subscription.paymentStatus === "failed" && (
-                <div className="mt-4 p-4 bg-red-50 dark:bg-red-900/30 rounded-lg">
-                  <p className="text-sm text-red-800 dark:text-red-200">
+                <div className="mt-4 p-4 bg-red-50 dark:bg-red-700/30 rounded-sm border border-red-100 dark:border-red-700/50">
+                  <p className="text-sm text-red-800 dark:text-red-300">
                     We weren't able to process your latest payment. Please
                     update your payment method to continue your subscription.
                   </p>
                   <button
                     onClick={handleUpdatePayment}
-                    className="mt-3 w-full px-4 py-2 text-sm text-white bg-red-600 hover:bg-red-700 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+                    className="mt-3 w-full px-4 py-2 text-sm text-white bg-red-500 hover:bg-red-600 dark:hover:bg-red-500 rounded-sm focus:outline-none focus:ring-1 focus:ring-red-400 focus:ring-offset-2"
                   >
                     Update Payment Method
                   </button>
@@ -337,23 +337,23 @@ const SubscriptionManagement = () => {
               )}
 
               {user.subscription.cancelAtPeriodEnd ? (
-                <div className="mt-4 p-4 bg-yellow-50 dark:bg-yellow-900/30 rounded-lg">
-                  <p className="text-sm text-yellow-800 dark:text-yellow-200">
+                <div className="mt-4 p-4 bg-yellow-50 dark:bg-yellow-700/30 rounded-sm border border-yellow-100 dark:border-yellow-700/50">
+                  <p className="text-sm text-yellow-800 dark:text-yellow-300">
                     Your subscription will end on{" "}
                     {formatDate(user.subscription.currentPeriodEnd)}
                   </p>
                   <button
                     onClick={() => setShowReactivateDialog(true)}
-                    className="mt-3 w-full px-4 py-2 text-sm text-green-600 dark:text-green-400 border border-green-200 dark:border-green-900/50 rounded-md hover:bg-green-50 dark:hover:bg-green-900/20 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
+                    className="mt-3 w-full px-4 py-2 text-sm text-green-600 dark:text-green-400 border border-green-200 dark:border-green-700/50 rounded-sm hover:bg-green-50 dark:hover:bg-green-700/20 focus:outline-none focus:ring-1 focus:ring-green-400 focus:ring-offset-2"
                   >
                     Reactivate Subscription
                   </button>
                 </div>
               ) : (
-                <div className="mt-6 border-t pt-6 dark:border-gray-700">
+                <div className="mt-6 border-t pt-6 dark:border-gray-600/50">
                   <button
                     onClick={() => setShowCancelDialog(true)}
-                    className="w-full px-4 py-2 text-sm text-red-600 dark:text-red-400 border border-red-200 dark:border-red-900/50 rounded-md hover:bg-red-50 dark:hover:bg-red-900/20 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+                    className="w-full px-4 py-2 text-sm text-red-600 dark:text-red-400 border border-red-200 dark:border-red-700/50 rounded-sm hover:bg-red-50 dark:hover:bg-red-700/20 focus:outline-none focus:ring-1 focus:ring-red-400 focus:ring-offset-2"
                   >
                     Cancel Subscription
                   </button>
@@ -379,13 +379,13 @@ const SubscriptionManagement = () => {
                 handleCancelSubscription();
                 setShowCancelDialog(false);
               }}
-              className="w-full sm:w-auto px-4 py-2 text-sm text-white bg-red-600 hover:bg-red-700 rounded-md"
+              className="w-full sm:w-auto px-4 py-2 text-sm text-white bg-red-500 hover:bg-red-600 dark:bg-red-500/90 dark:hover:bg-red-500 rounded-sm"
             >
               Yes, cancel subscription
             </button>
             <button
               onClick={() => setShowCancelDialog(false)}
-              className="w-full sm:w-auto px-4 py-2 text-sm text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md mt-3 sm:mt-0"
+              className="w-full sm:w-auto px-4 py-2 text-sm text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-600/50 border border-gray-300 dark:border-gray-600/70 rounded-sm mt-3 sm:mt-0"
             >
               No, keep my subscription
             </button>
@@ -409,13 +409,13 @@ const SubscriptionManagement = () => {
                 handlePlanChange(newPlanType);
                 setShowPlanChangeDialog(false);
               }}
-              className="w-full sm:w-auto px-4 py-2 text-sm text-white bg-blue-600 hover:bg-blue-700 rounded-md"
+              className="w-full sm:w-auto px-4 py-2 text-sm text-white bg-blue-500 hover:bg-blue-600 dark:bg-blue-500/90 dark:hover:bg-blue-500 rounded-sm"
             >
               Confirm Change
             </button>
             <button
               onClick={() => setShowPlanChangeDialog(false)}
-              className="w-full sm:w-auto px-4 py-2 text-sm text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md mt-3 sm:mt-0"
+              className="w-full sm:w-auto px-4 py-2 text-sm text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-600/50 border border-gray-300 dark:border-gray-600/70 rounded-sm mt-3 sm:mt-0"
             >
               Cancel
             </button>
@@ -428,7 +428,7 @@ const SubscriptionManagement = () => {
             {newPlanType} plan.
           </p>
 
-          <div className="p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+          <div className="p-4 bg-gray-50 dark:bg-gray-600/30 rounded-sm border border-gray-200 dark:border-gray-600/50">
             <h4 className="font-medium mb-2 text-gray-900 dark:text-gray-100">
               New Plan Details:
             </h4>
@@ -467,13 +467,13 @@ const SubscriptionManagement = () => {
                 }
                 setShowReactivateDialog(false);
               }}
-              className="w-full sm:w-auto px-4 py-2 text-sm text-white bg-green-600 hover:bg-green-700 rounded-md"
+              className="w-full sm:w-auto px-4 py-2 text-sm text-white bg-green-500 hover:bg-green-600 dark:bg-green-500/90 dark:hover:bg-green-500 rounded-sm"
             >
               Reactivate Subscription
             </button>
             <button
               onClick={() => setShowReactivateDialog(false)}
-              className="w-full sm:w-auto px-4 py-2 text-sm text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md mt-3 sm:mt-0"
+              className="w-full sm:w-auto px-4 py-2 text-sm text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-600/50 border border-gray-300 dark:border-gray-600/70 rounded-sm mt-3 sm:mt-0"
             >
               Cancel
             </button>
@@ -495,7 +495,7 @@ const SubscriptionManagement = () => {
                 value="monthly"
                 checked={reactivationPlanType === "monthly"}
                 onChange={(e) => setReactivationPlanType(e.target.value)}
-                className="h-4 w-4 text-blue-600 focus:ring-blue-500"
+                className="h-4 w-4 text-blue-500 focus:ring-1 focus:ring-blue-400 rounded-sm border-gray-300 dark:border-gray-600/70"
               />
               <label
                 htmlFor="monthly"
@@ -513,7 +513,7 @@ const SubscriptionManagement = () => {
                 value="yearly"
                 checked={reactivationPlanType === "yearly"}
                 onChange={(e) => setReactivationPlanType(e.target.value)}
-                className="h-4 w-4 text-blue-600 focus:ring-blue-500"
+                className="h-4 w-4 text-blue-500 focus:ring-1 focus:ring-blue-400 rounded-sm border-gray-300 dark:border-gray-600/70"
               />
               <label
                 htmlFor="yearly"
@@ -527,7 +527,7 @@ const SubscriptionManagement = () => {
             </div>
           </div>
 
-          <div className="mt-6 border-t pt-6 dark:border-gray-700">
+          <div className="mt-6 border-t pt-6 dark:border-gray-600/50">
             <h4 className="font-medium mb-4 text-gray-900 dark:text-gray-100">
               Payment Method
             </h4>
@@ -540,7 +540,7 @@ const SubscriptionManagement = () => {
                   value="current"
                   checked={paymentMethod === "current"}
                   onChange={(e) => setPaymentMethod(e.target.value)}
-                  className="h-4 w-4 text-blue-600 focus:ring-blue-500"
+                  className="h-4 w-4 text-blue-500 focus:ring-1 focus:ring-blue-400 rounded-sm border-gray-300 dark:border-gray-600/70"
                 />
                 <label
                   htmlFor="current-card"
@@ -559,7 +559,7 @@ const SubscriptionManagement = () => {
                   value="new"
                   checked={paymentMethod === "new"}
                   onChange={(e) => setPaymentMethod(e.target.value)}
-                  className="h-4 w-4 text-blue-600 focus:ring-blue-500"
+                  className="h-4 w-4 text-blue-500 focus:ring-1 focus:ring-blue-400 rounded-sm border-gray-300 dark:border-gray-600/70"
                 />
                 <label
                   htmlFor="new-card"
@@ -571,7 +571,7 @@ const SubscriptionManagement = () => {
             </div>
           </div>
 
-          <div className="p-4 bg-gray-50 dark:bg-gray-700 rounded-lg mt-4">
+          <div className="p-4 bg-gray-50 dark:bg-gray-600/30 rounded-sm border border-gray-200 dark:border-gray-600/50 mt-4">
             <h4 className="font-medium mb-2 text-gray-900 dark:text-gray-100">
               Selected Plan Details:
             </h4>

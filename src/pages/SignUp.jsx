@@ -153,11 +153,6 @@ const SignUp = () => {
 
   const renderSecurityQuestions = () => (
     <div className="space-y-4">
-      <h3 className="text-sm font-semibold text-black">Security Questions</h3>
-      <p className="text-xs text-gray-500">
-        Choose three different security questions
-      </p>
-
       {[1, 2, 3].map((num) => {
         const questionKey = `question${num}`;
         const currentQuestion =
@@ -173,7 +168,7 @@ const SignUp = () => {
         return (
           <div key={questionKey} className="space-y-2">
             <div>
-              <label className="block text-sm mb-1 text-black">
+              <label className="block text-sm mb-1 text-gray-700 dark:text-gray-300">
                 Security Question {num}
               </label>
               <select
@@ -181,7 +176,8 @@ const SignUp = () => {
                 onChange={(e) =>
                   handleQuestionChange(questionKey, e.target.value)
                 }
-                className="w-full px-3 py-2 bg-white border border-gray-300 text-black rounded"
+                className="w-full px-3 py-2 bg-white dark:bg-gray-500/50 border border-gray-300 dark:border-gray-600/70 
+                text-gray-900 dark:text-gray-100 rounded-sm focus:border-blue-500 focus:ring-blue-400"
                 required
               >
                 <option value="">Select a question</option>
@@ -195,14 +191,17 @@ const SignUp = () => {
 
             {currentQuestion && (
               <div>
-                <label className="block text-sm mb-1 text-black">Answer</label>
+                <label className="block text-sm mb-1 text-gray-700 dark:text-gray-300">
+                  Answer
+                </label>
                 <input
                   type="text"
                   value={formData.securityQuestions[questionKey].answer}
                   onChange={(e) =>
                     handleAnswerChange(questionKey, e.target.value)
                   }
-                  className="w-full px-3 py-2 bg-white border border-gray-300 text-black rounded"
+                  className="w-full px-3 py-2 bg-white dark:bg-gray-500/50 border border-gray-300 dark:border-gray-600/70 
+                  text-gray-900 dark:text-gray-100 rounded-sm focus:border-blue-500 focus:ring-blue-400"
                   required
                 />
               </div>
@@ -218,14 +217,17 @@ const SignUp = () => {
   };
 
   return (
-    <div className="min-h-screen pt-16 px-4 sm:px-6 bg-white flex items-center justify-center py-8 sm:py-12">
-      <div className="w-full max-w-md">
-        <h2 className="text-xl sm:text-2xl font-semibold mb-6 sm:mb-8 text-black text-center">
+    <div className="min-h-screen pt-16 px-4 sm:px-6 bg-white dark:bg-gray-700/60 flex items-center justify-center py-8 sm:py-12">
+      <div className="w-full max-w-md bg-white dark:bg-gray-600/30 p-6 rounded-sm border border-gray-200 dark:border-gray-600/50 shadow-sm">
+        <h2 className="text-xl sm:text-2xl font-semibold mb-6 sm:mb-8 text-gray-900 dark:text-gray-100 text-center">
           Create your account
         </h2>
 
         {error && (
-          <div className="bg-red-50 border border-red-400 text-red-700 px-3 sm:px-4 py-2 sm:py-3 rounded-md mb-6">
+          <div
+            className="bg-red-50 dark:bg-red-700/30 border border-red-100 dark:border-red-600/50 
+          text-red-700 dark:text-red-300 px-3 sm:px-4 py-2 sm:py-3 rounded-sm mb-6"
+          >
             <span className="block text-sm">{error}</span>
           </div>
         )}
@@ -233,33 +235,37 @@ const SignUp = () => {
         <form onSubmit={handleSubmit} className="space-y-6 sm:space-y-8">
           {/* Account Information Section */}
           <div className="space-y-4 sm:space-y-6">
-            <h3 className="text-base sm:text-lg font-medium text-gray-900">
+            <h3 className="text-base sm:text-lg font-medium text-gray-900 dark:text-gray-100">
               Account Information
             </h3>
             <div className="grid grid-cols-1 gap-4 sm:gap-6">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   Username
                 </label>
                 <input
                   name="username"
                   type="text"
                   required
-                  className="block w-full rounded-md border border-gray-300 px-3 py-2 text-black shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm"
+                  className="block w-full rounded-sm border border-gray-300 dark:border-gray-600/70 px-3 py-2 
+                  text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-500/50 shadow-sm 
+                  focus:border-blue-500 focus:ring-blue-400 text-sm"
                   value={formData.username}
                   onChange={handleChange}
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   Email address
                 </label>
                 <input
                   name="email"
                   type="email"
                   required
-                  className="block w-full rounded-md border border-gray-300 px-3 py-2 text-black shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm"
+                  className="block w-full rounded-sm border border-gray-300 dark:border-gray-600/70 px-3 py-2 
+                  text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-500/50 shadow-sm 
+                  focus:border-blue-500 focus:ring-blue-400 text-sm"
                   value={formData.email}
                   onChange={handleChange}
                 />
@@ -267,28 +273,32 @@ const SignUp = () => {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                     Password
                   </label>
                   <input
                     name="password"
                     type="password"
                     required
-                    className="block w-full rounded-md border border-gray-300 px-3 py-2 text-black shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm"
+                    className="block w-full rounded-sm border border-gray-300 dark:border-gray-600/70 px-3 py-2 
+                    text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-500/50 shadow-sm 
+                    focus:border-blue-500 focus:ring-blue-400 text-sm"
                     value={formData.password}
                     onChange={handleChange}
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                     Confirm Password
                   </label>
                   <input
                     name="confirmPassword"
                     type="password"
                     required
-                    className="block w-full rounded-md border border-gray-300 px-3 py-2 text-black shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm"
+                    className="block w-full rounded-sm border border-gray-300 dark:border-gray-600/70 px-3 py-2 
+                    text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-500/50 shadow-sm 
+                    focus:border-blue-500 focus:ring-blue-400 text-sm"
                     value={formData.confirmPassword}
                     onChange={handleChange}
                   />
@@ -299,11 +309,11 @@ const SignUp = () => {
 
           {/* Security Questions Section */}
           <div className="space-y-4 sm:space-y-6">
-            <div className="border-t border-gray-200 pt-4 sm:pt-6">
-              <h3 className="text-base sm:text-lg font-medium text-gray-900 mb-2 sm:mb-4">
+            <div className="border-t border-gray-200 dark:border-gray-600/50 pt-4 sm:pt-6">
+              <h3 className="text-base sm:text-lg font-medium text-gray-900 dark:text-gray-100 mb-2 sm:mb-4">
                 Security Questions
               </h3>
-              <p className="text-xs sm:text-sm text-gray-500 mb-4 sm:mb-6">
+              <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mb-4 sm:mb-6">
                 Choose three different security questions to help protect your
                 account
               </p>
@@ -315,7 +325,8 @@ const SignUp = () => {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-blue-600 text-white py-2.5 sm:py-3 rounded-md hover:bg-blue-700 disabled:opacity-50 shadow-sm text-sm font-medium"
+              className="w-full bg-blue-500 dark:bg-blue-500/90 text-white py-2.5 sm:py-3 rounded-sm 
+              hover:bg-blue-600 dark:hover:bg-blue-500 disabled:opacity-50 shadow-sm text-sm font-medium"
             >
               {loading ? "Creating account..." : "Create account"}
             </button>
@@ -327,7 +338,8 @@ const SignUp = () => {
           <button
             type="button"
             onClick={handleGoogleSignup}
-            className="w-full bg-red-500 text-white py-2.5 sm:py-3 rounded-md hover:bg-red-600 shadow-sm text-sm font-medium flex items-center justify-center"
+            className="w-full bg-red-500 dark:bg-red-500/90 text-white py-2.5 sm:py-3 rounded-sm 
+            hover:bg-red-600 dark:hover:bg-red-500 shadow-sm text-sm font-medium flex items-center justify-center"
           >
             <svg
               className="w-4 h-4 sm:w-5 sm:h-5 mr-2"
@@ -347,12 +359,12 @@ const SignUp = () => {
           </button>
         </div>
 
-        <p className="mt-4 text-center text-sm text-gray-600">
+        <p className="mt-4 text-center text-sm text-gray-600 dark:text-gray-400">
           Already have an account?{" "}
           <button
             type="button"
             onClick={() => navigate("/login")}
-            className="text-blue-600 hover:text-blue-800 font-medium"
+            className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 font-medium"
           >
             Sign in
           </button>

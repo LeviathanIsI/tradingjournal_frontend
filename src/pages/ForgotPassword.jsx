@@ -45,14 +45,14 @@ const ForgotPassword = () => {
   };
 
   return (
-    <div className="min-h-screen pt-16 px-4 sm:px-6 bg-white flex items-center justify-center">
-      <div className="w-full max-w-md mx-auto">
-        <h2 className="text-xl sm:text-2xl font-semibold mb-4 sm:mb-6 text-black">
+    <div className="min-h-screen pt-16 px-4 sm:px-6 bg-white dark:bg-gray-700/60 flex items-center justify-center">
+      <div className="w-full max-w-md mx-auto border border-gray-200 dark:border-gray-600/50 p-6 rounded-sm shadow-sm bg-white dark:bg-gray-700/60">
+        <h2 className="text-xl sm:text-2xl font-semibold mb-4 sm:mb-6 text-black dark:text-gray-100">
           Reset Password
         </h2>
 
         {error && (
-          <div className="bg-red-50 border border-red-400 text-red-700 px-3 sm:px-4 py-2 sm:py-3 rounded relative mb-4">
+          <div className="bg-red-50 dark:bg-red-900/20 border border-red-400 dark:border-red-800/50 text-red-700 dark:text-red-400 px-3 sm:px-4 py-2 sm:py-3 rounded-sm relative mb-4">
             <span className="block text-sm sm:text-base">{error}</span>
           </div>
         )}
@@ -60,14 +60,17 @@ const ForgotPassword = () => {
         {step === 1 && (
           <form onSubmit={handleEmailSubmit}>
             <div className="mb-4">
-              <label htmlFor="email" className="block text-sm mb-1 text-black">
+              <label
+                htmlFor="email"
+                className="block text-sm mb-1 text-black dark:text-gray-300"
+              >
                 Email address
               </label>
               <input
                 id="email"
                 type="email"
                 required
-                className="w-full px-3 py-2 bg-white border border-gray-300 text-black rounded text-sm sm:text-base"
+                className="w-full px-3 py-2 bg-white dark:bg-gray-600/50 border border-gray-300 dark:border-gray-600/70 text-black dark:text-gray-100 rounded-sm text-sm sm:text-base"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
@@ -76,7 +79,7 @@ const ForgotPassword = () => {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-blue-600 text-white py-2 sm:py-3 rounded hover:bg-blue-700 disabled:opacity-50 text-sm sm:text-base"
+              className="w-full bg-blue-600 text-white py-2 sm:py-3 rounded-sm hover:bg-blue-700 disabled:opacity-50 text-sm sm:text-base"
             >
               {loading ? "Checking..." : "Continue"}
             </button>
@@ -84,7 +87,7 @@ const ForgotPassword = () => {
             <button
               type="button"
               onClick={() => navigate("/login")}
-              className="w-full mt-4 text-blue-600 hover:text-blue-800 text-sm sm:text-base"
+              className="w-full mt-4 text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 text-sm sm:text-base"
             >
               Back to login
             </button>

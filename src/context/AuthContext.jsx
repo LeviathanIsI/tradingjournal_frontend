@@ -19,20 +19,19 @@ export const AuthProvider = ({ children }) => {
   const [isSubscriptionLoading, setIsSubscriptionLoading] = useState(true);
   const lastSubscriptionCheckRef = useRef(0);
   const pendingSubscriptionCheckRef = useRef(null);
-
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (!token) {
-      setLoading(false);
-      setIsSubscriptionLoading(false); // Not even trying to load subscription
-      return;
-    }
-    validateAuth(token);
-  }, []);
+  const [forceRender, setForceRender] = useState(0);
 
   const validateAuth = async (token) => {
+    if (!token) {
+      console.warn("❌ No token found in localStorage!");
+      setLoading(false);
+      setIsSubscriptionLoading(false);
+      return;
+    }
+
     try {
       checkTokenExpiry();
+
       const response = await fetch(
         `${import.meta.env.VITE_API_URL}/api/auth/validate`,
         {
@@ -42,18 +41,28 @@ export const AuthProvider = ({ children }) => {
 
       if (!response.ok) throw new Error("Invalid token");
 
-      // Read the response ONCE
       const responseData = await response.json();
 
-      // Extract data from the already-parsed response
-      const { data } = responseData;
+      // Ensure AI limits exist before setting user
+      const updatedUser = {
+        ...responseData.data,
+        aiRequestLimits: responseData.data.aiRequestLimits || {
+          nextResetDate: null,
+          remainingRequests: 0,
+          totalRequestsUsed: 0,
+          weeklyLimit: 0,
+        },
+      };
 
-      // Set the user data
-      setUser(data);
-      setLoading(false); // Auth loading complete
-
-      // Now load subscription (kept separate)
+      setUser(updatedUser);
+      setLoading(false);
       await loadSubscription(token);
+
+      // Immediately fetch AI limits after validating authentication
+      const aiLimits = await fetchAILimits(token);
+      if (aiLimits) {
+        updateAILimits(aiLimits);
+      }
     } catch (error) {
       console.error("❌ Auth validation failed:", error);
       setLoading(false);
@@ -62,18 +71,51 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      setLoading(false);
+      setIsSubscriptionLoading(false);
+      return;
+    }
+    validateAuth(token);
+  }, []);
+
+  // Updated updateAILimits function
+  const updateAILimits = (aiLimits) => {
+    if (!aiLimits) {
+      console.warn(
+        "⚠️ [updateAILimits] No AI limits provided, skipping update!"
+      );
+      return;
+    }
+
+    setUser((prevUser) => {
+      if (!prevUser) return prevUser;
+
+      return {
+        ...prevUser,
+        aiRequestLimits: aiLimits,
+      };
+    });
+
+    setForceRender((prev) => prev + 1);
+  };
+
   // Add updateUser function to allow updating user data
   const updateUser = (userData) => {
-    if (typeof userData === "function") {
-      // If userData is a function, call it with the previous state
-      setUser((prevUser) => {
-        const newUserData = userData(prevUser);
-        return newUserData;
-      });
-    } else {
-      // Otherwise, just update with the new data
-      setUser(userData);
-    }
+    setUser((prevUser) => ({
+      ...prevUser,
+      ...userData,
+      aiRequestLimits: userData.aiRequestLimits ||
+        prevUser?.aiRequestLimits || {
+          nextResetDate: null,
+          remainingRequests: 0,
+          totalRequestsUsed: 0,
+          weeklyLimit: 0,
+        },
+    }));
   };
 
   // Debounce function to prevent too many API calls
@@ -212,11 +254,35 @@ export const AuthProvider = ({ children }) => {
     return () => clearInterval(interval);
   }, [checkTokenExpiry]);
 
-  const login = (userData) => {
+  const login = async (userData) => {
     localStorage.setItem("token", userData.token);
-    setUser(userData);
-    loadSubscription(userData.token);
-    navigate("/dashboard");
+
+    const updatedUser = {
+      ...userData,
+      aiRequestLimits: userData.aiRequestLimits || {
+        nextResetDate: null,
+        remainingRequests: 0,
+        totalRequestsUsed: 0,
+        weeklyLimit: 0,
+      },
+    };
+
+    setUser(updatedUser);
+
+    // Fetch AI limits immediately after login
+    try {
+      const aiLimits = await fetchAILimits(userData.token);
+      if (aiLimits) {
+        updateAILimits(aiLimits);
+      }
+    } catch (error) {
+      console.error("Error fetching AI limits after login:", error);
+    }
+
+    // Navigate after state update and API calls are complete
+    setTimeout(() => {
+      navigate("/dashboard");
+    }, 100);
   };
 
   const logout = () => {
@@ -224,6 +290,42 @@ export const AuthProvider = ({ children }) => {
     setUser(null);
     setSubscription(null);
     navigate("/login");
+  };
+
+  // Updated fetchAILimits to accept token parameter
+  const fetchAILimits = async (providedToken = null) => {
+    try {
+      const token = providedToken || localStorage.getItem("token");
+      if (!token) {
+        console.warn("🚫 [fetchAILimits] No auth token found!");
+        return null;
+      }
+
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/api/auth/ai-limits`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error("❌ [fetchAILimits] API Request Failed:", errorText);
+        throw new Error("API request failed!");
+      }
+
+      const { data } = await response.json();
+
+      if (!data || !data.aiRequestLimits) {
+        console.warn("⚠️ [fetchAILimits] API response missing AI limits data!");
+        return null;
+      }
+
+      return data.aiRequestLimits;
+    } catch (error) {
+      console.error("❌ [fetchAILimits] Error fetching AI limits:", error);
+      return null;
+    }
   };
 
   return (
@@ -237,6 +339,8 @@ export const AuthProvider = ({ children }) => {
         logout,
         updateUser,
         checkSubscriptionStatus,
+        fetchAILimits,
+        updateAILimits,
       }}
     >
       {children}

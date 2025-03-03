@@ -7,12 +7,12 @@ const ConfirmationDialog = ({ isOpen, onClose, title, children, footer }) => {
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto">
       <div
-        className="fixed inset-0 bg-black bg-opacity-50 transition-opacity"
+        className="fixed inset-0 bg-black bg-opacity-40 transition-opacity"
         onClick={onClose}
       />
 
       <div className="flex min-h-full items-center justify-center p-4">
-        <div className="relative transform overflow-hidden rounded-lg bg-white dark:bg-gray-800 px-4 pb-4 pt-5 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg sm:p-6">
+        <div className="relative transform overflow-hidden rounded-md bg-white dark:bg-gray-700/80 px-4 pb-4 pt-5 text-left shadow-md transition-all border border-gray-100 dark:border-gray-600/50 sm:my-8 sm:w-full sm:max-w-lg sm:p-6">
           {/* Header */}
           <div className="mb-4">
             <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">

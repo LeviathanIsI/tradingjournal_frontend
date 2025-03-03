@@ -21,12 +21,10 @@ const GoogleAuthSuccess = () => {
     const apiUrl = `${
       import.meta.env.VITE_API_URL
     }/api/auth/google/success?token=${token}`;
-    console.log("🔍 Checking Google Auth Success:", apiUrl);
 
     const handleGoogleSuccess = async () => {
       try {
         setStatus("🔄 Verifying token...");
-        console.log("🔄 Fetching:", apiUrl);
 
         const response = await fetch(apiUrl, {
           credentials: "include",
@@ -41,7 +39,6 @@ const GoogleAuthSuccess = () => {
         }
 
         const data = await response.json();
-        console.log("✅ API Response:", data);
 
         if (data.success) {
           setStatus("✅ Logging in...");
@@ -61,16 +58,16 @@ const GoogleAuthSuccess = () => {
   }, [searchParams, login, navigate]);
 
   return (
-    <div className="min-h-screen pt-16 px-4 sm:px-6 flex items-center justify-center bg-white dark:bg-gray-900">
-      <div className="text-center w-full max-w-sm mx-auto">
+    <div className="min-h-screen pt-16 px-4 sm:px-6 flex items-center justify-center bg-white dark:bg-gray-700/60">
+      <div className="text-center w-full max-w-sm mx-auto border border-gray-200 dark:border-gray-600/50 p-6 rounded-sm shadow-sm bg-white dark:bg-gray-700/60">
         <h2 className="text-xl sm:text-2xl font-semibold mb-3 sm:mb-4 text-gray-900 dark:text-gray-100">
           Google Sign-In
         </h2>
         <p className="mb-3 sm:mb-4 text-sm sm:text-base text-gray-700 dark:text-gray-300">
           {status}
         </p>
-        <div className="mt-4 p-3 sm:p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
-          <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
+        <div className="mt-4 p-3 sm:p-4 bg-gray-50 dark:bg-gray-600/30 rounded-sm border border-gray-200 dark:border-gray-600/50">
+          <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-300">
             Token: {searchParams.get("token") ? "✅ Present" : "❌ Missing"}
           </p>
         </div>

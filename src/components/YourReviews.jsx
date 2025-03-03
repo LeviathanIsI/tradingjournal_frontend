@@ -185,7 +185,7 @@ const YourReviews = ({ userId }) => {
         <p className="text-base sm:text-lg text-gray-600 dark:text-gray-300">
           No reviews yet
         </p>
-        <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 px-4">
+        <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-300 px-4">
           {isOwnProfile
             ? "Start reviewing your trades to track your progress!"
             : "This trader hasn't published any reviews yet."}
@@ -199,14 +199,14 @@ const YourReviews = ({ userId }) => {
         {reviews.map((review) => (
           <div
             key={review._id}
-            className="bg-white dark:bg-gray-800 rounded-lg shadow p-4 sm:p-6"
+            className="bg-white dark:bg-gray-700/60 rounded-sm shadow-sm p-4 sm:p-6 border border-gray-200 dark:border-gray-600/50"
           >
             <div className="flex justify-between items-start mb-4">
               <div>
                 <h3 className="text-base sm:text-lg font-medium text-gray-900 dark:text-gray-100">
                   {review.trade.symbol} - {review.trade.type}
                 </h3>
-                <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">
+                <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-300">
                   {formatDate(review.createdAt)}
                 </p>
               </div>
@@ -214,7 +214,7 @@ const YourReviews = ({ userId }) => {
                 <div className="flex items-center gap-1 sm:gap-2">
                   <button
                     onClick={() => handleVisibilityToggle(review)}
-                    className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded"
+                    className="p-2 hover:bg-gray-100 dark:hover:bg-gray-600/30 rounded-sm"
                     title={review.isPublic ? "Make Private" : "Make Public"}
                   >
                     {review.isPublic ? (
@@ -225,14 +225,14 @@ const YourReviews = ({ userId }) => {
                   </button>
                   <button
                     onClick={() => handleEditClick(review)}
-                    className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded"
+                    className="p-2 hover:bg-gray-100 dark:hover:bg-gray-600/30 rounded-sm"
                     title="Edit Review"
                   >
                     <Edit className="h-4 w-4 sm:h-5 sm:w-5 text-blue-600 dark:text-blue-400" />
                   </button>
                   <button
                     onClick={() => handleDelete(review._id)}
-                    className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded"
+                    className="p-2 hover:bg-gray-100 dark:hover:bg-gray-600/30 rounded-sm"
                     title="Delete Review"
                   >
                     <Trash2 className="h-4 w-4 sm:h-5 sm:w-5 text-red-600 dark:text-red-400" />
@@ -246,7 +246,7 @@ const YourReviews = ({ userId }) => {
                 <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   What Went Well
                 </h4>
-                <p className="text-sm text-gray-600 dark:text-gray-400">
+                <p className="text-sm text-gray-600 dark:text-gray-300">
                   {review.whatWentWell}
                 </p>
               </div>
@@ -254,7 +254,7 @@ const YourReviews = ({ userId }) => {
                 <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   What Went Wrong
                 </h4>
-                <p className="text-sm text-gray-600 dark:text-gray-400">
+                <p className="text-sm text-gray-600 dark:text-gray-300">
                   {review.whatWentWrong}
                 </p>
               </div>
@@ -262,7 +262,7 @@ const YourReviews = ({ userId }) => {
                 <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Lessons Learned
                 </h4>
-                <p className="text-sm text-gray-600 dark:text-gray-400">
+                <p className="text-sm text-gray-600 dark:text-gray-300">
                   {review.lessonLearned}
                 </p>
               </div>
@@ -271,7 +271,7 @@ const YourReviews = ({ userId }) => {
                   <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     Future Adjustments
                   </h4>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                  <p className="text-sm text-gray-600 dark:text-gray-300">
                     {review.futureAdjustments}
                   </p>
                 </div>
@@ -280,9 +280,9 @@ const YourReviews = ({ userId }) => {
 
             <div
               className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-0 
-            pt-4 border-t dark:border-gray-700"
+              pt-4 border-t dark:border-gray-600/50"
             >
-              <div className="flex items-center gap-4 text-gray-500 dark:text-gray-400 text-xs sm:text-sm">
+              <div className="flex items-center gap-4 text-gray-500 dark:text-gray-300 text-xs sm:text-sm">
                 <div className="flex items-center gap-1">
                   <Heart className="h-4 w-4" />
                   <span>{review.likes?.length || 0} likes</span>
@@ -293,7 +293,7 @@ const YourReviews = ({ userId }) => {
                 </div>
               </div>
               <div
-                className={`px-3 py-1 rounded-full text-xs sm:text-sm w-fit ${
+                className={`px-3 py-1 rounded-sm text-xs sm:text-sm w-fit ${
                   review.trade.profitLoss.realized >= 0
                     ? "bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300"
                     : "bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300"

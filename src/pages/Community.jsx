@@ -25,8 +25,8 @@ const Community = () => {
       {/* Added pt-16 for fixed navbar */}
       <CommunityNav />
       {/* Info Section */}
-      <div className="px-3 sm:px-6 py-3 sm:py-4 bg-gray-50 dark:bg-gray-900">
-        <div className="bg-gray-100 dark:bg-gray-800 p-3 sm:p-6 rounded-lg">
+      <div className="px-3 sm:px-6 py-3 sm:py-4 bg-gray-50 dark:bg-gray-700/40">
+        <div className="bg-gray-100 dark:bg-gray-700/60 p-3 sm:p-6 rounded-sm border border-gray-200 dark:border-gray-600/50 shadow-sm">
           <p className="text-sm sm:text-base font-medium text-gray-900 dark:text-gray-100">
             Community Features:
           </p>
@@ -48,13 +48,13 @@ const Community = () => {
               <span>Access featured content from top traders</span>
             </li>
           </ul>
-          <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 mt-3 italic">
+          <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-300 mt-3 italic">
             Pro tip: Engage with the community to accelerate your learning
           </p>
         </div>
       </div>
       {/* Routes Section */}
-      <div className="flex-1 w-full px-3 sm:px-6 py-3 sm:py-4 dark:bg-gray-900">
+      <div className="flex-1 w-full px-3 sm:px-6 py-3 sm:py-4 dark:bg-gray-700/30">
         <Routes>
           {/* Route components with consistent padding/margin handling */}
           {[

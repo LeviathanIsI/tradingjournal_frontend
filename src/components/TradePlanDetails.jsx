@@ -15,12 +15,12 @@ const TradePlanDetails = ({ isOpen, onClose, plan, onStatusChange }) => {
         <h3 className="text-base sm:text-lg font-bold text-gray-900 dark:text-gray-100">
           {plan.ticker}
         </h3>
-        <p className="text-sm text-gray-600 dark:text-gray-400">
+        <p className="text-sm text-gray-600 dark:text-gray-300">
           {plan.direction}
         </p>
         <div className="mt-2 flex flex-col sm:flex-row gap-2 sm:gap-0 sm:justify-between sm:items-center">
           <span
-            className={`px-2 py-1 text-sm rounded-full w-fit ${
+            className={`px-2 py-1 text-sm rounded-sm w-fit ${
               plan.status === "EXECUTED"
                 ? "bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300"
                 : plan.status === "CANCELLED"
@@ -33,8 +33,8 @@ const TradePlanDetails = ({ isOpen, onClose, plan, onStatusChange }) => {
           <select
             value={plan.status}
             onChange={handleStatusChange}
-            className="px-3 py-1.5 sm:py-1 text-sm border border-gray-300 dark:border-gray-600 rounded 
-            bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200"
+            className="px-3 py-1.5 sm:py-1 text-sm border border-gray-300 dark:border-gray-600/70 rounded-sm 
+            bg-white dark:bg-gray-600/50 text-gray-700 dark:text-gray-100"
           >
             <option value="PLANNED">Planned</option>
             <option value="EXECUTED">Executed</option>
@@ -60,7 +60,7 @@ const TradePlanDetails = ({ isOpen, onClose, plan, onStatusChange }) => {
               >
                 {value ? "✓" : "×"}
               </span>
-              <span className="text-sm text-gray-600 dark:text-gray-400">
+              <span className="text-sm text-gray-600 dark:text-gray-300">
                 {key
                   .replace(/([A-Z])/g, " $1")
                   .replace(/^./, (str) => str.toUpperCase())}
@@ -152,7 +152,7 @@ const TradePlanDetails = ({ isOpen, onClose, plan, onStatusChange }) => {
           <h4 className="text-sm font-semibold text-gray-700 dark:text-gray-300">
             Notes
           </h4>
-          <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+          <p className="text-sm text-gray-600 dark:text-gray-300 mt-1">
             {plan.notes}
           </p>
         </div>
@@ -160,8 +160,8 @@ const TradePlanDetails = ({ isOpen, onClose, plan, onStatusChange }) => {
 
       {/* Timestamps */}
       <div
-        className="col-span-1 sm:col-span-2 mt-4 pt-3 border-t border-gray-200 dark:border-gray-700 
-      flex flex-col sm:flex-row justify-between text-xs text-gray-500 dark:text-gray-400 gap-2 sm:gap-0"
+        className="col-span-1 sm:col-span-2 mt-4 pt-3 border-t border-gray-200 dark:border-gray-600/50 
+        flex flex-col sm:flex-row justify-between text-xs text-gray-500 dark:text-gray-400 gap-2 sm:gap-0"
       >
         <span>Created: {new Date(plan.createdAt).toLocaleString()}</span>
         <span>Last Updated: {new Date(plan.updatedAt).toLocaleString()}</span>

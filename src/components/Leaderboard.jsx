@@ -137,7 +137,7 @@ const Leaderboard = () => {
 
       {/* Stats Cards - Always showing all-time top performers */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
-        <div className="bg-blue-50 dark:bg-blue-900/20 p-4 sm:p-6 rounded-lg">
+        <div className="bg-blue-50 dark:bg-blue-900/20 p-4 sm:p-6 rounded-md">
           <div className="flex items-center gap-2 mb-2">
             <Trophy className="h-5 w-5 text-blue-600 dark:text-blue-400" />
             <h3 className="font-medium text-blue-900 dark:text-blue-100">
@@ -154,7 +154,7 @@ const Leaderboard = () => {
           </p>
         </div>
 
-        <div className="bg-green-50 dark:bg-green-900/20 p-4 sm:p-6 rounded-lg">
+        <div className="bg-green-50 dark:bg-green-900/20 p-4 sm:p-6 rounded-md">
           <div className="flex items-center gap-2 mb-2">
             <Target className="h-5 w-5 text-green-600 dark:text-green-400" />
             <h3 className="font-medium text-green-900 dark:text-green-100">
@@ -171,7 +171,7 @@ const Leaderboard = () => {
           </p>
         </div>
 
-        <div className="bg-purple-50 dark:bg-purple-900/20 p-4 sm:p-6 rounded-lg">
+        <div className="bg-purple-50 dark:bg-purple-900/20 p-4 sm:p-6 rounded-md">
           <div className="flex items-center gap-2 mb-2">
             <LineChart className="h-5 w-5 text-purple-600 dark:text-purple-400" />
             <h3 className="font-medium text-purple-900 dark:text-purple-100">
@@ -191,8 +191,8 @@ const Leaderboard = () => {
         <select
           value={timeFrame}
           onChange={(e) => setTimeFrame(e.target.value)}
-          className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm 
-              bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+          className="px-3 py-2 border border-gray-300 dark:border-gray-600/70 rounded-sm text-sm 
+              bg-white dark:bg-gray-600/50 text-gray-900 dark:text-gray-100"
         >
           <option value="all">All Time</option>
           <option value="today">Today</option>
@@ -203,8 +203,8 @@ const Leaderboard = () => {
         <select
           value={sortBy}
           onChange={(e) => setSortBy(e.target.value)}
-          className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm 
-              bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+          className="px-3 py-2 border border-gray-300 dark:border-gray-600/70 rounded-sm text-sm 
+              bg-white dark:bg-gray-600/50 text-gray-900 dark:text-gray-100"
         >
           <option value="totalProfit">Total Profit</option>
           <option value="winRate">Win Rate</option>
@@ -212,11 +212,11 @@ const Leaderboard = () => {
         </select>
       </div>
       {/* Leaderboard Table/Cards */}
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden">
+      <div className="bg-white dark:bg-gray-700/60 rounded-md shadow-sm border border-gray-200 dark:border-gray-600/50 overflow-hidden">
         {/* Desktop Table View */}
         <div className="hidden sm:block">
           <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-            <thead className="bg-gray-50 dark:bg-gray-700">
+            <thead className="bg-gray-50 dark:bg-gray-600/50">
               <tr>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                   Rank
@@ -241,8 +241,8 @@ const Leaderboard = () => {
                   key={trader._id}
                   className={`${
                     index % 2 === 0
-                      ? "bg-white dark:bg-gray-800"
-                      : "bg-gray-50 dark:bg-gray-700/50"
+                      ? "bg-white dark:bg-gray-700/60"
+                      : "bg-gray-50 dark:bg-gray-600/40"
                   }`}
                 >
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">

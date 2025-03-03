@@ -81,8 +81,8 @@ const ProfileStats = ({ userId, trades, stats }) => {
           <select
             value={timeFrame}
             onChange={(e) => setTimeFrame(e.target.value)}
-            className="w-full sm:w-auto px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm
-            bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+            className="w-full sm:w-auto px-3 py-2 border border-gray-300 dark:border-gray-600/70 rounded-sm text-sm
+            bg-white dark:bg-gray-600/50 text-gray-900 dark:text-gray-100"
           >
             <option value="all">All Time</option>
             <option value="year">This Year</option>
@@ -94,7 +94,7 @@ const ProfileStats = ({ userId, trades, stats }) => {
 
       {/* Stats Cards */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-3 sm:p-4">
+        <div className="bg-white dark:bg-gray-700/60 rounded-md border border-gray-200 dark:border-gray-600/50 shadow-sm p-3 sm:p-4">
           <div className="flex items-center gap-2 mb-2">
             <CreditCard className="h-5 w-5 text-blue-500 dark:text-blue-400" />
             <h3 className="font-medium text-sm sm:text-base text-gray-900 dark:text-gray-100">
@@ -112,7 +112,7 @@ const ProfileStats = ({ userId, trades, stats }) => {
           </p>
         </div>
 
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-3 sm:p-4">
+        <div className="bg-white dark:bg-gray-700/60 rounded-md border border-gray-200 dark:border-gray-600/50 shadow-sm p-3 sm:p-4">
           <div className="flex items-center gap-2 mb-2">
             <TrendingUp className="h-5 w-5 text-green-500 dark:text-green-400" />
             <h3 className="font-medium text-sm sm:text-base text-gray-900 dark:text-gray-100">
@@ -127,7 +127,7 @@ const ProfileStats = ({ userId, trades, stats }) => {
           </p>
         </div>
 
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-3 sm:p-4">
+        <div className="bg-white dark:bg-gray-700/60 rounded-md border border-gray-200 dark:border-gray-600/50 shadow-sm p-3 sm:p-4">
           <div className="flex items-center gap-2 mb-2">
             <ChartBar className="h-5 w-5 text-purple-500 dark:text-purple-400" />
             <h3 className="font-medium text-sm sm:text-base text-gray-900 dark:text-gray-100">
@@ -139,7 +139,7 @@ const ProfileStats = ({ userId, trades, stats }) => {
           </p>
         </div>
 
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-3 sm:p-4">
+        <div className="bg-white dark:bg-gray-700/60 rounded-md border border-gray-200 dark:border-gray-600/50 shadow-sm p-3 sm:p-4">
           <div className="flex items-center gap-2 mb-2">
             <PieChartIcon className="h-5 w-5 text-orange-500 dark:text-orange-400" />
             <h3 className="font-medium text-sm sm:text-base text-gray-900 dark:text-gray-100">
@@ -161,7 +161,7 @@ const ProfileStats = ({ userId, trades, stats }) => {
       {/* Charts */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
         {/* Monthly P&L Chart */}
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-3 sm:p-4">
+        <div className="bg-white dark:bg-gray-700/60 rounded-md border border-gray-200 dark:border-gray-600/50 shadow-sm p-3 sm:p-4">
           <h3 className="text-base sm:text-lg font-medium mb-4 text-gray-900 dark:text-gray-100">
             Monthly Performance
           </h3>
@@ -197,7 +197,7 @@ const ProfileStats = ({ userId, trades, stats }) => {
         </div>
 
         {/* Trade Type Distribution */}
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-3 sm:p-4">
+        <div className="bg-white dark:bg-gray-700/60 rounded-md border border-gray-200 dark:border-gray-600/50 shadow-sm p-3 sm:p-4">
           <h3 className="text-base sm:text-lg font-medium mb-4 text-gray-900 dark:text-gray-100">
             Trade Type Distribution
           </h3>

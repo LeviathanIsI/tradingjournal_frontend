@@ -2,13 +2,12 @@
 import React, { useEffect } from "react";
 
 const StatsOverview = ({ user, stats, formatCurrency }) => {
-
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 bg-transparent">
-      <div className="bg-white dark:bg-gray-900 p-3 sm:p-4 rounded-lg shadow">
+      <div className="bg-white dark:bg-gray-700/60 p-3 sm:p-4 rounded-md border border-gray-200 dark:border-gray-600/50 shadow-sm">
         <div className="flex flex-col sm:flex-row sm:justify-between gap-3 sm:gap-0">
           <div>
-            <h3 className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
+            <h3 className="text-xs sm:text-sm text-gray-600 dark:text-gray-300">
               Starting Capital
             </h3>
             <p className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-gray-100">
@@ -16,7 +15,7 @@ const StatsOverview = ({ user, stats, formatCurrency }) => {
             </p>
           </div>
           <div>
-            <h3 className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
+            <h3 className="text-xs sm:text-sm text-gray-600 dark:text-gray-300">
               Current Balance
             </h3>
             <div className="flex items-baseline gap-2">
@@ -58,10 +57,10 @@ const StatsOverview = ({ user, stats, formatCurrency }) => {
         </div>
       </div>
 
-      <div className="bg-white dark:bg-gray-900 p-3 sm:p-4 rounded-lg shadow">
+      <div className="bg-white dark:bg-gray-700/60 p-3 sm:p-4 rounded-md border border-gray-200 dark:border-gray-600/50 shadow-sm">
         <div className="flex justify-between">
           <div>
-            <h3 className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
+            <h3 className="text-xs sm:text-sm text-gray-600 dark:text-gray-300">
               Total Trades
             </h3>
             <p className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-gray-100">
@@ -69,7 +68,7 @@ const StatsOverview = ({ user, stats, formatCurrency }) => {
             </p>
           </div>
           <div>
-            <h3 className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
+            <h3 className="text-xs sm:text-sm text-gray-600 dark:text-gray-300">
               Win Rate
             </h3>
             <p className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-gray-100">
@@ -86,9 +85,9 @@ const StatsOverview = ({ user, stats, formatCurrency }) => {
         </div>
       </div>
 
-      <div className="bg-white dark:bg-gray-900 p-3 sm:p-4 rounded-lg shadow">
+      <div className="bg-white dark:bg-gray-700/60 p-3 sm:p-4 rounded-md border border-gray-200 dark:border-gray-600/50 shadow-sm">
         <div>
-          <h3 className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
+          <h3 className="text-xs sm:text-sm text-gray-600 dark:text-gray-300">
             Win/Loss Ratio
           </h3>
           <p className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-gray-100">
@@ -108,8 +107,8 @@ const StatsOverview = ({ user, stats, formatCurrency }) => {
         </div>
       </div>
 
-      <div className="bg-white dark:bg-gray-900 p-3 sm:p-4 rounded-lg shadow">
-        <h3 className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
+      <div className="bg-white dark:bg-gray-700/60 p-3 sm:p-4 rounded-md border border-gray-200 dark:border-gray-600/50 shadow-sm">
+        <h3 className="text-xs sm:text-sm text-gray-600 dark:text-gray-300">
           Total P/L
         </h3>
         <p

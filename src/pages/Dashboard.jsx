@@ -14,6 +14,8 @@ import TradeJournal from "../components/TradeJournal";
 import Analysis from "../components/Analysis";
 import Planning from "../components/Planning";
 import StatsOverview from "../components/StatsOverview";
+import AIInsights from "../pages/AIInsights";
+import WeeklyReview from "../components/WeeklyReview";
 import { useToast } from "../context/ToastContext";
 
 const Dashboard = () => {
@@ -44,6 +46,8 @@ const Dashboard = () => {
     bulkDeleteTrades,
     submitTradeReview,
     importTrades,
+    fetchTradesForWeek,
+    analyzeTradesForWeek,
   } = useTrades(user);
 
   // UI-specific handler functions that call the hook functions
@@ -275,7 +279,7 @@ const Dashboard = () => {
   if (error) {
     return (
       <div className="w-full min-h-screen pt-16 px-3 sm:px-6 py-3 sm:py-6 flex items-center justify-center text-red-600 dark:text-red-400">
-        <div className="bg-red-50 dark:bg-red-900/30 p-4 rounded-lg">
+        <div className="bg-red-50 dark:bg-red-900/20 p-4 rounded-sm border border-red-100 dark:border-red-800/50 shadow-sm">
           Error: {error}
         </div>
       </div>
@@ -347,6 +351,25 @@ const Dashboard = () => {
                 <Planning trades={allTrades} user={user} stats={stats} />
               ),
             },
+            {
+              path: "ai-insights/*",
+              element: (
+                <AIInsights
+                  fetchTradesForWeek={fetchTradesForWeek}
+                  analyzeTradesForWeek={analyzeTradesForWeek}
+                />
+              ),
+            },
+            {
+              path: "weekly-review",
+              element: (
+                <WeeklyReview
+                  trades={allTrades}
+                  fetchTradesForWeek={fetchTradesForWeek}
+                  analyzeTradesForWeek={analyzeTradesForWeek}
+                />
+              ),
+            },
           ].map(({ path, element }) => (
             <Route
               key={path}
@@ -393,7 +416,7 @@ const Dashboard = () => {
       />
       {/* Error Display */}
       {error && (
-        <div className="fixed bottom-4 left-4 right-4 p-4 bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 rounded-lg shadow-lg">
+        <div className="fixed bottom-4 left-4 right-4 p-4 bg-red-100 dark:bg-red-900/20 text-red-600 dark:text-red-400 rounded-sm border border-red-100 dark:border-red-800/50 shadow-sm">
           Error: {error}
         </div>
       )}

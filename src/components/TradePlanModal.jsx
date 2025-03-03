@@ -1,8 +1,9 @@
 // src/components/TradePlanModal.jsx
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { X } from "lucide-react";
 
 const TradePlanModal = ({ isOpen, onClose, onSubmit, plan }) => {
+  const modalRef = useRef(null);
   const initialFormState = {
     ticker: "",
     direction: "LONG",
@@ -39,15 +40,48 @@ const TradePlanModal = ({ isOpen, onClose, onSubmit, plan }) => {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (!isOpen) {
-      // Reset form when modal closes
-      setFormData(initialFormState);
-    } else if (plan) {
-      // Load plan data when editing
-      setFormData(plan);
-    } else {
-      // Reset to initial state for new trade
-      setFormData(initialFormState);
+    const handleClickOutside = (event) => {
+      if (modalRef.current && !modalRef.current.contains(event.target)) {
+        onClose();
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isOpen, onClose]);
+
+  // Load plan data when plan changes or modal opens
+  useEffect(() => {
+    if (isOpen) {
+      if (plan) {
+        setFormData({
+          ...initialFormState,
+          ...plan,
+          attributes: {
+            ...initialFormState.attributes,
+            ...(plan.attributes || {}),
+          },
+          quality: {
+            ...initialFormState.quality,
+            ...(plan.quality || {}),
+          },
+          setup: {
+            ...initialFormState.setup,
+            ...(plan.setup || {}),
+          },
+          execution: {
+            ...initialFormState.execution,
+            ...(plan.execution || {}),
+          },
+        });
+      } else {
+        setFormData(initialFormState);
+      }
     }
   }, [isOpen, plan]);
 
@@ -109,7 +143,10 @@ const TradePlanModal = ({ isOpen, onClose, onSubmit, plan }) => {
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white dark:bg-gray-800 rounded-lg w-full max-w-4xl h-[90vh] sm:max-h-[90vh] overflow-y-auto">
+      <div
+        ref={modalRef}
+        className="bg-white dark:bg-gray-700/60 rounded-sm w-full max-w-4xl h-[90vh] sm:max-h-[90vh] overflow-y-auto border border-gray-200 dark:border-gray-600/50 shadow-sm"
+      >
         <div className="p-4 sm:p-6">
           {/* Header */}
           <div className="flex justify-between items-center mb-4 sm:mb-6">
@@ -118,8 +155,8 @@ const TradePlanModal = ({ isOpen, onClose, onSubmit, plan }) => {
             </h2>
             <button
               onClick={onClose}
-              className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg 
-            text-gray-500 dark:text-gray-400"
+              className="p-2 hover:bg-gray-100 dark:hover:bg-gray-600/70 rounded-sm 
+              text-gray-500 dark:text-gray-400"
             >
               <X className="h-5 w-5 sm:h-6 sm:w-6" />
             </button>
@@ -138,8 +175,8 @@ const TradePlanModal = ({ isOpen, onClose, onSubmit, plan }) => {
                   name="ticker"
                   value={formData.ticker}
                   onChange={handleChange}
-                  className="w-full px-3 py-2.5 sm:py-2 border border-gray-300 dark:border-gray-600 rounded 
-                bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                  className="w-full px-3 py-2.5 sm:py-2 border border-gray-300 dark:border-gray-600/70 rounded-sm 
+                  bg-white dark:bg-gray-600/50 text-gray-900 dark:text-gray-100"
                   required
                 />
               </div>
@@ -151,8 +188,8 @@ const TradePlanModal = ({ isOpen, onClose, onSubmit, plan }) => {
                   name="direction"
                   value={formData.direction}
                   onChange={handleChange}
-                  className="w-full px-3 py-2.5 sm:py-2 border border-gray-300 dark:border-gray-600 rounded 
-                bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                  className="w-full px-3 py-2.5 sm:py-2 border border-gray-300 dark:border-gray-600/70 rounded-sm 
+                  bg-white dark:bg-gray-600/50 text-gray-900 dark:text-gray-100"
                   required
                 >
                   <option value="LONG">Long</option>
@@ -169,53 +206,53 @@ const TradePlanModal = ({ isOpen, onClose, onSubmit, plan }) => {
               </h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                 <div className="space-y-3 sm:space-y-2">
-                  <label className="flex items-center p-2 hover:bg-gray-50 dark:hover:bg-gray-700/50 rounded">
+                  <label className="flex items-center p-2 hover:bg-gray-50 dark:hover:bg-gray-600/30 rounded-sm">
                     <input
                       type="checkbox"
                       name="attributes.lowFloat"
                       checked={formData.attributes.lowFloat}
                       onChange={handleChange}
-                      className="h-4 w-4 rounded border-gray-300 dark:border-gray-600 
-            bg-white dark:bg-gray-700 text-blue-600"
+                      className="h-4 w-4 rounded-sm border-gray-300 dark:border-gray-600/70 
+                      bg-white dark:bg-gray-600/50 text-blue-600"
                     />
                     <span className="ml-2 text-sm text-gray-700 dark:text-gray-300">
                       Low Float
                     </span>
                   </label>
-                  <label className="flex items-center p-2 hover:bg-gray-50 dark:hover:bg-gray-700/50 rounded">
+                  <label className="flex items-center p-2 hover:bg-gray-50 dark:hover:bg-gray-600/30 rounded-sm">
                     <input
                       type="checkbox"
                       name="attributes.upMoreThan10Percent"
                       checked={formData.attributes.upMoreThan10Percent}
                       onChange={handleChange}
-                      className="h-4 w-4 rounded border-gray-300 dark:border-gray-600 
-            bg-white dark:bg-gray-700 text-blue-600"
+                      className="h-4 w-4 rounded-sm border-gray-300 dark:border-gray-600/70 
+                      bg-white dark:bg-gray-600/50 text-blue-600"
                     />
                     <span className="ml-2 text-sm text-gray-700 dark:text-gray-300">
                       Up more than 10%
                     </span>
                   </label>
-                  <label className="flex items-center p-2 hover:bg-gray-50 dark:hover:bg-gray-700/50 rounded">
+                  <label className="flex items-center p-2 hover:bg-gray-50 dark:hover:bg-gray-600/30 rounded-sm">
                     <input
                       type="checkbox"
                       name="attributes.unusualVolume"
                       checked={formData.attributes.unusualVolume}
                       onChange={handleChange}
-                      className="h-4 w-4 rounded border-gray-300 dark:border-gray-600 
-            bg-white dark:bg-gray-700 text-blue-600"
+                      className="h-4 w-4 rounded-sm border-gray-300 dark:border-gray-600/70 
+                      bg-white dark:bg-gray-600/50 text-blue-600"
                     />
                     <span className="ml-2 text-sm text-gray-700 dark:text-gray-300">
                       Have Unusual Volume
                     </span>
                   </label>
-                  <label className="flex items-center p-2 hover:bg-gray-50 dark:hover:bg-gray-700/50 rounded">
+                  <label className="flex items-center p-2 hover:bg-gray-50 dark:hover:bg-gray-600/30 rounded-sm">
                     <input
                       type="checkbox"
                       name="attributes.formerRunner"
                       checked={formData.attributes.formerRunner}
                       onChange={handleChange}
-                      className="h-4 w-4 rounded border-gray-300 dark:border-gray-600 
-            bg-white dark:bg-gray-700 text-blue-600"
+                      className="h-4 w-4 rounded-sm border-gray-300 dark:border-gray-600/70 
+                      bg-white dark:bg-gray-600/50 text-blue-600"
                     />
                     <span className="ml-2 text-sm text-gray-700 dark:text-gray-300">
                       Former Runner
@@ -223,40 +260,40 @@ const TradePlanModal = ({ isOpen, onClose, onSubmit, plan }) => {
                   </label>
                 </div>
                 <div className="space-y-3 sm:space-y-2">
-                  <label className="flex items-center p-2 hover:bg-gray-50 dark:hover:bg-gray-700/50 rounded">
+                  <label className="flex items-center p-2 hover:bg-gray-50 dark:hover:bg-gray-600/30 rounded-sm">
                     <input
                       type="checkbox"
                       name="attributes.hasCatalyst"
                       checked={formData.attributes.hasCatalyst}
                       onChange={handleChange}
-                      className="h-4 w-4 rounded border-gray-300 dark:border-gray-600 
-            bg-white dark:bg-gray-700 text-blue-600"
+                      className="h-4 w-4 rounded-sm border-gray-300 dark:border-gray-600/70 
+                      bg-white dark:bg-gray-600/50 text-blue-600"
                     />
                     <span className="ml-2 text-sm text-gray-700 dark:text-gray-300">
                       Has Catalyst
                     </span>
                   </label>
-                  <label className="flex items-center p-2 hover:bg-gray-50 dark:hover:bg-gray-700/50 rounded">
+                  <label className="flex items-center p-2 hover:bg-gray-50 dark:hover:bg-gray-600/30 rounded-sm">
                     <input
                       type="checkbox"
                       name="attributes.wholeHalfDollarBreak"
                       checked={formData.attributes.wholeHalfDollarBreak}
                       onChange={handleChange}
-                      className="h-4 w-4 rounded border-gray-300 dark:border-gray-600 
-            bg-white dark:bg-gray-700 text-blue-600"
+                      className="h-4 w-4 rounded-sm border-gray-300 dark:border-gray-600/70 
+                      bg-white dark:bg-gray-600/50 text-blue-600"
                     />
                     <span className="ml-2 text-sm text-gray-700 dark:text-gray-300">
                       Whole/Half $ Break
                     </span>
                   </label>
-                  <label className="flex items-center p-2 hover:bg-gray-50 dark:hover:bg-gray-700/50 rounded">
+                  <label className="flex items-center p-2 hover:bg-gray-50 dark:hover:bg-gray-600/30 rounded-sm">
                     <input
                       type="checkbox"
                       name="attributes.clearSupport"
                       checked={formData.attributes.clearSupport}
                       onChange={handleChange}
-                      className="h-4 w-4 rounded border-gray-300 dark:border-gray-600 
-            bg-white dark:bg-gray-700 text-blue-600"
+                      className="h-4 w-4 rounded-sm border-gray-300 dark:border-gray-600/70 
+                      bg-white dark:bg-gray-600/50 text-blue-600"
                     />
                     <span className="ml-2 text-sm text-gray-700 dark:text-gray-300">
                       Clear Support
@@ -282,8 +319,8 @@ const TradePlanModal = ({ isOpen, onClose, onSubmit, plan }) => {
                     name="quality.float"
                     value={formData.quality.float || ""}
                     onChange={handleChange}
-                    className="w-full px-3 py-2.5 sm:py-2 border border-gray-300 dark:border-gray-600 rounded 
-          bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                    className="w-full px-3 py-2.5 sm:py-2 border border-gray-300 dark:border-gray-600/70 rounded-sm 
+                    bg-white dark:bg-gray-600/50 text-gray-900 dark:text-gray-100"
                   />
                 </div>
                 <div>
@@ -296,8 +333,8 @@ const TradePlanModal = ({ isOpen, onClose, onSubmit, plan }) => {
                     name="quality.supportArea"
                     value={formData.quality.supportArea || ""}
                     onChange={handleChange}
-                    className="w-full px-3 py-2.5 sm:py-2 border border-gray-300 dark:border-gray-600 rounded 
-          bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                    className="w-full px-3 py-2.5 sm:py-2 border border-gray-300 dark:border-gray-600/70 rounded-sm 
+                    bg-white dark:bg-gray-600/50 text-gray-900 dark:text-gray-100"
                   />
                 </div>
                 <div>
@@ -312,8 +349,8 @@ const TradePlanModal = ({ isOpen, onClose, onSubmit, plan }) => {
                     onChange={handleChange}
                     min="1"
                     max="10"
-                    className="w-full px-3 py-2.5 sm:py-2 border border-gray-300 dark:border-gray-600 rounded 
-          bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                    className="w-full px-3 py-2.5 sm:py-2 border border-gray-300 dark:border-gray-600/70 rounded-sm 
+                    bg-white dark:bg-gray-600/50 text-gray-900 dark:text-gray-100"
                   />
                 </div>
               </div>
@@ -328,8 +365,8 @@ const TradePlanModal = ({ isOpen, onClose, onSubmit, plan }) => {
                 name="setup.setupGrade"
                 value={formData.setup.setupGrade || ""}
                 onChange={handleChange}
-                className="w-full px-3 py-2.5 sm:py-2 border border-gray-300 dark:border-gray-600 rounded 
-      bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                className="w-full px-3 py-2.5 sm:py-2 border border-gray-300 dark:border-gray-600/70 rounded-sm 
+                bg-white dark:bg-gray-600/50 text-gray-900 dark:text-gray-100"
               >
                 <option value="">Select Grade</option>
                 <option value="A+">A+</option>
@@ -358,8 +395,8 @@ const TradePlanModal = ({ isOpen, onClose, onSubmit, plan }) => {
                     value={formData.execution.entry || ""}
                     onChange={handleChange}
                     step="0.01"
-                    className="w-full px-3 py-2.5 sm:py-2 border border-gray-300 dark:border-gray-600 rounded 
-          bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                    className="w-full px-3 py-2.5 sm:py-2 border border-gray-300 dark:border-gray-600/70 rounded-sm 
+                    bg-white dark:bg-gray-600/50 text-gray-900 dark:text-gray-100"
                   />
                 </div>
                 <div>
@@ -373,8 +410,8 @@ const TradePlanModal = ({ isOpen, onClose, onSubmit, plan }) => {
                     value={formData.execution.profitTarget || ""}
                     onChange={handleChange}
                     step="0.01"
-                    className="w-full px-3 py-2.5 sm:py-2 border border-gray-300 dark:border-gray-600 rounded 
-          bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                    className="w-full px-3 py-2.5 sm:py-2 border border-gray-300 dark:border-gray-600/70 rounded-sm 
+                    bg-white dark:bg-gray-600/50 text-gray-900 dark:text-gray-100"
                   />
                 </div>
                 <div>
@@ -388,13 +425,12 @@ const TradePlanModal = ({ isOpen, onClose, onSubmit, plan }) => {
                     value={formData.execution.stopLoss || ""}
                     onChange={handleChange}
                     step="0.01"
-                    className="w-full px-3 py-2.5 sm:py-2 border border-gray-300 dark:border-gray-600 rounded 
-          bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                    className="w-full px-3 py-2.5 sm:py-2 border border-gray-300 dark:border-gray-600/70 rounded-sm 
+                    bg-white dark:bg-gray-600/50 text-gray-900 dark:text-gray-100"
                   />
                 </div>
               </div>
             </div>
-
             {/* Notes */}
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
@@ -406,27 +442,27 @@ const TradePlanModal = ({ isOpen, onClose, onSubmit, plan }) => {
                 value={formData.notes || ""}
                 onChange={handleChange}
                 rows="3"
-                className="w-full px-3 py-2.5 sm:py-2 border border-gray-300 dark:border-gray-600 rounded 
-      bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                className="w-full px-3 py-2.5 sm:py-2 border border-gray-300 dark:border-gray-600/70 rounded-sm 
+                bg-white dark:bg-gray-600/50 text-gray-900 dark:text-gray-100"
               />
             </div>
 
             {/* Form Actions */}
-            <div className="flex flex-col sm:flex-row justify-end gap-3 sm:gap-4 pt-4 border-t dark:border-gray-700">
+            <div className="flex flex-col sm:flex-row justify-end gap-3 sm:gap-4 pt-4 border-t dark:border-gray-600/50">
               <button
                 type="button"
                 onClick={onClose}
-                className="w-full sm:w-auto px-4 py-2.5 sm:py-2 border border-gray-300 dark:border-gray-600 rounded 
-      bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 
-      hover:bg-gray-50 dark:hover:bg-gray-600 text-sm"
+                className="w-full sm:w-auto px-4 py-2.5 sm:py-2 border border-gray-300 dark:border-gray-600/70 rounded-sm 
+                bg-white dark:bg-gray-600/50 text-gray-700 dark:text-gray-300 
+                hover:bg-gray-50 dark:hover:bg-gray-600/70 text-sm"
               >
                 Cancel
               </button>
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full sm:w-auto px-4 py-2.5 sm:py-2 bg-blue-600 text-white rounded 
-      hover:bg-blue-700 dark:hover:bg-blue-500 disabled:opacity-50 text-sm"
+                className="w-full sm:w-auto px-4 py-2.5 sm:py-2 bg-blue-500 dark:bg-blue-500/90 text-white rounded-sm 
+                hover:bg-blue-600 dark:hover:bg-blue-500 disabled:opacity-50 text-sm"
               >
                 {loading
                   ? plan

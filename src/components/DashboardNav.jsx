@@ -6,6 +6,7 @@ import {
   Target,
   Clock,
   BarChart,
+  BrainCircuit,
 } from "lucide-react";
 
 const DashboardNav = () => {
@@ -36,14 +37,18 @@ const DashboardNav = () => {
       icon: Target,
       shortLabel: "Entry/Exit",
     },
+    {
+      label: "AI Insights",
+      path: "/dashboard/ai-insights",
+      icon: BrainCircuit,
+      shortLabel: "AI",
+    },
   ];
 
-  const isActive = (path) => {
-    return location.pathname === path;
-  };
+  const isActive = (path) => location.pathname === path;
 
   return (
-    <nav className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 sticky top-0 z-10">
+    <nav className="bg-white dark:bg-gray-700/80 border-b border-gray-200 dark:border-gray-600/50 sticky top-0 z-10">
       <div className="max-w-screen-2xl mx-auto overflow-x-auto scrollbar-none">
         <div className="flex justify-between sm:justify-center min-w-max px-2 sm:px-0">
           {navItems.map((item) => {
@@ -55,7 +60,7 @@ const DashboardNav = () => {
                 className={`flex items-center justify-center min-w-[4.5rem] sm:min-w-0 px-2 sm:px-4 py-3 sm:py-4 text-xs sm:text-sm font-medium transition-colors ${
                   isActive(item.path)
                     ? "border-b-2 border-blue-500 text-blue-600 dark:text-blue-400"
-                    : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:border-b-2 hover:border-gray-300 dark:hover:border-gray-600"
+                    : "text-gray-500 dark:text-gray-300 hover:text-gray-700 dark:hover:text-gray-100 hover:border-b-2 hover:border-gray-300 dark:hover:border-gray-500"
                 }`}
               >
                 <Icon

@@ -132,13 +132,13 @@ const Profile = () => {
   return (
     <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-8">
       {/* Profile Header */}
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4 sm:p-6 mb-4 sm:mb-6">
+      <div className="bg-white dark:bg-gray-700/60 rounded-md border border-gray-200 dark:border-gray-600/50 shadow-sm p-4 sm:p-6 mb-4 sm:mb-6">
         <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4 sm:gap-0">
           <div>
             <h1 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-gray-100">
               {profile.user.username}
             </h1>
-            <p className="text-sm text-gray-500 dark:text-gray-400">
+            <p className="text-sm text-gray-500 dark:text-gray-300">
               {profile.user.tradingStyle || "No trading style set"}
             </p>
             <div className="mt-4">
@@ -150,10 +150,10 @@ const Profile = () => {
           {!isOwnProfile && (
             <button
               onClick={handleFollow}
-              className={`flex items-center justify-center gap-2 px-4 py-2 rounded-md w-full sm:w-auto ${
+              className={`flex items-center justify-center gap-2 px-4 py-2 rounded-sm w-full sm:w-auto ${
                 isFollowing
-                  ? "bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600"
-                  : "bg-blue-600 text-white hover:bg-blue-700 dark:hover:bg-blue-500"
+                  ? "bg-gray-100 dark:bg-gray-600/50 text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-600/70"
+                  : "bg-blue-500 text-white hover:bg-blue-600 dark:hover:bg-blue-500"
               }`}
             >
               {isFollowing ? (
@@ -172,7 +172,7 @@ const Profile = () => {
         </div>
 
         {/* Stats */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-6 pt-6 border-t dark:border-gray-700">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-6 pt-6 border-t dark:border-gray-600/50">
           <div className="text-center p-2 sm:p-0">
             <p className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-gray-100">
               {profile.stats?.totalTrades || 0}
@@ -209,15 +209,15 @@ const Profile = () => {
       </div>
 
       {/* Content Tabs */}
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow">
-        <div className="border-b border-gray-200 dark:border-gray-700 overflow-x-auto">
+      <div className="bg-white dark:bg-gray-700/60 rounded-md border border-gray-200 dark:border-gray-600/50 shadow-sm">
+        <div className="border-b border-gray-200 dark:border-gray-600/50 overflow-x-auto">
           <nav className="flex gap-2 sm:gap-4 px-2 sm:px-6 min-w-max">
             <button
               onClick={() => setActiveTab("reviews")}
               className={`px-2 sm:px-3 py-4 text-xs sm:text-sm font-medium border-b-2 whitespace-nowrap ${
                 activeTab === "reviews"
                   ? "border-blue-500 text-blue-600 dark:text-blue-400"
-                  : "border-transparent text-gray-500 dark:text-gray-400 hover:border-gray-300 dark:hover:border-gray-600"
+                  : "border-transparent text-gray-500 dark:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600/70"
               }`}
             >
               <PenLine className="h-4 w-4 inline mr-1 sm:mr-2" />
@@ -228,7 +228,7 @@ const Profile = () => {
               className={`px-2 sm:px-3 py-4 text-xs sm:text-sm font-medium border-b-2 whitespace-nowrap ${
                 activeTab === "stats"
                   ? "border-blue-500 text-blue-600 dark:text-blue-400"
-                  : "border-transparent text-gray-500 dark:text-gray-400 hover:border-gray-300 dark:hover:border-gray-600"
+                  : "border-transparent text-gray-500 dark:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600/70"
               }`}
             >
               <ChartLine className="h-4 w-4 inline mr-1 sm:mr-2" />
@@ -239,7 +239,7 @@ const Profile = () => {
               className={`px-2 sm:px-3 py-4 text-xs sm:text-sm font-medium border-b-2 whitespace-nowrap ${
                 activeTab === "network"
                   ? "border-blue-500 text-blue-600 dark:text-blue-400"
-                  : "border-transparent text-gray-500 dark:text-gray-400 hover:border-gray-300 dark:hover:border-gray-600"
+                  : "border-transparent text-gray-500 dark:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600/70"
               }`}
             >
               <Users className="h-4 w-4 inline mr-1 sm:mr-2" />
@@ -251,7 +251,7 @@ const Profile = () => {
                 className={`px-2 sm:px-3 py-4 text-xs sm:text-sm font-medium border-b-2 whitespace-nowrap ${
                   activeTab === "settings"
                     ? "border-blue-500 text-blue-600 dark:text-blue-400"
-                    : "border-transparent text-gray-500 dark:text-gray-400 hover:border-gray-300 dark:hover:border-gray-600"
+                    : "border-transparent text-gray-500 dark:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600/70"
                 }`}
               >
                 <Settings className="h-4 w-4 inline mr-1 sm:mr-2" />

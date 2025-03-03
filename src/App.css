@@ -40,3 +40,15 @@
 .read-the-docs {
   color: #888;
 }
+
+.prose h4 {
+  @apply text-lg font-bold text-blue-700 dark:text-blue-400 mb-3;
+}
+
+.prose h5 {
+  @apply text-base font-semibold text-gray-700 dark:text-gray-300 mb-2;
+}
+
+.prose p {
+  @apply text-gray-800 dark:text-gray-200 leading-relaxed;
+}

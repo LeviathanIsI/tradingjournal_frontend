@@ -1,4 +1,3 @@
-// src/components/SubscriptionRequired.jsx
 import { Navigate, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
@@ -8,8 +7,10 @@ const SubscriptionRequired = ({ children }) => {
 
   if (isSubscriptionLoading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-pulse text-lg">Loading...</div>
+      <div className="flex items-center justify-center min-h-screen bg-white dark:bg-gray-800/90">
+        <div className="animate-pulse p-4 rounded-lg text-lg text-gray-700 dark:text-gray-200">
+          Loading...
+        </div>
       </div>
     );
   }

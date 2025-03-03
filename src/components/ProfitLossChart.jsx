@@ -38,12 +38,12 @@ const CustomTooltip = ({ active, payload, label, displayMode }) => {
     const tooltipDate = new Date(year, month - 1, day);
 
     return (
-      <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-3 shadow-lg">
+      <div className="bg-white dark:bg-gray-700/80 border border-gray-200 dark:border-gray-600/50 rounded-md p-3 shadow-sm">
         <p className="font-medium text-gray-900 dark:text-gray-100">
           {tooltipDate.toLocaleDateString()}
         </p>
         <div className="mt-2 space-y-1">
-          <p className="text-sm text-gray-600 dark:text-gray-400">
+          <p className="text-sm text-gray-600 dark:text-gray-300">
             Daily P/L:
             <span
               className={`ml-2 font-medium ${
@@ -55,10 +55,10 @@ const CustomTooltip = ({ active, payload, label, displayMode }) => {
               {formatCurrency(data.profit)}
             </span>
           </p>
-          <p className="text-sm text-gray-600 dark:text-gray-400">
+          <p className="text-sm text-gray-600 dark:text-gray-300">
             Win Rate: <span className="ml-2 font-medium">{winRate}%</span>
           </p>
-          <p className="text-sm text-gray-600 dark:text-gray-400">
+          <p className="text-sm text-gray-600 dark:text-gray-300">
             Trades: <span className="ml-2 font-medium">{data.dailyTrades}</span>
           </p>
         </div>
@@ -170,35 +170,35 @@ const filterTradesByTimeframe = (trades, selectedDate, timeframe) => {
 
 const TradesTable = ({ trades }) => {
   return (
-    <div className="mt-4 border dark:border-gray-700 rounded-lg overflow-hidden">
-      <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-        <thead className="bg-gray-50 dark:bg-gray-800">
+    <div className="mt-4 border dark:border-gray-600/50 rounded-md overflow-hidden">
+      <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-600/50">
+        <thead className="bg-gray-50 dark:bg-gray-600/40">
           <tr>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
+            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">
               Date
             </th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
+            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">
               Symbol
             </th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
+            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">
               Type
             </th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
+            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">
               Entry
             </th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
+            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">
               Exit
             </th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
+            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">
               P/L
             </th>
           </tr>
         </thead>
-        <tbody className="bg-white dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-700">
+        <tbody className="bg-white dark:bg-gray-700/50 divide-y divide-gray-200 dark:divide-gray-600/50">
           {trades.map((trade) => (
             <tr
               key={trade._id}
-              className="hover:bg-gray-50 dark:hover:bg-gray-800"
+              className="hover:bg-gray-50 dark:hover:bg-gray-600/40"
             >
               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
                 {new Date(trade.exitDate).toLocaleDateString()}
@@ -311,7 +311,7 @@ const ProfitLossChart = ({ trades }) => {
         Profit/Loss Over Time
       </h2>
 
-      <div className="bg-gray-100 dark:bg-gray-800 p-3 rounded-md">
+      <div className="bg-gray-100 dark:bg-gray-600/30 p-3 rounded-sm border border-gray-200 dark:border-gray-600/50">
         <p className="text-sm sm:text-base text-gray-900 dark:text-gray-100">
           Chart features:
         </p>
@@ -328,41 +328,41 @@ const ProfitLossChart = ({ trades }) => {
           <button
             onClick={() => setShowTrades(!showTrades)}
             disabled={!selectedDate}
-            className={`flex items-center gap-2 px-3 py-2 sm:py-1 text-sm bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded w-full sm:w-auto justify-center sm:justify-start text-gray-900 dark:text-gray-100
+            className={`flex items-center gap-2 px-3 py-2 sm:py-1 text-sm bg-white dark:bg-gray-600/50 border border-gray-300 dark:border-gray-600/70 rounded-sm w-full sm:w-auto justify-center sm:justify-start text-gray-900 dark:text-gray-100
             ${
               !selectedDate
                 ? "opacity-50 cursor-not-allowed"
-                : "hover:bg-gray-50 dark:hover:bg-gray-700"
+                : "hover:bg-gray-50 dark:hover:bg-gray-600/70"
             }`}
           >
             <Table size={16} />
             {showTrades ? "Hide Trades" : "Show Trades"}
           </button>
           {selectedDate && (
-            <span className="text-sm text-gray-600 dark:text-gray-400">
+            <span className="text-sm text-gray-600 dark:text-gray-300">
               Selected: {selectedDate}
             </span>
           )}
         </div>
 
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4 w-full sm:w-auto">
-          <div className="flex border border-gray-300 dark:border-gray-700 rounded-lg">
+          <div className="flex border border-gray-300 dark:border-gray-600/70 rounded-sm">
             <button
               onClick={() => setDisplayMode("currency")}
-              className={`flex-1 sm:flex-none px-3 py-2 sm:py-1 text-sm rounded-l-lg ${
+              className={`flex-1 sm:flex-none px-3 py-2 sm:py-1 text-sm rounded-l-sm ${
                 displayMode === "currency"
-                  ? "bg-blue-600 text-white"
-                  : "bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
+                  ? "bg-blue-500 text-white"
+                  : "bg-white dark:bg-gray-600/50 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600/70"
               }`}
             >
               Dollar
             </button>
             <button
               onClick={() => setDisplayMode("percentage")}
-              className={`flex-1 sm:flex-none px-3 py-2 sm:py-1 text-sm rounded-r-lg border-l border-gray-300 dark:border-gray-700 ${
+              className={`flex-1 sm:flex-none px-3 py-2 sm:py-1 text-sm rounded-r-sm border-l border-gray-300 dark:border-gray-600/70 ${
                 displayMode === "percentage"
-                  ? "bg-blue-600 text-white"
-                  : "bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
+                  ? "bg-blue-500 text-white"
+                  : "bg-white dark:bg-gray-600/50 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600/70"
               }`}
             >
               Percent
@@ -374,10 +374,10 @@ const ProfitLossChart = ({ trades }) => {
               <button
                 key={key}
                 onClick={() => setTimeframe(key)}
-                className={`px-3 py-2 sm:py-1 rounded text-sm ${
+                className={`px-3 py-2 sm:py-1 rounded-sm text-sm ${
                   timeframe === key
-                    ? "bg-blue-600 text-white"
-                    : "bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700"
+                    ? "bg-blue-500 text-white"
+                    : "bg-white dark:bg-gray-600/50 text-gray-700 dark:text-gray-200 border border-gray-300 dark:border-gray-600/70 hover:bg-gray-50 dark:hover:bg-gray-600/70"
                 }`}
               >
                 {label}
@@ -429,9 +429,9 @@ const ProfitLossChart = ({ trades }) => {
             />
             <Tooltip
               contentStyle={{
-                backgroundColor: isDark ? "rgb(31, 41, 55)" : "white",
+                backgroundColor: isDark ? "rgba(55, 65, 81, 0.8)" : "white",
                 border: isDark
-                  ? "1px solid rgb(55, 65, 81)"
+                  ? "1px solid rgba(75, 85, 99, 0.5)"
                   : "1px solid rgb(229, 231, 235)",
                 color: isDark ? "white" : "rgb(17, 24, 39)",
               }}
@@ -464,7 +464,7 @@ const ProfitLossChart = ({ trades }) => {
       </div>
 
       {showTrades && selectedDate && (
-        <div className="border-t dark:border-gray-700 pt-4 sm:pt-6">
+        <div className="border-t dark:border-gray-600/50 pt-4 sm:pt-6">
           {filteredTrades.length > 0 ? (
             <div>
               <h3 className="text-base sm:text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">

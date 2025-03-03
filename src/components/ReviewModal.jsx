@@ -142,9 +142,9 @@ const ReviewModal = ({ isOpen, onClose, trade, review, onSubmit }) => {
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 sm:p-0">
-      <div className="bg-white dark:bg-gray-900 rounded-lg w-full max-w-3xl max-h-[90vh] overflow-y-auto shadow-xl">
-        <div className="flex justify-between items-center p-4 sm:p-6 border-b border-gray-200 dark:border-gray-700">
+    <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 p-4 sm:p-0">
+      <div className="bg-white dark:bg-gray-700/90 rounded-md border border-gray-200 dark:border-gray-600/50 w-full max-w-3xl max-h-[90vh] overflow-y-auto shadow-md">
+        <div className="flex justify-between items-center p-4 sm:p-6 border-b border-gray-200 dark:border-gray-600/50">
           <h2 className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-gray-100">
             {tradeTitle}
           </h2>
@@ -157,7 +157,7 @@ const ReviewModal = ({ isOpen, onClose, trade, review, onSubmit }) => {
         </div>
 
         <div className="p-4 sm:p-6">
-          <div className="mb-4 sm:mb-6 p-3 sm:p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+          <div className="mb-4 sm:mb-6 p-3 sm:p-4 bg-gray-50 dark:bg-gray-600/30 rounded-sm border border-gray-200 dark:border-gray-600/50">
             {renderTradeSummary()}
           </div>
 

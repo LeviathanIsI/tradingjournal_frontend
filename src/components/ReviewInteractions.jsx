@@ -87,11 +87,11 @@ const ReviewInteractions = ({ review, onUpdate }) => {
   const isLiked = review.likes?.includes(user?._id);
 
   return (
-    <div className="mt-4 pt-4 border-t dark:border-gray-700">
+    <div className="mt-4 pt-4 border-t dark:border-gray-600/50">
       <div className="flex items-center gap-4">
         <button
           onClick={handleLike}
-          className="flex items-center gap-1 text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400"
+          className="flex items-center gap-1 text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400"
         >
           <Heart
             className={`h-5 w-5 ${
@@ -104,7 +104,7 @@ const ReviewInteractions = ({ review, onUpdate }) => {
         </button>
         <button
           onClick={() => setShowComments(!showComments)}
-          className="flex items-center gap-1 text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400"
+          className="flex items-center gap-1 text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400"
         >
           <MessageCircle className="h-5 w-5" />
           <span className="text-sm sm:text-base">
@@ -122,14 +122,14 @@ const ReviewInteractions = ({ review, onUpdate }) => {
                 value={comment}
                 onChange={(e) => setComment(e.target.value)}
                 placeholder="Add a comment..."
-                className="flex-1 px-3 py-2.5 sm:py-2 border border-gray-300 dark:border-gray-600 
-                rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100
-                focus:outline-none focus:border-blue-500 text-sm"
+                className="flex-1 px-3 py-2.5 sm:py-2 border border-gray-300 dark:border-gray-600/70 
+                rounded-sm bg-white dark:bg-gray-600/50 text-gray-900 dark:text-gray-100
+                focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-400 text-sm"
               />
               <button
                 type="submit"
-                className="px-4 py-2.5 sm:py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 
-                text-sm font-medium w-full sm:w-auto"
+                className="px-4 py-2.5 sm:py-2 bg-blue-500 text-white rounded-sm hover:bg-blue-600 
+                dark:bg-blue-500/90 dark:hover:bg-blue-500 text-sm font-medium w-full sm:w-auto"
               >
                 Post
               </button>
@@ -140,17 +140,17 @@ const ReviewInteractions = ({ review, onUpdate }) => {
             {review.comments?.map((comment) => (
               <div
                 key={comment._id}
-                className="flex justify-between items-start bg-gray-50 dark:bg-gray-800/50 
-                p-3 rounded-lg"
+                className="flex justify-between items-start bg-gray-50 dark:bg-gray-600/30 
+                p-3 rounded-sm border border-gray-200 dark:border-gray-600/50"
               >
                 <div className="space-y-1">
                   <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
                     {comment.user.username}
                   </p>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                  <p className="text-sm text-gray-600 dark:text-gray-300">
                     {comment.content}
                   </p>
-                  <p className="text-xs text-gray-400 dark:text-gray-500">
+                  <p className="text-xs text-gray-400 dark:text-gray-400">
                     {new Date(comment.createdAt).toLocaleDateString()}
                   </p>
                 </div>

@@ -21,8 +21,32 @@ const ProfileSettings = ({
     answer2: "",
     answer3: "",
   });
+  // Add state for deletion warning step
+  const [deleteStep, setDeleteStep] = useState(1);
+  const [deleteConfirmation, setDeleteConfirmation] = useState({
+    billingAcknowledged: false,
+    signature: "",
+  });
 
   const handleDeleteAccount = async () => {
+    // If on first step (warning), move to verification step
+    if (deleteStep === 1) {
+      // Validate required fields in step 1
+      if (hasActiveSubscription && !deleteConfirmation.billingAcknowledged) {
+        setError("Please acknowledge the billing notice");
+        return;
+      }
+
+      if (!deleteConfirmation.signature) {
+        setError("Please type your full name to confirm");
+        return;
+      }
+
+      setDeleteStep(2);
+      setError(null);
+      return;
+    }
+
     try {
       setDeleteLoading(true);
       const token = localStorage.getItem("token");
@@ -37,6 +61,8 @@ const ProfileSettings = ({
           },
           body: JSON.stringify({
             answers: user.googleAuth ? null : deleteAnswers,
+            billingAcknowledged: deleteConfirmation.billingAcknowledged,
+            signature: deleteConfirmation.signature,
           }),
         }
       );
@@ -280,16 +306,38 @@ const ProfileSettings = ({
     }
   };
 
+  // Reset delete confirmation state when dialog is closed
+  const cancelDelete = () => {
+    setShowDeleteConfirm(false);
+    setDeleteStep(1);
+    setDeleteAnswers({
+      answer1: "",
+      answer2: "",
+      answer3: "",
+    });
+    setDeleteConfirmation({
+      billingAcknowledged: false,
+      signature: "",
+    });
+  };
+
+  // Get subscription details
+  const hasActiveSubscription = user?.subscription?.status === "active";
+  const subscriptionTier = user?.subscription?.tier || "Free";
+  const nextBillingDate = user?.subscription?.nextBillingDate
+    ? new Date(user.subscription.nextBillingDate).toLocaleDateString()
+    : "N/A";
+
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden">
-      <div className="border-b border-gray-200 dark:border-gray-700 overflow-x-auto">
+    <div className="bg-white dark:bg-gray-700/60 rounded-md border border-gray-200 dark:border-gray-600/50 shadow-sm overflow-hidden">
+      <div className="border-b border-gray-200 dark:border-gray-600/50 overflow-x-auto">
         <nav className="flex gap-2 sm:gap-4 px-2 sm:px-6 min-w-max">
           <button
             onClick={() => setTab("general")}
             className={`px-2 sm:px-3 py-2 sm:py-3 text-xs sm:text-sm font-medium border-b-2 whitespace-nowrap flex items-center justify-center ${
               tab === "general"
                 ? "border-blue-500 text-blue-600 dark:text-blue-400"
-                : "border-transparent text-gray-500 dark:text-gray-400 hover:border-gray-300 dark:hover:border-gray-600"
+                : "border-transparent text-gray-500 dark:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600/70"
             }`}
           >
             General
@@ -299,7 +347,7 @@ const ProfileSettings = ({
             className={`px-2 sm:px-3 py-2 sm:py-3 text-xs sm:text-sm font-medium border-b-2 whitespace-nowrap flex items-center justify-center ${
               tab === "password"
                 ? "border-blue-500 text-blue-600 dark:text-blue-400"
-                : "border-transparent text-gray-500 dark:text-gray-400 hover:border-gray-300 dark:hover:border-gray-600"
+                : "border-transparent text-gray-500 dark:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600/70"
             }`}
           >
             Password
@@ -309,7 +357,7 @@ const ProfileSettings = ({
             className={`px-2 sm:px-3 py-2 sm:py-3 text-xs sm:text-sm font-medium border-b-2 whitespace-nowrap flex items-center justify-center ${
               tab === "account"
                 ? "border-blue-500 text-blue-600 dark:text-blue-400"
-                : "border-transparent text-gray-500 dark:text-gray-400 hover:border-gray-300 dark:hover:border-gray-600"
+                : "border-transparent text-gray-500 dark:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600/70"
             }`}
           >
             Account
@@ -319,7 +367,7 @@ const ProfileSettings = ({
             className={`px-2 sm:px-3 py-2 sm:py-3 text-xs sm:text-sm font-medium border-b-2 whitespace-nowrap flex items-center justify-center ${
               tab === "subscription"
                 ? "border-blue-500 text-blue-600 dark:text-blue-400"
-                : "border-transparent text-gray-500 dark:text-gray-400 hover:border-gray-300 dark:hover:border-gray-600"
+                : "border-transparent text-gray-500 dark:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600/70"
             }`}
           >
             Subscription
@@ -329,14 +377,14 @@ const ProfileSettings = ({
 
       <div className="p-4 sm:p-6">
         {error && (
-          <div className="mb-4 p-3 sm:p-4 bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-400 rounded-md flex items-center gap-2 text-sm">
+          <div className="mb-4 p-3 sm:p-4 bg-red-50 dark:bg-red-700/30 text-red-700 dark:text-red-300 rounded-sm border border-red-100 dark:border-red-600/50 flex items-center gap-2 text-sm">
             <AlertCircle className="h-5 w-5 flex-shrink-0" />
             {error}
           </div>
         )}
 
         {success && (
-          <div className="mb-4 p-3 sm:p-4 bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-400 rounded-md text-sm">
+          <div className="mb-4 p-3 sm:p-4 bg-green-50 dark:bg-green-700/30 text-green-700 dark:text-green-300 rounded-sm border border-green-100 dark:border-green-600/50 text-sm">
             {success}
           </div>
         )}
@@ -356,9 +404,9 @@ const ProfileSettings = ({
                     username: e.target.value,
                   }))
                 }
-                className="mt-1 block w-full rounded-md border border-gray-300 dark:border-gray-600 
-        px-3 py-2 sm:py-2 text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100
-        focus:border-blue-500 focus:ring-blue-500"
+                className="mt-1 block w-full rounded-sm border border-gray-300 dark:border-gray-600/70 
+  px-3 py-2 sm:py-2 text-sm bg-white dark:bg-gray-600/50 text-gray-900 dark:text-gray-100
+  focus:border-blue-500 focus:ring-1 focus:ring-blue-400"
               />
             </div>
 
@@ -372,9 +420,9 @@ const ProfileSettings = ({
                 onChange={(e) =>
                   setGeneralForm((prev) => ({ ...prev, email: e.target.value }))
                 }
-                className="mt-1 block w-full rounded-md border border-gray-300 dark:border-gray-600 
-        px-3 py-2 sm:py-2 text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100
-        focus:border-blue-500 focus:ring-blue-500"
+                className="mt-1 block w-full rounded-sm border border-gray-300 dark:border-gray-600/70 
+  px-3 py-2 sm:py-2 text-sm bg-white dark:bg-gray-600/50 text-gray-900 dark:text-gray-100
+  focus:border-blue-500 focus:ring-1 focus:ring-blue-400"
               />
             </div>
 
@@ -390,9 +438,9 @@ const ProfileSettings = ({
                     tradingStyle: e.target.value,
                   }))
                 }
-                className="mt-1 block w-full rounded-md border border-gray-300 dark:border-gray-600 
-                  px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100
-                  focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                className="mt-1 block w-full rounded-sm border border-gray-300 dark:border-gray-600/70 
+  px-3 py-2 bg-white dark:bg-gray-600/50 text-gray-900 dark:text-gray-100
+  focus:border-blue-500 focus:ring-1 focus:ring-blue-400 sm:text-sm"
               >
                 <option value="">Select a style</option>
                 <option value="Day Trader">Day Trader</option>
@@ -412,9 +460,9 @@ const ProfileSettings = ({
                   setGeneralForm((prev) => ({ ...prev, bio: e.target.value }))
                 }
                 rows={4}
-                className="mt-1 block w-full rounded-md border border-gray-300 dark:border-gray-600 
-                  px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100
-                  focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                className="mt-1 block w-full rounded-sm border border-gray-300 dark:border-gray-600/70 
+  px-3 py-2 bg-white dark:bg-gray-600/50 text-gray-900 dark:text-gray-100
+  focus:border-blue-500 focus:ring-1 focus:ring-blue-400 sm:text-sm"
               />
             </div>
 
@@ -422,8 +470,8 @@ const ProfileSettings = ({
               <button
                 type="submit"
                 disabled={loading}
-                className="px-3 sm:px-4 py-2 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700 
-        dark:hover:bg-blue-500 disabled:opacity-50 w-full sm:w-auto"
+                className="px-3 sm:px-4 py-2 text-sm bg-blue-500 text-white rounded-sm hover:bg-blue-600 
+  dark:bg-blue-500/90 dark:hover:bg-blue-500 disabled:opacity-50 w-full sm:w-auto"
               >
                 {loading ? "Saving..." : "Save Changes"}
               </button>
@@ -452,9 +500,9 @@ const ProfileSettings = ({
                         newPassword: e.target.value,
                       }))
                     }
-                    className="mt-1 block w-full rounded-md border border-gray-300 dark:border-gray-600 
-        px-3 py-2 sm:py-2 text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100
-        focus:border-blue-500 focus:ring-blue-500"
+                    className="mt-1 block w-full rounded-sm border border-gray-300 dark:border-gray-600/70 
+  px-3 py-2 sm:py-2 text-sm bg-white dark:bg-gray-600/50 text-gray-900 dark:text-gray-100
+  focus:border-blue-500 focus:ring-1 focus:ring-blue-400"
                   />
                 </div>
 
@@ -471,9 +519,9 @@ const ProfileSettings = ({
                         confirmPassword: e.target.value,
                       }))
                     }
-                    className="mt-1 block w-full rounded-md border border-gray-300 dark:border-gray-600 
-        px-3 py-2 sm:py-2 text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100
-        focus:border-blue-500 focus:ring-blue-500"
+                    className="mt-1 block w-full rounded-sm border border-gray-300 dark:border-gray-600/70 
+  px-3 py-2 sm:py-2 text-sm bg-white dark:bg-gray-600/50 text-gray-900 dark:text-gray-100
+  focus:border-blue-500 focus:ring-1 focus:ring-blue-400"
                   />
                 </div>
 
@@ -503,9 +551,9 @@ const ProfileSettings = ({
                         currentPassword: e.target.value,
                       }))
                     }
-                    className="mt-1 block w-full rounded-md border border-gray-300 dark:border-gray-600 
-        px-3 py-2 sm:py-2 text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100
-        focus:border-blue-500 focus:ring-blue-500"
+                    className="mt-1 block w-full rounded-sm border border-gray-300 dark:border-gray-600/70 
+  px-3 py-2 sm:py-2 text-sm bg-white dark:bg-gray-600/50 text-gray-900 dark:text-gray-100
+  focus:border-blue-500 focus:ring-1 focus:ring-blue-400"
                   />
                 </div>
 
@@ -522,9 +570,9 @@ const ProfileSettings = ({
                         newPassword: e.target.value,
                       }))
                     }
-                    className="mt-1 block w-full rounded-md border border-gray-300 dark:border-gray-600 
-        px-3 py-2 sm:py-2 text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100
-        focus:border-blue-500 focus:ring-blue-500"
+                    className="mt-1 block w-full rounded-sm border border-gray-300 dark:border-gray-600/70 
+  px-3 py-2 sm:py-2 text-sm bg-white dark:bg-gray-600/50 text-gray-900 dark:text-gray-100
+  focus:border-blue-500 focus:ring-1 focus:ring-blue-400"
                   />
                 </div>
 
@@ -541,9 +589,9 @@ const ProfileSettings = ({
                         confirmPassword: e.target.value,
                       }))
                     }
-                    className="mt-1 block w-full rounded-md border border-gray-300 dark:border-gray-600 
-        px-3 py-2 sm:py-2 text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100
-        focus:border-blue-500 focus:ring-blue-500"
+                    className="mt-1 block w-full rounded-sm border border-gray-300 dark:border-gray-600/70 
+  px-3 py-2 sm:py-2 text-sm bg-white dark:bg-gray-600/50 text-gray-900 dark:text-gray-100
+  focus:border-blue-500 focus:ring-1 focus:ring-blue-400"
                   />
                 </div>
 
@@ -551,8 +599,8 @@ const ProfileSettings = ({
                   <button
                     type="submit"
                     disabled={loading}
-                    className="px-3 sm:px-4 py-2 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700 
-        dark:hover:bg-blue-500 disabled:opacity-50 w-full sm:w-auto"
+                    className="px-3 sm:px-4 py-2 text-sm bg-blue-500 text-white rounded-sm hover:bg-blue-600 
+  dark:bg-blue-500/90 dark:hover:bg-blue-500 disabled:opacity-50 w-full sm:w-auto"
                   >
                     {loading ? "Updating..." : "Update Password"}
                   </button>
@@ -576,9 +624,9 @@ const ProfileSettings = ({
                 value={accountForm.startingCapital}
                 onChange={handleAccountChange}
                 placeholder="Enter your starting capital"
-                className="mt-1 block w-full rounded-md border border-gray-300 dark:border-gray-600 
-        px-3 py-2 sm:py-2 text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100
-        focus:border-blue-500 focus:ring-blue-500"
+                className="mt-1 block w-full rounded-sm border border-gray-300 dark:border-gray-600/70 
+  px-3 py-2 sm:py-2 text-sm bg-white dark:bg-gray-600/50 text-gray-900 dark:text-gray-100
+  focus:border-blue-500 focus:ring-1 focus:ring-blue-400"
               />
             </div>
 
@@ -590,9 +638,9 @@ const ProfileSettings = ({
                 name="defaultCurrency"
                 value={accountForm.defaultCurrency}
                 onChange={handleAccountChange}
-                className="mt-1 block w-full rounded-md border border-gray-300 dark:border-gray-600 
-                  px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100
-                  focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                className="mt-1 block w-full rounded-sm border border-gray-300 dark:border-gray-600/70 
+  px-3 py-2 bg-white dark:bg-gray-600/50 text-gray-900 dark:text-gray-100
+  focus:border-blue-500 focus:ring-1 focus:ring-blue-400 sm:text-sm"
               >
                 <option value="USD">USD</option>
                 <option value="EUR">EUR</option>
@@ -608,9 +656,9 @@ const ProfileSettings = ({
                 name="timeZone"
                 value={accountForm.timeZone}
                 onChange={handleAccountChange}
-                className="mt-1 block w-full rounded-md border border-gray-300 dark:border-gray-600 
-                  px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100
-                  focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                className="mt-1 block w-full rounded-sm border border-gray-300 dark:border-gray-600/70 
+  px-3 py-2 bg-white dark:bg-gray-600/50 text-gray-900 dark:text-gray-100
+  focus:border-blue-500 focus:ring-1 focus:ring-blue-400 sm:text-sm"
               >
                 {timeZones.map((tz) => (
                   <option key={tz.value} value={tz.value}>
@@ -628,9 +676,9 @@ const ProfileSettings = ({
                 name="experienceLevel"
                 value={accountForm.experienceLevel}
                 onChange={handleAccountChange}
-                className="mt-1 block w-full rounded-md border border-gray-300 dark:border-gray-600 
-                  px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100
-                  focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                className="mt-1 block w-full rounded-sm border border-gray-300 dark:border-gray-600/70 
+  px-3 py-2 bg-white dark:bg-gray-600/50 text-gray-900 dark:text-gray-100
+  focus:border-blue-500 focus:ring-1 focus:ring-blue-400 sm:text-sm"
               >
                 <option value="auto">Auto-calculate from trades</option>
                 <option value="beginner">Beginner</option>
@@ -656,8 +704,8 @@ const ProfileSettings = ({
                 <button
                   type="button"
                   onClick={() => setShowDeleteConfirm(true)}
-                  className="w-full sm:w-auto px-4 py-2 sm:py-2.5 text-sm bg-red-600 text-white rounded-md hover:bg-red-700 
-    dark:hover:bg-red-500 transition-colors"
+                  className="w-full sm:w-auto px-4 py-2 sm:py-2.5 text-sm bg-red-500 text-white rounded-sm hover:bg-red-600 
+  dark:bg-red-500/90 dark:hover:bg-red-500 transition-colors"
                 >
                   Delete Account
                 </button>
@@ -665,106 +713,179 @@ const ProfileSettings = ({
             </div>
 
             {showDeleteConfirm && (
-              <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-3 sm:p-4 z-50">
-                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-3 sm:p-4 z-50">
-                  <h3 className="text-base sm:text-lg font-medium text-red-600 dark:text-red-400 mb-4">
-                    Delete Account
-                  </h3>
-
-                  {!user.googleAuth ? (
+              <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center p-3 sm:p-4 z-50">
+                <div className="bg-white dark:bg-gray-700/60 rounded-sm w-full max-w-md p-4 sm:p-6">
+                  {deleteStep === 1 ? (
                     <>
+                      <h3 className="text-base sm:text-lg font-medium text-red-600 dark:text-red-400 mb-4">
+                        Delete Account
+                      </h3>
+
                       <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
-                        Please verify your identity by answering your security
-                        questions:
+                        This action cannot be undone. Your account will be
+                        permanently deleted.
                       </p>
-                      <div className="space-y-4 mb-6">
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                            {user.securityQuestions?.question1?.question}
-                          </label>
-                          <input
-                            type="text"
-                            value={deleteAnswers.answer1}
-                            onChange={(e) =>
-                              setDeleteAnswers((prev) => ({
-                                ...prev,
-                                answer1: e.target.value,
-                              }))
-                            }
-                            className="mt-1 block w-full rounded-md border border-gray-300 dark:border-gray-600 
-        px-3 py-2 sm:py-2 text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100
-        focus:border-blue-500 focus:ring-blue-500"
-                          />
+
+                      {/* Subscription warning */}
+                      {hasActiveSubscription && (
+                        <div className="mb-4 p-3 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-100 dark:border-yellow-700/50 rounded-sm">
+                          <p className="text-sm font-medium text-yellow-800 dark:text-yellow-300 mb-2">
+                            Subscription Warning
+                          </p>
+                          <ul className="text-xs text-yellow-700 dark:text-yellow-300 space-y-1 list-disc pl-4">
+                            <li>
+                              You are currently on the{" "}
+                              <strong>{subscriptionTier}</strong> plan
+                            </li>
+                            <li>
+                              You will continue to be billed until the end of
+                              your current billing cycle (next billing date:{" "}
+                              {nextBillingDate})
+                            </li>
+                            <li>
+                              No partial refunds will be issued for the
+                              remainder of your subscription period
+                            </li>
+                            <li>
+                              You will lose access to all premium features
+                              immediately
+                            </li>
+                          </ul>
                         </div>
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                            {user.securityQuestions?.question2?.question}
-                          </label>
-                          <input
-                            type="text"
-                            value={deleteAnswers.answer2}
-                            onChange={(e) =>
-                              setDeleteAnswers((prev) => ({
-                                ...prev,
-                                answer2: e.target.value,
-                              }))
-                            }
-                            className="mt-1 block w-full rounded-md border border-gray-300 dark:border-gray-600 
-        px-3 py-2 sm:py-2 text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100
-        focus:border-blue-500 focus:ring-blue-500"
-                          />
-                        </div>
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                            {user.securityQuestions?.question3?.question}
-                          </label>
-                          <input
-                            type="text"
-                            value={deleteAnswers.answer3}
-                            onChange={(e) =>
-                              setDeleteAnswers((prev) => ({
-                                ...prev,
-                                answer3: e.target.value,
-                              }))
-                            }
-                            className="mt-1 block w-full rounded-md border border-gray-300 dark:border-gray-600 
-        px-3 py-2 sm:py-2 text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100
-        focus:border-blue-500 focus:ring-blue-500"
-                          />
-                        </div>
+                      )}
+
+                      {/* Data deletion warning */}
+                      <div className="mb-4 p-3 bg-red-50 dark:bg-red-900/20 border border-red-100 dark:border-red-700/50 rounded-sm">
+                        <p className="text-sm font-medium text-red-800 dark:text-red-300 mb-2">
+                          Data Deletion
+                        </p>
+                        <ul className="text-xs text-red-700 dark:text-red-300 space-y-1 list-disc pl-4">
+                          <li>
+                            All your personal data will be permanently deleted
+                          </li>
+                          <li>
+                            Your trade history and reviews will no longer be
+                            accessible
+                          </li>
+                          <li>Your network connections will be removed</li>
+                          <li>
+                            Your profile will be removed from the community
+                          </li>
+                        </ul>
+                      </div>
+
+                      <div className="flex justify-end space-x-3">
+                        <button
+                          onClick={cancelDelete}
+                          className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 
+                            hover:bg-gray-100 dark:hover:bg-gray-700 rounded-sm"
+                        >
+                          Cancel
+                        </button>
+                        <button
+                          onClick={handleDeleteAccount}
+                          className="px-4 py-2 text-sm font-medium text-white bg-red-500 dark:bg-red-500/90
+                            hover:bg-red-600 dark:hover:bg-red-600/90 rounded-sm"
+                        >
+                          Continue
+                        </button>
                       </div>
                     </>
                   ) : (
-                    <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">
-                      This action cannot be undone. Your account will be
-                      permanently deleted.
-                    </p>
-                  )}
+                    <>
+                      <h3 className="text-base sm:text-lg font-medium text-red-600 dark:text-red-400 mb-4">
+                        Confirm Account Deletion
+                      </h3>
 
-                  <div className="flex justify-end space-x-3">
-                    <button
-                      onClick={() => {
-                        setShowDeleteConfirm(false);
-                        setDeleteAnswers({
-                          answer1: "",
-                          answer2: "",
-                          answer3: "",
-                        });
-                      }}
-                      className="w-full sm:w-auto px-4 py-2.5 text-sm font-medium text-gray-700 dark:text-gray-300 
-    hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md"
-                    >
-                      Cancel
-                    </button>
-                    <button
-                      onClick={handleDeleteAccount}
-                      disabled={deleteLoading}
-                      className="w-full sm:w-auto px-4 py-2.5 text-sm font-medium text-white bg-red-600 
-    hover:bg-red-700 rounded-md disabled:opacity-50"
-                    >
-                      {deleteLoading ? "Deleting..." : "Delete Account"}
-                    </button>
-                  </div>
+                      {!user.googleAuth ? (
+                        <>
+                          <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
+                            Please verify your identity by answering your
+                            security questions:
+                          </p>
+                          <div className="space-y-4 mb-6">
+                            <div>
+                              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                                {user.securityQuestions?.question1?.question}
+                              </label>
+                              <input
+                                type="text"
+                                value={deleteAnswers.answer1}
+                                onChange={(e) =>
+                                  setDeleteAnswers((prev) => ({
+                                    ...prev,
+                                    answer1: e.target.value,
+                                  }))
+                                }
+                                className="mt-1 block w-full rounded-sm border border-gray-300 dark:border-gray-600/70 
+                  px-3 py-2 sm:py-2 text-sm bg-white dark:bg-gray-600/50 text-gray-900 dark:text-gray-100
+                  focus:border-blue-500 focus:ring-1 focus:ring-blue-400"
+                              />
+                            </div>
+                            <div>
+                              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                                {user.securityQuestions?.question2?.question}
+                              </label>
+                              <input
+                                type="text"
+                                value={deleteAnswers.answer2}
+                                onChange={(e) =>
+                                  setDeleteAnswers((prev) => ({
+                                    ...prev,
+                                    answer2: e.target.value,
+                                  }))
+                                }
+                                className="mt-1 block w-full rounded-sm border border-gray-300 dark:border-gray-600/70 
+                  px-3 py-2 sm:py-2 text-sm bg-white dark:bg-gray-600/50 text-gray-900 dark:text-gray-100
+                  focus:border-blue-500 focus:ring-1 focus:ring-blue-400"
+                              />
+                            </div>
+                            <div>
+                              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                                {user.securityQuestions?.question3?.question}
+                              </label>
+                              <input
+                                type="text"
+                                value={deleteAnswers.answer3}
+                                onChange={(e) =>
+                                  setDeleteAnswers((prev) => ({
+                                    ...prev,
+                                    answer3: e.target.value,
+                                  }))
+                                }
+                                className="mt-1 block w-full rounded-sm border border-gray-300 dark:border-gray-600/70 
+                  px-3 py-2 sm:py-2 text-sm bg-white dark:bg-gray-600/50 text-gray-900 dark:text-gray-100
+                  focus:border-blue-500 focus:ring-1 focus:ring-blue-400"
+                              />
+                            </div>
+                          </div>
+                        </>
+                      ) : (
+                        <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">
+                          Please confirm that you want to permanently delete
+                          your account. This action cannot be undone.
+                        </p>
+                      )}
+
+                      <div className="flex justify-end space-x-3">
+                        <button
+                          onClick={cancelDelete}
+                          className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 
+                            hover:bg-gray-100 dark:hover:bg-gray-700 rounded-sm"
+                        >
+                          Cancel
+                        </button>
+                        <button
+                          onClick={handleDeleteAccount}
+                          disabled={deleteLoading}
+                          className="px-4 py-2 text-sm font-medium text-white bg-red-500 dark:bg-red-500/90
+                            hover:bg-red-600 dark:hover:bg-red-600/90 rounded-sm disabled:opacity-50"
+                        >
+                          {deleteLoading ? "Deleting..." : "Delete Account"}
+                        </button>
+                      </div>
+                    </>
+                  )}
                 </div>
               </div>
             )}
@@ -773,8 +894,8 @@ const ProfileSettings = ({
               <button
                 type="submit"
                 disabled={loading}
-                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 
-                  dark:hover:bg-blue-500 disabled:opacity-50"
+                className="px-3 sm:px-4 py-2 text-sm bg-blue-500 text-white rounded-sm hover:bg-blue-600 
+  dark:bg-blue-500/90 dark:hover:bg-blue-500 disabled:opacity-50 w-full sm:w-auto"
               >
                 {loading ? "Saving..." : "Save Settings"}
               </button>

@@ -51,7 +51,7 @@ const TradeReview = ({ trade, review, onSubmit, onClose }) => {
   };
 
   return (
-    <div className="p-4 sm:p-6 bg-white dark:bg-gray-900 rounded-lg shadow-xl">
+    <div className="p-4 sm:p-6 bg-white dark:bg-gray-700/60 rounded-sm shadow-sm border border-gray-200 dark:border-gray-600/50">
       <h2 className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-gray-100 mb-4">
         Trade Review
       </h2>
@@ -68,12 +68,11 @@ const TradeReview = ({ trade, review, onSubmit, onClose }) => {
                 lessonLearned: e.target.value,
               }))
             }
-            className="w-full border border-gray-300 dark:border-gray-700 rounded-md shadow-sm 
-            px-3 py-2.5 sm:py-2 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100"
+            className="w-full border border-gray-300 dark:border-gray-600/70 rounded-sm shadow-sm 
+            px-3 py-2.5 sm:py-2 bg-gray-50 dark:bg-gray-600/50 text-gray-900 dark:text-gray-100"
             rows="3"
           />
         </div>
-
         <div>
           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
             What Went Well
@@ -83,8 +82,8 @@ const TradeReview = ({ trade, review, onSubmit, onClose }) => {
             onChange={(e) =>
               setFormData((prev) => ({ ...prev, whatWentWell: e.target.value }))
             }
-            className="w-full border border-gray-300 dark:border-gray-700 rounded-md shadow-sm 
-            px-3 py-2.5 sm:py-2 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100"
+            className="w-full border border-gray-300 dark:border-gray-600/70 rounded-sm shadow-sm 
+            px-3 py-2.5 sm:py-2 bg-gray-50 dark:bg-gray-600/50 text-gray-900 dark:text-gray-100"
             rows="3"
           />
         </div>
@@ -101,8 +100,8 @@ const TradeReview = ({ trade, review, onSubmit, onClose }) => {
                 whatWentWrong: e.target.value,
               }))
             }
-            className="w-full border border-gray-300 dark:border-gray-700 rounded-md shadow-sm 
-            px-3 py-2.5 sm:py-2 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100"
+            className="w-full border border-gray-300 dark:border-gray-600/70 rounded-sm shadow-sm 
+            px-3 py-2.5 sm:py-2 bg-gray-50 dark:bg-gray-600/50 text-gray-900 dark:text-gray-100"
             rows="3"
           />
         </div>
@@ -119,13 +118,13 @@ const TradeReview = ({ trade, review, onSubmit, onClose }) => {
                 futureAdjustments: e.target.value,
               }))
             }
-            className="w-full border border-gray-300 dark:border-gray-700 rounded-md shadow-sm 
-            px-3 py-2.5 sm:py-2 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100"
+            className="w-full border border-gray-300 dark:border-gray-600/70 rounded-sm shadow-sm 
+            px-3 py-2.5 sm:py-2 bg-gray-50 dark:bg-gray-600/50 text-gray-900 dark:text-gray-100"
             rows="3"
           />
         </div>
 
-        <div className="flex items-center p-2 hover:bg-gray-50 dark:hover:bg-gray-800/50 rounded">
+        <div className="flex items-center p-2 hover:bg-gray-50 dark:hover:bg-gray-600/30 rounded-sm">
           <input
             type="checkbox"
             id="isPublic"
@@ -133,7 +132,7 @@ const TradeReview = ({ trade, review, onSubmit, onClose }) => {
             onChange={(e) =>
               setFormData((prev) => ({ ...prev, isPublic: e.target.checked }))
             }
-            className="h-4 w-4 text-blue-600 dark:text-blue-400 border-gray-300 dark:border-gray-600 rounded"
+            className="h-4 w-4 text-blue-600 dark:text-blue-400 border-gray-300 dark:border-gray-600/70 rounded-sm"
           />
           <label
             htmlFor="isPublic"
@@ -143,20 +142,20 @@ const TradeReview = ({ trade, review, onSubmit, onClose }) => {
           </label>
         </div>
 
-        <div className="flex flex-col sm:flex-row justify-end gap-3 sm:gap-2 pt-4 border-t dark:border-gray-700">
+        <div className="flex flex-col sm:flex-row justify-end gap-3 sm:gap-2 pt-4 border-t dark:border-gray-600/50">
           <button
             type="button"
             onClick={onClose}
-            className="w-full sm:w-auto px-4 py-2.5 sm:py-2 border border-gray-300 dark:border-gray-700 
-            rounded-md text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 
-            text-sm order-2 sm:order-1"
+            className="w-full sm:w-auto px-4 py-2.5 sm:py-2 border border-gray-300 dark:border-gray-600/70 
+            rounded-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600/70 
+            text-sm order-2 sm:order-1 bg-white dark:bg-gray-600/50"
           >
             Cancel
           </button>
           <button
             type="submit"
             className="w-full sm:w-auto px-4 py-2.5 sm:py-2 bg-blue-600 dark:bg-blue-500 text-white 
-            rounded-md hover:bg-blue-700 dark:hover:bg-blue-600 text-sm order-1 sm:order-2"
+            rounded-sm hover:bg-blue-700 dark:hover:bg-blue-600 text-sm order-1 sm:order-2"
           >
             Save Review
           </button>

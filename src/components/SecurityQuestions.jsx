@@ -52,10 +52,10 @@ const SecurityQuestions = ({ securityData, onSuccess, onError }) => {
           <input
             type="text"
             required
-            className="w-full px-3 py-2.5 sm:py-2 bg-white dark:bg-gray-700 
-            border border-gray-300 dark:border-gray-600 
+            className="w-full px-3 py-2.5 sm:py-2 bg-white dark:bg-gray-600/50 
+            border border-gray-300 dark:border-gray-600/70 
             text-gray-900 dark:text-gray-100 
-            rounded-md focus:ring-blue-500 focus:border-blue-500"
+            rounded-sm focus:ring-1 focus:ring-blue-400 focus:border-blue-500"
             value={answers.answer1}
             onChange={(e) =>
               setAnswers((prev) => ({ ...prev, answer1: e.target.value }))
@@ -70,10 +70,10 @@ const SecurityQuestions = ({ securityData, onSuccess, onError }) => {
           <input
             type="text"
             required
-            className="w-full px-3 py-2.5 sm:py-2 bg-white dark:bg-gray-700 
-            border border-gray-300 dark:border-gray-600 
+            className="w-full px-3 py-2.5 sm:py-2 bg-white dark:bg-gray-600/50 
+            border border-gray-300 dark:border-gray-600/70 
             text-gray-900 dark:text-gray-100 
-            rounded-md focus:ring-blue-500 focus:border-blue-500"
+            rounded-sm focus:ring-1 focus:ring-blue-400 focus:border-blue-500"
             value={answers.answer2}
             onChange={(e) =>
               setAnswers((prev) => ({ ...prev, answer2: e.target.value }))
@@ -88,10 +88,10 @@ const SecurityQuestions = ({ securityData, onSuccess, onError }) => {
           <input
             type="text"
             required
-            className="w-full px-3 py-2.5 sm:py-2 bg-white dark:bg-gray-700 
-            border border-gray-300 dark:border-gray-600 
+            className="w-full px-3 py-2.5 sm:py-2 bg-white dark:bg-gray-600/50 
+            border border-gray-300 dark:border-gray-600/70 
             text-gray-900 dark:text-gray-100 
-            rounded-md focus:ring-blue-500 focus:border-blue-500"
+            rounded-sm focus:ring-1 focus:ring-blue-400 focus:border-blue-500"
             value={answers.answer3}
             onChange={(e) =>
               setAnswers((prev) => ({ ...prev, answer3: e.target.value }))
@@ -102,8 +102,8 @@ const SecurityQuestions = ({ securityData, onSuccess, onError }) => {
         <button
           type="submit"
           disabled={loading}
-          className="w-full bg-blue-600 text-white py-2.5 sm:py-2 rounded-md 
-          hover:bg-blue-700 disabled:opacity-50 text-sm sm:text-base font-medium"
+          className="w-full bg-blue-500 text-white py-2.5 sm:py-2 rounded-sm 
+          hover:bg-blue-600 dark:bg-blue-500/90 dark:hover:bg-blue-500 disabled:opacity-50 text-sm sm:text-base font-medium"
         >
           {loading ? "Verifying..." : "Verify Answers"}
         </button>

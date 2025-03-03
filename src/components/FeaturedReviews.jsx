@@ -43,14 +43,14 @@ const FeaturedReviews = () => {
 
   if (loading) {
     return (
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-4 sm:p-6 mb-4 sm:mb-6">
+      <div className="bg-white dark:bg-gray-700/60 rounded-md border border-gray-200 dark:border-gray-600/50 shadow-sm p-4 sm:p-6 mb-4 sm:mb-6">
         <div className="flex items-center gap-2 mb-4">
           <Star className="h-5 w-5 text-yellow-400 fill-current" />
           <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
             Featured Reviews
           </h2>
         </div>
-        <div className="flex justify-center py-8 text-gray-600 dark:text-gray-400">
+        <div className="flex justify-center py-8 text-gray-600 dark:text-gray-300">
           Loading featured reviews...
         </div>
       </div>
@@ -60,7 +60,7 @@ const FeaturedReviews = () => {
   if (error || !featuredReviews.length) return null;
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-4 sm:p-6 mb-4 sm:mb-6">
+    <div className="bg-white dark:bg-gray-700/60 rounded-md border border-gray-200 dark:border-gray-600/50 shadow-sm p-4 sm:p-6 mb-4 sm:mb-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-4 mb-4">
         <div className="flex items-center gap-2">
           <Star className="h-5 w-5 text-yellow-400 fill-current" />
@@ -77,7 +77,7 @@ const FeaturedReviews = () => {
         {featuredReviews.map((review) => (
           <div
             key={review._id}
-            className="border-b border-gray-200 dark:border-gray-700 last:border-0 pb-6 last:pb-0"
+            className="border-b border-gray-200 dark:border-gray-600/50 last:border-0 pb-6 last:pb-0"
           >
             <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-2 sm:gap-4 mb-4">
               <div>
@@ -96,10 +96,10 @@ const FeaturedReviews = () => {
                 </p>
               </div>
               <div
-                className={`px-3 py-1 rounded-full text-sm ${
+                className={`px-3 py-1 rounded-sm text-sm ${
                   review.trade.profitLoss.realized >= 0
-                    ? "bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300"
-                    : "bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300"
+                    ? "bg-green-100 dark:bg-green-700/30 text-green-800 dark:text-green-300"
+                    : "bg-red-100 dark:bg-red-700/30 text-red-800 dark:text-red-300"
                 } self-start sm:self-center`}
               >
                 {formatCurrency(review.trade.profitLoss.realized)}
@@ -111,7 +111,7 @@ const FeaturedReviews = () => {
                 <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   What Went Well
                 </h4>
-                <p className="text-sm text-gray-600 dark:text-gray-400">
+                <p className="text-sm text-gray-600 dark:text-gray-300">
                   {review.whatWentWell}
                 </p>
               </div>
@@ -119,7 +119,7 @@ const FeaturedReviews = () => {
                 <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   What Went Wrong
                 </h4>
-                <p className="text-sm text-gray-600 dark:text-gray-400">
+                <p className="text-sm text-gray-600 dark:text-gray-300">
                   {review.whatWentWrong}
                 </p>
               </div>
@@ -129,12 +129,12 @@ const FeaturedReviews = () => {
               <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 Lesson Learned
               </h4>
-              <p className="text-sm text-gray-600 dark:text-gray-400">
+              <p className="text-sm text-gray-600 dark:text-gray-300">
                 {review.lessonLearned}
               </p>
             </div>
 
-            <div className="bg-gray-50 dark:bg-gray-700/50 p-3 rounded-lg mb-4">
+            <div className="bg-gray-50 dark:bg-gray-600/30 p-3 rounded-sm mb-4">
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 text-sm">
                 <div>
                   <span className="block sm:inline text-gray-500 dark:text-gray-400">

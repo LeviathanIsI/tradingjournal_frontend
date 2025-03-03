@@ -45,48 +45,48 @@ const Pricing = () => {
 
       <div className="mt-12 space-y-4 sm:mt-16 sm:space-y-0 sm:grid sm:grid-cols-2 sm:gap-6 lg:max-w-4xl lg:mx-auto">
         {/* Monthly Plan */}
-        <div className="border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm p-6 bg-white dark:bg-gray-800">
+        <div className="border border-gray-200 dark:border-gray-600/50 rounded-md shadow-sm p-6 bg-white dark:bg-gray-700/60">
           <h2 className="text-lg font-medium text-gray-900 dark:text-gray-100">
             Monthly
           </h2>
-          <p className="mt-4 text-sm text-gray-500 dark:text-gray-400">
+          <p className="mt-4 text-sm text-gray-500 dark:text-gray-300">
             Perfect for getting started
           </p>
           <p className="mt-8">
             <span className="text-4xl font-bold text-gray-900 dark:text-gray-100">
               $10
             </span>
-            <span className="text-base font-medium text-gray-500 dark:text-gray-400">
+            <span className="text-base font-medium text-gray-500 dark:text-gray-300">
               /month
             </span>
           </p>
           <button
             onClick={() => handleSubscribe("monthly")}
-            className="mt-8 block w-full bg-blue-600 dark:bg-blue-500 text-white rounded-md py-2 font-medium hover:bg-blue-700 dark:hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+            className="mt-8 block w-full bg-blue-500 dark:bg-blue-500/90 text-white rounded-sm py-2 font-medium hover:bg-blue-600 dark:hover:bg-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-400 focus:ring-offset-2"
           >
             Subscribe Monthly
           </button>
         </div>
 
         {/* Yearly Plan */}
-        <div className="border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm p-6 bg-white dark:bg-gray-800">
+        <div className="border border-gray-200 dark:border-gray-600/50 rounded-md shadow-sm p-6 bg-white dark:bg-gray-700/60">
           <h2 className="text-lg font-medium text-gray-900 dark:text-gray-100">
             Yearly
           </h2>
-          <p className="mt-4 text-sm text-gray-500 dark:text-gray-400">
+          <p className="mt-4 text-sm text-gray-500 dark:text-gray-300">
             Save with yearly billing
           </p>
           <p className="mt-8">
             <span className="text-4xl font-bold text-gray-900 dark:text-gray-100">
               $100
             </span>
-            <span className="text-base font-medium text-gray-500 dark:text-gray-400">
+            <span className="text-base font-medium text-gray-500 dark:text-gray-300">
               /year
             </span>
           </p>
           <button
             onClick={() => handleSubscribe("yearly")}
-            className="mt-8 block w-full bg-blue-600 dark:bg-blue-500 text-white rounded-md py-2 font-medium hover:bg-blue-700 dark:hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+            className="mt-8 block w-full bg-blue-500 dark:bg-blue-500/90 text-white rounded-sm py-2 font-medium hover:bg-blue-600 dark:hover:bg-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-400 focus:ring-offset-2"
           >
             Subscribe Yearly
           </button>

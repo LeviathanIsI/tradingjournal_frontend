@@ -604,14 +604,14 @@ const StopLossStudy = ({ trades, user, stats, experienceLevel }) => {
   }, [planEntry, accountBalance, supportPrice, resistancePrice, useSupRes]);
 
   return (
-    <div className="bg-white dark:bg-gray-800 p-3 sm:p-4 rounded shadow h-full">
+    <div className="bg-white dark:bg-gray-700/60 p-3 sm:p-4 rounded-md border border-gray-200 dark:border-gray-600/50 shadow-sm h-full">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {/* Left Side - Exit Analysis */}
         <div>
           <h3 className="text-sm sm:text-base text-gray-900 dark:text-gray-100 font-medium">
             Exit Analysis
           </h3>
-          <div className="bg-gray-100 dark:bg-gray-700/50 p-3 rounded-md mb-4">
+          <div className="bg-gray-100 dark:bg-gray-600/30 p-3 rounded-sm border border-gray-200 dark:border-gray-600/50 mb-4">
             <p className="text-xs sm:text-sm text-gray-900 dark:text-gray-100">
               Analysis of your trading patterns:
             </p>
@@ -620,7 +620,7 @@ const StopLossStudy = ({ trades, user, stats, experienceLevel }) => {
               <li>• Analyzes winning and losing patterns</li>
               <li>• Considers time of day and momentum</li>
             </ul>
-            <p className="text-xs text-gray-600 dark:text-gray-400 mt-2 italic">
+            <p className="text-xs text-gray-600 dark:text-gray-300 mt-2 italic">
               Note: Suggestions improve in accuracy as you add more trades to
               your history
             </p>
@@ -629,7 +629,7 @@ const StopLossStudy = ({ trades, user, stats, experienceLevel }) => {
           <div className="grid grid-cols-1 gap-3 sm:gap-4 mt-2">
             {!trades?.length ? (
               <div className="text-center py-2">
-                <p className="text-sm text-gray-500 dark:text-gray-400">
+                <p className="text-sm text-gray-500 dark:text-gray-300">
                   Add trades to see analysis
                 </p>
               </div>
@@ -698,7 +698,7 @@ const StopLossStudy = ({ trades, user, stats, experienceLevel }) => {
           <h4 className="text-sm sm:text-base font-medium text-gray-900 dark:text-gray-100 mb-3">
             Plan Your Trade
           </h4>
-          <div className="bg-gray-100 dark:bg-gray-700/50 p-3 rounded-md mb-4">
+          <div className="bg-gray-100 dark:bg-gray-600/30 p-3 rounded-sm border border-gray-200 dark:border-gray-600/50 mb-4">
             <p className="text-xs sm:text-sm text-gray-900 dark:text-gray-100 mb-2">
               Risk Management Rules:
             </p>
@@ -729,8 +729,8 @@ const StopLossStudy = ({ trades, user, stats, experienceLevel }) => {
                 type="number"
                 value={planEntry}
                 onChange={(e) => setPlanEntry(e.target.value)}
-                className="w-full px-3 py-2.5 sm:py-2 border border-gray-300 dark:border-gray-600 
-          bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-md"
+                className="w-full px-3 py-2.5 sm:py-2 border border-gray-300 dark:border-gray-600/70 
+          bg-white dark:bg-gray-600/50 text-gray-900 dark:text-gray-100 rounded-sm"
                 step="0.01"
                 min="0"
               />
@@ -742,8 +742,8 @@ const StopLossStudy = ({ trades, user, stats, experienceLevel }) => {
                 id="useSupRes"
                 checked={useSupRes}
                 onChange={(e) => setUseSupRes(e.target.checked)}
-                className="h-4 w-4 rounded border-gray-300 dark:border-gray-600 
-          text-blue-600 focus:ring-blue-500"
+                className="h-4 w-4 rounded-sm border-gray-300 dark:border-gray-600/70 
+          text-blue-500 focus:ring-1 focus:ring-blue-400"
               />
               <label
                 htmlFor="useSupRes"
@@ -763,8 +763,8 @@ const StopLossStudy = ({ trades, user, stats, experienceLevel }) => {
                     type="number"
                     value={supportPrice}
                     onChange={(e) => setSupportPrice(e.target.value)}
-                    className="w-full px-3 py-2.5 sm:py-2 border border-gray-300 dark:border-gray-600 
-              bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-md"
+                    className="w-full px-3 py-2.5 sm:py-2 border border-gray-300 dark:border-gray-600/70 
+              bg-white dark:bg-gray-600/50 text-gray-900 dark:text-gray-100 rounded-sm"
                     step="0.01"
                     min="0"
                   />
@@ -777,8 +777,8 @@ const StopLossStudy = ({ trades, user, stats, experienceLevel }) => {
                     type="number"
                     value={resistancePrice}
                     onChange={(e) => setResistancePrice(e.target.value)}
-                    className="w-full px-3 py-2.5 sm:py-2 border border-gray-300 dark:border-gray-600 
-              bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-md"
+                    className="w-full px-3 py-2.5 sm:py-2 border border-gray-300 dark:border-gray-600/70 
+              bg-white dark:bg-gray-600/50 text-gray-900 dark:text-gray-100 rounded-sm"
                     step="0.01"
                     min="0"
                   />
