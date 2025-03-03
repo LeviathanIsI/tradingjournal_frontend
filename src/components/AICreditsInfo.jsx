@@ -19,14 +19,12 @@ const AICreditsInfo = React.memo(() => {
 
   // Function to fetch latest limits from API - guaranteed to be fresh
   const fetchLatestLimits = useCallback(async () => {
-    console.log("Fetching latest limits from API...");
     setIsRefreshing(true);
 
     try {
       if (typeof fetchAILimits === "function") {
         const freshLimits = await fetchAILimits();
         if (freshLimits) {
-          console.log("✅ Received fresh limits from API:", freshLimits);
           setLocalAILimits(freshLimits);
           return freshLimits;
         }
@@ -52,7 +50,6 @@ const AICreditsInfo = React.memo(() => {
 
     // Set a new timeout - wait 1500ms to allow database updates to propagate
     const timeoutId = setTimeout(async () => {
-      console.log("⏰ Executing queued update check for AI limits");
       await fetchLatestLimits();
       setUpdateQueued(false);
     }, 1500);
@@ -69,7 +66,6 @@ const AICreditsInfo = React.memo(() => {
   useEffect(() => {
     // Handler function for the event
     const handleAILimitsUpdate = (event) => {
-      console.log("📊 AI limits updated event received:", event.detail);
 
       // Instead of immediately updating, queue a check to get the latest data
       queueUpdateCheck();
@@ -77,7 +73,6 @@ const AICreditsInfo = React.memo(() => {
 
     // Add event listener
     if (aiLimitsUpdateEvent) {
-      console.log("🔌 Setting up AI limits event listener");
       aiLimitsUpdateEvent.addEventListener(
         "ai-limits-updated",
         handleAILimitsUpdate
@@ -87,7 +82,6 @@ const AICreditsInfo = React.memo(() => {
     // Cleanup on unmount
     return () => {
       if (aiLimitsUpdateEvent) {
-        console.log("🔌 Removing AI limits event listener");
         aiLimitsUpdateEvent.removeEventListener(
           "ai-limits-updated",
           handleAILimitsUpdate
