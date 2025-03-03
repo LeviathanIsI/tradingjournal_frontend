@@ -195,11 +195,53 @@ const TradeExecutionReplay = () => {
   }, [selectedTrade, makeAIRequest, showToast]);
 
   // 3. Predictive Analysis Component (analyzeTrade function)
-  // Just keep a minimal stub that doesn't attempt to use selectedScenario
-  const analyzeTrade = useCallback(() => {
-    console.log("This function is not used in TradeExecutionReplay");
-    // This is just a placeholder function to avoid errors
-  }, []);
+  const analyzeTrade = useCallback(async () => {
+    if (!selectedTrade || !selectedScenario) return;
+
+    setLoading(true);
+    setAnalysisStarted(true);
+    setAnalysis(null);
+    setError(null);
+
+    try {
+      const tradeType = selectedTrade.contractType ? "option" : "stock";
+
+      // Use makeAIRequest instead of direct fetch
+      const data = await makeAIRequest(
+        "predictive-analysis",
+        {
+          tradeId: selectedTrade._id,
+          type: tradeType,
+          scenario: selectedScenario.id,
+        },
+        null,
+        { suppressToast: true }
+      );
+
+      if (data && data.success) {
+        setAnalysis(data.analysis);
+        setTradeDetails(data.tradeDetails);
+        showToast("Analysis completed successfully", "success");
+      } else if (data && data.isCreditsError) {
+        // Credit limit errors are already handled
+        setAnalysisStarted(false);
+      } else {
+        // Handle other errors
+        setError(data?.error || "Failed to analyze trade scenarios");
+        showToast("Failed to analyze trade scenarios", "error");
+      }
+    } catch (error) {
+      console.error("Error generating prediction:", error);
+      if (!error.isCreditsError) {
+        const errorMsg = error.message || "An unexpected error occurred";
+        setError(errorMsg);
+        showToast(errorMsg, "error");
+      }
+      setAnalysisStarted(false);
+    } finally {
+      setLoading(false);
+    }
+  }, [selectedTrade, selectedScenario, makeAIRequest, showToast]);
 
   // Reset analysis
   const resetAnalysis = useCallback(() => {
