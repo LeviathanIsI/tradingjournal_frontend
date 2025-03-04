@@ -423,19 +423,19 @@ const PredictiveAnalysis = () => {
               ) : (
                 <div className="bg-white dark:bg-gray-700/80 rounded-md shadow-sm">
                   {/* Analysis Header */}
-                  <div className="border-b border-gray-200 dark:border-gray-600/50 pb-2">
+                  <div className="border-b border-gray-200 dark:border-gray-600/50 pb-4 px-6 pt-4">
                     <div className="flex justify-between items-start">
                       <div>
                         <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 flex items-center">
-                          <selectedScenario.icon className="mr-2 h-5 w-5 text-blue-500" />
+                          <selectedScenario.icon className="mr-3 h-6 w-6 text-blue-500" />
                           {selectedScenario.label}: {tradeDetails?.symbol}
                         </h3>
-                        <p className="text-sm text-gray-600 dark:text-gray-400">
+                        <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
                           {selectedScenario.description}
                         </p>
                       </div>
                       <div
-                        className={`px-3 py-1 text-sm rounded-full font-medium ${
+                        className={`px-4 py-1.5 text-sm rounded-full font-medium ${
                           tradeDetails?.profitLoss > 0
                             ? "bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300"
                             : "bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300"
@@ -448,38 +448,38 @@ const PredictiveAnalysis = () => {
                     </div>
 
                     {tradeDetails && (
-                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-4">
-                        <div className=" bg-gray-50 dark:bg-gray-600/30 p-2 rounded-sm">
-                          <p className="text-xs text-gray-500 dark:text-gray-400">
+                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-6">
+                        <div className="bg-gray-50 dark:bg-gray-600/30 p-3 rounded-md shadow-sm border border-gray-100 dark:border-gray-600/20">
+                          <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">
                             Entry
                           </p>
-                          <p className="font-medium">
+                          <p className="font-medium text-gray-900 dark:text-gray-100">
                             {formatCurrency(tradeDetails.entryPrice)}
                           </p>
                         </div>
-                        <div className="bg-gray-50 dark:bg-gray-600/30 p-2 rounded-sm">
-                          <p className="text-xs text-gray-500 dark:text-gray-400">
+                        <div className="bg-gray-50 dark:bg-gray-600/30 p-3 rounded-md shadow-sm border border-gray-100 dark:border-gray-600/20">
+                          <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">
                             Exit
                           </p>
-                          <p className="font-medium">
+                          <p className="font-medium text-gray-900 dark:text-gray-100">
                             {tradeDetails.exitPrice
                               ? formatCurrency(tradeDetails.exitPrice)
                               : "Open"}
                           </p>
                         </div>
-                        <div className="bg-gray-50 dark:bg-gray-600/30 p-2 rounded-sm">
-                          <p className="text-xs text-gray-500 dark:text-gray-400">
+                        <div className="bg-gray-50 dark:bg-gray-600/30 p-3 rounded-md shadow-sm border border-gray-100 dark:border-gray-600/20">
+                          <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">
                             Trade Type
                           </p>
-                          <p className="font-medium">
+                          <p className="font-medium text-gray-900 dark:text-gray-100">
                             {tradeDetails.tradeType}
                           </p>
                         </div>
-                        <div className="bg-gray-50 dark:bg-gray-600/30 p-2 rounded-sm">
-                          <p className="text-xs text-gray-500 dark:text-gray-400">
+                        <div className="bg-gray-50 dark:bg-gray-600/30 p-3 rounded-md shadow-sm border border-gray-100 dark:border-gray-600/20">
+                          <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">
                             Holding Time
                           </p>
-                          <p className="font-medium">
+                          <p className="font-medium text-gray-900 dark:text-gray-100">
                             {tradeDetails.holdingTime} hrs
                           </p>
                         </div>
