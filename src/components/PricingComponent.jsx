@@ -125,8 +125,6 @@ const PricingComponent = () => {
       if (data.success) {
         await checkSubscriptionStatus();
         if (fromSignup) {
-          // Don't show toast if automatically applying free tier for new users
-          console.log("Free tier applied automatically for new user");
         } else {
           showToast("You're all set with the Free plan!", "success");
         }

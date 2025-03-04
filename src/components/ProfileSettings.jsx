@@ -67,13 +67,6 @@ const ProfileSettings = ({
       setDeleteLoading(true);
       const token = localStorage.getItem("token");
 
-      // Log request data for debugging
-      console.log("Deletion request data:", {
-        answers: user.googleAuth ? null : deleteAnswers,
-        billingAcknowledged: deleteConfirmation.billingAcknowledged,
-        signature: deleteConfirmation.signature,
-      });
-
       const response = await fetch(
         `${import.meta.env.VITE_API_URL}/api/auth/delete-account`,
         {
