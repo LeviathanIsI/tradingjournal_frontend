@@ -7,6 +7,8 @@ import {
   useRef,
 } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+import { generateWelcomeMessage } from "../utils/welcomeMessages";
+import { useToast } from "./ToastContext";
 
 const AuthContext = createContext(null);
 
@@ -19,6 +21,7 @@ export const AuthProvider = ({ children }) => {
   const [isSubscriptionLoading, setIsSubscriptionLoading] = useState(true);
   const lastSubscriptionCheckRef = useRef(0);
   const pendingSubscriptionCheckRef = useRef(null);
+  const { showToast } = useToast();
 
   const validateAuth = async (token) => {
     if (!token) {
@@ -199,9 +202,30 @@ export const AuthProvider = ({ children }) => {
     return () => clearInterval(interval);
   }, [checkTokenExpiry]);
 
-  const login = async (userData) => {
+  const login = async (userData, expireAt2AM = true) => {
+    // Store token, optionally setting it to expire at 2 AM
     localStorage.setItem("token", userData.token);
+
+    // Store the user data
     setUser(userData);
+
+    // Display personalized welcome message
+    try {
+      // Get user's timezone from preferences or use UTC as fallback
+      const timezone = userData.preferences?.timeZone || "UTC";
+
+      // Generate personalized welcome message
+      const welcomeMessage = generateWelcomeMessage(
+        userData.username,
+        timezone
+      );
+
+      // Show welcome toast that requires manual dismissal
+      showToast(welcomeMessage, "welcome", false);
+    } catch (error) {
+      console.error("Error showing welcome message:", error);
+      // Continue with login even if welcome message fails
+    }
 
     // Navigate after state update
     setTimeout(() => {

@@ -132,7 +132,11 @@ const SignUp = () => {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify(formData),
+          body: JSON.stringify({
+            ...formData,
+            // Add expiry at 2 AM next day flag
+            expireAt2AM: true,
+          }),
         }
       );
 
@@ -142,6 +146,7 @@ const SignUp = () => {
         throw new Error(data.error || "Registration failed");
       }
 
+      // Use login without rememberMe parameter
       login(data.data);
       navigate("/dashboard");
     } catch (err) {
@@ -213,7 +218,10 @@ const SignUp = () => {
   );
 
   const handleGoogleSignup = () => {
-    window.location.href = `${import.meta.env.VITE_API_URL}/api/auth/google`;
+    // Add the expireAt2AM parameter to the Google auth URL
+    window.location.href = `${
+      import.meta.env.VITE_API_URL
+    }/api/auth/google?expireAt2AM=true`;
   };
 
   return (
@@ -347,12 +355,20 @@ const SignUp = () => {
               xmlns="http://www.w3.org/2000/svg"
             >
               <path
-                fill="#4285F4"
-                d="M46.1,24.6c0-1.6-0.1-3.1-0.4-4.6H24v9.3h12.6c-0.6,3-2.3,5.5-4.7,7.2v6h7.6C43.7,38.9,46.1,32.4,46.1,24.6z"
+                fill="#FFF"
+                d="M24 10.605c5.303 0 8.978 2.298 11.038 4.219l8.266-8.062C38.896 2.734 32.095 0 24 0 14.64 0 6.558 5.377 2.53 13.295l9.493 7.375C14.396 14.657 18.855 10.605 24 10.605z"
               ></path>
               <path
-                fill="#34A853"
-                d="M24,46c6.5,0,11.9-2.1,15.9-5.6L32.3,34c-2.3,1.5-5.2,2.4-8.3,2.4c-6.4,0-11.8-4.3-13.7-10.1H2.7v6.2C6.8,40,14.9,46,24,46z"
+                fill="#FFF"
+                d="M47.102 24.482c0-1.996-.187-3.396-.571-4.889H24v9.636h13.122c-.279 1.486-1.118 3.721-3.172 5.21l9.19 7.133C46.756 37.321 47.102 31.051 47.102 24.482z"
+              ></path>
+              <path
+                fill="#FFF"
+                d="M10.122 28.429C9.649 27.036 9.387 25.547 9.387 24c0-1.548.262-3.036.736-4.429l-9.489-7.375C.215 14.976 0 19.398 0 24c0 4.601.215 9.023.633 10.822l9.489-6.393z"
+              ></path>
+              <path
+                fill="#FFF"
+                d="M24 48c6.442 0 11.845-2.123 15.79-5.772l-9.188-7.133c-2.533 1.703-5.785 2.7-6.602 2.7-5.145 0-9.603-3.438-11.181-8.082l-9.494 7.375C7.275 45.092 15.094 48 24 48z"
               ></path>
             </svg>
             Sign up with Google

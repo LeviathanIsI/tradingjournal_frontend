@@ -7,7 +7,6 @@ const Login = () => {
   const [formData, setFormData] = useState({
     email: "",
     password: "",
-    rememberMe: false,
   });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -15,11 +14,9 @@ const Login = () => {
   const { login } = useAuth();
 
   const handleChange = (e) => {
-    const value =
-      e.target.type === "checkbox" ? e.target.checked : e.target.value;
     setFormData({
       ...formData,
-      [e.target.name]: value,
+      [e.target.name]: e.target.value,
     });
   };
 
@@ -42,7 +39,8 @@ const Login = () => {
           body: JSON.stringify({
             email: formData.email,
             password: formData.password,
-            rememberMe: formData.rememberMe,
+            // Set daily expiration flag for server to know we want 2AM expiration
+            dailyExpiration: true,
           }),
         }
       );
@@ -53,7 +51,8 @@ const Login = () => {
         throw new Error(data.error || "Login failed");
       }
 
-      login(data.data, formData.rememberMe);
+      // Call login with data, false for rememberMe (always expire at 2AM)
+      login(data.data, false);
       navigate("/dashboard");
     } catch (err) {
       console.error("❌ [Login] Request Failed:", err);
@@ -113,19 +112,8 @@ const Login = () => {
             />
           </div>
 
-          <div>
-            <label className="flex items-center">
-              <input
-                type="checkbox"
-                name="rememberMe"
-                checked={formData.rememberMe}
-                onChange={handleChange}
-                className="mr-2 accent-blue-600 dark:accent-blue-400"
-              />
-              <span className="text-sm text-gray-700 dark:text-gray-300">
-                Remember me for 5 days
-              </span>
-            </label>
+          <div className="text-xs text-gray-500 dark:text-gray-400 italic">
+            Note: Your session will automatically expire at 2AM
           </div>
 
           <button

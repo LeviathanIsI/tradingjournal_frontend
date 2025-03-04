@@ -7,8 +7,8 @@ const ToastContext = createContext(null);
 export const ToastProvider = ({ children }) => {
   const [toast, setToast] = useState(null);
 
-  const showToast = (message, type = "success") => {
-    setToast({ message, type });
+  const showToast = (message, type = "success", autoClose = true) => {
+    setToast({ message, type, autoClose });
   };
 
   const hideToast = () => {
@@ -22,6 +22,7 @@ export const ToastProvider = ({ children }) => {
         <ToastNotification
           message={toast.message}
           type={toast.type}
+          autoClose={toast.autoClose}
           onClose={hideToast}
         />
       )}

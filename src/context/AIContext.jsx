@@ -432,7 +432,6 @@ export const AIProvider = ({ children }) => {
         fetchAILimits,
         updateAILimits,
         aiLimitsUpdateEvent,
-        clearCacheWithPrefix,
       }}
     >
       {children}

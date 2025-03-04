@@ -1,3 +1,4 @@
+// src/App.jsx
 import React, { useEffect, useState } from "react";
 import {
   BrowserRouter as Router,
@@ -8,7 +9,7 @@ import {
   useNavigate,
 } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
-import { AIProvider } from "./context/AIContext"; // Import AIProvider
+import { AIProvider } from "./context/AIContext";
 import { ToastProvider } from "./context/ToastContext";
 import { useAuth } from "./context/AuthContext";
 import { ThemeProvider } from "./context/ThemeContext";
@@ -205,12 +206,10 @@ function AppRoutes() {
 function App() {
   return (
     <Router>
-      <AuthProvider>
-        <ThemeProvider>
-          <ToastProvider>
+      <ToastProvider>
+        <AuthProvider>
+          <ThemeProvider>
             <AIProvider>
-              {" "}
-              {/* Added AIProvider here */}
               <div className="min-h-screen min-w-[320px] bg-white dark:bg-gray-800/70 text-gray-900 dark:text-gray-100">
                 <Navbar />
                 <div className="pt-16">
@@ -218,9 +217,9 @@ function App() {
                 </div>
               </div>
             </AIProvider>
-          </ToastProvider>
-        </ThemeProvider>
-      </AuthProvider>
+          </ThemeProvider>
+        </AuthProvider>
+      </ToastProvider>
     </Router>
   );
 }

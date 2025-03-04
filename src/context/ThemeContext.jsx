@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
-import { useAuth } from "./AuthContext";
+// Remove the import of useAuth here to break the circular dependency
 
 const ThemeContext = createContext(null);
 
@@ -9,7 +9,7 @@ export const THEME_MODES = {
 };
 
 export const ThemeProvider = ({ children }) => {
-  const { user, updateUser } = useAuth() || { user: null, updateUser: null };
+  // Instead of using useAuth, handle auth-related functionality more directly
   const [themeMode, setThemeMode] = useState(() => {
     // First check localStorage for theme preference
     const savedTheme = localStorage.getItem("theme-mode");
@@ -42,18 +42,41 @@ export const ThemeProvider = ({ children }) => {
     return THEME_MODES.LIGHT;
   });
 
-  // Sync theme with user preferences when they log in
+  // Listen for user data changes to sync theme
   useEffect(() => {
-    if (user?.preferences?.darkMode !== undefined) {
-      const userPreferredTheme = user.preferences.darkMode
-        ? THEME_MODES.DARK
-        : THEME_MODES.LIGHT;
-      if (userPreferredTheme !== themeMode) {
-        setThemeMode(userPreferredTheme);
-        localStorage.setItem("theme-mode", userPreferredTheme);
-      }
-    }
-  }, [user, themeMode]);
+    const checkUserPreference = () => {
+      const token = localStorage.getItem("token");
+      if (!token) return;
+
+      // Get user data directly when needed
+      fetch(`${import.meta.env.VITE_API_URL}/api/auth/me`, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+        .then((response) => {
+          if (!response.ok) throw new Error("Failed to fetch user data");
+          return response.json();
+        })
+        .then((data) => {
+          if (data.data?.preferences?.darkMode !== undefined) {
+            const userPreferredTheme = data.data.preferences.darkMode
+              ? THEME_MODES.DARK
+              : THEME_MODES.LIGHT;
+            if (userPreferredTheme !== themeMode) {
+              setThemeMode(userPreferredTheme);
+              localStorage.setItem("theme-mode", userPreferredTheme);
+            }
+          }
+        })
+        .catch((error) => {
+          console.error("Error fetching user theme preference:", error);
+        });
+    };
+
+    // Check once on mount
+    checkUserPreference();
+
+    // We could also set up an interval or event listener if needed
+  }, [themeMode]);
 
   // Apply theme class to document
   useEffect(() => {
@@ -73,34 +96,43 @@ export const ThemeProvider = ({ children }) => {
     localStorage.setItem("theme-mode", newTheme);
 
     // Update user preferences if logged in
-    if (user && updateUser) {
+    const token = localStorage.getItem("token");
+    if (token) {
       try {
+        // First get current user data
+        const userResponse = await fetch(
+          `${import.meta.env.VITE_API_URL}/api/auth/me`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+
+        if (!userResponse.ok) {
+          throw new Error("Failed to fetch user data");
+        }
+
+        const userData = await userResponse.json();
+        const currentPreferences = userData.data?.preferences || {};
+
+        // Then update settings
         const response = await fetch(
           `${import.meta.env.VITE_API_URL}/api/auth/settings`,
           {
             method: "PUT",
             headers: {
               "Content-Type": "application/json",
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
+              Authorization: `Bearer ${token}`,
             },
             body: JSON.stringify({
               preferences: {
-                ...user.preferences,
+                ...currentPreferences,
                 darkMode: newTheme === THEME_MODES.DARK,
               },
             }),
           }
         );
 
-        if (response.ok) {
-          // Update local user state with new preference
-          updateUser({
-            preferences: {
-              ...user.preferences,
-              darkMode: newTheme === THEME_MODES.DARK,
-            },
-          });
-        } else {
+        if (!response.ok) {
           const errorData = await response.json();
           console.error("Server response error:", errorData);
         }
