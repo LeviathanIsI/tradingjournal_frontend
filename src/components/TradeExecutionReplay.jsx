@@ -100,6 +100,11 @@ const TradeExecutionReplay = () => {
   const processMarkdown = (markdown) => {
     if (!markdown) return "";
 
+    if (typeof markdown !== "string") {
+      console.warn("processMarkdown received non-string value:", markdown);
+      return String(markdown) || "";
+    }
+
     return markdown
       .replace(/\\text\{([^}]+)\}/g, "$1")
       .replace(/\\times/g, "×")
@@ -124,31 +129,51 @@ const TradeExecutionReplay = () => {
     try {
       const tradeType = selectedTrade.contractType ? "option" : "stock";
 
-      // First, get the estimated response time (optional)
-      try {
-        const estimateData = await makeAIRequest(
-          "trade-execution-estimate",
-          {
-            tradeId: selectedTrade._id,
-            type: tradeType,
-          },
-          null,
-          { suppressToast: true }
-        );
+      // Set a minimum set of data first, so we have something to show even if API fails
+      setTradeDetails({
+        symbol: selectedTrade.symbol || selectedTrade.ticker,
+        entryPrice: selectedTrade.entryPrice,
+        exitPrice: selectedTrade.exitPrice,
+        profitLoss: selectedTrade.profitLoss?.realized || 0,
+        tradeType: selectedTrade.contractType ? "Option" : "Stock",
+        decisionTime: "-",
+      });
 
-        if (
-          estimateData &&
-          estimateData.success &&
-          estimateData.estimatedSeconds
-        ) {
-          setEstimatedResponseTime(estimateData.estimatedSeconds);
-        }
-      } catch (estimateError) {
-        console.error("Error fetching estimate:", estimateError);
-        // Continue anyway - this is just for user experience
+      // Create a minimal timeline with entry/exit events
+      const minimalTimeline = [
+        {
+          title: "Trade Entry",
+          actionType: "entry",
+          timestamp: selectedTrade.entryDate,
+          description: `Entered ${
+            selectedTrade.symbol || selectedTrade.ticker
+          } at ${selectedTrade.entryPrice}`,
+          insight: "Loading detailed timeline...",
+        },
+      ];
+
+      // Add exit point if trade is closed
+      if (selectedTrade.exitDate) {
+        minimalTimeline.push({
+          title: "Trade Exit",
+          actionType: "exit",
+          timestamp: selectedTrade.exitDate,
+          description: `Exited ${
+            selectedTrade.symbol || selectedTrade.ticker
+          } at ${selectedTrade.exitPrice || "unknown price"}`,
+          insight: "Loading detailed insights...",
+        });
       }
 
-      // Main analysis request
+      setTradeTimeline(minimalTimeline);
+
+      // Skip the estimate API call for now
+      setEstimatedResponseTime(30);
+
+      // Introduce a small delay to let React update the UI
+      await new Promise((resolve) => setTimeout(resolve, 50));
+
+      // Now make the main API request
       const data = await makeAIRequest(
         "trade-execution-replay",
         {
@@ -160,69 +185,42 @@ const TradeExecutionReplay = () => {
       );
 
       if (data && data.success) {
-        // Enhanced data validation and fallback handling
-        // Set analysis with fallback for missing data
+
         if (data.analysis) {
-          setAnalysis(data.analysis);
+
+          // Ensure analysis is a string before setting it
+          if (typeof data.analysis === "string") {
+            setAnalysis(data.analysis);
+          } else if (typeof data.analysis === "object") {
+            // If API is returning an object instead of a string, extract the text or stringify it
+            setAnalysis(
+              data.analysis.text ||
+                data.analysis.summary ||
+                JSON.stringify(data.analysis)
+            );
+            console.warn(
+              "API returned analysis as object instead of string:",
+              data.analysis
+            );
+          } else {
+            setAnalysis(String(data.analysis) || "");
+          }
         } else {
           console.warn("Missing analysis data in API response");
-          // Create a minimal analysis structure
-          setAnalysis({
-            summary:
-              "The AI couldn't generate a complete analysis for this trade. Please try again or select a different trade.",
-            keyTakeaways: [],
-            improvements: [],
-          });
+          // Set a string instead of an object for missing analysis
+          setAnalysis(
+            "The AI couldn't generate a complete analysis for this trade. Please try again or select a different trade."
+          );
         }
 
-        // Set trade details with fallback for missing data
+        // Update trade details if provided
         if (data.tradeDetails) {
           setTradeDetails(data.tradeDetails);
-        } else {
-          console.warn("Missing trade details in API response");
-          // Create minimal trade details from selected trade
-          setTradeDetails({
-            symbol: selectedTrade.symbol || selectedTrade.ticker,
-            entryPrice: selectedTrade.entryPrice,
-            exitPrice: selectedTrade.exitPrice,
-            profitLoss: selectedTrade.profitLoss?.realized || 0,
-            tradeType: selectedTrade.contractType ? "Option" : "Stock",
-            decisionTime: "-",
-          });
         }
 
-        // Set timeline with fallback for missing data
+        // Update timeline if provided
         if (data.timeline && data.timeline.length > 0) {
           setTradeTimeline(data.timeline);
-        } else {
-          console.warn("Missing timeline data in API response");
-          // Create a minimal timeline with entry/exit events
-          const minimalTimeline = [
-            {
-              title: "Trade Entry",
-              actionType: "entry",
-              timestamp: selectedTrade.entryDate,
-              description: `Entered ${
-                selectedTrade.symbol || selectedTrade.ticker
-              } at ${selectedTrade.entryPrice}`,
-              insight: "Limited data available for detailed timeline.",
-            },
-          ];
-
-          // Add exit point if trade is closed
-          if (selectedTrade.exitDate) {
-            minimalTimeline.push({
-              title: "Trade Exit",
-              actionType: "exit",
-              timestamp: selectedTrade.exitDate,
-              description: `Exited ${
-                selectedTrade.symbol || selectedTrade.ticker
-              } at ${selectedTrade.exitPrice || "unknown price"}`,
-              insight: "Limited data available for detailed timeline.",
-            });
-          }
-
-          setTradeTimeline(minimalTimeline);
         }
 
         // Update estimated time if provided
@@ -233,7 +231,6 @@ const TradeExecutionReplay = () => {
         showToast("Trade execution analysis generated successfully", "success");
       } else if (data && data.isCreditsError) {
         // Credit limit error already handled
-        // Just don't show additional errors
       } else {
         // Handle other errors
         const errorMessage = data?.error || "Failed to analyze trade execution";
@@ -245,7 +242,7 @@ const TradeExecutionReplay = () => {
         );
       }
     } catch (error) {
-      console.error("Error analyzing trade execution:", error);
+      console.error("Step 15: Exception caught:", error);
       if (!error.isCreditsError) {
         setError(error.message || "An unexpected error occurred");
         showToast(
@@ -406,6 +403,7 @@ const TradeExecutionReplay = () => {
         return <ChevronRight className="text-gray-500" />;
     }
   };
+
   return (
     <div className="max-w-6xl mx-auto">
       <h2 className="text-2xl font-semibold text-gray-900 dark:text-gray-100 mb-6">
@@ -581,16 +579,25 @@ const TradeExecutionReplay = () => {
                 </p>
 
                 {/* Large, prominent button */}
-                <button
+                <div
                   className="w-full md:w-3/4 mx-auto py-4 px-6 bg-blue-600 dark:bg-blue-600/90 
-  hover:bg-blue-700 dark:hover:bg-blue-700 text-white text-lg font-medium rounded-sm 
-  flex items-center justify-center transition-colors shadow-sm cursor-pointer"
-                  onClick={analyzeTradeExecution}
-                  disabled={loading}
+    hover:bg-blue-700 dark:hover:bg-blue-700 text-white text-lg font-medium rounded-sm 
+    flex items-center justify-center transition-colors shadow-sm cursor-pointer"
+                  tabIndex={0}
+                  role="button"
+                  aria-label="Run execution analysis"
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      setTimeout(() => analyzeTradeExecution(), 10);
+                    }
+                  }}
+                  onClick={() => {
+                    setTimeout(() => analyzeTradeExecution(), 10);
+                  }}
                 >
                   <Film className="h-6 w-6 mr-3" />
                   <span>Run Execution Analysis</span>
-                </button>
+                </div>
               </div>
             </div>
           ) : (
