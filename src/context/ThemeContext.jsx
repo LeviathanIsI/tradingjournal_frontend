@@ -1,5 +1,4 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
-// Remove the import of useAuth here to break the circular dependency
 
 const ThemeContext = createContext(null);
 
@@ -9,7 +8,12 @@ export const THEME_MODES = {
 };
 
 export const ThemeProvider = ({ children }) => {
-  // Instead of using useAuth, handle auth-related functionality more directly
+  // Add a state to track if we're fetching to prevent multiple requests
+  const [isFetching, setIsFetching] = useState(false);
+
+  // Add a state to track if we've attempted to fetch user data
+  const [hasFetchAttempted, setHasFetchAttempted] = useState(false);
+
   const [themeMode, setThemeMode] = useState(() => {
     // First check localStorage for theme preference
     const savedTheme = localStorage.getItem("theme-mode");
@@ -45,11 +49,19 @@ export const ThemeProvider = ({ children }) => {
   // Listen for user data changes to sync theme
   useEffect(() => {
     const checkUserPreference = () => {
-      const token = localStorage.getItem("token");
-      if (!token) return;
+      // If we're already fetching or have tried and failed, don't try again
+      if (isFetching || hasFetchAttempted) return;
 
-      // Get user data directly when needed
-      fetch(`${import.meta.env.VITE_API_URL}/api/auth/me`, {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        setHasFetchAttempted(true);
+        return;
+      }
+
+      setIsFetching(true);
+
+      // Use the /validate endpoint instead of /me
+      fetch(`${import.meta.env.VITE_API_URL}/api/auth/validate`, {
         headers: { Authorization: `Bearer ${token}` },
       })
         .then((response) => {
@@ -66,17 +78,20 @@ export const ThemeProvider = ({ children }) => {
               localStorage.setItem("theme-mode", userPreferredTheme);
             }
           }
+          setHasFetchAttempted(true);
         })
         .catch((error) => {
           console.error("Error fetching user theme preference:", error);
+          setHasFetchAttempted(true);
+        })
+        .finally(() => {
+          setIsFetching(false);
         });
     };
 
     // Check once on mount
     checkUserPreference();
-
-    // We could also set up an interval or event listener if needed
-  }, [themeMode]);
+  }, [themeMode, isFetching, hasFetchAttempted]);
 
   // Apply theme class to document
   useEffect(() => {
@@ -99,16 +114,20 @@ export const ThemeProvider = ({ children }) => {
     const token = localStorage.getItem("token");
     if (token) {
       try {
-        // First get current user data
+        // First get current user data using the /validate endpoint
         const userResponse = await fetch(
-          `${import.meta.env.VITE_API_URL}/api/auth/me`,
+          `${import.meta.env.VITE_API_URL}/api/auth/validate`,
           {
             headers: { Authorization: `Bearer ${token}` },
           }
         );
 
         if (!userResponse.ok) {
-          throw new Error("Failed to fetch user data");
+          // If we can't fetch the user, just update the local theme and don't try to update server
+          console.warn(
+            "Could not update server theme preferences - API unavailable"
+          );
+          return;
         }
 
         const userData = await userResponse.json();
@@ -138,6 +157,7 @@ export const ThemeProvider = ({ children }) => {
         }
       } catch (error) {
         console.error("Error updating theme preference:", error);
+        // Continue with local theme change even if server update fails
       }
     }
   };

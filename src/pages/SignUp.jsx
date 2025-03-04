@@ -136,6 +136,8 @@ const SignUp = () => {
             ...formData,
             // Add expiry at 2 AM next day flag
             expireAt2AM: true,
+            // Mark as new user for special handling
+            isNewUser: true,
           }),
         }
       );
@@ -146,9 +148,14 @@ const SignUp = () => {
         throw new Error(data.error || "Registration failed");
       }
 
-      // Use login without rememberMe parameter
-      login(data.data);
-      navigate("/dashboard");
+      // Set isNewUser flag to ensure proper handling in login process
+      data.data.isNewUser = true;
+
+      // Login the user
+      await login(data.data);
+
+      // Navigate to pricing page with fromSignup flag
+      navigate("/pricing", { state: { fromSignup: true } });
     } catch (err) {
       setError(err.message);
     } finally {
@@ -218,10 +225,10 @@ const SignUp = () => {
   );
 
   const handleGoogleSignup = () => {
-    // Add the expireAt2AM parameter to the Google auth URL
+    // Add the expireAt2AM parameter to the Google auth URL and flag new user
     window.location.href = `${
       import.meta.env.VITE_API_URL
-    }/api/auth/google?expireAt2AM=true`;
+    }/api/auth/google?expireAt2AM=true&isNewUser=true`;
   };
 
   return (

@@ -49,7 +49,7 @@ const Navbar = () => {
   }, [location.pathname]);
 
   // Combined access check - user has access if they have subscription OR special access
-  const hasAccess = subscription?.active || hasSpecialAccess;
+  const hasPremiumAccess = subscription?.active || hasSpecialAccess;
 
   const handleLogout = () => {
     if (logout) {
@@ -78,6 +78,12 @@ const Navbar = () => {
                   <ThemeSwitcher />
                   <div className="border-l border-gray-700 h-6 mx-2"></div>
                   <Link
+                    to="/pricing"
+                    className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm"
+                  >
+                    Pricing
+                  </Link>
+                  <Link
                     to="/login"
                     className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm"
                   >
@@ -92,15 +98,19 @@ const Navbar = () => {
                 </>
               ) : (
                 <div className="flex items-center space-x-4">
-                  {/* Show subscription routes if user has subscription OR special access */}
-                  {user && hasAccess && (
+                  {/* Dashboard is available to all authenticated users */}
+                  {user && (
+                    <Link
+                      to="/dashboard"
+                      className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm"
+                    >
+                      Dashboard
+                    </Link>
+                  )}
+
+                  {/* Premium features only for subscribers or special access */}
+                  {user && hasPremiumAccess && (
                     <>
-                      <Link
-                        to="/dashboard"
-                        className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm"
-                      >
-                        Dashboard
-                      </Link>
                       <Link
                         to="/trade-planning"
                         className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm"
@@ -125,6 +135,12 @@ const Navbar = () => {
                     className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm"
                   >
                     Profile
+                  </Link>
+                  <Link
+                    to="/pricing"
+                    className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm"
+                  >
+                    Pricing
                   </Link>
                   <button
                     onClick={handleLogout}
@@ -181,6 +197,12 @@ const Navbar = () => {
                   {!user ? (
                     <>
                       <Link
+                        to="/pricing"
+                        className="block px-4 py-3 text-gray-300 hover:bg-gray-800 rounded-md transition-colors"
+                      >
+                        Pricing
+                      </Link>
+                      <Link
                         to="/login"
                         className="block px-4 py-3 text-gray-300 hover:bg-gray-800 rounded-md transition-colors"
                       >
@@ -195,15 +217,17 @@ const Navbar = () => {
                     </>
                   ) : (
                     <>
-                      {/* Updated to show subscription routes if user has subscription OR special access */}
-                      {hasAccess && (
+                      {/* Dashboard is available to all authenticated users */}
+                      <Link
+                        to="/dashboard"
+                        className="block px-4 py-3 text-gray-300 hover:bg-gray-800 rounded-md transition-colors"
+                      >
+                        Dashboard
+                      </Link>
+
+                      {/* Premium features only for subscribers or special access */}
+                      {hasPremiumAccess && (
                         <>
-                          <Link
-                            to="/dashboard"
-                            className="block px-4 py-3 text-gray-300 hover:bg-gray-800 rounded-md transition-colors"
-                          >
-                            Dashboard
-                          </Link>
                           <Link
                             to="/trade-planning"
                             className="block px-4 py-3 text-gray-300 hover:bg-gray-800 rounded-md transition-colors"
@@ -223,6 +247,12 @@ const Navbar = () => {
                         className="block px-4 py-3 text-gray-300 hover:bg-gray-800 rounded-md transition-colors"
                       >
                         Profile
+                      </Link>
+                      <Link
+                        to="/pricing"
+                        className="block px-4 py-3 text-gray-300 hover:bg-gray-800 rounded-md transition-colors"
+                      >
+                        Pricing
                       </Link>
                     </>
                   )}

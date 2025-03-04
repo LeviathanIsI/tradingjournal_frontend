@@ -1,6 +1,12 @@
 // src/pages/Dashboard.jsx
-import { useState, useEffect } from "react";
-import { Routes, Route, Navigate } from "react-router-dom";
+import { useState, useEffect, useRef } from "react";
+import {
+  Routes,
+  Route,
+  Navigate,
+  useLocation,
+  useNavigate,
+} from "react-router-dom";
 import TradeModal from "../components/TradeModal";
 import OptionTradeModal from "../components/OptionTradeModal";
 import { useTrades } from "../hooks/useTrades";
@@ -18,8 +24,60 @@ import AIInsights from "../pages/AIInsights";
 import WeeklyReview from "../components/WeeklyReview";
 import { useToast } from "../context/ToastContext";
 
+// Premium route guard component
+const PremiumFeatureRoute = ({ children }) => {
+  const { user, subscription } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { showToast } = useToast();
+  const hasRedirected = useRef(false);
+
+  // Check if user has premium access
+  const hasPremiumAccess =
+    subscription?.active || user?.specialAccess?.hasAccess;
+
+  // Force redirect for non-premium users
+  useEffect(() => {
+    // Only redirect if we haven't already and user doesn't have access
+    if (!hasPremiumAccess && !hasRedirected.current) {
+      hasRedirected.current = true;
+
+      // Show toast with countdown message
+      showToast(
+        "This feature requires a premium subscription. Redirecting to Overview in 5 seconds...",
+        "info",
+        true
+      );
+
+      // Forced redirect after delay
+      const redirectTimer = setTimeout(() => {
+        window.location.href = "/dashboard/overview";
+      }, 5000);
+
+      return () => {
+        clearTimeout(redirectTimer);
+      };
+    }
+  }, []);
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      hasRedirected.current = false;
+    };
+  }, []);
+
+  // Only render children if premium access is confirmed
+  return hasPremiumAccess ? children : null;
+};
+
 const Dashboard = () => {
-  const { user, checkSubscriptionStatus, loading: authLoading } = useAuth();
+  const {
+    user,
+    checkSubscriptionStatus,
+    loading: authLoading,
+    subscription,
+  } = useAuth();
   const userTimeZone = user?.preferences?.timeZone || "UTC";
   const [isTradeModalOpen, setIsTradeModalOpen] = useState(false);
   const [selectedTrade, setSelectedTrade] = useState(null);
@@ -33,7 +91,13 @@ const Dashboard = () => {
   const [bulkDeleteError, setBulkDeleteError] = useState(null);
   const [isDeleting, setIsDeleting] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const location = useLocation();
+  const navigate = useNavigate();
   const { showToast } = useToast();
+
+  // Check if user has premium access
+  const hasPremiumAccess =
+    subscription?.active || user?.specialAccess?.hasAccess;
 
   // Get all trade-related functions from the hook
   const {
@@ -201,6 +265,13 @@ const Dashboard = () => {
     checkStripeSuccess();
   }, [checkSubscriptionStatus, showToast]);
 
+  // Redirect to overview if at dashboard root
+  useEffect(() => {
+    if (location.pathname === "/dashboard") {
+      navigate("/dashboard/overview");
+    }
+  }, [location, navigate]);
+
   const handleAddTradeClick = () => {
     setSelectedTrade(null);
     setIsTradeModalOpen(true);
@@ -301,20 +372,25 @@ const Dashboard = () => {
       <div className="flex-1">
         <Routes>
           <Route path="" element={<Navigate to="overview" replace />} />
-          {[
-            {
-              path: "overview",
-              element: (
+
+          {/* Free routes available to all users */}
+          <Route
+            path="overview"
+            element={
+              <div className="px-3 sm:px-6 py-3 sm:py-4">
                 <Overview
                   trades={allTrades}
                   stats={stats}
                   formatCurrency={formatCurrency}
                 />
-              ),
-            },
-            {
-              path: "journal",
-              element: (
+              </div>
+            }
+          />
+
+          <Route
+            path="journal"
+            element={
+              <div className="px-3 sm:px-6 py-3 sm:py-4">
                 <TradeJournal
                   trades={allTrades}
                   handleEditClick={handleEditClick}
@@ -333,52 +409,62 @@ const Dashboard = () => {
                   setSelectedTradeForReview={setSelectedTradeForReview}
                   setIsReviewModalOpen={setIsReviewModalOpen}
                 />
-              ),
-            },
-            {
-              path: "analysis",
-              element: (
+              </div>
+            }
+          />
+
+          <Route
+            path="analysis"
+            element={
+              <div className="px-3 sm:px-6 py-3 sm:py-4">
                 <Analysis
                   trades={allTrades}
                   activeChart={activeChart}
                   setActiveChart={setActiveChart}
                 />
-              ),
-            },
-            {
-              path: "planning",
-              element: (
-                <Planning trades={allTrades} user={user} stats={stats} />
-              ),
-            },
-            {
-              path: "ai-insights/*",
-              element: (
-                <AIInsights
-                  fetchTradesForWeek={fetchTradesForWeek}
-                  analyzeTradesForWeek={analyzeTradesForWeek}
-                />
-              ),
-            },
-            {
-              path: "weekly-review",
-              element: (
+              </div>
+            }
+          />
+
+          {/* Protected premium routes */}
+          <Route
+            path="planning"
+            element={
+              <PremiumFeatureRoute>
+                <div className="px-3 sm:px-6 py-3 sm:py-4">
+                  <Planning trades={allTrades} user={user} stats={stats} />
+                </div>
+              </PremiumFeatureRoute>
+            }
+          />
+
+          <Route
+            path="ai-insights/*"
+            element={
+              <PremiumFeatureRoute>
+                <div className="px-3 sm:px-6 py-3 sm:py-4">
+                  <AIInsights
+                    fetchTradesForWeek={fetchTradesForWeek}
+                    analyzeTradesForWeek={analyzeTradesForWeek}
+                  />
+                </div>
+              </PremiumFeatureRoute>
+            }
+          />
+
+          <Route
+            path="weekly-review"
+            element={
+              <div className="px-3 sm:px-6 py-3 sm:py-4">
                 <WeeklyReview
                   trades={allTrades}
                   fetchTradesForWeek={fetchTradesForWeek}
                   analyzeTradesForWeek={analyzeTradesForWeek}
                 />
-              ),
-            },
-          ].map(({ path, element }) => (
-            <Route
-              key={path}
-              path={path}
-              element={
-                <div className="px-3 sm:px-6 py-3 sm:py-4">{element}</div>
-              }
-            />
-          ))}
+              </div>
+            }
+          />
+
           <Route path="*" element={<Navigate to="overview" replace />} />
         </Routes>
       </div>

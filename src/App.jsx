@@ -24,12 +24,12 @@ import Traders from "./components/Traders";
 import ForgotPassword from "./pages/ForgotPassword";
 import WeeklyReview from "./components/WeeklyReview.jsx";
 import GoogleAuthSuccess from "./pages/GoogleAuthSuccess";
-import Pricing from "./components/Pricing";
+import Pricing from "./pages/Pricing.jsx";
 import Profile from "./components/Profile";
 import AIInsights from "./pages/AIInsights";
 import { PrivacyPolicy, TermsOfService } from "./pages/PrivacyPolicy.jsx";
 
-const SubscriptionRoute = ({ children }) => {
+const SubscriptionRoute = ({ children, allowFree = false }) => {
   const { user, loading, subscription, isSubscriptionLoading } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
@@ -84,12 +84,13 @@ const SubscriptionRoute = ({ children }) => {
     return children;
   }
 
-  // Check subscription
-  if (!subscription?.active) {
-    return <Navigate to="/pricing" state={{ from: location }} replace />;
+  // If allowFree is true or user has active subscription, show content
+  if (allowFree || subscription?.active) {
+    return children;
   }
 
-  return children;
+  // Otherwise redirect to pricing
+  return <Navigate to="/pricing" state={{ from: location }} replace />;
 };
 
 const ProtectedRoute = ({ children }) => {
@@ -166,7 +167,7 @@ function AppRoutes() {
       <Route
         path="/dashboard/*"
         element={
-          <SubscriptionRoute>
+          <SubscriptionRoute allowFree={true}>
             <Dashboard />
           </SubscriptionRoute>
         }

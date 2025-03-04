@@ -19,15 +19,15 @@ const SubscriptionManagement = () => {
 
   const planDetails = {
     monthly: {
-      price: "$10",
+      price: "$20",
       period: "month",
       billingFrequency: "Monthly billing",
     },
     yearly: {
-      price: "$100",
+      price: "$200",
       period: "year",
       billingFrequency: "Annual billing",
-      savings: "Save $20/year",
+      savings: "Save $40/year",
     },
   };
 

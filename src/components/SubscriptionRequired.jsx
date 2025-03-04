@@ -1,10 +1,14 @@
+// src/components/SubscriptionRequired.jsx
+import React from "react";
 import { Navigate, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
-const SubscriptionRequired = ({ children }) => {
-  const { user, isSubscriptionLoading } = useAuth();
+const SubscriptionRequired = ({ children, allowFree = false }) => {
+  const { user, isSubscriptionLoading, hasActiveSubscription, isFreeTier } =
+    useAuth();
   const location = useLocation();
 
+  // Show loading state while checking subscription
   if (isSubscriptionLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-white dark:bg-gray-800/90">
@@ -15,21 +19,30 @@ const SubscriptionRequired = ({ children }) => {
     );
   }
 
-  if (user?.specialAccess?.hasAccess) {
-    if (
-      !user.specialAccess.expiresAt ||
-      new Date() < new Date(user.specialAccess.expiresAt)
-    ) {
-      return children;
-    }
+  // Check if user has an active subscription
+  const hasActiveSubscriptionStatus = hasActiveSubscription();
+
+  // Check if user is on free tier
+  const isOnFreeTier = isFreeTier();
+
+  // Check if user has special access (useful for beta testers, etc.)
+  const hasSpecialAccess =
+    user?.specialAccess?.hasAccess &&
+    (!user.specialAccess.expiresAt ||
+      new Date() < new Date(user.specialAccess.expiresAt));
+
+  // Allow access if user has a paid subscription or special access
+  if (hasActiveSubscriptionStatus || hasSpecialAccess) {
+    return children;
   }
 
-  // Then check subscription
-  if (!user?.subscription?.active) {
-    return <Navigate to="/pricing" state={{ from: location }} replace />;
+  // If free tier is allowed for this route and user is on free tier, allow access
+  if (allowFree && isOnFreeTier) {
+    return children;
   }
 
-  return children;
+  // Otherwise redirect to pricing page
+  return <Navigate to="/pricing" state={{ from: location }} replace />;
 };
 
 export default SubscriptionRequired;

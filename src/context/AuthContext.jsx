@@ -18,7 +18,7 @@ export const AuthProvider = ({ children }) => {
   const [subscription, setSubscription] = useState(null);
   const navigate = useNavigate();
   const location = useLocation();
-  const [isSubscriptionLoading, setIsSubscriptionLoading] = useState(true);
+  const [isSubscriptionLoading, setIsSubscriptionLoading] = useState(false);
   const lastSubscriptionCheckRef = useRef(0);
   const pendingSubscriptionCheckRef = useRef(null);
   const { showToast } = useToast();
@@ -110,6 +110,13 @@ export const AuthProvider = ({ children }) => {
 
   // Add the checkSubscriptionStatus function with rate limiting
   const checkSubscriptionStatus = async () => {
+    // Check if user is logged in first (token exists)
+    const token = localStorage.getItem("token");
+    if (!token) {
+      // If not logged in, don't attempt to check subscription
+      return null;
+    }
+
     // Check if we've called this too recently (at least 5 seconds between calls)
     const now = Date.now();
     const timeSinceLastCheck = now - lastSubscriptionCheckRef.current;
@@ -128,7 +135,8 @@ export const AuthProvider = ({ children }) => {
             const result = await actualCheckSubscription();
             resolve(result);
           } catch (error) {
-            reject(error);
+            console.error("❌ Delayed subscription check failed:", error);
+            resolve(null); // Resolve with null instead of rejecting to prevent unhandled promise rejections
           } finally {
             pendingSubscriptionCheckRef.current = null;
           }
@@ -139,7 +147,12 @@ export const AuthProvider = ({ children }) => {
       return pendingPromise;
     }
 
-    return actualCheckSubscription();
+    try {
+      return await actualCheckSubscription();
+    } catch (error) {
+      console.error("❌ Subscription check failed:", error);
+      return null; // Return null instead of rethrowing to prevent crashes
+    }
   };
 
   const actualCheckSubscription = async () => {
@@ -177,6 +190,35 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  // Function to set user to free tier
+  const setUserToFreeTier = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) throw new Error("No authentication token found");
+
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/api/auth/set-free-tier`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (!response.ok) throw new Error("Failed to set free tier");
+
+      // Refresh subscription status after setting free tier
+      await checkSubscriptionStatus();
+
+      return true;
+    } catch (error) {
+      console.error("❌ Error setting free tier:", error);
+      return false;
+    }
+  };
+
   // Token expiry check
   const checkTokenExpiry = useCallback(() => {
     const token = localStorage.getItem("token");
@@ -202,8 +244,8 @@ export const AuthProvider = ({ children }) => {
     return () => clearInterval(interval);
   }, [checkTokenExpiry]);
 
-  const login = async (userData, expireAt2AM = true) => {
-    // Store token, optionally setting it to expire at 2 AM
+  const login = async (userData) => {
+    // Store token
     localStorage.setItem("token", userData.token);
 
     // Store the user data
@@ -227,9 +269,29 @@ export const AuthProvider = ({ children }) => {
       // Continue with login even if welcome message fails
     }
 
+    // If user is coming from signup, redirect to pricing page
+    if (userData.isNewUser) {
+      // If user is brand new, set them to free tier by default
+      try {
+        // Wait for auth to be properly set up before setting free tier
+        setTimeout(async () => {
+          await setUserToFreeTier();
+          navigate("/pricing", { state: { fromSignup: true } });
+        }, 500);
+        return;
+      } catch (error) {
+        console.error("Error setting free tier for new user:", error);
+        // Continue with navigation even if free tier setting fails
+        navigate("/pricing", { state: { fromSignup: true } });
+        return;
+      }
+    }
+
     // Navigate after state update
     setTimeout(() => {
-      navigate("/dashboard");
+      // Check if there is a redirect path from location state
+      const { from } = location.state || { from: { pathname: "/dashboard" } };
+      navigate(from.pathname || "/dashboard", { replace: true });
     }, 100);
   };
 
@@ -238,6 +300,26 @@ export const AuthProvider = ({ children }) => {
     setUser(null);
     setSubscription(null);
     navigate("/login");
+  };
+
+  // Function to check if user has active subscription
+  const hasActiveSubscription = () => {
+    return (
+      user?.subscription?.active ||
+      (user?.specialAccess?.hasAccess &&
+        (!user.specialAccess.expiresAt ||
+          new Date() < new Date(user.specialAccess.expiresAt)))
+    );
+  };
+
+  // Function to check if user is on free tier
+  const isFreeTier = () => {
+    return user?.subscription?.type === "free";
+  };
+
+  // Function to check if user is authenticated
+  const isAuthenticated = () => {
+    return !!user;
   };
 
   return (
@@ -251,6 +333,10 @@ export const AuthProvider = ({ children }) => {
         logout,
         updateUser,
         checkSubscriptionStatus,
+        setUserToFreeTier,
+        hasActiveSubscription,
+        isFreeTier,
+        isAuthenticated,
       }}
     >
       {children}

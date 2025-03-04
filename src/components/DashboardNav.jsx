@@ -8,49 +8,66 @@ import {
   BarChart,
   BrainCircuit,
 } from "lucide-react";
+import { useAuth } from "../context/AuthContext";
 
 const DashboardNav = () => {
   const location = useLocation();
+  const { user, subscription } = useAuth();
 
-  const navItems = [
+  // Check if user has premium access (active subscription)
+  const hasPremiumAccess =
+    subscription?.active || user?.specialAccess?.hasAccess;
+
+  // Define all navigation items
+  const allNavItems = [
     {
       label: "Overview",
       path: "/dashboard/overview",
       icon: BarChart,
       shortLabel: "Overview",
+      premium: false, // Available to all users
     },
     {
       label: "Trade Journal",
       path: "/dashboard/journal",
       icon: ClipboardList,
       shortLabel: "Journal",
+      premium: false, // Available to all users
     },
     {
       label: "Analysis",
       path: "/dashboard/analysis",
       icon: LineChart,
       shortLabel: "Analysis",
+      premium: false, // Available to all users
     },
     {
       label: "Entry/Exit Analysis",
       path: "/dashboard/planning",
       icon: Target,
       shortLabel: "Entry/Exit",
+      premium: true, // Premium feature
     },
     {
       label: "AI Insights",
       path: "/dashboard/ai-insights",
       icon: BrainCircuit,
       shortLabel: "AI",
+      premium: true, // Premium feature
     },
   ];
+
+  // Filter nav items based on user subscription
+  const navItems = allNavItems.filter(
+    (item) => !item.premium || hasPremiumAccess
+  );
 
   const isActive = (path) => location.pathname === path;
 
   return (
     <nav className="bg-white dark:bg-gray-700/80 border-b border-gray-200 dark:border-gray-600/50 sticky top-0 z-10">
       <div className="max-w-screen-2xl mx-auto overflow-x-auto scrollbar-none">
-        <div className="flex justify-between sm:justify-center min-w-max px-2 sm:px-0">
+        <div className="flex justify-center min-w-max px-2 sm:px-0">
           {navItems.map((item) => {
             const Icon = item.icon;
             return (

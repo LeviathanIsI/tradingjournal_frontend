@@ -31,9 +31,11 @@ const ProfileSettings = ({
   const handleDeleteAccount = async () => {
     // If on first step (warning), move to verification step
     if (deleteStep === 1) {
-      // Validate required fields in step 1
+      // Make sure we're validating the subscription acknowledgment if needed
       if (hasActiveSubscription && !deleteConfirmation.billingAcknowledged) {
-        setError("Please acknowledge the billing notice");
+        setError(
+          "Please acknowledge the subscription notice before proceeding"
+        );
         return;
       }
 
@@ -42,14 +44,35 @@ const ProfileSettings = ({
         return;
       }
 
+      // If validation passes, proceed to step 2
       setDeleteStep(2);
       setError(null);
       return;
     }
 
+    // Add validation for security questions if needed
+    if (!user.googleAuth) {
+      // Check if security question answers are filled
+      if (
+        !deleteAnswers.answer1 ||
+        !deleteAnswers.answer2 ||
+        !deleteAnswers.answer3
+      ) {
+        setError("Please answer all security questions");
+        return;
+      }
+    }
+
     try {
       setDeleteLoading(true);
       const token = localStorage.getItem("token");
+
+      // Log request data for debugging
+      console.log("Deletion request data:", {
+        answers: user.googleAuth ? null : deleteAnswers,
+        billingAcknowledged: deleteConfirmation.billingAcknowledged,
+        signature: deleteConfirmation.signature,
+      });
 
       const response = await fetch(
         `${import.meta.env.VITE_API_URL}/api/auth/delete-account`,
@@ -72,13 +95,12 @@ const ProfileSettings = ({
         throw new Error(data.error || "Failed to delete account");
       }
 
-      // Clear local storage and log out
+      // On successful deletion
       localStorage.removeItem("token");
       localStorage.removeItem("user");
-
-      // Redirect to home
       window.location.href = "/";
     } catch (error) {
+      console.error("Account deletion error:", error);
       setError(error.message);
     } finally {
       setDeleteLoading(false);
@@ -726,34 +748,6 @@ const ProfileSettings = ({
                         permanently deleted.
                       </p>
 
-                      {/* Subscription warning */}
-                      {hasActiveSubscription && (
-                        <div className="mb-4 p-3 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-100 dark:border-yellow-700/50 rounded-sm">
-                          <p className="text-sm font-medium text-yellow-800 dark:text-yellow-300 mb-2">
-                            Subscription Warning
-                          </p>
-                          <ul className="text-xs text-yellow-700 dark:text-yellow-300 space-y-1 list-disc pl-4">
-                            <li>
-                              You are currently on the{" "}
-                              <strong>{subscriptionTier}</strong> plan
-                            </li>
-                            <li>
-                              You will continue to be billed until the end of
-                              your current billing cycle (next billing date:{" "}
-                              {nextBillingDate})
-                            </li>
-                            <li>
-                              No partial refunds will be issued for the
-                              remainder of your subscription period
-                            </li>
-                            <li>
-                              You will lose access to all premium features
-                              immediately
-                            </li>
-                          </ul>
-                        </div>
-                      )}
-
                       {/* Data deletion warning */}
                       <div className="mb-4 p-3 bg-red-50 dark:bg-red-900/20 border border-red-100 dark:border-red-700/50 rounded-sm">
                         <p className="text-sm font-medium text-red-800 dark:text-red-300 mb-2">
@@ -771,21 +765,89 @@ const ProfileSettings = ({
                           <li>
                             Your profile will be removed from the community
                           </li>
+                          <li>
+                            If you have an active subscription, you won't
+                            receive a partial refund for any unused time
+                          </li>
+                          <li>
+                            It would be best to cancel your subscription and
+                            continue using the app until your subscription
+                            expires
+                          </li>
                         </ul>
+
+                        <p className="text-xs text-red-700 dark:text-red-300 mt-3 pt-2 border-t border-red-100 dark:border-red-600/30">
+                          You can manage your subscription from the{" "}
+                          <button
+                            type="button"
+                            className="text-red-600 dark:text-red-400 underline font-medium"
+                            onClick={() => {
+                              setShowDeleteConfirm(false);
+                              setTab("subscription");
+                            }}
+                          >
+                            Subscription tab
+                          </button>{" "}
+                          in your settings.
+                        </p>
+                      </div>
+
+                      {/* Add this section for the username confirmation */}
+                      <div className="mb-4">
+                        <label className="block text-sm font-medium text-red-800 dark:text-red-300 mb-2">
+                          Enter your username to confirm deletion
+                        </label>
+                        <p className="text-sm text-gray-600 dark:text-gray-400 italic mb-2">
+                          {user.username}
+                        </p>
+                        <input
+                          type="text"
+                          value={deleteConfirmation.signature}
+                          onChange={(e) => {
+                            const currentValue = deleteConfirmation.signature;
+                            const nextChar = user.username[currentValue.length];
+                            const typedChar =
+                              e.target.value[e.target.value.length - 1];
+
+                            // Only accept input if it matches the next character in username
+                            if (
+                              e.target.value.length > currentValue.length &&
+                              typedChar === nextChar
+                            ) {
+                              setDeleteConfirmation((prev) => ({
+                                ...prev,
+                                signature: prev.signature + nextChar,
+                              }));
+                            }
+                          }}
+                          onPaste={(e) => e.preventDefault()}
+                          onCopy={(e) => e.preventDefault()}
+                          onCut={(e) => e.preventDefault()}
+                          placeholder="Type your username"
+                          className="mt-1 block w-full rounded-sm border border-gray-300 dark:border-gray-600/70 
+      px-3 py-2 sm:py-2 text-sm bg-white dark:bg-gray-600/50 text-gray-900 dark:text-gray-100
+      focus:border-red-500 focus:ring-1 focus:ring-red-400"
+                        />
+                        <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                          Type your username exactly as shown above. Copy and
+                          paste is disabled.
+                        </p>
                       </div>
 
                       <div className="flex justify-end space-x-3">
                         <button
+                          type="button"
                           onClick={cancelDelete}
                           className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 
-                            hover:bg-gray-100 dark:hover:bg-gray-700 rounded-sm"
+                hover:bg-gray-100 dark:hover:bg-gray-700 rounded-sm"
                         >
                           Cancel
                         </button>
                         <button
+                          type="button"
                           onClick={handleDeleteAccount}
                           className="px-4 py-2 text-sm font-medium text-white bg-red-500 dark:bg-red-500/90
-                            hover:bg-red-600 dark:hover:bg-red-600/90 rounded-sm"
+                hover:bg-red-600 dark:hover:bg-red-600/90 rounded-sm"
                         >
                           Continue
                         </button>
@@ -818,8 +880,8 @@ const ProfileSettings = ({
                                   }))
                                 }
                                 className="mt-1 block w-full rounded-sm border border-gray-300 dark:border-gray-600/70 
-                  px-3 py-2 sm:py-2 text-sm bg-white dark:bg-gray-600/50 text-gray-900 dark:text-gray-100
-                  focus:border-blue-500 focus:ring-1 focus:ring-blue-400"
+                      px-3 py-2 sm:py-2 text-sm bg-white dark:bg-gray-600/50 text-gray-900 dark:text-gray-100
+                      focus:border-blue-500 focus:ring-1 focus:ring-blue-400"
                               />
                             </div>
                             <div>
@@ -836,8 +898,8 @@ const ProfileSettings = ({
                                   }))
                                 }
                                 className="mt-1 block w-full rounded-sm border border-gray-300 dark:border-gray-600/70 
-                  px-3 py-2 sm:py-2 text-sm bg-white dark:bg-gray-600/50 text-gray-900 dark:text-gray-100
-                  focus:border-blue-500 focus:ring-1 focus:ring-blue-400"
+                      px-3 py-2 sm:py-2 text-sm bg-white dark:bg-gray-600/50 text-gray-900 dark:text-gray-100
+                      focus:border-blue-500 focus:ring-1 focus:ring-blue-400"
                               />
                             </div>
                             <div>
@@ -854,8 +916,8 @@ const ProfileSettings = ({
                                   }))
                                 }
                                 className="mt-1 block w-full rounded-sm border border-gray-300 dark:border-gray-600/70 
-                  px-3 py-2 sm:py-2 text-sm bg-white dark:bg-gray-600/50 text-gray-900 dark:text-gray-100
-                  focus:border-blue-500 focus:ring-1 focus:ring-blue-400"
+                      px-3 py-2 sm:py-2 text-sm bg-white dark:bg-gray-600/50 text-gray-900 dark:text-gray-100
+                      focus:border-blue-500 focus:ring-1 focus:ring-blue-400"
                               />
                             </div>
                           </div>
@@ -869,17 +931,19 @@ const ProfileSettings = ({
 
                       <div className="flex justify-end space-x-3">
                         <button
+                          type="button"
                           onClick={cancelDelete}
                           className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 
-                            hover:bg-gray-100 dark:hover:bg-gray-700 rounded-sm"
+                hover:bg-gray-100 dark:hover:bg-gray-700 rounded-sm"
                         >
                           Cancel
                         </button>
                         <button
+                          type="button"
                           onClick={handleDeleteAccount}
                           disabled={deleteLoading}
                           className="px-4 py-2 text-sm font-medium text-white bg-red-500 dark:bg-red-500/90
-                            hover:bg-red-600 dark:hover:bg-red-600/90 rounded-sm disabled:opacity-50"
+                hover:bg-red-600 dark:hover:bg-red-600/90 rounded-sm disabled:opacity-50"
                         >
                           {deleteLoading ? "Deleting..." : "Delete Account"}
                         </button>
