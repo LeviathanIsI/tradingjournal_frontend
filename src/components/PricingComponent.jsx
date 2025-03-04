@@ -4,6 +4,34 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { useToast } from "../context/ToastContext";
 
+function useResetProcessingOnLoad(setIsLoading, processingPlan, setResetting) {
+  useEffect(() => {
+    // Reset processing state on component mount
+    const resetProcessingState = () => {
+      console.log("Resetting processing state");
+      setIsLoading(false);
+      processingPlan.current = null;
+      setResetting(false);
+    };
+
+    // When component mounts
+    resetProcessingState();
+
+    // Also reset when the page becomes visible again (returning from Stripe)
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === "visible") {
+        resetProcessingState();
+      }
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
+  }, [setIsLoading, processingPlan, setResetting]);
+}
+
 const PricingComponent = () => {
   const { user, checkSubscriptionStatus, isAuthenticated } = useAuth();
   const navigate = useNavigate();
@@ -15,6 +43,8 @@ const PricingComponent = () => {
   const fromSignup = location.state?.fromSignup || false;
   const initialSetupDone = useRef(false);
   const processingPlan = useRef(null);
+
+  useResetProcessingOnLoad(setIsLoading, processingPlan, setResetting);
 
   // Define plans and features
   const plans = [
