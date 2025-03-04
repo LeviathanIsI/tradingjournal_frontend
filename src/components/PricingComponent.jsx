@@ -142,98 +142,45 @@ const PricingComponent = () => {
   };
 
   // Create a new subscription with Stripe
-  router.post("/create-subscription", protect, async (req, res) => {
+  const createSubscription = async (planType) => {
     try {
-      const { planType, isReactivation } = req.body;
-      const user = await User.findById(req.user._id);
-
-      // If subscription is marked for cancellation, we want to allow a new subscription
-      if (user.subscription.active && !user.subscription.cancelAtPeriodEnd) {
-        return res.status(400).json({
-          success: false,
-          error: "User already has an active subscription",
-        });
-      }
-
-      // Create or get Stripe customer
-      let customerId = user.subscription.stripeCustomerId;
-      let needNewCustomer = false;
-
-      // Check if we need to create a new customer
-      // This could be because:
-      // 1. No customer ID exists yet
-      // 2. The customer ID is from test mode (starts with 'cus_' and can't be found in live mode)
-      if (!customerId) {
-        needNewCustomer = true;
-      } else {
-        try {
-          // Try to retrieve the customer to see if it exists in the current environment
-          await stripe.customers.retrieve(customerId);
-        } catch (stripeError) {
-          // If we get a "no such customer" error or any other error, create a new customer
-          console.log(`Customer retrieval error: ${stripeError.message}`);
-          needNewCustomer = true;
-        }
-      }
-
-      // Create a new customer if needed
-      if (needNewCustomer) {
-        try {
-          const customer = await stripe.customers.create({
-            email: user.email,
-            metadata: {
-              userId: user._id.toString(),
-            },
-          });
-          customerId = customer.id;
-
-          // Save the new customer ID to the user record
-          user.subscription.stripeCustomerId = customerId;
-          await user.save();
-        } catch (createError) {
-          console.error("Error creating customer:", createError);
-          return res.status(500).json({
-            success: false,
-            error: "Failed to create customer",
-          });
-        }
-      }
-
-      // Create checkout session
-      const session = await stripe.checkout.sessions.create({
-        customer: customerId,
-        mode: "subscription",
-        payment_method_types: ["card"],
-        line_items: [
-          {
-            price:
-              planType === "yearly"
-                ? process.env.STRIPE_YEARLY_PRICE_ID
-                : process.env.STRIPE_MONTHLY_PRICE_ID,
-            quantity: 1,
+      setIsLoading(true);
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/api/auth/create-subscription`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
-        ],
-        metadata: {
-          userId: user._id.toString(),
-          planType,
-          isReactivation: isReactivation ? "true" : "false",
-        },
-        success_url: `${process.env.FRONTEND_URL}/dashboard?success=true`,
-        cancel_url: `${process.env.FRONTEND_URL}/settings?canceled=true`,
-      });
+          body: JSON.stringify({
+            planType,
+            isReactivation: user?.subscription?.cancelAtPeriodEnd || false,
+          }),
+        }
+      );
 
-      res.json({
-        success: true,
-        url: session.url,
-      });
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "Failed to create subscription");
+      }
+
+      if (data.success && data.url) {
+        // Redirect to Stripe checkout
+        window.location.href = data.url;
+      } else {
+        throw new Error("No checkout URL received");
+      }
     } catch (error) {
       console.error("Subscription error:", error);
-      res.status(500).json({
-        success: false,
-        error: error.message,
-      });
+      showToast(
+        "There was an error processing your subscription. Please try again.",
+        "error"
+      );
+      setIsLoading(false);
     }
-  });
+  };
 
   // Handle subscription reactivation
   const handleReactivate = async (planType) => {
