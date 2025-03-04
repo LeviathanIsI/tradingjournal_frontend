@@ -11,8 +11,10 @@ const PricingComponent = () => {
   const { showToast } = useToast();
   const [selectedPlan, setSelectedPlan] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [resetting, setResetting] = useState(false);
   const fromSignup = location.state?.fromSignup || false;
   const initialSetupDone = useRef(false);
+  const processingPlan = useRef(null);
 
   // Define plans and features
   const plans = [
@@ -83,6 +85,28 @@ const PricingComponent = () => {
     "Community Features",
   ];
 
+  // Reset component state when using browser navigation buttons
+  useEffect(() => {
+    const handleNavigation = () => {
+      setIsLoading(false);
+      processingPlan.current = null;
+
+      // If authenticated, set to current subscription, otherwise null
+      if (isAuthenticated() && user?.subscription?.type) {
+        setSelectedPlan(user.subscription.type);
+      } else {
+        setSelectedPlan(null);
+      }
+    };
+
+    window.addEventListener("popstate", handleNavigation);
+
+    // Clean up the listener when component unmounts
+    return () => {
+      window.removeEventListener("popstate", handleNavigation);
+    };
+  }, [isAuthenticated, user]);
+
   // Set initial selected plan
   useEffect(() => {
     if (initialSetupDone.current) return;
@@ -108,6 +132,9 @@ const PricingComponent = () => {
     }
 
     try {
+      setIsLoading(true);
+      processingPlan.current = "free";
+
       // This endpoint might need to be created on your backend
       const response = await fetch(
         `${import.meta.env.VITE_API_URL}/api/auth/set-free-tier`,
@@ -124,8 +151,7 @@ const PricingComponent = () => {
 
       if (data.success) {
         await checkSubscriptionStatus();
-        if (fromSignup) {
-        } else {
+        if (!fromSignup) {
           showToast("You're all set with the Free plan!", "success");
         }
         navigate("/dashboard");
@@ -138,6 +164,8 @@ const PricingComponent = () => {
         "There was an error setting the free tier. Please try again.",
         "error"
       );
+      setIsLoading(false);
+      processingPlan.current = null;
     }
   };
 
@@ -145,6 +173,10 @@ const PricingComponent = () => {
   const createSubscription = async (planType) => {
     try {
       setIsLoading(true);
+      processingPlan.current = planType;
+
+      console.log(`Creating ${planType} subscription`); // Debug log
+
       const response = await fetch(
         `${import.meta.env.VITE_API_URL}/api/auth/create-subscription`,
         {
@@ -167,6 +199,9 @@ const PricingComponent = () => {
       }
 
       if (data.success && data.url) {
+        // Store plan type in session storage before redirecting
+        sessionStorage.setItem("pendingSubscription", planType);
+
         // Redirect to Stripe checkout
         window.location.href = data.url;
       } else {
@@ -179,6 +214,7 @@ const PricingComponent = () => {
         "error"
       );
       setIsLoading(false);
+      processingPlan.current = null;
     }
   };
 
@@ -186,6 +222,10 @@ const PricingComponent = () => {
   const handleReactivate = async (planType) => {
     try {
       setIsLoading(true);
+      processingPlan.current = planType;
+
+      console.log(`Reactivating subscription to ${planType}`); // Debug log
+
       const response = await fetch(
         `${import.meta.env.VITE_API_URL}/api/auth/reactivate-subscription`,
         {
@@ -208,6 +248,9 @@ const PricingComponent = () => {
         );
         navigate("/dashboard");
       } else if (data.url) {
+        // Store plan type in session storage before redirecting
+        sessionStorage.setItem("pendingSubscription", planType);
+
         // If we got a URL, redirect to it (probably new payment method needed)
         window.location.href = data.url;
       } else {
@@ -220,11 +263,29 @@ const PricingComponent = () => {
         "error"
       );
       setIsLoading(false);
+      processingPlan.current = null;
     }
   };
 
   // Main subscription handler
   const handleSubscribe = async (planType) => {
+    // Prevent multiple clicks or processing when already working
+    if (isLoading || resetting) return;
+
+    // If user was trying to process a different plan, reset first
+    if (processingPlan.current && processingPlan.current !== planType) {
+      setResetting(true);
+      setIsLoading(false);
+      processingPlan.current = null;
+
+      setTimeout(() => {
+        setResetting(false);
+        // Continue with new plan after reset
+        handleSubscribe(planType);
+      }, 100);
+      return;
+    }
+
     // If user is not logged in, redirect to login page with plan selection info
     if (!isAuthenticated()) {
       navigate("/login", { state: { from: location, selectedPlan: planType } });
@@ -265,16 +326,16 @@ const PricingComponent = () => {
 
   // Handle mouse hover for plan selection UI
   const handleMouseOver = (planId) => {
-    if (!isLoading) {
+    if (!isLoading && !resetting) {
       setSelectedPlan(planId);
     }
   };
 
   // Handle mouse out
   const handleMouseOut = () => {
-    if (!isLoading && !user?.subscription?.type) {
+    if (!isLoading && !resetting && !user?.subscription?.type) {
       setSelectedPlan(null);
-    } else if (!isLoading && user?.subscription?.type) {
+    } else if (!isLoading && !resetting && user?.subscription?.type) {
       setSelectedPlan(user.subscription.type);
     }
   };
@@ -293,6 +354,7 @@ const PricingComponent = () => {
       <div className="flex flex-col space-y-8 lg:flex-row lg:space-y-0 lg:space-x-8">
         {plans.map((plan) => {
           const planStatus = getPlanStatus(plan.id);
+          const isProcessing = isLoading && processingPlan.current === plan.id;
 
           // Determine card classes based on selection state
           let cardClasses =
@@ -400,10 +462,14 @@ const PricingComponent = () => {
 
                 <button
                   onClick={() => handleSubscribe(plan.id)}
-                  disabled={isLoading || planStatus === "Current Plan"}
+                  disabled={
+                    isLoading || resetting || planStatus === "Current Plan"
+                  }
                   className={`mt-8 block w-full py-3 px-4 rounded-md text-white font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 transition-colors ${
-                    isLoading && selectedPlan === plan.id
+                    isProcessing
                       ? "bg-gray-400 dark:bg-gray-500/50 cursor-not-allowed"
+                      : resetting
+                      ? "bg-gray-300 dark:bg-gray-600/50 cursor-not-allowed"
                       : planStatus === "Current Plan"
                       ? "bg-green-600 dark:bg-green-600/90 cursor-not-allowed"
                       : plan.id === "free"
@@ -411,7 +477,7 @@ const PricingComponent = () => {
                       : "bg-blue-500 hover:bg-blue-600 dark:bg-blue-500/90 dark:hover:bg-blue-500 focus:ring-blue-400"
                   }`}
                 >
-                  {isLoading && selectedPlan === plan.id ? (
+                  {isProcessing ? (
                     <span className="flex items-center justify-center">
                       <svg
                         className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
@@ -435,6 +501,8 @@ const PricingComponent = () => {
                       </svg>
                       Processing...
                     </span>
+                  ) : resetting ? (
+                    "Resetting..."
                   ) : planStatus === "Current Plan" ? (
                     "Current Plan"
                   ) : !isAuthenticated() ? (
@@ -467,6 +535,7 @@ const PricingComponent = () => {
             <button
               onClick={() => navigate("/dashboard")}
               className="text-blue-500 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium"
+              disabled={isLoading || resetting}
             >
               Skip for now and explore the dashboard →
             </button>
@@ -479,6 +548,7 @@ const PricingComponent = () => {
               type="button"
               onClick={() => navigate("/login", { state: { from: location } })}
               className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 font-medium"
+              disabled={isLoading || resetting}
             >
               Log in
             </button>
