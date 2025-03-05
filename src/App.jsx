@@ -35,12 +35,12 @@ import LoggingIn from "./components/Dashboard/LoggingIn";
 const Dashboard = React.lazy(() => import("./pages/Dashboard"));
 const TradePlanning = React.lazy(() => import("./pages/TradePlanning"));
 const Community = React.lazy(() => import("./pages/Community"));
-const Traders = React.lazy(() => import("./components/Traders"));
+const Traders = React.lazy(() => import("./components/Community/Traders.jsx"));
 const WeeklyReview = React.lazy(() =>
   import("./components/Dashboard/WeeklyReview")
 );
 const GoogleAuthSuccess = React.lazy(() => import("./pages/GoogleAuthSuccess"));
-const Profile = React.lazy(() => import("./components/Profile"));
+const Profile = React.lazy(() => import("./components/Community/Profile.jsx"));
 const AIInsights = React.lazy(() => import("./pages/AIInsights"));
 // const StudyGroups = React.lazy(() =>
 //   import("./components/StudyGroup/StudyGroups")
