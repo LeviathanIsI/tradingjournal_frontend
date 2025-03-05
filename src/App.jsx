@@ -21,6 +21,7 @@ import { useAuth } from "./context/AuthContext";
 import { ThemeProvider } from "./context/ThemeContext";
 import { StudyGroupProvider } from "./context/StudyGroupContext";
 import Navbar from "./components/Navbar";
+import StudyGroups from "./components/StudyGroup/StudyGroups";
 
 // Eagerly loaded components (critical UI)
 import Home from "./pages/Home";
