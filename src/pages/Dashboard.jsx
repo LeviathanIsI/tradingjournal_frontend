@@ -1,110 +1,87 @@
-// src/pages/Dashboard.jsx
-import { useState, useEffect, useRef } from "react";
-import {
-  Routes,
-  Route,
-  Navigate,
-  useLocation,
-  useNavigate,
-} from "react-router-dom";
-import TradeModal from "../components/TradeModal";
-import OptionTradeModal from "../components/OptionTradeModal";
-import { useTrades } from "../hooks/useTrades";
+import React, { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
-import ReviewModal from "../components/ReviewModal";
-import ImportTradeModal from "../components/ImportTradeModal";
-import DashboardNav from "../components/DashboardNav";
-import { formatInTimeZone } from "date-fns-tz";
-import Overview from "../components/Overview";
-import TradeJournal from "../components/TradeJournal";
-import Analysis from "../components/Analysis";
-import Planning from "../components/Planning";
-import StatsOverview from "../components/StatsOverview";
-import AIInsights from "../pages/AIInsights";
-import WeeklyReview from "../components/WeeklyReview";
 import { useToast } from "../context/ToastContext";
+import { useTrades } from "../hooks/useTrades";
+import { generateWelcomeMessage } from "../utils/welcomeMessages";
 
-// Premium route guard component
-const PremiumFeatureRoute = ({ children }) => {
-  const { user, subscription } = useAuth();
-  const navigate = useNavigate();
-  const location = useLocation();
-  const { showToast } = useToast();
-  const hasRedirected = useRef(false);
+// Dashboard components
+import DashboardNav from "../components/Dashboard/DashboardNav";
+import {
+  DashboardStats,
+  DashboardRoutes,
+  DashboardModals,
+} from "../components/Dashboard";
 
-  // Check if user has premium access
-  const hasPremiumAccess =
-    subscription?.active || user?.specialAccess?.hasAccess;
+// Custom hooks
+import useModalState from "../hooks/Dashboard/useModalState.js";
+import useUIState from "../hooks/Dashboard/useUIState.js";
+import useDashboardEffects from "../hooks/Dashboard/useDashboardEffects.js";
 
-  // Force redirect for non-premium users
-  useEffect(() => {
-    // Only redirect if we haven't already and user doesn't have access
-    if (!hasPremiumAccess && !hasRedirected.current) {
-      hasRedirected.current = true;
+// Utility functions
+import { formatCurrency } from "../components/Dashboard/utils/formatters";
 
-      // Show toast with countdown message
-      showToast(
-        "This feature requires a premium subscription. Redirecting to Overview in 5 seconds...",
-        "info",
-        true
-      );
-
-      // Forced redirect after delay
-      const redirectTimer = setTimeout(() => {
-        window.location.href = "/dashboard/overview";
-      }, 5000);
-
-      return () => {
-        clearTimeout(redirectTimer);
-      };
-    }
-  }, []);
-
-  // Cleanup on unmount
-  useEffect(() => {
-    return () => {
-      hasRedirected.current = false;
-    };
-  }, []);
-
-  // Only render children if premium access is confirmed
-  return hasPremiumAccess ? children : null;
-};
-
+/**
+ * Main Dashboard page component - now significantly leaner
+ * with logic extracted to custom hooks and subcomponents
+ */
 const Dashboard = () => {
+  // Get user data and auth state
   const {
     user,
     checkSubscriptionStatus,
     loading: authLoading,
     subscription,
   } = useAuth();
-  const userTimeZone = user?.preferences?.timeZone || "UTC";
-  const [isTradeModalOpen, setIsTradeModalOpen] = useState(false);
-  const [selectedTrade, setSelectedTrade] = useState(null);
-  const [isOptionTradeModalOpen, setIsOptionTradeModalOpen] = useState(false);
-  const [selectedOptionTrade, setSelectedOptionTrade] = useState(null);
-  const [activeChart, setActiveChart] = useState("pnl");
-  const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
-  const [selectedTradeForReview, setSelectedTradeForReview] = useState(null);
-  const [isImportModalOpen, setIsImportModalOpen] = useState(false);
-  const [selectedTrades, setSelectedTrades] = useState(new Set());
-  const [bulkDeleteError, setBulkDeleteError] = useState(null);
-  const [isDeleting, setIsDeleting] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
-  const location = useLocation();
-  const navigate = useNavigate();
+  const [welcomeMessageShown, setWelcomeMessageShown] = useState(false);
+
   const { showToast } = useToast();
 
-  // Check if user has premium access
-  const hasPremiumAccess =
-    subscription?.active || user?.specialAccess?.hasAccess;
+  // Dashboard UI state hook
+  const {
+    selectedTrades,
+    hasSelectedTrades,
+    activeChart,
+    setActiveChart,
+    bulkDeleteError,
+    isDeleting,
+    setBulkDeleteStatus,
+    handleSelectTrade,
+    handleSelectAll,
+    clearSelectedTrades,
+  } = useUIState();
 
-  // Get all trade-related functions from the hook
+  // Modal management hook
+  const {
+    isTradeModalOpen,
+    selectedTrade,
+    isOptionTradeModalOpen,
+    selectedOptionTrade,
+    isReviewModalOpen,
+    selectedTradeForReview,
+    isImportModalOpen,
+    openTradeModal,
+    openOptionTradeModal,
+    openReviewModal,
+    openImportModal,
+    closeTradeModal,
+    closeOptionTradeModal,
+    closeReviewModal,
+    closeImportModal,
+    handleEditClick,
+  } = useModalState();
+
+  // Dashboard effects hook
+  const { isLoading, setIsLoading } = useDashboardEffects(
+    checkSubscriptionStatus,
+    user
+  );
+
+  // Get trades and trade functions from the hook
   const {
     trades: allTrades,
     stats,
-    error,
-    loading: dataLoading,
+    error: tradesError,
+    loading: tradesLoading,
     deleteTrade,
     submitTrade,
     bulkDeleteTrades,
@@ -114,17 +91,40 @@ const Dashboard = () => {
     analyzeTradesForWeek,
   } = useTrades(user);
 
-  // UI-specific handler functions that call the hook functions
-  const handleEditClick = (trade) => {
-    if (trade.contractType) {
-      setSelectedOptionTrade(trade);
-      setIsOptionTradeModalOpen(true);
-    } else {
-      setSelectedTrade(trade);
-      setIsTradeModalOpen(true);
-    }
-  };
+  // Set up user timezone from preferences
+  const userTimeZone = user?.preferences?.timeZone || "UTC";
 
+  useEffect(() => {
+    // Read the flag from sessionStorage
+    const shouldShowWelcome = sessionStorage.getItem("showWelcome") === "true";
+
+    // Clear the flag immediately to prevent showing on refresh
+    if (shouldShowWelcome) {
+      sessionStorage.removeItem("showWelcome");
+    }
+
+    // Only show if flag was true and we haven't shown it yet
+    if (shouldShowWelcome && !welcomeMessageShown && user) {
+      // Add a delay to ensure dashboard is visible first
+      const timer = setTimeout(() => {
+        try {
+          const timezone = user.preferences?.timeZone || "UTC";
+          const welcomeMessage = generateWelcomeMessage(
+            user.username,
+            timezone
+          );
+          showToast(welcomeMessage, "welcome", false);
+          setWelcomeMessageShown(true);
+        } catch (e) {
+          console.error("Error showing welcome message:", e);
+        }
+      }, 1000); // Increased delay for reliability
+
+      return () => clearTimeout(timer);
+    }
+  }, [user, welcomeMessageShown, showToast]);
+
+  // Handler for deleting a single trade
   const handleDeleteClick = async (trade) => {
     if (!trade || !trade._id) {
       console.error("❌ Trade or Trade ID is missing!");
@@ -153,6 +153,7 @@ const Dashboard = () => {
     }
   };
 
+  // Handler for bulk deleting trades
   const handleBulkDelete = async () => {
     if (selectedTrades.size === 0) return;
 
@@ -164,33 +165,33 @@ const Dashboard = () => {
       return;
     }
 
-    setIsDeleting(true);
-    setBulkDeleteError(null);
+    setBulkDeleteStatus(true, null);
 
     const result = await bulkDeleteTrades(selectedTrades);
 
     if (result.success) {
-      setSelectedTrades(new Set());
+      clearSelectedTrades();
       showToast(
         `Successfully deleted ${selectedTrades.size} trades`,
         "success"
       );
     } else {
-      setBulkDeleteError(
+      setBulkDeleteStatus(
+        false,
         result.error || "Failed to delete trades. Please try again."
       );
     }
 
-    setIsDeleting(false);
+    setBulkDeleteStatus(false, null);
   };
 
+  // Handler for submitting a trade
   const handleTradeSubmit = async (tradeData) => {
     try {
       const success = await submitTrade(tradeData, selectedTrade);
 
       if (success) {
-        setIsTradeModalOpen(false);
-        setSelectedTrade(null);
+        closeTradeModal();
         showToast("Trade saved successfully", "success");
       } else {
         showToast("Failed to save trade", "error");
@@ -201,13 +202,13 @@ const Dashboard = () => {
     }
   };
 
+  // Handler for submitting an option trade
   const handleOptionTradeSubmit = async (tradeData) => {
     try {
       const success = await submitTrade(tradeData, selectedOptionTrade);
 
       if (success) {
-        setIsOptionTradeModalOpen(false);
-        setSelectedOptionTrade(null);
+        closeOptionTradeModal();
         showToast("Option trade saved successfully", "success");
       } else {
         showToast("Failed to save option trade", "error");
@@ -218,128 +219,32 @@ const Dashboard = () => {
     }
   };
 
+  // Handler for submitting a trade review
   const handleReviewSubmit = async (reviewData) => {
     const success = await submitTradeReview(reviewData);
 
     if (success) {
-      setIsReviewModalOpen(false);
-      setSelectedTradeForReview(null);
+      closeReviewModal();
       showToast("Review submitted successfully", "success");
     } else {
       showToast("Failed to submit review", "error");
     }
   };
 
+  // Handler for importing trades
   const handleImportTrades = async (trades) => {
     const success = await importTrades(trades);
 
     if (success) {
-      setIsImportModalOpen(false);
+      closeImportModal();
       showToast("Trades imported successfully", "success");
     } else {
       showToast("Failed to import trades", "error");
     }
   };
 
-  useEffect(() => {
-    const checkStripeSuccess = async () => {
-      const queryParams = new URLSearchParams(window.location.search);
-      if (queryParams.get("success") === "true") {
-        try {
-          await checkSubscriptionStatus();
-          showToast("Subscription activated successfully!", "success");
-          window.history.replaceState({}, "", "/dashboard");
-          setIsLoading(false);
-        } catch (error) {
-          console.error("Error checking subscription status:", error);
-          showToast(
-            "Error verifying subscription. Please refresh the page.",
-            "error"
-          );
-          setIsLoading(false);
-        }
-      } else {
-        setIsLoading(false);
-      }
-    };
-    checkStripeSuccess();
-  }, [checkSubscriptionStatus, showToast]);
-
-  // Redirect to overview if at dashboard root
-  useEffect(() => {
-    if (location.pathname === "/dashboard") {
-      navigate("/dashboard/overview");
-    }
-  }, [location, navigate]);
-
-  const handleAddTradeClick = () => {
-    setSelectedTrade(null);
-    setIsTradeModalOpen(true);
-  };
-
-  const handleAddOptionTradeClick = () => {
-    setSelectedOptionTrade(null);
-    setIsOptionTradeModalOpen(true);
-  };
-
-  const handleSelectTrade = (tradeId) => {
-    const newSelected = new Set(selectedTrades);
-    if (newSelected.has(tradeId)) {
-      newSelected.delete(tradeId);
-    } else {
-      newSelected.add(tradeId);
-    }
-    setSelectedTrades(newSelected);
-  };
-
-  const handleSelectAll = (currentTrades) => {
-    const areAllSelected = currentTrades.every((trade) =>
-      selectedTrades.has(trade._id)
-    );
-
-    if (areAllSelected) {
-      const newSelected = new Set(selectedTrades);
-      currentTrades.forEach((trade) => newSelected.delete(trade._id));
-      setSelectedTrades(newSelected);
-    } else {
-      const newSelected = new Set(selectedTrades);
-      currentTrades.forEach((trade) => newSelected.add(trade._id));
-      setSelectedTrades(newSelected);
-    }
-  };
-
-  // Utility functions
-  const formatCurrency = (value, maxDecimals = 2) => {
-    if (!value && value !== 0) return "-";
-
-    // Convert to string and remove any existing formatting
-    const numStr = Math.abs(value).toString();
-
-    // Find the number of actual decimal places
-    const decimalPlaces = numStr.includes(".")
-      ? numStr.split(".")[1].replace(/0+$/, "").length // Remove trailing zeros
-      : 0;
-
-    // Use the smaller of actual decimal places or maxDecimals
-    const decimals = Math.min(decimalPlaces, maxDecimals);
-
-    return new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: "USD",
-      minimumFractionDigits: decimals,
-      maximumFractionDigits: decimals,
-    }).format(value);
-  };
-
-  const formatDate = (dateString) => {
-    return formatInTimeZone(
-      new Date(dateString),
-      userTimeZone,
-      "MM/dd/yyyy hh:mm a"
-    );
-  };
-
-  if (authLoading || isLoading) {
+  // Loading state
+  if (authLoading || isLoading || tradesLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="animate-pulse text-lg">Loading...</div>
@@ -347,11 +252,12 @@ const Dashboard = () => {
     );
   }
 
-  if (error) {
+  // Error state
+  if (tradesError) {
     return (
       <div className="w-full min-h-screen pt-16 px-3 sm:px-6 py-3 sm:py-6 flex items-center justify-center text-red-600 dark:text-red-400">
         <div className="bg-red-50 dark:bg-red-900/20 p-4 rounded-sm border border-red-100 dark:border-red-800/50 shadow-sm">
-          Error: {error}
+          Error: {tradesError}
         </div>
       </div>
     );
@@ -359,153 +265,59 @@ const Dashboard = () => {
 
   return (
     <div className="flex flex-col min-h-screen pt-16">
+      {/* Navigation */}
       <DashboardNav />
-      {/* Stats Overview Section */}
-      <div className="px-3 sm:px-6 py-3 sm:py-4 bg-transparent">
-        <StatsOverview
+
+      {/* Stats Overview */}
+      <div className="px-3 sm:px-6 py-3 sm:py-4 mt-4 bg-transparent">
+        <DashboardStats user={user} stats={stats} />
+      </div>
+
+      {/* Main Content with Routes */}
+      <div className="flex-1">
+        <DashboardRoutes
           user={user}
+          trades={allTrades}
           stats={stats}
+          activeChart={activeChart}
+          setActiveChart={setActiveChart}
+          onEditClick={handleEditClick}
+          onDeleteClick={handleDeleteClick}
+          onSelectTrade={handleSelectTrade}
+          onSelectAll={handleSelectAll}
+          onBulkDelete={handleBulkDelete}
+          onAddTradeClick={() => openTradeModal()}
+          onAddOptionTradeClick={() => openOptionTradeModal()}
+          onOpenReviewModal={openReviewModal}
+          selectedTrades={selectedTrades}
+          isDeleting={isDeleting}
+          bulkDeleteError={bulkDeleteError}
+          setBulkDeleteError={(error) => setBulkDeleteStatus(isDeleting, error)}
+          fetchTradesForWeek={fetchTradesForWeek}
+          analyzeTradesForWeek={analyzeTradesForWeek}
           formatCurrency={formatCurrency}
         />
       </div>
-      {/* Main Content */}
-      <div className="flex-1">
-        <Routes>
-          <Route path="" element={<Navigate to="overview" replace />} />
 
-          {/* Free routes available to all users */}
-          <Route
-            path="overview"
-            element={
-              <div className="px-3 sm:px-6 py-3 sm:py-4">
-                <Overview
-                  trades={allTrades}
-                  stats={stats}
-                  formatCurrency={formatCurrency}
-                />
-              </div>
-            }
-          />
-
-          <Route
-            path="journal"
-            element={
-              <div className="px-3 sm:px-6 py-3 sm:py-4">
-                <TradeJournal
-                  trades={allTrades}
-                  handleEditClick={handleEditClick}
-                  handleDeleteClick={handleDeleteClick}
-                  handleSelectTrade={handleSelectTrade}
-                  handleSelectAll={handleSelectAll}
-                  handleBulkDelete={handleBulkDelete}
-                  handleAddTradeClick={handleAddTradeClick}
-                  handleAddOptionTradeClick={handleAddOptionTradeClick}
-                  selectedTrades={selectedTrades}
-                  isDeleting={isDeleting}
-                  bulkDeleteError={bulkDeleteError}
-                  setBulkDeleteError={setBulkDeleteError}
-                  formatDate={formatDate}
-                  formatCurrency={formatCurrency}
-                  setSelectedTradeForReview={setSelectedTradeForReview}
-                  setIsReviewModalOpen={setIsReviewModalOpen}
-                />
-              </div>
-            }
-          />
-
-          <Route
-            path="analysis"
-            element={
-              <div className="px-3 sm:px-6 py-3 sm:py-4">
-                <Analysis
-                  trades={allTrades}
-                  activeChart={activeChart}
-                  setActiveChart={setActiveChart}
-                />
-              </div>
-            }
-          />
-
-          {/* Protected premium routes */}
-          <Route
-            path="planning"
-            element={
-              <PremiumFeatureRoute>
-                <div className="px-3 sm:px-6 py-3 sm:py-4">
-                  <Planning trades={allTrades} user={user} stats={stats} />
-                </div>
-              </PremiumFeatureRoute>
-            }
-          />
-
-          <Route
-            path="ai-insights/*"
-            element={
-              <PremiumFeatureRoute>
-                <div className="px-3 sm:px-6 py-3 sm:py-4">
-                  <AIInsights
-                    fetchTradesForWeek={fetchTradesForWeek}
-                    analyzeTradesForWeek={analyzeTradesForWeek}
-                  />
-                </div>
-              </PremiumFeatureRoute>
-            }
-          />
-
-          <Route
-            path="weekly-review"
-            element={
-              <div className="px-3 sm:px-6 py-3 sm:py-4">
-                <WeeklyReview
-                  trades={allTrades}
-                  fetchTradesForWeek={fetchTradesForWeek}
-                  analyzeTradesForWeek={analyzeTradesForWeek}
-                />
-              </div>
-            }
-          />
-
-          <Route path="*" element={<Navigate to="overview" replace />} />
-        </Routes>
-      </div>
       {/* Modals */}
-      <TradeModal
-        isOpen={isTradeModalOpen}
-        onClose={() => setIsTradeModalOpen(false)}
-        onSubmit={handleTradeSubmit}
-        trade={selectedTrade}
+      <DashboardModals
+        isTradeModalOpen={isTradeModalOpen}
+        selectedTrade={selectedTrade}
+        isOptionTradeModalOpen={isOptionTradeModalOpen}
+        selectedOptionTrade={selectedOptionTrade}
+        isReviewModalOpen={isReviewModalOpen}
+        selectedTradeForReview={selectedTradeForReview}
+        isImportModalOpen={isImportModalOpen}
+        onTradeModalClose={closeTradeModal}
+        onOptionTradeModalClose={closeOptionTradeModal}
+        onReviewModalClose={closeReviewModal}
+        onImportModalClose={closeImportModal}
+        onTradeSubmit={handleTradeSubmit}
+        onOptionTradeSubmit={handleOptionTradeSubmit}
+        onReviewSubmit={handleReviewSubmit}
+        onImportTrades={handleImportTrades}
         userTimeZone={userTimeZone}
       />
-      <OptionTradeModal
-        isOpen={isOptionTradeModalOpen}
-        onClose={() => {
-          setIsOptionTradeModalOpen(false);
-          setSelectedOptionTrade(null);
-        }}
-        onSubmit={handleOptionTradeSubmit}
-        trade={selectedOptionTrade}
-        userTimeZone={userTimeZone}
-      />
-      <ReviewModal
-        isOpen={isReviewModalOpen}
-        onClose={() => {
-          setIsReviewModalOpen(false);
-          setSelectedTradeForReview(null);
-        }}
-        trade={selectedTradeForReview}
-        onSubmit={handleReviewSubmit}
-      />
-      <ImportTradeModal
-        isOpen={isImportModalOpen}
-        onClose={() => setIsImportModalOpen(false)}
-        onImport={handleImportTrades}
-      />
-      {/* Error Display */}
-      {error && (
-        <div className="fixed bottom-4 left-4 right-4 p-4 bg-red-100 dark:bg-red-900/20 text-red-600 dark:text-red-400 rounded-sm border border-red-100 dark:border-red-800/50 shadow-sm">
-          Error: {error}
-        </div>
-      )}
     </div>
   );
 };

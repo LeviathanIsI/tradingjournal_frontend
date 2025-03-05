@@ -42,8 +42,16 @@ const GoogleAuthSuccess = () => {
 
         if (data.success) {
           setStatus("✅ Logging in...");
-          await login(data.data);
-          navigate("/dashboard");
+
+          // Pass false for both shouldRedirect and showWelcome
+          // We'll show the welcome message after loading the complete profile
+          await login(data.data, false, false);
+
+          // IMPORTANT: Navigate to logging-in component
+          navigate("/logging-in", {
+            state: { from: "/dashboard", referrer: "login" },
+            replace: true,
+          });
         } else {
           throw new Error(data.error || "Login failed");
         }

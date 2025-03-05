@@ -1,12 +1,12 @@
 import React, { useEffect } from "react";
 import { Routes, Route, Navigate, Link, useLocation } from "react-router-dom";
-import WeeklyReview from "../components/WeeklyReview";
-import SmartTradeCoaching from "../components/SmartTradeCoaching";
-import PatternRecognition from "../components/PatternRecognition";
-import PredictiveAnalysis from "../components/PredictiveAnalysis";
-import TradeExecutionReplay from "../components/TradeExecutionReplay";
-import TradingBotSimulator from "../components/TradingBotSimulator";
-import AICreditsInfo from "../components/AICreditsInfo";
+import WeeklyReview from "../components/Dashboard/WeeklyReview";
+import SmartTradeCoaching from "../components/Dashboard/SmartTradeCoaching";
+import PatternRecognition from "../components/Dashboard/PatternRecognition";
+import PredictiveAnalysis from "../components/Dashboard/PredictiveAnalysis";
+import TradeExecutionReplay from "../components/Dashboard/TradeExecutionReplay";
+import TradingBotSimulator from "../components/Dashboard/TradingBotSimulator";
+import AICreditsInfo from "../components/Dashboard/AICreditsInfo";
 import { useAI } from "../context/AIContext";
 
 // SubNav component for AI features - Add preventDefault to links

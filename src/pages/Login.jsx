@@ -39,7 +39,6 @@ const Login = () => {
           body: JSON.stringify({
             email: formData.email,
             password: formData.password,
-            // Set daily expiration flag for server to know we want 2AM expiration
             dailyExpiration: true,
           }),
         }
@@ -51,9 +50,25 @@ const Login = () => {
         throw new Error(data.error || "Login failed");
       }
 
-      // Call login with data, false for rememberMe (always expire at 2AM)
-      login(data.data, false);
-      navigate("/dashboard");
+      // Login without auto-redirect or welcome message
+      await login(data.data, false, false);
+
+      navigate("/logging-in", {
+        state: {
+          from: "/dashboard",
+          referrer: "login",
+        },
+        replace: true,
+      });
+
+      // Navigate to LoggingIn with referrer info
+      navigate("/logging-in", {
+        state: {
+          from: "/dashboard",
+          referrer: "login",
+        },
+        replace: true,
+      });
     } catch (err) {
       console.error("❌ [Login] Request Failed:", err);
       setError(err.message);

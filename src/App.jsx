@@ -1,5 +1,11 @@
 // src/App.jsx
-import React, { useEffect, useState } from "react";
+import React, {
+  useEffect,
+  useState,
+  useMemo,
+  useCallback,
+  Suspense,
+} from "react";
 import {
   BrowserRouter as Router,
   Routes,
@@ -15,36 +21,56 @@ import { useAuth } from "./context/AuthContext";
 import { ThemeProvider } from "./context/ThemeContext";
 import { StudyGroupProvider } from "./context/StudyGroupContext";
 import Navbar from "./components/Navbar";
+
+// Eagerly loaded components (critical UI)
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import SignUp from "./pages/SignUp.jsx";
-import Dashboard from "./pages/Dashboard";
-import TradePlanning from "./pages/TradePlanning";
-import Community from "./pages/Community";
-import Traders from "./components/Traders";
 import ForgotPassword from "./pages/ForgotPassword";
-import WeeklyReview from "./components/WeeklyReview.jsx";
-import GoogleAuthSuccess from "./pages/GoogleAuthSuccess";
 import Pricing from "./pages/Pricing.jsx";
-import Profile from "./components/Profile";
-import AIInsights from "./pages/AIInsights";
 import { PrivacyPolicy, TermsOfService } from "./pages/PrivacyPolicy.jsx";
-// Import Study Group components
-import StudyGroups from "./components/StudyGroups";
-import CreateStudyGroup from "./components/CreateStudyGroup";
-import StudyGroupDetail from "./components/StudyGroupDetail";
+import LoggingIn from "./components/Dashboard/LoggingIn";
 
-const SubscriptionRoute = ({ children, allowFree = false }) => {
+// Lazy loaded components (code splitting)
+const Dashboard = React.lazy(() => import("./pages/Dashboard"));
+const TradePlanning = React.lazy(() => import("./pages/TradePlanning"));
+const Community = React.lazy(() => import("./pages/Community"));
+const Traders = React.lazy(() => import("./components/Traders"));
+const WeeklyReview = React.lazy(() =>
+  import("./components/Dashboard/WeeklyReview")
+);
+const GoogleAuthSuccess = React.lazy(() => import("./pages/GoogleAuthSuccess"));
+const Profile = React.lazy(() => import("./components/Profile"));
+const AIInsights = React.lazy(() => import("./pages/AIInsights"));
+const StudyGroups = React.lazy(() =>
+  import("./components/StudyGroup/StudyGroups")
+);
+const CreateStudyGroup = React.lazy(() =>
+  import("./components/StudyGroup/CreateStudyGroup")
+);
+const StudyGroupDetail = React.lazy(() =>
+  import("./components/StudyGroup/StudyGroupDetail")
+);
+
+// Loading fallback for suspense
+const LoadingFallback = () => (
+  <div className="flex items-center justify-center min-h-screen">
+    <div className="animate-pulse text-lg">Loading...</div>
+  </div>
+);
+
+// Custom hook for access control
+const useAccessControl = () => {
   const { user, loading, subscription, isSubscriptionLoading } = useAuth();
-  const location = useLocation();
-  const navigate = useNavigate();
   const [hasSpecialAccess, setHasSpecialAccess] = useState(false);
   const [accessLoading, setAccessLoading] = useState(true);
 
-  // Check special access whenever user changes
   useEffect(() => {
     const checkAccess = async () => {
-      if (!user) return;
+      if (!user) {
+        setAccessLoading(false);
+        return;
+      }
 
       try {
         setAccessLoading(true);
@@ -68,73 +94,89 @@ const SubscriptionRoute = ({ children, allowFree = false }) => {
     };
 
     checkAccess();
-  }, [user]);
+  }, [user?.id]); // Only recheck if user ID changes
 
-  // Show loading state while loading
-  if (loading || isSubscriptionLoading || accessLoading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-pulse text-lg">Loading...</div>
-      </div>
-    );
+  return {
+    isAuthenticated: !!user,
+    hasActiveSubscription: subscription?.active,
+    hasSpecialAccess,
+    isLoading: loading || isSubscriptionLoading || accessLoading,
+    user,
+  };
+};
+
+// Enhanced route protection components
+const SubscriptionRoute = ({ children, allowFree = false }) => {
+  const {
+    isAuthenticated,
+    hasActiveSubscription,
+    hasSpecialAccess,
+    isLoading,
+  } = useAccessControl();
+  const location = useLocation();
+
+  if (isLoading) {
+    return <LoadingFallback />;
   }
 
-  // Redirect if no user
-  if (!user) {
+  if (!isAuthenticated) {
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
-  // If user has special access, show protected content
-  if (hasSpecialAccess) {
-    return children;
+  if (hasSpecialAccess || allowFree || hasActiveSubscription) {
+    return <Suspense fallback={<LoadingFallback />}>{children}</Suspense>;
   }
 
-  // If allowFree is true or user has active subscription, show content
-  if (allowFree || subscription?.active) {
-    return children;
-  }
-
-  // Otherwise redirect to pricing
   return <Navigate to="/pricing" state={{ from: location }} replace />;
 };
 
 const ProtectedRoute = ({ children }) => {
-  const { user } = useAuth();
+  const { isAuthenticated, isLoading } = useAccessControl();
   const location = useLocation();
 
-  if (!user) {
+  if (isLoading) {
+    return <LoadingFallback />;
+  }
+
+  if (!isAuthenticated) {
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
-  return children;
+  return <Suspense fallback={<LoadingFallback />}>{children}</Suspense>;
 };
 
-// Update the PublicRoute component
 const PublicRoute = ({ children }) => {
-  const { user, subscription, loading, isSubscriptionLoading } = useAuth();
-  const navigate = useNavigate();
+  const { user, loading } = useAuth();
+  const location = useLocation();
 
-  useEffect(() => {
-    if (!loading && !isSubscriptionLoading && user) {
-      if (subscription?.active && window.location.pathname !== "/dashboard") {
-        navigate("/dashboard", { replace: true });
-      } else if (
-        !subscription?.active &&
-        window.location.pathname !== `/profile/${user.username}`
-      ) {
-        navigate(`/profile/${user.username}`, { replace: true });
-      }
-    }
-  }, [user, subscription, loading, isSubscriptionLoading, navigate]);
+  // Skip redirect for logging-in path
+  const isLoggingInPath = location.pathname === "/logging-in";
+
+  if (isLoggingInPath) {
+    return children;
+  }
 
   return !user && !loading ? children : null;
 };
 
 function AppRoutes() {
   const { user } = useAuth();
+
+  // Memoize the route to user's profile to prevent unnecessary recalculations
+  const userProfilePath = useMemo(
+    () => (user?.username ? `/profile/${user.username}` : "/profile"),
+    [user?.username]
+  );
+
   return (
     <Routes>
+      {/* Public routes */}
       <Route path="/" element={<Home />} />
+      <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+      <Route path="/terms-of-service" element={<TermsOfService />} />
+      <Route path="/pricing" element={<Pricing />} />
+
+      {/* Authentication routes */}
       <Route
         path="/login"
         element={
@@ -151,8 +193,23 @@ function AppRoutes() {
           </PublicRoute>
         }
       />
-      <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-      <Route path="/terms-of-service" element={<TermsOfService />} />
+      <Route
+        path="/forgot-password"
+        element={
+          <PublicRoute>
+            <ForgotPassword />
+          </PublicRoute>
+        }
+      />
+
+      {/* IMPORTANT: LoggingIn route outside of any route guard wrapper */}
+      <Route path="/logging-in" element={<LoggingIn />} />
+
+      {/* Auth callback routes */}
+      <Route path="/auth/google/success" element={<GoogleAuthSuccess />} />
+      <Route path="/auth/google/callback" element={<GoogleAuthSuccess />} />
+
+      {/* Protected routes */}
       <Route
         path="/profile/:username"
         element={
@@ -165,10 +222,12 @@ function AppRoutes() {
         path="/profile"
         element={
           <ProtectedRoute>
-            <Navigate to={`/profile/${user?.username}`} replace />
+            <Navigate to={userProfilePath} replace />
           </ProtectedRoute>
         }
       />
+
+      {/* Subscription routes */}
       <Route
         path="/dashboard/*"
         element={
@@ -201,7 +260,8 @@ function AppRoutes() {
           </SubscriptionRoute>
         }
       />
-      {/* Study Group Routes - Add these new routes */}
+
+      {/* Study Group Routes */}
       <Route
         path="/study-groups"
         element={
@@ -226,15 +286,12 @@ function AppRoutes() {
           </SubscriptionRoute>
         }
       />
-      <Route path="/forgot-password" element={<ForgotPassword />} />
-      <Route path="/auth/google/success" element={<GoogleAuthSuccess />} />
-      <Route path="/auth/google/callback" element={<GoogleAuthSuccess />} />
-      <Route path="/pricing" element={<Pricing />} />
     </Routes>
   );
 }
 
-function App() {
+// Memoized App to prevent unnecessary re-renders of the entire application
+const App = React.memo(() => {
   return (
     <Router>
       <ToastProvider>
@@ -242,8 +299,6 @@ function App() {
           <ThemeProvider>
             <AIProvider>
               <StudyGroupProvider>
-                {" "}
-                {/* Add StudyGroupProvider here */}
                 <div className="min-h-screen min-w-[320px] bg-white dark:bg-gray-800/70 text-gray-900 dark:text-gray-100">
                   <Navbar />
                   <div className="pt-16">
@@ -257,5 +312,6 @@ function App() {
       </ToastProvider>
     </Router>
   );
-}
+});
+
 export default App;
