@@ -1,8 +1,8 @@
 import { Routes, Route, Navigate } from "react-router-dom";
-import CommunityNav from "../Community/CommunityNav";
+import CommunityNav from "../components/Community/CommunityNav";
 import PublicReviews from "../components/PublicReviews";
 import FeaturedReviews from "../components/FeaturedReviews";
-import Traders from "../components/Traders";
+import Traders from "../components/Community/Traders";
 import Leaderboard from "../components/Leaderboard";
 import Profile from "../components/Profile";
 import Network from "../components/Network";
