@@ -21,7 +21,6 @@ import { useAuth } from "./context/AuthContext";
 import { ThemeProvider } from "./context/ThemeContext";
 import { StudyGroupProvider } from "./context/StudyGroupContext";
 import Navbar from "./components/Navbar";
-import StudyGroups from "./components/StudyGroup/StudyGroups";
 
 // Eagerly loaded components (critical UI)
 import Home from "./pages/Home";
@@ -43,9 +42,9 @@ const WeeklyReview = React.lazy(() =>
 const GoogleAuthSuccess = React.lazy(() => import("./pages/GoogleAuthSuccess"));
 const Profile = React.lazy(() => import("./components/Profile"));
 const AIInsights = React.lazy(() => import("./pages/AIInsights"));
-const StudyGroups = React.lazy(() =>
-  import("./components/StudyGroup/StudyGroups")
-);
+// const StudyGroups = React.lazy(() =>
+//   import("./components/StudyGroup/StudyGroups")
+// );
 const CreateStudyGroup = React.lazy(() =>
   import("./components/StudyGroup/CreateStudyGroup")
 );
@@ -263,30 +262,30 @@ function AppRoutes() {
       />
 
       {/* Study Group Routes */}
-      <Route
+      {/* <Route
         path="/study-groups"
         element={
           <SubscriptionRoute>
             <StudyGroups />
           </SubscriptionRoute>
         }
-      />
-      <Route
+      /> */}
+      {/* <Route
         path="/study-groups/create"
         element={
           <SubscriptionRoute>
             <CreateStudyGroup />
           </SubscriptionRoute>
         }
-      />
-      <Route
+      /> */}
+      {/* <Route
         path="/study-groups/:id"
         element={
           <SubscriptionRoute>
             <StudyGroupDetail />
           </SubscriptionRoute>
         }
-      />
+      /> */}
     </Routes>
   );
 }
