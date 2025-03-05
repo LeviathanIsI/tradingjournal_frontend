@@ -19,7 +19,7 @@ import { AIProvider } from "./context/AIContext";
 import { ToastProvider } from "./context/ToastContext";
 import { useAuth } from "./context/AuthContext";
 import { ThemeProvider } from "./context/ThemeContext";
-import { StudyGroupProvider } from "./context/StudyGroupContext";
+// import { StudyGroupProvider } from "./context/StudyGroupContext";
 import Navbar from "./components/Navbar";
 
 // Eagerly loaded components (critical UI)
@@ -45,12 +45,12 @@ const AIInsights = React.lazy(() => import("./pages/AIInsights"));
 // const StudyGroups = React.lazy(() =>
 //   import("./components/StudyGroup/StudyGroups")
 // );
-const CreateStudyGroup = React.lazy(() =>
-  import("./components/StudyGroup/CreateStudyGroup")
-);
-const StudyGroupDetail = React.lazy(() =>
-  import("./components/StudyGroup/StudyGroupDetail")
-);
+// const CreateStudyGroup = React.lazy(() =>
+//   import("./components/StudyGroup/CreateStudyGroup")
+// );
+// const StudyGroupDetail = React.lazy(() =>
+//   import("./components/StudyGroup/StudyGroupDetail")
+// );
 
 // Loading fallback for suspense
 const LoadingFallback = () => (
@@ -298,14 +298,14 @@ const App = React.memo(() => {
         <AuthProvider>
           <ThemeProvider>
             <AIProvider>
-              <StudyGroupProvider>
+              {/* <StudyGroupProvider> */}
                 <div className="min-h-screen min-w-[320px] bg-white dark:bg-gray-800/70 text-gray-900 dark:text-gray-100">
                   <Navbar />
                   <div className="pt-16">
                     <AppRoutes />
                   </div>
                 </div>
-              </StudyGroupProvider>
+              {/* </StudyGroupProvider> */}
             </AIProvider>
           </ThemeProvider>
         </AuthProvider>
