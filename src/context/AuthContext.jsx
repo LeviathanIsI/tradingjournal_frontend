@@ -9,6 +9,10 @@ import {
 import { useNavigate, useLocation } from "react-router-dom";
 import { generateWelcomeMessage } from "../utils/welcomeMessages";
 import { useToast } from "./ToastContext";
+import {
+  fillMissingFields,
+  validateUserProfile,
+} from "../services/UserProfileService";
 
 const AuthContext = createContext(null);
 
@@ -45,8 +49,11 @@ export const AuthProvider = ({ children }) => {
 
       const responseData = await response.json();
 
+      // Apply default values for any missing fields
+      const completeUserData = fillMissingFields(responseData.data);
+
       // Store user data
-      setUser(responseData.data);
+      setUser(completeUserData);
       setLoading(false);
 
       // Load subscription data
@@ -70,12 +77,48 @@ export const AuthProvider = ({ children }) => {
     validateAuth(token);
   }, []);
 
-  // Add updateUser function to allow updating user data
+  // Enhanced updateUser function to ensure data integrity
   const updateUser = (userData) => {
-    setUser((prevUser) => ({
-      ...prevUser,
-      ...userData,
-    }));
+    // Ensure we don't lose existing data by merging with current state
+    setUser((prevUser) => {
+      if (!prevUser) return userData;
+
+      const updatedUser = {
+        ...prevUser,
+        ...userData,
+      };
+
+      // Handle nested objects like subscription
+      if (userData.subscription) {
+        updatedUser.subscription = {
+          ...prevUser.subscription,
+          ...userData.subscription,
+        };
+      }
+
+      // Handle nested objects like specialAccess
+      if (userData.specialAccess) {
+        updatedUser.specialAccess = {
+          ...prevUser.specialAccess,
+          ...userData.specialAccess,
+        };
+      }
+
+      // Handle nested objects like preferences
+      if (userData.preferences) {
+        updatedUser.preferences = {
+          ...prevUser.preferences,
+          ...userData.preferences,
+        };
+      }
+
+      return updatedUser;
+    });
+
+    // If updating subscription data, also update subscription state
+    if (userData.subscription) {
+      setSubscription(userData.subscription);
+    }
   };
 
   const loadSubscription = async (token) => {
@@ -94,13 +137,7 @@ export const AuthProvider = ({ children }) => {
       setSubscription(data);
 
       // Update user with subscription data but preserve other fields
-      setUser((prevUser) => {
-        if (!prevUser) return prevUser;
-        return {
-          ...prevUser,
-          subscription: data,
-        };
-      });
+      updateUser({ subscription: data });
     } catch (error) {
       console.error("❌ Subscription fetch failed:", error);
     } finally {
@@ -108,12 +145,11 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // Add the checkSubscriptionStatus function with rate limiting
+  // Enhanced checkSubscriptionStatus function
   const checkSubscriptionStatus = async () => {
     // Check if user is logged in first (token exists)
     const token = localStorage.getItem("token");
     if (!token) {
-      // If not logged in, don't attempt to check subscription
       return null;
     }
 
@@ -163,6 +199,7 @@ export const AuthProvider = ({ children }) => {
       const token = localStorage.getItem("token");
       if (!token) throw new Error("No authentication token found");
 
+      // First load subscription data
       const response = await fetch(
         `${import.meta.env.VITE_API_URL}/api/auth/subscription`,
         {
@@ -175,13 +212,36 @@ export const AuthProvider = ({ children }) => {
       const { data } = await response.json();
       setSubscription(data);
 
-      // Update user with subscription data
-      setUser((prevUser) => {
-        if (!prevUser) return prevUser;
-        return { ...prevUser, subscription: data };
-      });
+      // Check if we also need to load special access data
+      const { isValid, missingFields } = validateUserProfile(user);
 
-      return data;
+      if (!isValid && missingFields.includes("specialAccess")) {
+        // Load full profile if special access is missing
+        const profileResponse = await fetch(
+          `${import.meta.env.VITE_API_URL}/api/auth/me`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+
+        if (!profileResponse.ok)
+          throw new Error("Failed to fetch complete profile");
+
+        const profileData = await profileResponse.json();
+
+        // Update with both new profile data and subscription
+        const completeUser = {
+          ...profileData.data,
+          subscription: data,
+        };
+
+        updateUser(completeUser);
+        return data;
+      } else {
+        // Just update subscription data
+        updateUser({ subscription: data });
+        return data;
+      }
     } catch (error) {
       console.error("❌ Subscription status check failed:", error);
       throw error;
@@ -244,55 +304,66 @@ export const AuthProvider = ({ children }) => {
     return () => clearInterval(interval);
   }, [checkTokenExpiry]);
 
-  const login = async (userData) => {
-    // Store token
+  const login = async (userData, shouldRedirect = true, showWelcome = true) => {
+    // Store token first
     localStorage.setItem("token", userData.token);
 
-    // Store the user data
-    setUser(userData);
+    // Apply default values for any missing fields
+    const completeUserData = fillMissingFields(userData);
 
-    // Display personalized welcome message
-    try {
-      // Get user's timezone from preferences or use UTC as fallback
-      const timezone = userData.preferences?.timeZone || "UTC";
+    // Store the complete user data
+    setUser(completeUserData);
 
-      // Generate personalized welcome message
-      const welcomeMessage = generateWelcomeMessage(
-        userData.username,
-        timezone
-      );
-
-      // Show welcome toast that requires manual dismissal
-      showToast(welcomeMessage, "welcome", false);
-    } catch (error) {
-      console.error("Error showing welcome message:", error);
-      // Continue with login even if welcome message fails
+    // Set subscription data if available
+    if (completeUserData.subscription) {
+      setSubscription(completeUserData.subscription);
     }
 
-    // If user is coming from signup, redirect to pricing page
-    if (userData.isNewUser) {
-      // If user is brand new, set them to free tier by default
+    if (showWelcome) {
       try {
-        // Wait for auth to be properly set up before setting free tier
-        setTimeout(async () => {
-          await setUserToFreeTier();
-          navigate("/pricing", { state: { fromSignup: true } });
-        }, 500);
-        return;
+        // Get user's timezone from preferences or use UTC as fallback
+        const timezone = completeUserData.preferences?.timeZone || "UTC";
+
+        // Generate personalized welcome message
+        const welcomeMessage = generateWelcomeMessage(
+          completeUserData.username,
+          timezone
+        );
+
+        // Show welcome toast that requires manual dismissal
+        showToast(welcomeMessage, "welcome", false);
       } catch (error) {
-        console.error("Error setting free tier for new user:", error);
-        // Continue with navigation even if free tier setting fails
-        navigate("/pricing", { state: { fromSignup: true } });
-        return;
+        console.error("Error showing welcome message:", error);
+        // Continue with login even if welcome message fails
       }
     }
 
-    // Navigate after state update
-    setTimeout(() => {
-      // Check if there is a redirect path from location state
-      const { from } = location.state || { from: { pathname: "/dashboard" } };
-      navigate(from.pathname || "/dashboard", { replace: true });
-    }, 100);
+    // This is a new user from signup - special handling
+    if (userData.isNewUser) {
+      try {
+        // Set a slight delay to ensure auth state is updated
+        setTimeout(async () => {
+          await setUserToFreeTier();
+          if (shouldRedirect) {
+            navigate("/pricing", { state: { fromSignup: true } });
+          }
+        }, 500);
+      } catch (error) {
+        console.error("Error setting free tier for new user:", error);
+        // Continue anyway
+        if (shouldRedirect) {
+          navigate("/pricing", { state: { fromSignup: true } });
+        }
+      }
+      return completeUserData;
+    }
+
+    // If this is a regular login and we should auto-redirect (not from login page)
+    if (shouldRedirect) {
+      navigate("/dashboard");
+    }
+
+    return completeUserData;
   };
 
   const logout = () => {
@@ -312,7 +383,7 @@ export const AuthProvider = ({ children }) => {
     );
   };
 
-  // New function to check if user has access to a feature
+  // Function to check if user has access to a feature
   const hasAccessToFeature = (featureName) => {
     // Special access users get access to everything
     if (

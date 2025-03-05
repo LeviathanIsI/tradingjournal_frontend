@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useStudyGroups } from "../context/StudyGroupContext";
+import { useStudyGroups } from "../../context/StudyGroupContext";
 import {
   ArrowLeft,
   Tag,

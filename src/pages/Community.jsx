@@ -1,11 +1,16 @@
 import { Routes, Route, Navigate } from "react-router-dom";
-import CommunityNav from "../components/Community/CommunityNav";
-import PublicReviews from "../components/PublicReviews";
-import FeaturedReviews from "../components/FeaturedReviews";
-import Traders from "../components/Traders";
-import Leaderboard from "../components/Leaderboard";
-import Profile from "../components/Profile";
-import Network from "../components/Network";
+import {
+  Traders,
+  Leaderboard,
+  CommunityNav,
+  PublicReviews,
+  FeaturedReviews,
+  Profile,
+  Network,
+  ReviewInteractions,
+  TraderCard,
+  ReviewCard,
+} from "../components/Community";
 import { useAuth } from "../context/AuthContext";
 
 const Community = () => {
@@ -21,9 +26,8 @@ const Community = () => {
 
   return (
     <div className="flex flex-col min-h-screen pt-16">
-      {" "}
-      {/* Added pt-16 for fixed navbar */}
       <CommunityNav />
+
       {/* Info Section */}
       <div className="px-3 sm:px-6 py-3 sm:py-4 bg-gray-50 dark:bg-gray-700/40">
         <div className="bg-gray-100 dark:bg-gray-700/60 p-3 sm:p-6 rounded-sm border border-gray-200 dark:border-gray-600/50 shadow-sm">
@@ -53,10 +57,10 @@ const Community = () => {
           </p>
         </div>
       </div>
+
       {/* Routes Section */}
       <div className="flex-1 w-full px-3 sm:px-6 py-3 sm:py-4 dark:bg-gray-700/30">
         <Routes>
-          {/* Route components with consistent padding/margin handling */}
           {[
             { path: "reviews", Component: PublicReviews },
             { path: "traders", Component: Traders },

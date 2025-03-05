@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useParams } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../../context/AuthContext";
 import {
   Edit,
   UserPlus,
@@ -10,9 +10,9 @@ import {
   Settings,
   PenLine,
 } from "lucide-react";
-import YourReviews from "./YourReviews";
-import ProfileSettings from "./ProfileSettings";
-import ProfileStats from "./ProfileStats";
+import YourReviews from "../YourReviews";
+import ProfileSettings from "../ProfileSettings";
+import ProfileStats from "../ProfileStats";
 import Network from "./Network";
 
 const Profile = () => {

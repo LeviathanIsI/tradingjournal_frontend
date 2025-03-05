@@ -1,88 +1,61 @@
-// src/components/ReviewInteractions.jsx
+// src/community/components/ReviewInteractions.jsx
 import { useState } from "react";
 import { Heart, MessageCircle, Trash2 } from "lucide-react";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../../context/AuthContext";
 
 const ReviewInteractions = ({ review, onUpdate }) => {
   const { user } = useAuth();
   const [comment, setComment] = useState("");
   const [showComments, setShowComments] = useState(false);
 
-  const handleLike = async () => {
+  const makeRequest = async (url, method = "POST", body = null) => {
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/trade-reviews/${review._id}/like`,
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const options = {
+        method,
+        headers: {
+          Authorization: `Bearer ${token}`,
+          ...(body && { "Content-Type": "application/json" }),
+        },
+        ...(body && { body: JSON.stringify(body) }),
+      };
+      const response = await fetch(url, options);
 
-      if (response.ok) {
-        const data = await response.json();
-        onUpdate && onUpdate(data.data);
-      }
+      if (!response.ok) throw new Error("Network response was not ok");
+
+      const data = await response.json();
+      onUpdate && onUpdate(data.data);
     } catch (error) {
-      console.error("Error liking review:", error);
+      console.error(`Error during ${method} request to ${url}:`, error);
     }
   };
 
-  const handleComment = async (e) => {
-    e.preventDefault();
-    if (!comment.trim()) return;
+  const handleLike = () =>
+    makeRequest(
+      `${import.meta.env.VITE_API_URL}/api/trade-reviews/${review._id}/like`
+    );
 
-    try {
-      const token = localStorage.getItem("token");
-      const response = await fetch(
+  const handleComment = (e) => {
+    e.preventDefault();
+    if (comment.trim()) {
+      makeRequest(
         `${import.meta.env.VITE_API_URL}/api/trade-reviews/${
           review._id
         }/comments`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({ content: comment }),
-        }
+        "POST",
+        { content: comment }
       );
-
-      if (response.ok) {
-        const data = await response.json();
-        onUpdate && onUpdate(data.data);
-        setComment("");
-      }
-    } catch (error) {
-      console.error("Error adding comment:", error);
+      setComment("");
     }
   };
 
-  const handleDeleteComment = async (commentId) => {
-    try {
-      const token = localStorage.getItem("token");
-      const response = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/trade-reviews/${
-          review._id
-        }/comments/${commentId}`,
-        {
-          method: "DELETE",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      if (response.ok) {
-        const data = await response.json();
-        onUpdate && onUpdate(data.data);
-      }
-    } catch (error) {
-      console.error("Error deleting comment:", error);
-    }
-  };
+  const handleDeleteComment = (commentId) =>
+    makeRequest(
+      `${import.meta.env.VITE_API_URL}/api/trade-reviews/${
+        review._id
+      }/comments/${commentId}`,
+      "DELETE"
+    );
 
   const isLiked = review.likes?.includes(user?._id);
 
@@ -103,7 +76,7 @@ const ReviewInteractions = ({ review, onUpdate }) => {
           </span>
         </button>
         <button
-          onClick={() => setShowComments(!showComments)}
+          onClick={() => setShowComments((prev) => !prev)}
           className="flex items-center gap-1 text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400"
         >
           <MessageCircle className="h-5 w-5" />
@@ -122,14 +95,11 @@ const ReviewInteractions = ({ review, onUpdate }) => {
                 value={comment}
                 onChange={(e) => setComment(e.target.value)}
                 placeholder="Add a comment..."
-                className="flex-1 px-3 py-2.5 sm:py-2 border border-gray-300 dark:border-gray-600/70 
-                rounded-sm bg-white dark:bg-gray-600/50 text-gray-900 dark:text-gray-100
-                focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-400 text-sm"
+                className="flex-1 px-3 py-2.5 sm:py-2 border border-gray-300 dark:border-gray-600/70 rounded-sm bg-white dark:bg-gray-600/50 text-gray-900 dark:text-gray-100 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-400 text-sm"
               />
               <button
                 type="submit"
-                className="px-4 py-2.5 sm:py-2 bg-blue-500 text-white rounded-sm hover:bg-blue-600 
-                dark:bg-blue-500/90 dark:hover:bg-blue-500 text-sm font-medium w-full sm:w-auto"
+                className="px-4 py-2.5 sm:py-2 bg-blue-500 text-white rounded-sm hover:bg-blue-600 dark:bg-blue-500/90 dark:hover:bg-blue-500 text-sm font-medium w-full sm:w-auto"
               >
                 Post
               </button>
@@ -137,27 +107,26 @@ const ReviewInteractions = ({ review, onUpdate }) => {
           </form>
 
           <div className="space-y-3">
-            {review.comments?.map((comment) => (
+            {review.comments?.map((cmt) => (
               <div
-                key={comment._id}
-                className="flex justify-between items-start bg-gray-50 dark:bg-gray-600/30 
-                p-3 rounded-sm border border-gray-200 dark:border-gray-600/50"
+                key={cmt._id}
+                className="flex justify-between items-start bg-gray-50 dark:bg-gray-600/30 p-3 rounded-sm border border-gray-200 dark:border-gray-600/50"
               >
                 <div className="space-y-1">
                   <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
-                    {comment.user.username}
+                    {cmt.user.username}
                   </p>
                   <p className="text-sm text-gray-600 dark:text-gray-300">
-                    {comment.content}
+                    {cmt.content}
                   </p>
                   <p className="text-xs text-gray-400 dark:text-gray-400">
-                    {new Date(comment.createdAt).toLocaleDateString()}
+                    {new Date(cmt.createdAt).toLocaleDateString()}
                   </p>
                 </div>
-                {(comment.user._id === user?._id ||
+                {(cmt.user._id === user?._id ||
                   review.user._id === user?._id) && (
                   <button
-                    onClick={() => handleDeleteComment(comment._id)}
+                    onClick={() => handleDeleteComment(cmt._id)}
                     className="p-1 text-gray-400 hover:text-red-500 dark:hover:text-red-400"
                   >
                     <Trash2 className="h-4 w-4" />

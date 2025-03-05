@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { useStudyGroups } from "../context/StudyGroupContext";
+import { useStudyGroups } from "../../context/StudyGroupContext";
 import {
   Search,
   Users,
@@ -11,7 +11,7 @@ import {
   BookOpen,
   Clock,
 } from "lucide-react";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../../context/AuthContext";
 
 const StudyGroups = () => {
   const { loading, studyGroups, fetchStudyGroups } = useStudyGroups();
