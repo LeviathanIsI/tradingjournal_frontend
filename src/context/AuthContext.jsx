@@ -312,6 +312,29 @@ export const AuthProvider = ({ children }) => {
     );
   };
 
+  // New function to check if user has access to a feature
+  const hasAccessToFeature = (featureName) => {
+    // Special access users get access to everything
+    if (
+      user?.specialAccess?.hasAccess &&
+      (!user.specialAccess.expiresAt ||
+        new Date() < new Date(user.specialAccess.expiresAt))
+    ) {
+      return true;
+    }
+
+    // For premium-only features
+    if (featureName === "premium") {
+      return user?.subscription?.active;
+    }
+
+    // For specific features that might have different access levels in the future
+    // (You can expand this as needed)
+
+    // Default case - basic features available to everyone
+    return true;
+  };
+
   // Function to check if user is on free tier
   const isFreeTier = () => {
     return user?.subscription?.type === "free";
@@ -335,6 +358,7 @@ export const AuthProvider = ({ children }) => {
         checkSubscriptionStatus,
         setUserToFreeTier,
         hasActiveSubscription,
+        hasAccessToFeature,
         isFreeTier,
         isAuthenticated,
       }}

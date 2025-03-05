@@ -12,11 +12,7 @@ import { useAuth } from "../context/AuthContext";
 
 const DashboardNav = () => {
   const location = useLocation();
-  const { user, subscription } = useAuth();
-
-  // Check if user has premium access (active subscription)
-  const hasPremiumAccess =
-    subscription?.active || user?.specialAccess?.hasAccess;
+  const { hasAccessToFeature } = useAuth();
 
   // Define all navigation items
   const allNavItems = [
@@ -57,9 +53,9 @@ const DashboardNav = () => {
     },
   ];
 
-  // Filter nav items based on user subscription
+  // Filter nav items based on user access
   const navItems = allNavItems.filter(
-    (item) => !item.premium || hasPremiumAccess
+    (item) => !item.premium || hasAccessToFeature("premium")
   );
 
   const isActive = (path) => location.pathname === path;

@@ -8,7 +8,6 @@ function useResetProcessingOnLoad(setIsLoading, processingPlan, setResetting) {
   useEffect(() => {
     // Reset processing state on component mount
     const resetProcessingState = () => {
-      console.log("Resetting processing state");
       setIsLoading(false);
       processingPlan.current = null;
       setResetting(false);
@@ -205,8 +204,6 @@ const PricingComponent = () => {
       setIsLoading(true);
       processingPlan.current = planType;
 
-      console.log(`Creating ${planType} subscription`); // Debug log
-
       const response = await fetch(
         `${import.meta.env.VITE_API_URL}/api/auth/create-subscription`,
         {
@@ -253,8 +250,6 @@ const PricingComponent = () => {
     try {
       setIsLoading(true);
       processingPlan.current = planType;
-
-      console.log(`Reactivating subscription to ${planType}`); // Debug log
 
       const response = await fetch(
         `${import.meta.env.VITE_API_URL}/api/auth/reactivate-subscription`,

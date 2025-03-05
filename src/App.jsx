@@ -13,6 +13,7 @@ import { AIProvider } from "./context/AIContext";
 import { ToastProvider } from "./context/ToastContext";
 import { useAuth } from "./context/AuthContext";
 import { ThemeProvider } from "./context/ThemeContext";
+import { StudyGroupProvider } from "./context/StudyGroupContext";
 import Navbar from "./components/Navbar";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
@@ -28,6 +29,10 @@ import Pricing from "./pages/Pricing.jsx";
 import Profile from "./components/Profile";
 import AIInsights from "./pages/AIInsights";
 import { PrivacyPolicy, TermsOfService } from "./pages/PrivacyPolicy.jsx";
+// Import Study Group components
+import StudyGroups from "./components/StudyGroups";
+import CreateStudyGroup from "./components/CreateStudyGroup";
+import StudyGroupDetail from "./components/StudyGroupDetail";
 
 const SubscriptionRoute = ({ children, allowFree = false }) => {
   const { user, loading, subscription, isSubscriptionLoading } = useAuth();
@@ -196,6 +201,31 @@ function AppRoutes() {
           </SubscriptionRoute>
         }
       />
+      {/* Study Group Routes - Add these new routes */}
+      <Route
+        path="/study-groups"
+        element={
+          <SubscriptionRoute>
+            <StudyGroups />
+          </SubscriptionRoute>
+        }
+      />
+      <Route
+        path="/study-groups/create"
+        element={
+          <SubscriptionRoute>
+            <CreateStudyGroup />
+          </SubscriptionRoute>
+        }
+      />
+      <Route
+        path="/study-groups/:id"
+        element={
+          <SubscriptionRoute>
+            <StudyGroupDetail />
+          </SubscriptionRoute>
+        }
+      />
       <Route path="/forgot-password" element={<ForgotPassword />} />
       <Route path="/auth/google/success" element={<GoogleAuthSuccess />} />
       <Route path="/auth/google/callback" element={<GoogleAuthSuccess />} />
@@ -211,12 +241,16 @@ function App() {
         <AuthProvider>
           <ThemeProvider>
             <AIProvider>
-              <div className="min-h-screen min-w-[320px] bg-white dark:bg-gray-800/70 text-gray-900 dark:text-gray-100">
-                <Navbar />
-                <div className="pt-16">
-                  <AppRoutes />
+              <StudyGroupProvider>
+                {" "}
+                {/* Add StudyGroupProvider here */}
+                <div className="min-h-screen min-w-[320px] bg-white dark:bg-gray-800/70 text-gray-900 dark:text-gray-100">
+                  <Navbar />
+                  <div className="pt-16">
+                    <AppRoutes />
+                  </div>
                 </div>
-              </div>
+              </StudyGroupProvider>
             </AIProvider>
           </ThemeProvider>
         </AuthProvider>

@@ -1,6 +1,6 @@
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Users, LineChart, PenLine, Star, User } from "lucide-react";
+import { Users, LineChart, PenLine, Star, User, BookOpen } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 
 const CommunityNav = () => {
@@ -28,10 +28,20 @@ const CommunityNav = () => {
       path: "/community/featured",
       icon: Star,
     },
+    {
+      label: "Study Groups",
+      path: "/study-groups",
+      icon: BookOpen,
+    },
   ];
 
   const isActive = (path) => {
-    return location.pathname === path;
+    // Updated to also match paths that start with the given path
+    // This ensures the nav item stays highlighted when on sub-pages
+    return (
+      location.pathname === path ||
+      (path !== "/community/reviews" && location.pathname.startsWith(path))
+    );
   };
 
   return (

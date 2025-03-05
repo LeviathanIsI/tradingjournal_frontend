@@ -10,46 +10,15 @@ import ThemeSwitcher from "./ThemeSwitcher";
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
-  const { user, logout, subscription } = useAuth() || {
+  const { user, logout, hasAccessToFeature } = useAuth() || {
     user: null,
     logout: null,
-    subscription: null,
   };
-  const [hasSpecialAccess, setHasSpecialAccess] = useState(false);
-
-  // Check special access
-  useEffect(() => {
-    const checkAccess = async () => {
-      if (!user) return;
-
-      try {
-        const token = localStorage.getItem("token");
-        const response = await fetch(
-          `${import.meta.env.VITE_API_URL}/api/auth/me/special-access`,
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        );
-
-        if (response.ok) {
-          const data = await response.json();
-          setHasSpecialAccess(data.hasSpecialAccess);
-        }
-      } catch (error) {
-        console.error("Error checking special access:", error);
-      }
-    };
-
-    checkAccess();
-  }, [user]);
 
   // Close menu if route changes
   useEffect(() => {
     setIsOpen(false);
   }, [location.pathname]);
-
-  // Combined access check - user has access if they have subscription OR special access
-  const hasPremiumAccess = subscription?.active || hasSpecialAccess;
 
   const handleLogout = () => {
     if (logout) {
@@ -109,7 +78,7 @@ const Navbar = () => {
                   )}
 
                   {/* Premium features only for subscribers or special access */}
-                  {user && hasPremiumAccess && (
+                  {user && hasAccessToFeature("premium") && (
                     <>
                       <Link
                         to="/trade-planning"
@@ -226,7 +195,7 @@ const Navbar = () => {
                       </Link>
 
                       {/* Premium features only for subscribers or special access */}
-                      {hasPremiumAccess && (
+                      {hasAccessToFeature("premium") && (
                         <>
                           <Link
                             to="/trade-planning"
