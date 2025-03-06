@@ -21,7 +21,7 @@ import { ToastProvider } from "./context/ToastContext";
 import { useAuth } from "./context/AuthContext";
 import { ThemeProvider } from "./context/ThemeContext";
 // import { StudyGroupProvider } from "./context/StudyGroupContext";
-import Navbar from "./components/Navbar";
+import Navbar from "./components/Navbar/";
 
 // Eagerly loaded components (critical UI)
 import Home from "./pages/Home";
