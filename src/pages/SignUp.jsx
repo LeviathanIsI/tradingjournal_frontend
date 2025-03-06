@@ -151,11 +151,10 @@ const SignUp = () => {
       // Set isNewUser flag to ensure proper handling in login process
       data.data.isNewUser = true;
 
-      // Login the user
+      // Login the user - login() will handle the redirect to dashboard
       await login(data.data);
 
-      // Navigate to pricing page with fromSignup flag
-      navigate("/pricing", { state: { fromSignup: true } });
+      // No need to navigate here as login() will handle it
     } catch (err) {
       setError(err.message);
     } finally {

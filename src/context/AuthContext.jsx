@@ -338,28 +338,21 @@ export const AuthProvider = ({ children }) => {
       }
     }
 
-    // This is a new user from signup - special handling
+    // For new users, set free tier and navigate directly to dashboard
     if (userData.isNewUser) {
-      try {
-        // Set a slight delay to ensure auth state is updated
-        setTimeout(async () => {
-          await setUserToFreeTier();
-          if (shouldRedirect) {
-            navigate("/pricing", { state: { fromSignup: true } });
-          }
-        }, 500);
-      } catch (error) {
-        console.error("Error setting free tier for new user:", error);
-        // Continue anyway
-        if (shouldRedirect) {
-          navigate("/pricing", { state: { fromSignup: true } });
-        }
+      // Update immediately to prevent auto-navigation elsewhere
+      const freeTierSet = await setUserToFreeTier();
+
+      if (shouldRedirect) {
+        // Navigate directly to dashboard/overview instead of pricing
+        navigate("/dashboard/overview");
       }
+
       return completeUserData;
     }
 
-    // If this is a regular login and we should auto-redirect (not from login page)
-    if (shouldRedirect) {
+    // Only for regular logins, not new users
+    if (shouldRedirect && !userData.isNewUser) {
       navigate("/dashboard");
     }
 

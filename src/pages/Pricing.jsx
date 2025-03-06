@@ -86,20 +86,18 @@ const PricingPage = () => {
   }
 
   function getMessageClass() {
-    if (!isAuthenticated()) return "bg-gray-50 dark:bg-gray-700/30";
-    if (fromSignup || fromRestrictedPage)
-      return "bg-blue-50 dark:bg-blue-900/30";
-    if (isFreeTier()) return "bg-green-50 dark:bg-green-900/30";
-    if (user?.subscription?.cancelAtPeriodEnd)
-      return "bg-yellow-50 dark:bg-yellow-900/30";
-    return "bg-gray-50 dark:bg-gray-700/30";
+    if (!isAuthenticated()) return "bg-gray-700/60";
+    if (fromSignup || fromRestrictedPage) return "bg-blue-900/30";
+    if (isFreeTier()) return "bg-green-900/30";
+    if (user?.subscription?.cancelAtPeriodEnd) return "bg-yellow-900/30";
+    return "bg-gray-700/60";
   }
 
   function getIcon() {
     if (!isAuthenticated()) {
       return (
         <svg
-          className="h-6 w-6 text-gray-500 dark:text-gray-400"
+          className="h-6 w-6 text-gray-400"
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"
@@ -117,7 +115,7 @@ const PricingPage = () => {
     if (fromSignup) {
       return (
         <svg
-          className="h-6 w-6 text-blue-500 dark:text-blue-400"
+          className="h-6 w-6 text-blue-400"
           fill="currentColor"
           viewBox="0 0 20 20"
         >
@@ -130,10 +128,64 @@ const PricingPage = () => {
       );
     }
 
-    // Other icon cases...
+    if (fromRestrictedPage) {
+      return (
+        <svg
+          className="h-6 w-6 text-blue-400"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+          />
+        </svg>
+      );
+    }
+
+    if (user?.subscription?.cancelAtPeriodEnd) {
+      return (
+        <svg
+          className="h-6 w-6 text-yellow-400"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+          />
+        </svg>
+      );
+    }
+
+    if (isFreeTier && isFreeTier()) {
+      return (
+        <svg
+          className="h-6 w-6 text-green-400"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"
+          />
+        </svg>
+      );
+    }
+
+    // Default icon
     return (
       <svg
-        className="h-6 w-6 text-gray-500 dark:text-gray-400"
+        className="h-6 w-6 text-gray-400"
         fill="none"
         viewBox="0 0 24 24"
         stroke="currentColor"
@@ -149,23 +201,19 @@ const PricingPage = () => {
   }
 
   function getTextColorClass() {
-    if (!isAuthenticated()) return "text-gray-800 dark:text-gray-200";
-    if (fromSignup || fromRestrictedPage)
-      return "text-blue-800 dark:text-blue-200";
-    if (isFreeTier()) return "text-green-800 dark:text-green-200";
-    if (user?.subscription?.cancelAtPeriodEnd)
-      return "text-yellow-800 dark:text-yellow-200";
-    return "text-gray-800 dark:text-gray-200";
+    if (!isAuthenticated()) return "text-gray-100";
+    if (fromSignup || fromRestrictedPage) return "text-blue-100";
+    if (isFreeTier()) return "text-green-100";
+    if (user?.subscription?.cancelAtPeriodEnd) return "text-yellow-100";
+    return "text-gray-100";
   }
 
   function getDescriptionColorClass() {
-    if (!isAuthenticated()) return "text-gray-700 dark:text-gray-300";
-    if (fromSignup || fromRestrictedPage)
-      return "text-blue-700 dark:text-blue-300";
-    if (isFreeTier()) return "text-green-700 dark:text-green-300";
-    if (user?.subscription?.cancelAtPeriodEnd)
-      return "text-yellow-700 dark:text-yellow-300";
-    return "text-gray-700 dark:text-gray-300";
+    if (!isAuthenticated()) return "text-gray-300";
+    if (fromSignup || fromRestrictedPage) return "text-blue-300";
+    if (isFreeTier()) return "text-green-300";
+    if (user?.subscription?.cancelAtPeriodEnd) return "text-yellow-300";
+    return "text-gray-300";
   }
 
   const messageData = getMessageData();
@@ -174,25 +222,44 @@ const PricingPage = () => {
   const textColorClass = getTextColorClass();
   const descriptionColorClass = getDescriptionColorClass();
 
+  // Loading state
+  if (isPageLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="animate-pulse text-lg text-gray-100 dark:text-gray-100">
+          Loading...
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-800/90 pt-16">
-      <div
-        className={`max-w-7xl mx-auto px-4 py-6 ${messageClass} rounded-lg mb-6 shadow-sm`}
-      >
-        <div className="flex items-center">
-          <div className="flex-shrink-0">{messageIcon}</div>
-          <div className="ml-3">
-            <h3 className={`text-sm font-medium ${textColorClass}`}>
-              {messageData.title}
-            </h3>
-            <div className={`mt-1 text-sm ${descriptionColorClass}`}>
-              <p>{messageData.message}</p>
+    <div className="min-h-screen dark:bg-gray-500/10 pt-16">
+      <div className="max-w-7xl mx-auto px-3 sm:px-6 py-3 sm:py-4">
+        <div
+          className={`${messageClass} p-3 sm:p-4 rounded-md border border-gray-200 dark:border-gray-600/50 shadow-sm mb-4 sm:mb-6`}
+        >
+          <div className="flex items-center">
+            <div className="flex-shrink-0">{messageIcon}</div>
+            <div className="ml-3">
+              <h3
+                className={`text-sm sm:text-base font-medium ${textColorClass}`}
+              >
+                {messageData.title}
+              </h3>
+              <div
+                className={`mt-1 text-xs sm:text-sm ${descriptionColorClass}`}
+              >
+                <p>{messageData.message}</p>
+              </div>
             </div>
           </div>
         </div>
-      </div>
 
-      <PricingComponent />
+        <div className="bg-white dark:bg-gray-700/60 rounded-md border border-gray-200 dark:border-gray-600/50 shadow-sm">
+          <PricingComponent />
+        </div>
+      </div>
     </div>
   );
 };

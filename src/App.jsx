@@ -5,7 +5,6 @@ import React, {
   useMemo,
   useCallback,
   Suspense,
-  useRef,
 } from "react";
 import {
   BrowserRouter as Router,
@@ -21,7 +20,7 @@ import { ToastProvider } from "./context/ToastContext";
 import { useAuth } from "./context/AuthContext";
 import { ThemeProvider } from "./context/ThemeContext";
 // import { StudyGroupProvider } from "./context/StudyGroupContext";
-import Navbar from "./components/Navbar/";
+import Navbar from "./components/Navbar";
 
 // Eagerly loaded components (critical UI)
 import Home from "./pages/Home";
@@ -31,20 +30,6 @@ import ForgotPassword from "./pages/ForgotPassword";
 import Pricing from "./pages/Pricing.jsx";
 import { PrivacyPolicy, TermsOfService } from "./pages/PrivacyPolicy.jsx";
 import LoggingIn from "./components/Dashboard/LoggingIn";
-
-const AuthLoader = ({ children }) => {
-  const { loading } = useAuth();
-
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-pulse text-lg">Loading your account...</div>
-      </div>
-    );
-  }
-
-  return children;
-};
 
 // Lazy loaded components (code splitting)
 const Dashboard = React.lazy(() => import("./pages/Dashboard"));
@@ -57,15 +42,6 @@ const WeeklyReview = React.lazy(() =>
 const GoogleAuthSuccess = React.lazy(() => import("./pages/GoogleAuthSuccess"));
 const Profile = React.lazy(() => import("./components/Community/Profile.jsx"));
 const AIInsights = React.lazy(() => import("./pages/AIInsights"));
-// const StudyGroups = React.lazy(() =>
-//   import("./components/StudyGroup/StudyGroups")
-// );
-// const CreateStudyGroup = React.lazy(() =>
-//   import("./components/StudyGroup/CreateStudyGroup")
-// );
-// const StudyGroupDetail = React.lazy(() =>
-//   import("./components/StudyGroup/StudyGroupDetail")
-// );
 
 // Loading fallback for suspense
 const LoadingFallback = () => (
@@ -79,18 +55,9 @@ const useAccessControl = () => {
   const { user, loading, subscription, isSubscriptionLoading } = useAuth();
   const [hasSpecialAccess, setHasSpecialAccess] = useState(false);
   const [accessLoading, setAccessLoading] = useState(true);
-  const accessCheckAttempted = useRef(false);
 
   useEffect(() => {
     const checkAccess = async () => {
-      // Skip if we've already attempted this check and user is null/undefined
-      if (accessCheckAttempted.current && !user) {
-        setAccessLoading(false);
-        return;
-      }
-
-      accessCheckAttempted.current = true;
-
       if (!user) {
         setAccessLoading(false);
         return;
@@ -99,12 +66,6 @@ const useAccessControl = () => {
       try {
         setAccessLoading(true);
         const token = localStorage.getItem("token");
-        if (!token) {
-          setHasSpecialAccess(false);
-          setAccessLoading(false);
-          return;
-        }
-
         const response = await fetch(
           `${import.meta.env.VITE_API_URL}/api/auth/me/special-access`,
           {
@@ -115,12 +76,9 @@ const useAccessControl = () => {
         if (response.ok) {
           const data = await response.json();
           setHasSpecialAccess(data.hasSpecialAccess);
-        } else {
-          setHasSpecialAccess(false);
         }
       } catch (error) {
         console.error("Error checking special access:", error);
-        setHasSpecialAccess(false);
       } finally {
         setAccessLoading(false);
       }
@@ -140,15 +98,21 @@ const useAccessControl = () => {
 
 // Enhanced route protection components
 const SubscriptionRoute = ({ children, allowFree = false }) => {
-  const { user, subscription } = useAuth();
+  const {
+    isAuthenticated,
+    hasActiveSubscription,
+    hasSpecialAccess,
+    isLoading,
+  } = useAccessControl();
   const location = useLocation();
 
-  if (!user) {
-    return <Navigate to="/login" state={{ from: location }} replace />;
+  if (isLoading) {
+    return <LoadingFallback />;
   }
 
-  const hasSpecialAccess = user.specialAccess?.hasAccess;
-  const hasActiveSubscription = subscription?.active;
+  if (!isAuthenticated) {
+    return <Navigate to="/login" state={{ from: location }} replace />;
+  }
 
   if (hasSpecialAccess || allowFree || hasActiveSubscription) {
     return <Suspense fallback={<LoadingFallback />}>{children}</Suspense>;
@@ -158,10 +122,14 @@ const SubscriptionRoute = ({ children, allowFree = false }) => {
 };
 
 const ProtectedRoute = ({ children }) => {
-  const { user } = useAuth();
+  const { isAuthenticated, isLoading } = useAccessControl();
   const location = useLocation();
 
-  if (!user) {
+  if (isLoading) {
+    return <LoadingFallback />;
+  }
+
+  if (!isAuthenticated) {
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
@@ -169,18 +137,17 @@ const ProtectedRoute = ({ children }) => {
 };
 
 const PublicRoute = ({ children }) => {
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
   const location = useLocation();
 
-  if (location.pathname === "/logging-in") {
+  // Skip redirect for logging-in path
+  const isLoggingInPath = location.pathname === "/logging-in";
+
+  if (isLoggingInPath) {
     return children;
   }
 
-  if (user) {
-    return <Navigate to="/dashboard" replace />;
-  }
-
-  return children;
+  return !user && !loading ? children : null;
 };
 
 function AppRoutes() {
@@ -323,14 +290,13 @@ const App = React.memo(() => {
           <ThemeProvider>
             <AIProvider>
               {/* <StudyGroupProvider> */}
-              <div className="min-h-screen min-w-[320px] bg-white dark:bg-gray-800/70 text-gray-900 dark:text-gray-100">
-                <Navbar />
-                <div className="pt-16">
-                  <AuthLoader>
+                <div className="min-h-screen min-w-[320px] bg-white dark:bg-gray-800/70 text-gray-900 dark:text-gray-100">
+                  <Navbar />
+                  <div className="pt-16">
                     <AppRoutes />
-                  </AuthLoader>
+                  </div>
                 </div>
-              </div>
+              {/* </StudyGroupProvider> */}
             </AIProvider>
           </ThemeProvider>
         </AuthProvider>

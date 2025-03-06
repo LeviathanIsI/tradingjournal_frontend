@@ -144,8 +144,8 @@ const PricingComponent = () => {
     if (isAuthenticated()) {
       if (fromSignup) {
         setSelectedPlan("free");
-        // If coming from signup, apply free tier automatically
-        handleFreeSubscription();
+        // Remove automatic handleFreeSubscription call
+        // Let users click the button instead
       } else if (user?.subscription?.type) {
         // Set selected plan to user's current subscription if they have one
         setSelectedPlan(user.subscription.type);
@@ -366,30 +366,30 @@ const PricingComponent = () => {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <div className="sm:flex sm:flex-col sm:align-center text-center mb-12">
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
+    <div className="px-3 sm:px-6 py-3 sm:py-6">
+      <div className="sm:flex sm:flex-col sm:align-center text-center mb-4 sm:mb-8">
+        <h1 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-gray-100">
           Choose Your Trading Journey
         </h1>
-        <p className="mt-5 text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+        <p className="mt-3 text-sm sm:text-base text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
           Select the plan that matches your trading ambitions.
         </p>
       </div>
 
-      <div className="flex flex-col space-y-8 lg:flex-row lg:space-y-0 lg:space-x-8">
+      <div className="flex flex-col space-y-4 lg:flex-row lg:space-y-0 lg:space-x-4">
         {plans.map((plan) => {
           const planStatus = getPlanStatus(plan.id);
           const isProcessing = isLoading && processingPlan.current === plan.id;
 
           // Determine card classes based on selection state
           let cardClasses =
-            "flex-1 border rounded-lg overflow-hidden transition-all duration-200 ";
+            "flex-1 rounded-md border transition-all duration-200 overflow-hidden ";
           cardClasses +=
             selectedPlan === plan.id
-              ? "scale-105 shadow-lg border-blue-500 dark:border-blue-400 "
+              ? "scale-105 shadow-lg border-blue-500 "
               : plan.highlight
-              ? "border-blue-200 dark:border-blue-700/50 shadow-md "
-              : "border-gray-200 dark:border-gray-600/50 ";
+              ? "border-blue-500/50 shadow-sm "
+              : "border-gray-200 dark:border-gray-600/50 shadow-sm ";
           cardClasses += "bg-white dark:bg-gray-700/60";
 
           return (
@@ -400,22 +400,22 @@ const PricingComponent = () => {
               onMouseLeave={handleMouseOut}
             >
               {plan.highlight && (
-                <div className="bg-blue-500 text-white py-1 px-4 text-center text-sm font-medium">
+                <div className="bg-blue-500 text-white py-1 px-4 text-center text-xs sm:text-sm font-medium">
                   MOST POPULAR
                 </div>
               )}
 
-              <div className="p-6">
+              <div className="p-3 sm:p-4">
                 <div className="flex justify-between items-center">
-                  <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+                  <h2 className="text-sm sm:text-base font-medium text-gray-900 dark:text-gray-100">
                     {plan.name}
                   </h2>
                   {planStatus && (
                     <span
-                      className={`inline-flex items-center px-2.5 py-0.5 rounded-sm text-xs font-medium ${
+                      className={`inline-flex items-center px-2 py-0.5 rounded-sm text-xs font-medium ${
                         planStatus === "Current Plan"
-                          ? "bg-green-100 text-green-800 dark:bg-green-700/30 dark:text-green-300"
-                          : "bg-yellow-100 text-yellow-800 dark:bg-yellow-700/30 dark:text-yellow-300"
+                          ? "bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400"
+                          : "bg-yellow-100 dark:bg-yellow-900/30 text-yellow-600 dark:text-yellow-400"
                       }`}
                     >
                       {planStatus}
@@ -423,32 +423,32 @@ const PricingComponent = () => {
                   )}
                 </div>
 
-                <p className="mt-4 text-sm text-gray-500 dark:text-gray-300">
+                <p className="mt-2 text-xs sm:text-sm text-gray-600 dark:text-gray-300">
                   {plan.description}
                 </p>
 
-                <div className="mt-6 flex items-baseline">
-                  <span className="text-4xl font-extrabold text-gray-900 dark:text-gray-100">
+                <div className="mt-3 sm:mt-4 flex items-baseline">
+                  <span className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-gray-100">
                     {plan.price}
                   </span>
-                  <span className="ml-1 text-base text-gray-500 dark:text-gray-300">
+                  <span className="ml-1 text-xs sm:text-sm text-gray-500 dark:text-gray-400">
                     /{plan.period}
                   </span>
                 </div>
 
                 {plan.savings && (
-                  <p className="mt-2 text-sm text-green-500 dark:text-green-400 font-medium">
+                  <p className="mt-1 text-xs sm:text-sm text-green-600 dark:text-green-400 font-medium">
                     {plan.savings}
                   </p>
                 )}
 
-                <ul className="mt-6 space-y-3">
+                <ul className="mt-4 space-y-2">
                   {features.map((feature) => (
                     <li key={feature} className="flex items-start">
                       <div className="flex-shrink-0">
                         {plan.features[feature] ? (
                           <svg
-                            className="h-5 w-5 text-green-500 dark:text-green-400"
+                            className="h-4 w-4 text-green-600 dark:text-green-400"
                             fill="currentColor"
                             viewBox="0 0 20 20"
                           >
@@ -460,7 +460,7 @@ const PricingComponent = () => {
                           </svg>
                         ) : (
                           <svg
-                            className="h-5 w-5 text-gray-400 dark:text-gray-500"
+                            className="h-4 w-4 text-gray-500 dark:text-gray-400"
                             fill="currentColor"
                             viewBox="0 0 20 20"
                           >
@@ -473,10 +473,10 @@ const PricingComponent = () => {
                         )}
                       </div>
                       <p
-                        className={`ml-3 text-sm ${
+                        className={`ml-2 text-xs sm:text-sm ${
                           plan.features[feature]
                             ? "text-gray-700 dark:text-gray-200"
-                            : "text-gray-400 dark:text-gray-500 line-through"
+                            : "text-gray-500 dark:text-gray-400 line-through"
                         }`}
                       >
                         {feature}
@@ -490,16 +490,16 @@ const PricingComponent = () => {
                   disabled={
                     isLoading || resetting || planStatus === "Current Plan"
                   }
-                  className={`mt-8 block w-full py-3 px-4 rounded-md text-white font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 transition-colors ${
+                  className={`mt-4 sm:mt-6 block w-full py-2 px-3 rounded-sm text-white text-sm font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 transition-colors ${
                     isProcessing
-                      ? "bg-gray-400 dark:bg-gray-500/50 cursor-not-allowed"
+                      ? "bg-gray-500/50 cursor-not-allowed"
                       : resetting
-                      ? "bg-gray-300 dark:bg-gray-600/50 cursor-not-allowed"
+                      ? "bg-gray-600/50 cursor-not-allowed"
                       : planStatus === "Current Plan"
-                      ? "bg-green-600 dark:bg-green-600/90 cursor-not-allowed"
+                      ? "bg-green-600/90 cursor-not-allowed"
                       : plan.id === "free"
-                      ? "bg-gray-600 hover:bg-gray-700 dark:bg-gray-600/90 dark:hover:bg-gray-500 focus:ring-gray-500"
-                      : "bg-blue-500 hover:bg-blue-600 dark:bg-blue-500/90 dark:hover:bg-blue-500 focus:ring-blue-400"
+                      ? "bg-gray-600 hover:bg-gray-500 focus:ring-gray-500"
+                      : "bg-blue-500 hover:bg-blue-600 focus:ring-blue-400"
                   }`}
                 >
                   {isProcessing ? (
@@ -551,15 +551,15 @@ const PricingComponent = () => {
         })}
       </div>
 
-      <div className="mt-10 text-center">
-        <p className="text-sm text-gray-500 dark:text-gray-400">
+      <div className="mt-6 sm:mt-8 text-center">
+        <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">
           You can upgrade, downgrade, or cancel your subscription at any time.
         </p>
         {isAuthenticated() && !fromSignup && (
-          <p className="mt-2 text-sm">
+          <p className="mt-2 text-xs sm:text-sm">
             <button
               onClick={() => navigate("/dashboard")}
-              className="text-blue-500 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium"
+              className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium"
               disabled={isLoading || resetting}
             >
               Skip for now and explore the dashboard →
@@ -567,12 +567,12 @@ const PricingComponent = () => {
           </p>
         )}
         {!isAuthenticated() && (
-          <p className="mt-4 text-sm text-gray-600 dark:text-gray-400">
+          <p className="mt-3 text-xs sm:text-sm text-gray-500 dark:text-gray-400">
             Already have an account?{" "}
             <button
               type="button"
               onClick={() => navigate("/login", { state: { from: location } })}
-              className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 font-medium"
+              className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium"
               disabled={isLoading || resetting}
             >
               Log in

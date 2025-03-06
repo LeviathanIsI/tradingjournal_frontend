@@ -35,8 +35,6 @@ const Leaderboard = () => {
       setLoading(true);
       const token = localStorage.getItem("token");
 
-      console.log("Fetching leaderboard data for timeFrame:", timeFrame);
-
       const response = await fetch(
         `${
           import.meta.env.VITE_API_URL
@@ -57,7 +55,6 @@ const Leaderboard = () => {
       }
 
       const result = await response.json();
-      console.log("Leaderboard response:", result);
 
       if (!result.success || !result.data) {
         throw new Error("Invalid response format from server");
