@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
-import { Star, Link as LinkIcon } from "lucide-react";
+import { Star } from "lucide-react";
 import { Link } from "react-router-dom";
 import ReviewInteractions from "./ReviewInteractions";
+import { formatCurrency, makeApiRequest } from "../../utils/communityUtils";
 
 const FeaturedReviews = () => {
   const [featuredReviews, setFeaturedReviews] = useState([]);
@@ -12,16 +13,8 @@ const FeaturedReviews = () => {
     const fetchFeaturedReviews = async () => {
       try {
         setLoading(true);
-        const response = await fetch(
-          `${import.meta.env.VITE_API_URL}/api/trade-reviews/featured`
-        );
-        const data = await response.json();
-
-        if (!response.ok) {
-          throw new Error(data.error || "Failed to fetch featured reviews");
-        }
-
-        setFeaturedReviews(data.data || []);
+        const data = await makeApiRequest("/api/trade-reviews/featured");
+        setFeaturedReviews(data || []);
       } catch (error) {
         console.error("Error fetching featured reviews:", error);
         setError(error.message);
@@ -32,14 +25,6 @@ const FeaturedReviews = () => {
 
     fetchFeaturedReviews();
   }, []);
-
-  const formatCurrency = (value) => {
-    return new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: "USD",
-      minimumFractionDigits: 2,
-    }).format(value);
-  };
 
   if (loading) {
     return (

@@ -26,11 +26,11 @@ const CommunityNav = () => {
       path: "/community/featured",
       icon: Star,
     },
-    // {
-    //   label: "Study Groups",
-    //   path: "/study-groups",
-    //   icon: BookOpen,
-    // },
+    {
+      label: "Study Groups",
+      path: "/study-groups",
+      icon: BookOpen,
+    },
   ];
 
   const isActive = (path) =>

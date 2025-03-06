@@ -5,6 +5,7 @@ import React, {
   useMemo,
   useCallback,
   Suspense,
+  useRef,
 } from "react";
 import {
   BrowserRouter as Router,
@@ -30,6 +31,20 @@ import ForgotPassword from "./pages/ForgotPassword";
 import Pricing from "./pages/Pricing.jsx";
 import { PrivacyPolicy, TermsOfService } from "./pages/PrivacyPolicy.jsx";
 import LoggingIn from "./components/Dashboard/LoggingIn";
+
+const AuthLoader = ({ children }) => {
+  const { loading } = useAuth();
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="animate-pulse text-lg">Loading your account...</div>
+      </div>
+    );
+  }
+
+  return children;
+};
 
 // Lazy loaded components (code splitting)
 const Dashboard = React.lazy(() => import("./pages/Dashboard"));
@@ -64,9 +79,18 @@ const useAccessControl = () => {
   const { user, loading, subscription, isSubscriptionLoading } = useAuth();
   const [hasSpecialAccess, setHasSpecialAccess] = useState(false);
   const [accessLoading, setAccessLoading] = useState(true);
+  const accessCheckAttempted = useRef(false);
 
   useEffect(() => {
     const checkAccess = async () => {
+      // Skip if we've already attempted this check and user is null/undefined
+      if (accessCheckAttempted.current && !user) {
+        setAccessLoading(false);
+        return;
+      }
+
+      accessCheckAttempted.current = true;
+
       if (!user) {
         setAccessLoading(false);
         return;
@@ -75,6 +99,12 @@ const useAccessControl = () => {
       try {
         setAccessLoading(true);
         const token = localStorage.getItem("token");
+        if (!token) {
+          setHasSpecialAccess(false);
+          setAccessLoading(false);
+          return;
+        }
+
         const response = await fetch(
           `${import.meta.env.VITE_API_URL}/api/auth/me/special-access`,
           {
@@ -85,9 +115,12 @@ const useAccessControl = () => {
         if (response.ok) {
           const data = await response.json();
           setHasSpecialAccess(data.hasSpecialAccess);
+        } else {
+          setHasSpecialAccess(false);
         }
       } catch (error) {
         console.error("Error checking special access:", error);
+        setHasSpecialAccess(false);
       } finally {
         setAccessLoading(false);
       }
@@ -107,21 +140,15 @@ const useAccessControl = () => {
 
 // Enhanced route protection components
 const SubscriptionRoute = ({ children, allowFree = false }) => {
-  const {
-    isAuthenticated,
-    hasActiveSubscription,
-    hasSpecialAccess,
-    isLoading,
-  } = useAccessControl();
+  const { user, subscription } = useAuth();
   const location = useLocation();
 
-  if (isLoading) {
-    return <LoadingFallback />;
-  }
-
-  if (!isAuthenticated) {
+  if (!user) {
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
+
+  const hasSpecialAccess = user.specialAccess?.hasAccess;
+  const hasActiveSubscription = subscription?.active;
 
   if (hasSpecialAccess || allowFree || hasActiveSubscription) {
     return <Suspense fallback={<LoadingFallback />}>{children}</Suspense>;
@@ -131,14 +158,10 @@ const SubscriptionRoute = ({ children, allowFree = false }) => {
 };
 
 const ProtectedRoute = ({ children }) => {
-  const { isAuthenticated, isLoading } = useAccessControl();
+  const { user } = useAuth();
   const location = useLocation();
 
-  if (isLoading) {
-    return <LoadingFallback />;
-  }
-
-  if (!isAuthenticated) {
+  if (!user) {
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
@@ -146,17 +169,18 @@ const ProtectedRoute = ({ children }) => {
 };
 
 const PublicRoute = ({ children }) => {
-  const { user, loading } = useAuth();
+  const { user } = useAuth();
   const location = useLocation();
 
-  // Skip redirect for logging-in path
-  const isLoggingInPath = location.pathname === "/logging-in";
-
-  if (isLoggingInPath) {
+  if (location.pathname === "/logging-in") {
     return children;
   }
 
-  return !user && !loading ? children : null;
+  if (user) {
+    return <Navigate to="/dashboard" replace />;
+  }
+
+  return children;
 };
 
 function AppRoutes() {
@@ -299,13 +323,14 @@ const App = React.memo(() => {
           <ThemeProvider>
             <AIProvider>
               {/* <StudyGroupProvider> */}
-                <div className="min-h-screen min-w-[320px] bg-white dark:bg-gray-800/70 text-gray-900 dark:text-gray-100">
-                  <Navbar />
-                  <div className="pt-16">
+              <div className="min-h-screen min-w-[320px] bg-white dark:bg-gray-800/70 text-gray-900 dark:text-gray-100">
+                <Navbar />
+                <div className="pt-16">
+                  <AuthLoader>
                     <AppRoutes />
-                  </div>
+                  </AuthLoader>
                 </div>
-              {/* </StudyGroupProvider> */}
+              </div>
             </AIProvider>
           </ThemeProvider>
         </AuthProvider>

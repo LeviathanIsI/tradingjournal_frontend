@@ -1,61 +1,57 @@
-// src/community/components/ReviewInteractions.jsx
 import { useState } from "react";
 import { Heart, MessageCircle, Trash2 } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
+import { makeApiRequest } from "../../utils/communityUtils";
 
 const ReviewInteractions = ({ review, onUpdate }) => {
   const { user } = useAuth();
   const [comment, setComment] = useState("");
   const [showComments, setShowComments] = useState(false);
 
-  const makeRequest = async (url, method = "POST", body = null) => {
+  const handleLike = async () => {
     try {
-      const token = localStorage.getItem("token");
-      const options = {
-        method,
-        headers: {
-          Authorization: `Bearer ${token}`,
-          ...(body && { "Content-Type": "application/json" }),
-        },
-        ...(body && { body: JSON.stringify(body) }),
-      };
-      const response = await fetch(url, options);
-
-      if (!response.ok) throw new Error("Network response was not ok");
-
-      const data = await response.json();
-      onUpdate && onUpdate(data.data);
-    } catch (error) {
-      console.error(`Error during ${method} request to ${url}:`, error);
-    }
-  };
-
-  const handleLike = () =>
-    makeRequest(
-      `${import.meta.env.VITE_API_URL}/api/trade-reviews/${review._id}/like`
-    );
-
-  const handleComment = (e) => {
-    e.preventDefault();
-    if (comment.trim()) {
-      makeRequest(
-        `${import.meta.env.VITE_API_URL}/api/trade-reviews/${
-          review._id
-        }/comments`,
-        "POST",
-        { content: comment }
+      const updatedReview = await makeApiRequest(
+        `/api/trade-reviews/${review._id}/like`,
+        {
+          method: "POST",
+        }
       );
-      setComment("");
+      onUpdate && onUpdate(updatedReview);
+    } catch (error) {
+      console.error("Error liking review:", error);
     }
   };
 
-  const handleDeleteComment = (commentId) =>
-    makeRequest(
-      `${import.meta.env.VITE_API_URL}/api/trade-reviews/${
-        review._id
-      }/comments/${commentId}`,
-      "DELETE"
-    );
+  const handleComment = async (e) => {
+    e.preventDefault();
+    if (!comment.trim()) return;
+
+    try {
+      const updatedReview = await makeApiRequest(
+        `/api/trade-reviews/${review._id}/comments`,
+        {
+          method: "POST",
+          body: JSON.stringify({ content: comment }),
+        }
+      );
+      onUpdate && onUpdate(updatedReview);
+      setComment("");
+    } catch (error) {
+      console.error("Error posting comment:", error);
+    }
+  };
+
+  const handleDeleteComment = async (commentId) => {
+    try {
+      const updatedReview = await makeApiRequest(
+        `/api/trade-reviews/${review._id}/comments/${commentId}`,
+        { method: "DELETE" }
+      );
+      onUpdate && onUpdate(updatedReview);
+    } catch (error) {
+      console.error("Error deleting comment:", error);
+    }
+  };
 
   const isLiked = review.likes?.includes(user?._id);
 
