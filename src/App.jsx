@@ -19,6 +19,7 @@ import { AIProvider } from "./context/AIContext";
 import { ToastProvider } from "./context/ToastContext";
 import { useAuth } from "./context/AuthContext";
 import { ThemeProvider } from "./context/ThemeContext";
+import { TradingStatsProvider } from "./context/TradingStatsContext"; // Import the TradingStatsProvider
 // import { StudyGroupProvider } from "./context/StudyGroupContext";
 import Navbar from "./components/Navbar";
 
@@ -289,14 +290,17 @@ const App = React.memo(() => {
         <AuthProvider>
           <ThemeProvider>
             <AIProvider>
-              {/* <StudyGroupProvider> */}
+              {/* Add TradingStatsProvider here, inside AIProvider and before content */}
+              <TradingStatsProvider>
+                {/* <StudyGroupProvider> */}
                 <div className="min-h-screen min-w-[320px] bg-white dark:bg-gray-800/70 text-gray-900 dark:text-gray-100">
                   <Navbar />
                   <div className="pt-16">
                     <AppRoutes />
                   </div>
                 </div>
-              {/* </StudyGroupProvider> */}
+                {/* </StudyGroupProvider> */}
+              </TradingStatsProvider>
             </AIProvider>
           </ThemeProvider>
         </AuthProvider>

@@ -5,6 +5,7 @@ import React, {
   useContext,
   useEffect,
   useCallback,
+  useMemo,
 } from "react";
 import { useAuth } from "./AuthContext";
 
@@ -17,6 +18,32 @@ export const TradingStatsProvider = ({ children }) => {
   const [error, setError] = useState(null);
   const [timeFrame, setTimeFrame] = useState("all");
   const { user } = useAuth();
+
+  // Ensure stats has all required fields even if API response is incomplete
+  const normalizedStats = useMemo(() => {
+    if (!stats) return null;
+
+    return {
+      totalTrades: stats.totalTrades || 0,
+      profitableTrades: stats.profitableTrades || stats.winningTrades || 0,
+      winningTrades: stats.winningTrades || stats.profitableTrades || 0,
+      losingTrades: stats.losingTrades || 0,
+      totalProfit: stats.totalProfit || 0,
+      winRate:
+        stats.winRate ||
+        (stats.totalTrades > 0
+          ? ((stats.profitableTrades || stats.winningTrades || 0) /
+              stats.totalTrades) *
+            100
+          : 0),
+      winLossRatio:
+        stats.winLossRatio ||
+        (stats.losingTrades > 0
+          ? (stats.profitableTrades || stats.winningTrades || 0) /
+            stats.losingTrades
+          : stats.profitableTrades || stats.winningTrades || 0),
+    };
+  }, [stats]);
 
   const fetchStats = useCallback(async () => {
     if (!user) return;
@@ -78,13 +105,19 @@ export const TradingStatsProvider = ({ children }) => {
 
       setLeaderboardData(result.data);
 
-      // Also update the user's stats if found in leaderboard data
-      const userData = result.data.find((trader) => trader._id === user._id);
-      if (userData && userData.stats) {
-        setStats((prevStats) => ({
-          ...prevStats,
-          ...userData.stats,
-        }));
+      // Update the user's stats if found in leaderboard data
+      // BUT only if the leaderboard timeframe is "all" - otherwise we'd
+      // be showing timeframe-limited stats in the main stats display
+      if (timeFrame === "all") {
+        const userData = result.data.find((trader) => trader._id === user._id);
+        if (userData && userData.stats) {
+          // Merge with existing stats to ensure all fields are present
+          // but prioritize leaderboard data as it may be more current
+          setStats((prevStats) => ({
+            ...(prevStats || {}),
+            ...userData.stats,
+          }));
+        }
       }
     } catch (err) {
       console.error("Leaderboard fetch error:", err);
@@ -112,14 +145,42 @@ export const TradingStatsProvider = ({ children }) => {
     }
   }, [timeFrame, fetchLeaderboard]);
 
+  // Utility functions for formatting
+  const formatCurrency = useCallback((amount) => {
+    if (amount === undefined || amount === null) return "$0.00";
+
+    return new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "USD",
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    }).format(amount);
+  }, []);
+
+  const formatPercent = useCallback((value, decimals = 1) => {
+    if (value === undefined || value === null) return "0.0%";
+    return `${value.toFixed(decimals)}%`;
+  }, []);
+
+  const formatRatio = useCallback((value, decimals = 2) => {
+    if (value === undefined || value === null) return "0.00";
+    return value.toFixed(decimals);
+  }, []);
+
   const value = {
-    stats,
+    stats: normalizedStats,
+    rawStats: stats,
     leaderboardData,
     loading,
     error,
     timeFrame,
     setTimeFrame,
     refreshData,
+    formatters: {
+      formatCurrency,
+      formatPercent,
+      formatRatio,
+    },
   };
 
   return (

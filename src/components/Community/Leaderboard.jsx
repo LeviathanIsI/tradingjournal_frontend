@@ -1,6 +1,7 @@
-// Update to the Leaderboard component
-import React, { useState, useEffect } from "react";
+// src/components/Community/Leaderboard.jsx
+import React, { useState } from "react";
 import { useAuth } from "../../context/AuthContext";
+import { useTradingStats } from "../../context/TradingStatsContext";
 import { Trophy, LineChart, Target } from "lucide-react";
 
 // Include the LeaderboardStatsCard component directly in this file
@@ -18,84 +19,19 @@ const LeaderboardStatsCard = ({ icon, label, value, valueColor, detail }) => (
 );
 
 const Leaderboard = () => {
-  const [leaderboardData, setLeaderboardData] = useState([]);
-  const [timeFrame, setTimeFrame] = useState("all");
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
   const [sortField, setSortField] = useState("stats.totalProfit");
   const [sortOrder, setSortOrder] = useState("desc");
   const { user } = useAuth();
+  const {
+    leaderboardData,
+    timeFrame,
+    setTimeFrame,
+    loading,
+    error,
+    formatters,
+  } = useTradingStats();
 
-  useEffect(() => {
-    fetchLeaderboardData();
-  }, [timeFrame]);
-
-  const fetchLeaderboardData = async () => {
-    try {
-      setLoading(true);
-      const token = localStorage.getItem("token");
-
-      const response = await fetch(
-        `${
-          import.meta.env.VITE_API_URL
-        }/api/auth/leaderboard?timeFrame=${timeFrame}`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error("Server response:", errorText);
-        throw new Error(
-          `Server returned ${response.status}: ${
-            errorText || "No error details"
-          }`
-        );
-      }
-
-      const result = await response.json();
-
-      if (!result.success || !result.data) {
-        throw new Error("Invalid response format from server");
-      }
-
-      // Sort the data
-      const sortedData = sortLeaderboardData(result.data, sortField, sortOrder);
-      setLeaderboardData(sortedData);
-    } catch (err) {
-      console.error("Leaderboard fetch error:", err);
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const sortLeaderboardData = (data, field, order) => {
-    return [...data].sort((a, b) => {
-      let valueA, valueB;
-
-      // Handle nested fields like stats.totalProfit
-      if (field.includes(".")) {
-        const [parentField, childField] = field.split(".");
-        valueA = a[parentField] ? a[parentField][childField] : 0;
-        valueB = b[parentField] ? b[parentField][childField] : 0;
-      } else {
-        valueA = a[field] || 0;
-        valueB = b[field] || 0;
-      }
-
-      // For numeric values
-      if (typeof valueA === "number" && typeof valueB === "number") {
-        return order === "asc" ? valueA - valueB : valueB - valueA;
-      }
-
-      // For string values
-      return order === "asc"
-        ? String(valueA).localeCompare(String(valueB))
-        : String(valueB).localeCompare(String(valueA));
-    });
-  };
+  const { formatCurrency, formatPercent } = formatters;
 
   const handleSort = (field) => {
     const newOrder =
@@ -103,8 +39,35 @@ const Leaderboard = () => {
     setSortField(field);
     setSortOrder(newOrder);
 
-    const sortedData = sortLeaderboardData(leaderboardData, field, newOrder);
-    setLeaderboardData(sortedData);
+    // Sorting is now handled within this component
+    // instead of modifying the original data in context
+  };
+
+  // Get sorted leaderboard data
+  const getSortedLeaderboardData = () => {
+    return [...leaderboardData].sort((a, b) => {
+      let valueA, valueB;
+
+      // Handle nested fields like stats.totalProfit
+      if (sortField.includes(".")) {
+        const [parentField, childField] = sortField.split(".");
+        valueA = a[parentField] ? a[parentField][childField] : 0;
+        valueB = b[parentField] ? b[parentField][childField] : 0;
+      } else {
+        valueA = a[sortField] || 0;
+        valueB = b[sortField] || 0;
+      }
+
+      // For numeric values
+      if (typeof valueA === "number" && typeof valueB === "number") {
+        return sortOrder === "asc" ? valueA - valueB : valueB - valueA;
+      }
+
+      // For string values
+      return sortOrder === "asc"
+        ? String(valueA).localeCompare(String(valueB))
+        : String(valueB).localeCompare(String(valueA));
+    });
   };
 
   // Get top performers
@@ -146,24 +109,24 @@ const Leaderboard = () => {
           (a, b) => (b.stats?.winLossRatio || 0) - (a.stats?.winLossRatio || 0)
         )[0] || activeTraders[0];
 
-    const profitValue = topProfitTrader.stats?.totalProfit || 0;
-    const formattedProfit = `$${Math.abs(profitValue).toFixed(2)}`;
-
     return {
       topProfit: {
-        value: profitValue >= 0 ? formattedProfit : `-${formattedProfit}`,
-        color: profitValue >= 0 ? "text-green-500" : "text-red-500",
+        value: formatCurrency(topProfitTrader.stats?.totalProfit || 0),
+        color:
+          (topProfitTrader.stats?.totalProfit || 0) >= 0
+            ? "text-green-500"
+            : "text-red-500",
         detail: topProfitTrader.username,
       },
       topWinRate: {
-        value: `${(topWinRateTrader.stats?.winRate || 0).toFixed(1)}%`,
+        value: formatPercent(topWinRateTrader.stats?.winRate || 0),
         color: "text-blue-500",
         detail: `(${topWinRateTrader.stats?.winningTrades || 0} W / ${
           topWinRateTrader.stats?.losingTrades || 0
         } L)`,
       },
       bestWinLossRatio: {
-        value: `${(bestRatioTrader.stats?.winLossRatio || 0).toFixed(2)}`,
+        value: (bestRatioTrader.stats?.winLossRatio || 0).toFixed(2),
         color: "text-purple-500",
         detail: `(${bestRatioTrader.stats?.winningTrades || 0} W / ${
           bestRatioTrader.stats?.losingTrades || 0
@@ -172,6 +135,7 @@ const Leaderboard = () => {
     };
   };
 
+  const sortedData = getSortedLeaderboardData();
   const topPerformers = getTopPerformers();
 
   if (loading)
@@ -291,7 +255,7 @@ const Leaderboard = () => {
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200 dark:divide-gray-600/50">
-            {leaderboardData.map((trader, index) => (
+            {sortedData.map((trader, index) => (
               <tr
                 key={trader._id}
                 className={`hover:bg-gray-50 dark:hover:bg-gray-600/30 ${
@@ -314,12 +278,12 @@ const Leaderboard = () => {
                         : "text-red-500"
                     }
                   >
-                    ${Math.abs(trader.stats?.totalProfit || 0).toFixed(2)}
+                    {formatCurrency(Math.abs(trader.stats?.totalProfit || 0))}
                     {(trader.stats?.totalProfit || 0) < 0 && "-"}
                   </span>
                 </td>
                 <td className="px-6 py-4 text-blue-600 dark:text-blue-400">
-                  {(trader.stats?.winRate || 0).toFixed(1)}%
+                  {formatPercent(trader.stats?.winRate || 0)}
                   {trader.stats?.winningTrades > 0 && (
                     <span className="text-xs text-gray-500 dark:text-gray-400 ml-1">
                       ({trader.stats.winningTrades} W /{" "}
@@ -333,7 +297,7 @@ const Leaderboard = () => {
               </tr>
             ))}
 
-            {leaderboardData.length === 0 && (
+            {sortedData.length === 0 && (
               <tr>
                 <td
                   colSpan="5"

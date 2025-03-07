@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import {
   LineChart,
   Line,
@@ -20,15 +20,33 @@ import {
   ChartBar,
   PieChart as PieChartIcon,
 } from "lucide-react";
+import { useTradingStats } from "../context/TradingStatsContext";
+import { useAuth } from "../context/AuthContext";
 
-const ProfileStats = ({ userId, trades, stats }) => {
+const ProfileStats = ({ userId, trades = [], stats: propStats = {} }) => {
   const [timeFrame, setTimeFrame] = useState("all");
   const [activeMetric, setActiveMetric] = useState("pnl");
+  const { stats: contextStats, formatters, refreshData } = useTradingStats();
+  const { formatCurrency, formatPercent } = formatters;
+  const { user } = useAuth();
+
+  // Decide which stats to use - context stats for current user, prop stats for others
+  const isCurrentUser = user && user._id === userId;
+  const stats = isCurrentUser ? contextStats : propStats;
+
+  // Refresh stats data when viewing own profile
+  useEffect(() => {
+    if (isCurrentUser) {
+      refreshData();
+    }
+  }, [isCurrentUser, refreshData, userId]);
 
   // Calculate monthly P&L data
   const monthlyPnL = useMemo(() => {
+    if (!trades || trades.length === 0) return [];
+
     const groupedByMonth = trades.reduce((acc, trade) => {
-      const date = new Date(trade.entryDate);
+      const date = new Date(trade.entryDate || trade.date);
       const monthKey = `${date.getFullYear()}-${String(
         date.getMonth() + 1
       ).padStart(2, "0")}`;
@@ -43,9 +61,17 @@ const ProfileStats = ({ userId, trades, stats }) => {
         };
       }
 
-      acc[monthKey].profit += trade.profitLoss.realized;
+      // Handle different structures for profitLoss
+      const profitLossValue =
+        typeof trade.profitLoss === "object"
+          ? trade.profitLoss.realized || 0
+          : typeof trade.profitLoss === "number"
+          ? trade.profitLoss
+          : 0;
+
+      acc[monthKey].profit += profitLossValue;
       acc[monthKey].trades += 1;
-      if (trade.profitLoss.realized > 0) {
+      if (profitLossValue > 0) {
         acc[monthKey].winningTrades += 1;
       }
 
@@ -54,14 +80,20 @@ const ProfileStats = ({ userId, trades, stats }) => {
 
     return Object.values(groupedByMonth).map((month) => ({
       ...month,
-      winRate: ((month.winningTrades / month.trades) * 100).toFixed(1),
+      winRate:
+        month.trades > 0
+          ? ((month.winningTrades / month.trades) * 100).toFixed(1)
+          : "0",
     }));
   }, [trades]);
 
   // Calculate trade type distribution
   const tradeTypeData = useMemo(() => {
+    if (!trades || trades.length === 0) return [];
+
     const distribution = trades.reduce((acc, trade) => {
-      acc[trade.type] = (acc[trade.type] || 0) + 1;
+      const type = trade.type || trade.direction || "Unknown";
+      acc[type] = (acc[type] || 0) + 1;
       return acc;
     }, {});
 
@@ -70,6 +102,35 @@ const ProfileStats = ({ userId, trades, stats }) => {
       value: count,
     }));
   }, [trades]);
+
+  // Safely calculate win rate
+  const winRateValue = useMemo(() => {
+    if (stats?.winRate !== undefined) return stats.winRate;
+
+    if (
+      stats?.winningTrades !== undefined &&
+      stats?.totalTrades &&
+      stats.totalTrades > 0
+    ) {
+      return (stats.winningTrades / stats.totalTrades) * 100;
+    }
+
+    if (
+      stats?.profitableTrades !== undefined &&
+      stats?.totalTrades &&
+      stats.totalTrades > 0
+    ) {
+      return (stats.profitableTrades / stats.totalTrades) * 100;
+    }
+
+    return 0;
+  }, [stats]);
+
+  // Safely calculate average profit
+  const avgProfit = useMemo(() => {
+    if (!stats?.totalTrades || stats.totalTrades === 0) return 0;
+    return (stats?.totalProfit || 0) / stats.totalTrades;
+  }, [stats]);
 
   const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042"];
 
@@ -103,12 +164,12 @@ const ProfileStats = ({ userId, trades, stats }) => {
           </div>
           <p
             className={`text-lg sm:text-2xl font-bold ${
-              stats.totalProfit >= 0
+              (stats?.totalProfit || 0) >= 0
                 ? "text-green-600 dark:text-green-400"
                 : "text-red-600 dark:text-red-400"
             }`}
           >
-            ${stats.totalProfit.toFixed(2)}
+            {formatCurrency(stats?.totalProfit || 0)}
           </p>
         </div>
 
@@ -120,10 +181,7 @@ const ProfileStats = ({ userId, trades, stats }) => {
             </h3>
           </div>
           <p className="text-lg sm:text-2xl font-bold text-gray-900 dark:text-gray-100">
-            {stats.winningTrades && stats.totalTrades
-              ? ((stats.winningTrades / stats.totalTrades) * 100).toFixed(1)
-              : stats.winRate?.toFixed(1) || "0"}
-            %
+            {formatPercent(winRateValue)}
           </p>
         </div>
 
@@ -135,7 +193,7 @@ const ProfileStats = ({ userId, trades, stats }) => {
             </h3>
           </div>
           <p className="text-lg sm:text-2xl font-bold text-gray-900 dark:text-gray-100">
-            {stats.totalTrades}
+            {stats?.totalTrades || 0}
           </p>
         </div>
 
@@ -148,12 +206,12 @@ const ProfileStats = ({ userId, trades, stats }) => {
           </div>
           <p
             className={`text-lg sm:text-2xl font-bold ${
-              stats.totalProfit / stats.totalTrades >= 0
+              avgProfit >= 0
                 ? "text-green-600 dark:text-green-400"
                 : "text-red-600 dark:text-red-400"
             }`}
           >
-            ${(stats.totalProfit / stats.totalTrades).toFixed(2)}
+            {formatCurrency(avgProfit)}
           </p>
         </div>
       </div>
@@ -166,33 +224,44 @@ const ProfileStats = ({ userId, trades, stats }) => {
             Monthly Performance
           </h3>
           <div className="h-[250px] sm:h-[300px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={monthlyPnL}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
-                <XAxis dataKey="month" tick={{ fill: "#6B7280" }} />
-                <YAxis tick={{ fill: "#6B7280" }} />
-                <Tooltip
-                  contentStyle={{
-                    backgroundColor: "rgb(31, 41, 55)",
-                    border: "1px solid rgb(55, 65, 81)",
-                    color: "#fff",
-                  }}
-                />
-                <Legend />
-                <Line
-                  type="monotone"
-                  dataKey="profit"
-                  stroke="#8884d8"
-                  name="P&L"
-                />
-                <Line
-                  type="monotone"
-                  dataKey="winRate"
-                  stroke="#82ca9d"
-                  name="Win Rate %"
-                />
-              </LineChart>
-            </ResponsiveContainer>
+            {monthlyPnL.length > 0 ? (
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart data={monthlyPnL}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+                  <XAxis dataKey="month" tick={{ fill: "#6B7280" }} />
+                  <YAxis tick={{ fill: "#6B7280" }} />
+                  <Tooltip
+                    contentStyle={{
+                      backgroundColor: "rgb(31, 41, 55)",
+                      border: "1px solid rgb(55, 65, 81)",
+                      color: "#fff",
+                    }}
+                    formatter={(value, name) => {
+                      if (name === "profit") return formatCurrency(value);
+                      if (name === "winRate") return `${value}%`;
+                      return value;
+                    }}
+                  />
+                  <Legend />
+                  <Line
+                    type="monotone"
+                    dataKey="profit"
+                    stroke="#8884d8"
+                    name="P&L"
+                  />
+                  <Line
+                    type="monotone"
+                    dataKey="winRate"
+                    stroke="#82ca9d"
+                    name="Win Rate %"
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+            ) : (
+              <div className="h-full flex items-center justify-center text-gray-500 dark:text-gray-400">
+                No data available for the selected time period
+              </div>
+            )}
           </div>
         </div>
 
@@ -202,38 +271,44 @@ const ProfileStats = ({ userId, trades, stats }) => {
             Trade Type Distribution
           </h3>
           <div className="h-[250px] sm:h-[300px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <PieChart>
-                <Pie
-                  data={tradeTypeData}
-                  innerRadius={60}
-                  outerRadius={80}
-                  paddingAngle={5}
-                  dataKey="value"
-                >
-                  {tradeTypeData.map((entry, index) => (
-                    <Cell
-                      key={`cell-${index}`}
-                      fill={COLORS[index % COLORS.length]}
-                    />
-                  ))}
-                </Pie>
-                <Tooltip
-                  contentStyle={{
-                    backgroundColor: "rgb(31, 41, 55)",
-                    border: "1px solid rgb(55, 65, 81)",
-                    color: "#fff",
-                  }}
-                />
-                <Legend
-                  formatter={(value) => (
-                    <span className="text-gray-900 dark:text-gray-100">
-                      {value}
-                    </span>
-                  )}
-                />
-              </PieChart>
-            </ResponsiveContainer>
+            {tradeTypeData.length > 0 ? (
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={tradeTypeData}
+                    innerRadius={60}
+                    outerRadius={80}
+                    paddingAngle={5}
+                    dataKey="value"
+                  >
+                    {tradeTypeData.map((entry, index) => (
+                      <Cell
+                        key={`cell-${index}`}
+                        fill={COLORS[index % COLORS.length]}
+                      />
+                    ))}
+                  </Pie>
+                  <Tooltip
+                    contentStyle={{
+                      backgroundColor: "rgb(31, 41, 55)",
+                      border: "1px solid rgb(55, 65, 81)",
+                      color: "#fff",
+                    }}
+                  />
+                  <Legend
+                    formatter={(value) => (
+                      <span className="text-gray-900 dark:text-gray-100">
+                        {value}
+                      </span>
+                    )}
+                  />
+                </PieChart>
+              </ResponsiveContainer>
+            ) : (
+              <div className="h-full flex items-center justify-center text-gray-500 dark:text-gray-400">
+                No trade type data available
+              </div>
+            )}
           </div>
         </div>
       </div>
