@@ -1,4 +1,4 @@
-// context/TradingStatsContext.js
+// Updated TradingStatsContext.js
 import React, {
   createContext,
   useState,
@@ -19,31 +19,64 @@ export const TradingStatsProvider = ({ children }) => {
   const [timeFrame, setTimeFrame] = useState("all");
   const { user } = useAuth();
 
-  // Ensure stats has all required fields even if API response is incomplete
+  // Enhanced stats normalization to ensure consistency
   const normalizedStats = useMemo(() => {
     if (!stats) return null;
 
+    // Calculate derived values to ensure consistency
+    const totalTrades = stats.totalTrades || 0;
+    const winningTrades = stats.winningTrades || stats.profitableTrades || 0;
+    const losingTrades = stats.losingTrades || totalTrades - winningTrades || 0;
+
+    // Explicitly calculate win rate
+    const winRate = totalTrades > 0 ? (winningTrades / totalTrades) * 100 : 0;
+
+    // Explicitly calculate win/loss ratio
+    const winLossRatio =
+      losingTrades > 0 ? winningTrades / losingTrades : winningTrades;
+
     return {
-      totalTrades: stats.totalTrades || 0,
-      profitableTrades: stats.profitableTrades || stats.winningTrades || 0,
-      winningTrades: stats.winningTrades || stats.profitableTrades || 0,
-      losingTrades: stats.losingTrades || 0,
+      totalTrades,
+      winningTrades,
+      losingTrades,
       totalProfit: stats.totalProfit || 0,
-      winRate:
-        stats.winRate ||
-        (stats.totalTrades > 0
-          ? ((stats.profitableTrades || stats.winningTrades || 0) /
-              stats.totalTrades) *
-            100
-          : 0),
-      winLossRatio:
-        stats.winLossRatio ||
-        (stats.losingTrades > 0
-          ? (stats.profitableTrades || stats.winningTrades || 0) /
-            stats.losingTrades
-          : stats.profitableTrades || stats.winningTrades || 0),
+      winRate,
+      winLossRatio,
+      // Store raw values for debugging
+      rawStats: { ...stats },
     };
   }, [stats]);
+
+  // Normalize trader stats to ensure consistency across components
+  const normalizeTraderStats = useCallback((trader) => {
+    if (!trader || !trader.stats) return trader;
+
+    const traderStats = trader.stats;
+    const totalTrades = traderStats.totalTrades || 0;
+    const winningTrades =
+      traderStats.winningTrades || traderStats.profitableTrades || 0;
+    const losingTrades =
+      traderStats.losingTrades || totalTrades - winningTrades || 0;
+
+    // Calculate win rate explicitly
+    const winRate = totalTrades > 0 ? (winningTrades / totalTrades) * 100 : 0;
+
+    return {
+      ...trader,
+      stats: {
+        ...traderStats,
+        totalTrades,
+        winningTrades,
+        losingTrades,
+        winRate,
+      },
+    };
+  }, []);
+
+  // Normalize leaderboard data
+  const normalizedLeaderboardData = useMemo(() => {
+    return leaderboardData.map(normalizeTraderStats);
+  }, [leaderboardData, normalizeTraderStats]);
 
   const fetchStats = useCallback(async () => {
     if (!user) return;
@@ -103,16 +136,15 @@ export const TradingStatsProvider = ({ children }) => {
         throw new Error("Invalid response format from server");
       }
 
+      // Normalize the leaderboard data before saving it
       setLeaderboardData(result.data);
 
       // Update the user's stats if found in leaderboard data
-      // BUT only if the leaderboard timeframe is "all" - otherwise we'd
-      // be showing timeframe-limited stats in the main stats display
+      // BUT only if the leaderboard timeframe is "all"
       if (timeFrame === "all") {
         const userData = result.data.find((trader) => trader._id === user._id);
         if (userData && userData.stats) {
-          // Merge with existing stats to ensure all fields are present
-          // but prioritize leaderboard data as it may be more current
+          // Normalize the user stats before merging with existing stats
           setStats((prevStats) => ({
             ...(prevStats || {}),
             ...userData.stats,
@@ -158,8 +190,10 @@ export const TradingStatsProvider = ({ children }) => {
   }, []);
 
   const formatPercent = useCallback((value, decimals = 1) => {
-    if (value === undefined || value === null) return "0.0%";
-    return `${value.toFixed(decimals)}%`;
+    // Convert to number and check if it's a valid number
+    const numValue = Number(value);
+    if (value === undefined || value === null || isNaN(numValue)) return "0.0%";
+    return `${numValue.toFixed(decimals)}%`;
   }, []);
 
   const formatRatio = useCallback((value, decimals = 2) => {
@@ -167,10 +201,22 @@ export const TradingStatsProvider = ({ children }) => {
     return value.toFixed(decimals);
   }, []);
 
+  // New helper function to get standardized win rate for display
+  const getWinRate = useCallback((trader) => {
+    if (!trader || !trader.stats) return 0;
+
+    const stats = trader.stats;
+    const totalTrades = stats.totalTrades || 0;
+    const winningTrades = stats.winningTrades || stats.profitableTrades || 0;
+
+    // Calculate win rate explicitly
+    return totalTrades > 0 ? (winningTrades / totalTrades) * 100 : 0;
+  }, []);
+
   const value = {
     stats: normalizedStats,
     rawStats: stats,
-    leaderboardData,
+    leaderboardData: normalizedLeaderboardData,
     loading,
     error,
     timeFrame,
@@ -181,6 +227,8 @@ export const TradingStatsProvider = ({ children }) => {
       formatPercent,
       formatRatio,
     },
+    getWinRate, // New helper function
+    normalizeTraderStats, // Expose this for components to use
   };
 
   return (

@@ -78,24 +78,33 @@ export const formatProfitLoss = (amount, includeSign = false) => {
 export const normalizeStats = (stats) => {
   if (!stats) return null;
 
+  // Extract base values with fallbacks
+  const totalTrades = stats.totalTrades || 0;
+  const winningTrades = stats.winningTrades || stats.profitableTrades || 0;
+  const losingTrades = stats.losingTrades || totalTrades - winningTrades || 0;
+
+  // ALWAYS calculate winRate directly, ignoring any pre-calculated values
+  // This is the key to consistency - same formula everywhere
+  const winRate =
+    totalTrades > 0 ? Math.round((winningTrades / totalTrades) * 1000) / 10 : 0;
+
+  // Calculate winLossRatio directly too
+  const winLossRatio =
+    losingTrades > 0
+      ? winningTrades / losingTrades
+      : winningTrades > 0
+      ? winningTrades
+      : 0;
+
   return {
-    totalTrades: stats.totalTrades || 0,
-    profitableTrades: stats.profitableTrades || stats.winningTrades || 0,
-    winningTrades: stats.winningTrades || stats.profitableTrades || 0,
-    losingTrades: stats.losingTrades || 0,
+    totalTrades,
+    winningTrades,
+    losingTrades,
     totalProfit: stats.totalProfit || 0,
-    winRate:
-      stats.winRate ||
-      (stats.totalTrades > 0
-        ? ((stats.profitableTrades || stats.winningTrades || 0) /
-            stats.totalTrades) *
-          100
-        : 0),
-    winLossRatio:
-      stats.winLossRatio ||
-      (stats.losingTrades > 0
-        ? (stats.profitableTrades || stats.winningTrades || 0) /
-          stats.losingTrades
-        : stats.profitableTrades || stats.winningTrades || 0),
+    // Use our directly calculated values
+    winRate,
+    winLossRatio,
+    // Store original stats for reference if needed
+    _original: { ...stats },
   };
 };

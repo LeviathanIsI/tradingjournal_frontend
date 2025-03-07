@@ -5,11 +5,12 @@ import {
   UserCheck,
   UserPlus,
   TrendingUp,
-  BarChart2,
   Award,
   Clock,
 } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
+import { useTradingStats } from "../../context/TradingStatsContext";
+import TraderCard from "./TraderCard";
 
 const Traders = () => {
   const [traders, setTraders] = useState([]);
@@ -17,8 +18,10 @@ const Traders = () => {
   const [error, setError] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
   const { user } = useAuth();
+  const { formatters, getWinRate, normalizeTraderStats } = useTradingStats();
+  const { formatPercent } = formatters;
 
-  // Fetch traders (keeping existing code)
+  // Fetch traders
   useEffect(() => {
     const fetchTraders = async () => {
       try {
@@ -38,7 +41,9 @@ const Traders = () => {
           throw new Error(data.error || "Failed to fetch traders");
         }
 
-        setTraders(data.data);
+        // Normalize trader stats before setting state
+        const normalizedTraders = data.data.map(normalizeTraderStats);
+        setTraders(normalizedTraders);
       } catch (error) {
         console.error("Error fetching traders:", error);
         setError(error.message);
@@ -48,9 +53,9 @@ const Traders = () => {
     };
 
     fetchTraders();
-  }, []);
+  }, [normalizeTraderStats]);
 
-  // Handle follow (keeping existing code)
+  // Handle follow
   const handleFollow = async (traderId) => {
     try {
       const token = localStorage.getItem("token");
@@ -73,12 +78,12 @@ const Traders = () => {
         traders.map((trader) => {
           if (trader._id === traderId) {
             const isNowFollowing = !trader.followers.includes(user._id);
-            return {
+            return normalizeTraderStats({
               ...trader,
               followers: isNowFollowing
                 ? [...trader.followers, user._id]
                 : trader.followers.filter((id) => id !== user._id),
-            };
+            });
           }
           return trader;
         })
@@ -159,128 +164,15 @@ const Traders = () => {
         </div>
       )}
 
-      {/* Traders Grid - Updated with softer dark mode */}
+      {/* Traders Grid - Using TraderCard for consistent display */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {filteredTraders.map((trader) => (
-          <div
+          <TraderCard
             key={trader._id}
-            className="relative overflow-hidden bg-white dark:bg-gray-700/60 rounded-md border border-gray-200 dark:border-gray-600 shadow-sm hover:shadow-md transition-shadow"
-          >
-            {/* Header with username and follow button */}
-            <div className="flex justify-between items-center p-4 border-b border-gray-100 dark:border-gray-600/50 bg-gray-50 dark:bg-gray-600/40">
-              <Link
-                to={`/community/profile/${trader.username}`}
-                className="flex items-center"
-              >
-                <div className="w-8 h-8 flex items-center justify-center rounded-sm bg-blue-500 dark:bg-blue-500/80 text-white font-bold mr-2">
-                  {trader.username.charAt(0).toUpperCase()}
-                </div>
-                <h3 className="text-base font-semibold text-gray-900 dark:text-gray-100 hover:text-blue-600 dark:hover:text-blue-300">
-                  {trader.username}
-                </h3>
-              </Link>
-
-              {user._id !== trader._id && (
-                <button
-                  onClick={() => handleFollow(trader._id)}
-                  className={`flex items-center gap-1 px-3 py-1.5 rounded-sm text-xs font-medium transition-colors ${
-                    trader.followers.includes(user._id)
-                      ? "bg-gray-100 dark:bg-gray-600/70 text-gray-600 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-600"
-                      : "bg-blue-500/10 dark:bg-blue-500/30 text-blue-600 dark:text-blue-300 hover:bg-blue-500/20 dark:hover:bg-blue-500/40"
-                  }`}
-                >
-                  {trader.followers.includes(user._id) ? (
-                    <>
-                      <UserCheck className="h-3.5 w-3.5" />
-                      <span>Following</span>
-                    </>
-                  ) : (
-                    <>
-                      <UserPlus className="h-3.5 w-3.5" />
-                      <span>Follow</span>
-                    </>
-                  )}
-                </button>
-              )}
-            </div>
-
-            {/* Body with trader info */}
-            <div className="p-4">
-              {/* Trading style with icon */}
-              {trader.tradingStyle && (
-                <div className="flex items-center text-sm text-gray-600 dark:text-gray-300 mb-2">
-                  <Clock className="h-4 w-4 mr-1.5 text-blue-500 dark:text-blue-400" />
-                  <span className="font-medium">{trader.tradingStyle}</span>
-                </div>
-              )}
-
-              {/* Bio */}
-              {trader.bio && (
-                <p className="text-sm text-gray-600 dark:text-gray-300 line-clamp-2 mb-4">
-                  {trader.bio}
-                </p>
-              )}
-
-              {/* Stats with visual indicators */}
-              <div className="grid grid-cols-3 gap-1 pt-3 border-t border-gray-100 dark:border-gray-600/50">
-                <div className="flex flex-col items-center">
-                  <div className="bg-blue-50 dark:bg-blue-700/20 w-full rounded-sm py-2 flex justify-center mb-1">
-                    <TrendingUp className="h-4 w-4 text-blue-500 dark:text-blue-300 mr-1" />
-                    <span className="font-semibold text-gray-900 dark:text-gray-100">
-                      {trader.stats?.totalTrades || 0}
-                    </span>
-                  </div>
-                  <p className="text-xs text-gray-500 dark:text-gray-300">
-                    Trades
-                  </p>
-                </div>
-
-                <div className="flex flex-col items-center">
-                  <div className="bg-purple-50 dark:bg-purple-700/20 w-full rounded-sm py-2 flex justify-center mb-1">
-                    <UserCheck className="h-4 w-4 text-purple-500 dark:text-purple-300 mr-1" />
-                    <span className="font-semibold text-gray-900 dark:text-gray-100">
-                      {trader.followers?.length || 0}
-                    </span>
-                  </div>
-                  <p className="text-xs text-gray-500 dark:text-gray-300">
-                    Followers
-                  </p>
-                </div>
-
-                <div className="flex flex-col items-center">
-                  <div
-                    className={`w-full rounded-sm py-2 flex justify-center mb-1 ${
-                      (trader.stats?.winRate || 0) >= 50
-                        ? "bg-green-50 dark:bg-green-700/20"
-                        : "bg-red-50 dark:bg-red-700/20"
-                    }`}
-                  >
-                    <Award
-                      className={`h-4 w-4 mr-1 ${
-                        (trader.stats?.winRate || 0) >= 50
-                          ? "text-green-500 dark:text-green-300"
-                          : "text-red-500 dark:text-red-300"
-                      }`}
-                    />
-                    <span
-                      className={`font-semibold ${
-                        (trader.stats?.winRate || 0) >= 50
-                          ? "text-green-600 dark:text-green-300"
-                          : "text-red-600 dark:text-red-300"
-                      }`}
-                    >
-                      {trader.stats?.winRate
-                        ? `${trader.stats.winRate}%`
-                        : "0%"}
-                    </span>
-                  </div>
-                  <p className="text-xs text-gray-500 dark:text-gray-300">
-                    Win Rate
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
+            trader={trader}
+            currentUserId={user._id}
+            onFollowToggle={handleFollow}
+          />
         ))}
       </div>
     </div>

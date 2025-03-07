@@ -1,9 +1,20 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { UserCheck, UserPlus, TrendingUp, Award } from "lucide-react";
+import { useTradingStats } from "../../context/TradingStatsContext";
 
 const TraderCard = ({ trader, currentUserId, onFollowToggle }) => {
   const isFollowing = trader.followers.includes(currentUserId);
+  const { formatters } = useTradingStats();
+  const { formatPercent } = formatters;
+
+  // IMPORTANT: Calculate win rate directly and consistently here
+  // This ensures the same calculation is used everywhere
+  const totalTrades = trader.stats?.totalTrades || 0;
+  const winningTrades =
+    trader.stats?.winningTrades || trader.stats?.profitableTrades || 0;
+  const winRate =
+    totalTrades > 0 ? Math.round((winningTrades / totalTrades) * 1000) / 10 : 0;
 
   return (
     <div className="relative overflow-hidden bg-white dark:bg-gray-700/60 rounded-md border border-gray-200 dark:border-gray-600/50 shadow-sm hover:shadow-md transition-shadow">
@@ -86,26 +97,26 @@ const TraderCard = ({ trader, currentUserId, onFollowToggle }) => {
           <div className="flex flex-col items-center">
             <div
               className={`w-full rounded-sm py-2 flex justify-center mb-1 ${
-                (trader.stats?.winRate || 0) >= 50
+                winRate >= 50
                   ? "bg-green-50 dark:bg-green-700/20"
                   : "bg-red-50 dark:bg-red-700/20"
               }`}
             >
               <Award
                 className={`h-4 w-4 mr-1 ${
-                  (trader.stats?.winRate || 0) >= 50
+                  winRate >= 50
                     ? "text-green-500 dark:text-green-300"
                     : "text-red-500 dark:text-red-300"
                 }`}
               />
               <span
                 className={`font-semibold ${
-                  (trader.stats?.winRate || 0) >= 50
+                  winRate >= 50
                     ? "text-green-600 dark:text-green-300"
                     : "text-red-600 dark:text-red-300"
                 }`}
               >
-                {trader.stats?.winRate ? `${trader.stats.winRate}%` : "0%"}
+                {`${winRate.toFixed(1)}%`}
               </span>
             </div>
             <p className="text-xs text-gray-500 dark:text-gray-300">Win Rate</p>
