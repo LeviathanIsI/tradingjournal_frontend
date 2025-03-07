@@ -157,12 +157,21 @@ const TradeModal = ({ isOpen, onClose, onSubmit, trade, userTimeZone }) => {
         throw new Error("Please fill in all required fields");
       }
 
-      // Validate day trade dates
+      // Validate day trade dates - FIXED VERSION
       if (formData.tradeType === "DAY" && formData.exitDate) {
-        const entryDay = new Date(formData.entryDate).toDateString();
-        const exitDay = new Date(formData.exitDate).toDateString();
+        // Format both dates to YYYY-MM-DD in the user's timezone for comparison
+        const entryDayStr = formatInTimeZone(
+          new Date(formData.entryDate),
+          userTimeZone,
+          "yyyy-MM-dd"
+        );
+        const exitDayStr = formatInTimeZone(
+          new Date(formData.exitDate),
+          userTimeZone,
+          "yyyy-MM-dd"
+        );
 
-        if (entryDay !== exitDay) {
+        if (entryDayStr !== exitDayStr) {
           setLoading(false);
           alert("Day trades must have entry and exit on the same day");
           return;
