@@ -157,27 +157,6 @@ const TradeModal = ({ isOpen, onClose, onSubmit, trade, userTimeZone }) => {
         throw new Error("Please fill in all required fields");
       }
 
-      // Validate day trade dates - FIXED VERSION
-      if (formData.tradeType === "DAY" && formData.exitDate) {
-        // Format both dates to YYYY-MM-DD in the user's timezone for comparison
-        const entryDayStr = formatInTimeZone(
-          new Date(formData.entryDate),
-          userTimeZone,
-          "yyyy-MM-dd"
-        );
-        const exitDayStr = formatInTimeZone(
-          new Date(formData.exitDate),
-          userTimeZone,
-          "yyyy-MM-dd"
-        );
-
-        if (entryDayStr !== exitDayStr) {
-          setLoading(false);
-          alert("Day trades must have entry and exit on the same day");
-          return;
-        }
-      }
-
       // Transform data for submission
       const submissionData = {
         symbol: formData.symbol.toUpperCase(),
@@ -209,6 +188,26 @@ const TradeModal = ({ isOpen, onClose, onSubmit, trade, userTimeZone }) => {
           lowBeforeHigh: formData.postExitAnalysis?.lowBeforeHigh || null,
         },
       };
+
+      // Validate day trade dates - FIXED VERSION
+      if (formData.tradeType === "DAY" && formData.exitDate) {
+        // First, check with 24-hour validation
+        const entryDate = new Date(formData.entryDate);
+        const exitDate = new Date(formData.exitDate);
+        const hoursDifference =
+          Math.abs(exitDate - entryDate) / (1000 * 60 * 60);
+
+        if (hoursDifference > 24) {
+          setLoading(false);
+          alert("Day trades must have entry and exit within 24 hours");
+          return;
+        }
+
+        // Add a special validation field instead of changing the original date
+        submissionData._validationSameDayAs = new Date(formData.entryDate)
+          .toISOString()
+          .split("T")[0];
+      }
 
       // Only include exit fields if they all exist
       if (formData.exitPrice && formData.exitQuantity && formData.exitDate) {
