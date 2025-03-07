@@ -34,6 +34,60 @@ export const AIProvider = ({ children }) => {
     );
   };
 
+  // Helper function for making fetch requests with retry logic
+  const fetchWithRetry = useCallback(async (url, options, maxRetries = 3) => {
+    let retries = 0;
+    while (retries < maxRetries) {
+      try {
+        const response = await fetch(url, options);
+
+        // If successful, return the response object (not parsed yet)
+        if (response.ok) {
+          return response;
+        }
+
+        // For 503 Service Unavailable, get retry information
+        if (response.status === 503) {
+          let errorData;
+          try {
+            errorData = await response.json();
+          } catch (e) {
+            errorData = { retryAfter: (retries + 1) * 2 }; // Default to exponential backoff
+          }
+
+          const retryAfter = errorData.retryAfter || (retries + 1) * 2;
+
+          console.log(
+            `API temporarily unavailable. Retrying in ${retryAfter} seconds...`
+          );
+
+          // Wait for the suggested retry time
+          await new Promise((resolve) =>
+            setTimeout(resolve, retryAfter * 1000)
+          );
+
+          retries++;
+          continue;
+        }
+
+        // For other errors, return the response to be handled by the caller
+        return response;
+      } catch (error) {
+        // For network errors, retry with exponential backoff
+        if (retries === maxRetries - 1) throw error;
+
+        retries++;
+        const backoffTime = Math.pow(2, retries) * 1000; // 2, 4, 8 seconds
+        console.log(
+          `Network request failed, retrying in ${backoffTime / 1000} seconds...`
+        );
+        await new Promise((resolve) => setTimeout(resolve, backoffTime));
+      }
+    }
+
+    throw new Error(`Failed after ${maxRetries} retries`);
+  }, []);
+
   // Function to format credit limit messages for better user experience
   const formatCreditLimitMessage = (error) => {
     if (!error) return "An unknown error occurred";
@@ -94,39 +148,37 @@ export const AIProvider = ({ children }) => {
         const token = localStorage.getItem("token");
         let response;
 
-        if (method.toUpperCase() === "GET") {
-          // For GET requests
-          response = await fetch(
-            `${import.meta.env.VITE_API_URL}/api/ai/${endpoint}`,
-            {
-              method: "GET",
-              headers: {
-                Authorization: `Bearer ${token}`,
-                "Content-Type": "application/json",
-              },
-            }
-          );
-        } else {
-          // For POST requests
-          response = await fetch(
-            `${import.meta.env.VITE_API_URL}/api/ai/${endpoint}`,
-            {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${token}`,
-              },
-              body: JSON.stringify(data),
-            }
-          );
+        const options = {
+          method: method.toUpperCase(),
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        };
+
+        if (method.toUpperCase() !== "GET") {
+          options.body = JSON.stringify(data);
         }
 
+        // Use fetchWithRetry to handle retries for 503 errors
+        response = await fetchWithRetry(
+          `${import.meta.env.VITE_API_URL}/api/ai/${endpoint}`,
+          options
+        );
+
         if (!response.ok) {
-          const errorText = await response.text();
+          let errorData;
+          try {
+            errorData = await response.json();
+          } catch (e) {
+            // If we can't parse JSON, use the text
+            const errorText = await response.text();
+            errorData = { error: errorText };
+          }
 
           // Check if this error is related to credit limits
-          if (isCreditLimitError(errorText)) {
-            const friendlyMessage = formatCreditLimitMessage(errorText);
+          if (errorData.error && isCreditLimitError(errorData.error)) {
+            const friendlyMessage = formatCreditLimitMessage(errorData.error);
             showToast(friendlyMessage, "error");
 
             return {
@@ -136,7 +188,7 @@ export const AIProvider = ({ children }) => {
             };
           }
 
-          throw new Error(`Server error: ${errorText}`);
+          throw new Error(`Server error: ${JSON.stringify(errorData)}`);
         }
 
         const responseData = await response.json();
@@ -181,7 +233,7 @@ export const AIProvider = ({ children }) => {
         setIsProcessing(false);
       }
     },
-    [updateAILimits, showToast]
+    [updateAILimits, showToast, fetchWithRetry]
   );
 
   // Handle API requests for AI features in a centralized way
@@ -204,29 +256,39 @@ export const AIProvider = ({ children }) => {
 
         // If it's a GET request endpoint, use makeDirectRequest
         if (useGetMethod) {
-          // ... existing GET code ...
+          return await makeDirectRequest(endpoint, "GET");
         }
 
-        // Regular POST request
+        // Regular POST request using fetchWithRetry
         const token = localStorage.getItem("token");
-        const response = await fetch(
+        const fetchOptions = {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(data),
+        };
+
+        // Use fetchWithRetry to handle retries for 503 errors
+        const response = await fetchWithRetry(
           `${import.meta.env.VITE_API_URL}/api/ai/${endpoint}`,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-            body: JSON.stringify(data),
-          }
+          fetchOptions
         );
 
         if (!response.ok) {
-          const errorText = await response.text();
+          let errorData;
+          try {
+            errorData = await response.json();
+          } catch (e) {
+            // If we can't parse JSON, use the text
+            const errorText = await response.text();
+            errorData = { error: errorText };
+          }
 
           // Check if this is a credit limit error
-          if (isCreditLimitError(errorText)) {
-            const friendlyMessage = formatCreditLimitMessage(errorText);
+          if (errorData.error && isCreditLimitError(errorData.error)) {
+            const friendlyMessage = formatCreditLimitMessage(errorData.error);
 
             // Only show toast if not suppressed
             if (!options.suppressToast) {
@@ -240,7 +302,7 @@ export const AIProvider = ({ children }) => {
             };
           }
 
-          throw new Error(`Server error: ${errorText}`);
+          throw new Error(`Server error: ${JSON.stringify(errorData)}`);
         }
 
         const responseData = await response.json();
@@ -310,7 +372,7 @@ export const AIProvider = ({ children }) => {
         setIsProcessing(false);
       }
     },
-    [updateAILimits, makeDirectRequest, showToast]
+    [updateAILimits, makeDirectRequest, showToast, fetchWithRetry]
   );
 
   // Add fetchAILimits function
@@ -322,7 +384,8 @@ export const AIProvider = ({ children }) => {
         return null;
       }
 
-      const response = await fetch(
+      // Use fetchWithRetry for fetching AI limits
+      const response = await fetchWithRetry(
         `${import.meta.env.VITE_API_URL}/api/auth/ai-limits`,
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -350,7 +413,7 @@ export const AIProvider = ({ children }) => {
       console.error("❌ [fetchAILimits] Error fetching AI limits:", error);
       return null;
     }
-  }, [updateAILimits]);
+  }, [updateAILimits, fetchWithRetry]);
 
   // Check if we have cached analysis for the given key
   const getCachedAnalysis = useCallback((cacheKey) => {
