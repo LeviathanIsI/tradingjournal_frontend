@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useParams } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
+import { useTradingStats } from "../../context/TradingStatsContext";
 import {
   Edit,
   UserPlus,
@@ -18,6 +19,9 @@ import Network from "./Network";
 const Profile = () => {
   const { username } = useParams();
   const { user: currentUser } = useAuth();
+  const { stats: contextStats, formatters } = useTradingStats();
+  const { formatPercent } = formatters;
+
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -129,6 +133,9 @@ const Profile = () => {
   const isOwnProfile = currentUser?.username === profile.user.username;
   const isFollowing = profile.user.followers?.includes(currentUser?._id);
 
+  // Use the correct stats source based on whether this is the current user's profile
+  const stats = isOwnProfile ? contextStats : profile.stats;
+
   return (
     <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-8">
       {/* Profile Header */}
@@ -171,11 +178,11 @@ const Profile = () => {
           )}
         </div>
 
-        {/* Stats */}
+        {/* Stats - Now using the correct stats source */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-6 pt-6 border-t dark:border-gray-600/50">
           <div className="text-center p-2 sm:p-0">
             <p className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-gray-100">
-              {profile.stats?.totalTrades || 0}
+              {stats?.totalTrades || 0}
             </p>
             <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">
               Trades
@@ -183,7 +190,7 @@ const Profile = () => {
           </div>
           <div className="text-center p-2 sm:p-0">
             <p className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-gray-100">
-              {profile.stats?.winRate?.toFixed(1) || 0}%
+              {formatPercent(stats?.winRate || 0)}
             </p>
             <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">
               Win Rate
