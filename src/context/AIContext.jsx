@@ -57,10 +57,6 @@ export const AIProvider = ({ children }) => {
 
           const retryAfter = errorData.retryAfter || (retries + 1) * 2;
 
-          console.log(
-            `API temporarily unavailable. Retrying in ${retryAfter} seconds...`
-          );
-
           // Wait for the suggested retry time
           await new Promise((resolve) =>
             setTimeout(resolve, retryAfter * 1000)
@@ -77,10 +73,7 @@ export const AIProvider = ({ children }) => {
         if (retries === maxRetries - 1) throw error;
 
         retries++;
-        const backoffTime = Math.pow(2, retries) * 1000; // 2, 4, 8 seconds
-        console.log(
-          `Network request failed, retrying in ${backoffTime / 1000} seconds...`
-        );
+        const backoffTime = Math.pow(2, retries) * 1000;
         await new Promise((resolve) => setTimeout(resolve, backoffTime));
       }
     }

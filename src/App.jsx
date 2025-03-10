@@ -19,8 +19,9 @@ import { AIProvider } from "./context/AIContext";
 import { ToastProvider } from "./context/ToastContext";
 import { useAuth } from "./context/AuthContext";
 import { ThemeProvider } from "./context/ThemeContext";
-import { TradingStatsProvider } from "./context/TradingStatsContext"; // Import the TradingStatsProvider
-// import { StudyGroupProvider } from "./context/StudyGroupContext";
+import { TradingStatsProvider } from "./context/TradingStatsContext";
+import { StudyGroupProvider } from "./context/StudyGroupContext";
+import { NotificationProvider } from "./context/NotificationsContext";
 import Navbar from "./components/Navbar";
 
 // Eagerly loaded components (critical UI)
@@ -43,6 +44,18 @@ const WeeklyReview = React.lazy(() =>
 const GoogleAuthSuccess = React.lazy(() => import("./pages/GoogleAuthSuccess"));
 const Profile = React.lazy(() => import("./components/Community/Profile.jsx"));
 const AIInsights = React.lazy(() => import("./pages/AIInsights"));
+const Notifications = React.lazy(() => import("./pages/Notifications"));
+
+// Lazy loaded study group components - individual imports
+const StudyGroups = React.lazy(() =>
+  import("./components/StudyGroup/StudyGroups.jsx")
+);
+const CreateStudyGroup = React.lazy(() =>
+  import("./components/StudyGroup/CreateStudyGroup.jsx")
+);
+const StudyGroupDetail = React.lazy(() =>
+  import("./components/StudyGroup/StudyGroupDetail.jsx")
+);
 
 // Loading fallback for suspense
 const LoadingFallback = () => (
@@ -120,6 +133,30 @@ const SubscriptionRoute = ({ children, allowFree = false }) => {
   }
 
   return <Navigate to="/pricing" state={{ from: location }} replace />;
+};
+
+// New Admin Route component
+const AdminRoute = ({ children }) => {
+  const { isAuthenticated, isLoading, user } = useAccessControl();
+  const location = useLocation();
+
+  if (isLoading) {
+    return <LoadingFallback />;
+  }
+
+  if (!isAuthenticated) {
+    return <Navigate to="/login" state={{ from: location }} replace />;
+  }
+
+  // Check if user has admin access
+  if (
+    user?.specialAccess?.hasAccess &&
+    user?.specialAccess?.reason === "Admin"
+  ) {
+    return <Suspense fallback={<LoadingFallback />}>{children}</Suspense>;
+  }
+
+  return <Navigate to="/dashboard" state={{ from: location }} replace />;
 };
 
 const ProtectedRoute = ({ children }) => {
@@ -219,6 +256,16 @@ function AppRoutes() {
         }
       />
 
+      {/* Notifications page */}
+      <Route
+        path="/notifications"
+        element={
+          <ProtectedRoute>
+            <Notifications />
+          </ProtectedRoute>
+        }
+      />
+
       {/* Subscription routes */}
       <Route
         path="/dashboard/*"
@@ -253,31 +300,31 @@ function AppRoutes() {
         }
       />
 
-      {/* Study Group Routes */}
-      {/* <Route
-        path="/study-groups"
-        element={
-          <SubscriptionRoute>
-            <StudyGroups />
-          </SubscriptionRoute>
-        }
-      /> */}
-      {/* <Route
+      {/* Study Group Routes - Still only accessible to admin users, but placed with community features */}
+      <Route
         path="/study-groups/create"
         element={
-          <SubscriptionRoute>
+          <AdminRoute>
             <CreateStudyGroup />
-          </SubscriptionRoute>
+          </AdminRoute>
         }
-      /> */}
-      {/* <Route
+      />
+      <Route
+        path="/study-groups"
+        element={
+          <AdminRoute>
+            <StudyGroups />
+          </AdminRoute>
+        }
+      />
+      <Route
         path="/study-groups/:id"
         element={
-          <SubscriptionRoute>
+          <AdminRoute>
             <StudyGroupDetail />
-          </SubscriptionRoute>
+          </AdminRoute>
         }
-      /> */}
+      />
     </Routes>
   );
 }
@@ -290,16 +337,19 @@ const App = React.memo(() => {
         <AuthProvider>
           <ThemeProvider>
             <AIProvider>
-              {/* Add TradingStatsProvider here, inside AIProvider and before content */}
               <TradingStatsProvider>
-                {/* <StudyGroupProvider> */}
-                <div className="min-h-screen min-w-[320px] bg-white dark:bg-gray-800/70 text-gray-900 dark:text-gray-100">
-                  <Navbar />
-                  <div className="pt-16">
-                    <AppRoutes />
-                  </div>
-                </div>
-                {/* </StudyGroupProvider> */}
+                <StudyGroupProvider>
+                  <NotificationProvider>
+                    {" "}
+                    {/* Added NotificationProvider */}
+                    <div className="min-h-screen min-w-[320px] bg-white dark:bg-gray-800/70 text-gray-900 dark:text-gray-100">
+                      <Navbar />
+                      <div className="pt-16">
+                        <AppRoutes />
+                      </div>
+                    </div>
+                  </NotificationProvider>
+                </StudyGroupProvider>
               </TradingStatsProvider>
             </AIProvider>
           </ThemeProvider>

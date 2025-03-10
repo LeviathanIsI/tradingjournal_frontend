@@ -121,16 +121,16 @@ const Leaderboard = () => {
       topWinRate: {
         value: formatPercent(topWinRateTrader.stats?.winRate || 0),
         color: "text-blue-500",
-        detail: `(${topWinRateTrader.stats?.winningTrades || 0} W / ${
-          topWinRateTrader.stats?.losingTrades || 0
-        } L)`,
+        detail: `${topWinRateTrader.username} (${
+          topWinRateTrader.stats?.winningTrades || 0
+        } W / ${topWinRateTrader.stats?.losingTrades || 0} L)`,
       },
       bestWinLossRatio: {
         value: (bestRatioTrader.stats?.winLossRatio || 0).toFixed(2),
         color: "text-purple-500",
-        detail: `(${bestRatioTrader.stats?.winningTrades || 0} W / ${
-          bestRatioTrader.stats?.losingTrades || 0
-        } L)`,
+        detail: `${bestRatioTrader.username} (${
+          bestRatioTrader.stats?.winningTrades || 0
+        } W / ${bestRatioTrader.stats?.losingTrades || 0} L)`,
       },
     };
   };

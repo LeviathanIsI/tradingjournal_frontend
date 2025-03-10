@@ -1,8 +1,9 @@
-// src/components/Navbar/MobileMenu.jsx
 import React from "react";
-import { Link } from "react-router-dom";
 import ThemeSwitcher from "../ThemeSwitcher";
 import NavLink from "./NavLink";
+import { Bell } from "lucide-react";
+import { useNotifications } from "../../context/NotificationsContext";
+import { Link } from "react-router-dom";
 
 const MobileMenu = ({
   isOpen,
@@ -13,6 +14,8 @@ const MobileMenu = ({
 }) => {
   const linkStyle =
     "block px-4 py-3 text-gray-300 hover:bg-gray-800 rounded-md transition-colors";
+
+  const { unreadCount } = useNotifications();
 
   return (
     <div
@@ -66,6 +69,24 @@ const MobileMenu = ({
                       </NavLink>
                     </>
                   )}
+
+                  {/* Notifications Link for Mobile */}
+                  <Link
+                    to="/notifications"
+                    className={`${linkStyle} flex items-center justify-between`}
+                    onClick={() => setIsOpen(false)}
+                  >
+                    <div className="flex items-center">
+                      <Bell className="h-5 w-5 mr-2" />
+                      <span>Notifications</span>
+                    </div>
+                    {unreadCount > 0 && (
+                      <span className="bg-blue-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                        {unreadCount > 9 ? "9+" : unreadCount}
+                      </span>
+                    )}
+                  </Link>
+
                   <NavLink to="/profile" className={linkStyle}>
                     Profile
                   </NavLink>

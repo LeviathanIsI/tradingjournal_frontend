@@ -301,16 +301,17 @@ const StudyGroupDetail = () => {
             )}
           </div>
         </div>
-        {(isCreator || isMember) && (
-          <div className="flex space-x-2">
-            <button
-              onClick={() => setShowInviteForm(true)}
-              className="px-3 py-2 bg-green-500 hover:bg-green-600 dark:bg-green-600 dark:hover:bg-green-500 text-white rounded-md flex items-center text-sm transition-colors"
-            >
-              <UserPlus size={16} className="mr-1.5" />
-              Invite Members
-            </button>
-            {isCreator && (
+        {/* Only show these buttons to creator or members with appropriate permissions */}
+        <div className="flex space-x-2">
+          {isCreator && (
+            <>
+              <button
+                onClick={() => setShowInviteForm(true)}
+                className="px-3 py-2 bg-green-500 hover:bg-green-600 dark:bg-green-600 dark:hover:bg-green-500 text-white rounded-md flex items-center text-sm transition-colors"
+              >
+                <UserPlus size={16} className="mr-1.5" />
+                Invite Members
+              </button>
               <button
                 onClick={() => setShowSessionForm(true)}
                 className="px-3 py-2 bg-blue-500 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-500 text-white rounded-md flex items-center text-sm transition-colors"
@@ -318,28 +319,44 @@ const StudyGroupDetail = () => {
                 <Calendar size={16} className="mr-1.5" />
                 Schedule Session
               </button>
-            )}
-          </div>
-        )}
+            </>
+          )}
+          {/* Allow members to see details but not edit */}
+          {isMember && !isCreator && (
+            <button
+              onClick={() => navigate(`/study-groups/${currentGroup._id}`)}
+              className="px-3 py-2 bg-blue-500 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-500 text-white rounded-md flex items-center text-sm transition-colors"
+            >
+              <Users size={16} className="mr-1.5" />
+              View Group
+            </button>
+          )}
+        </div>
       </div>
 
       {getEventDetails() &&
         new Date(getEventDetails().scheduledDate) < new Date() && (
           <div
             className="mb-6 px-4 py-3 rounded-sm bg-yellow-50 dark:bg-yellow-900/20 
-                border border-yellow-200 dark:border-yellow-800/30 
-                text-yellow-800 dark:text-yellow-300 flex items-center"
+          border border-yellow-200 dark:border-yellow-800/30 
+          text-yellow-800 dark:text-yellow-300 flex items-center"
           >
             <Clock className="h-5 w-5 mr-2" />
             <div>
               <p className="font-medium">This event has already passed</p>
               <p className="text-sm mt-1">
                 Would you like to{" "}
-                <a href="/study-groups/create" className="underline">
+                <a
+                  href="/study-groups/create"
+                  className="underline hover:text-yellow-600 dark:hover:text-yellow-200"
+                >
                   create a new study event
-                </a>
+                </a>{" "}
                 or{" "}
-                <a href="/study-groups" className="underline">
+                <a
+                  href="/study-groups"
+                  className="underline hover:text-yellow-600 dark:hover:text-yellow-200"
+                >
                   browse upcoming events
                 </a>
                 ?
@@ -449,9 +466,7 @@ const StudyGroupDetail = () => {
       <InvitationModal
         showInviteForm={showInviteForm}
         setShowInviteForm={setShowInviteForm}
-        inviteEmail={inviteEmail}
-        setInviteEmail={setInviteEmail}
-        handleInviteSubmit={handleInviteSubmit}
+        groupId={id}
       />
 
       <SessionModal
