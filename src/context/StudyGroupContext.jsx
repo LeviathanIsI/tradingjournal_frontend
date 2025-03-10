@@ -1,118 +1,224 @@
-// src/context/StudyGroupContext.jsx
-import React, {
-  createContext,
-  useState,
-  useContext,
-  useCallback,
-  useMemo,
-  useRef,
-} from "react";
+import React, { createContext, useContext, useState, useCallback } from "react";
 import axios from "axios";
-import { useAuth } from "./AuthContext";
 import { useToast } from "./ToastContext";
 
 const StudyGroupContext = createContext();
 
-export const StudyGroupProvider = ({ children }) => {
-  // Use useRef for stable references to state setters
-  const stateRef = useRef({
-    studyGroups: [],
-    currentGroup: null,
-    loading: false,
-    error: null,
-  });
+export const useStudyGroups = () => useContext(StudyGroupContext);
 
-  // Actual state (UI will re-render when these change)
-  const [studyGroups, setStudyGroups] = useState([]);
-  const [currentGroup, setCurrentGroup] = useState(null);
+export const StudyGroupProvider = ({ children }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-
-  // Update refs when state changes
-  stateRef.current = {
-    studyGroups,
-    currentGroup,
-    loading,
-    error,
-  };
-
-  const { user } = useAuth();
+  const [studyGroups, setStudyGroups] = useState([]);
+  const [currentGroup, setCurrentGroup] = useState(null);
   const { showToast } = useToast();
+  const API_URL = import.meta.env.VITE_API_URL;
 
-  // Keep a stable reference to API_URL
-  const API_URL = useRef(import.meta.env.VITE_API_URL).current;
-
-  // Helper function to handle errors consistently
-  const handleError = (err, message) => {
-    console.error(`${message}:`, err);
-    if (err.response) {
-      console.error("Response data:", err.response.data);
-      console.error("Status:", err.response.status);
-    }
-    setError(err.response?.data?.error || message);
-    showToast(message, "error");
-    setLoading(false);
-  };
-
+  // Fetch all study groups
   const fetchStudyGroups = useCallback(
-    async (includePublic = false) => {
-      if (stateRef.current.loading) return;
-
+    async (includePublic = true) => {
       try {
         setLoading(true);
+        setError(null);
+
+        // Clear the current group when fetching all groups
+        setCurrentGroup(null);
+
         const token = localStorage.getItem("token");
+        const url = `${API_URL}/api/study-groups?includePublic=${includePublic}`;
 
-        const res = await axios.get(
-          `${API_URL}/api/study-groups?includePublic=${includePublic}`,
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
-
-        const data = res.data.data || [];
-        setStudyGroups(data);
-        setLoading(false);
-        return data;
-      } catch (err) {
-        handleError(err, "Failed to fetch study groups");
-        return [];
-      }
-    },
-    [API_URL, showToast]
-  );
-
-  // Fetch a single study group by ID
-  const fetchStudyGroup = useCallback(
-    async (id) => {
-      if (stateRef.current.loading) return;
-
-      try {
-        setLoading(true);
-        const token = localStorage.getItem("token");
-
-        const res = await axios.get(`${API_URL}/api/study-groups/${id}`, {
-          headers: { Authorization: `Bearer ${token}` },
+        const response = await axios.get(url, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         });
 
-        setCurrentGroup(res.data.data);
-        setLoading(false);
-        return res.data.data;
+        setStudyGroups(response.data.data || []);
       } catch (err) {
-        handleError(err, "Failed to fetch study group");
-        return null;
+        console.error("Error fetching study groups:", err);
+        setError("Failed to load study groups");
+        showToast("Failed to load study groups", "error");
+      } finally {
+        setLoading(false);
       }
     },
     [API_URL, showToast]
   );
 
-  const updateStudyGroup = useCallback(
-    async (id, updateData) => {
-      if (stateRef.current.loading) return;
+  // Fetch a specific study group by ID
+  const fetchStudyGroup = useCallback(
+    async (groupId) => {
+      // Only proceed if we have a valid group ID
+      if (!groupId) {
+        setCurrentGroup(null);
+        setError("No study group ID provided");
+        return;
+      }
 
       try {
         setLoading(true);
-        const token = localStorage.getItem("token");
+        setError(null);
 
-        const res = await axios.patch(
-          `${API_URL}/api/study-groups/${id}`,
+        const token = localStorage.getItem("token");
+        const response = await axios.get(
+          `${API_URL}/api/study-groups/${groupId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        setCurrentGroup(response.data.data);
+      } catch (err) {
+        console.error(`Error fetching study group ${groupId}:`, err);
+        setError("Failed to load study group");
+        showToast("Failed to load study group details", "error");
+        setCurrentGroup(null);
+      } finally {
+        setLoading(false);
+      }
+    },
+    [API_URL, showToast]
+  );
+
+  // Get available users to invite to a study group
+  const getAvailableUsers = useCallback(
+    async (groupId) => {
+      if (!groupId) {
+        setError("No study group ID provided");
+        return [];
+      }
+
+      try {
+        setLoading(true);
+        setError(null);
+
+        const token = localStorage.getItem("token");
+        const response = await axios.get(
+          `${API_URL}/api/study-groups/${groupId}/available-users`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        return response.data.data || [];
+      } catch (err) {
+        console.error(
+          `Error fetching available users for group ${groupId}:`,
+          err
+        );
+        setError("Failed to load available users");
+        showToast("Failed to load available users", "error");
+        return [];
+      } finally {
+        setLoading(false);
+      }
+    },
+    [API_URL, showToast]
+  );
+
+  // Invite a user to a study group
+  const inviteToGroup = useCallback(
+    async (groupId, email) => {
+      if (!groupId) {
+        setError("No study group ID provided");
+        throw new Error("No study group ID provided");
+      }
+
+      if (!email) {
+        setError("Email is required");
+        throw new Error("Email is required");
+      }
+
+      try {
+        setLoading(true);
+        setError(null);
+
+        const token = localStorage.getItem("token");
+        const response = await axios.post(
+          `${API_URL}/api/study-groups/${groupId}/invite`,
+          { email },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        // If we have the current group loaded and it's the same one we're inviting to,
+        // update its invitees list
+        if (currentGroup && currentGroup._id === groupId) {
+          setCurrentGroup({
+            ...currentGroup,
+            invitees: response.data.data || currentGroup.invitees,
+          });
+        }
+
+        return response.data.data;
+      } catch (err) {
+        console.error(`Error inviting user to group ${groupId}:`, err);
+        setError(err.response?.data?.error || "Failed to send invitation");
+        showToast(
+          err.response?.data?.error || "Failed to send invitation",
+          "error"
+        );
+        throw err;
+      } finally {
+        setLoading(false);
+      }
+    },
+    [API_URL, currentGroup, showToast]
+  );
+
+  const getUserProfileInfo = useCallback((userId, username) => {
+    return { userId, username };
+  }, []);
+
+  // Create a new study group
+  const createStudyGroup = useCallback(
+    async (groupData) => {
+      try {
+        setLoading(true);
+        setError(null);
+
+        const token = localStorage.getItem("token");
+        const response = await axios.post(
+          `${API_URL}/api/study-groups`,
+          groupData,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        // Update the study groups list
+        setStudyGroups((prevGroups) => [...prevGroups, response.data.data]);
+
+        showToast("Study group created successfully", "success");
+        return response.data.data;
+      } catch (err) {
+        console.error("Error creating study group:", err);
+        setError("Failed to create study group");
+        showToast("Failed to create study group", "error");
+        throw err;
+      } finally {
+        setLoading(false);
+      }
+    },
+    [API_URL, showToast]
+  );
+
+  // Update a study group
+  const updateStudyGroup = useCallback(
+    async (groupId, updateData) => {
+      try {
+        const token = localStorage.getItem("token");
+        const response = await axios.patch(
+          `${API_URL}/api/study-groups/${groupId}`,
           updateData,
           {
             headers: {
@@ -121,100 +227,79 @@ export const StudyGroupProvider = ({ children }) => {
           }
         );
 
-        const updatedGroup = res.data.data;
-
-        // Update the groups list if it exists there
-        setStudyGroups((prev) =>
-          prev.map((group) => (group._id === id ? updatedGroup : group))
-        );
-
-        // Update current group if it's the one being edited
-        if (stateRef.current.currentGroup?._id === id) {
-          setCurrentGroup(updatedGroup);
+        // Update the current group if it's the one being edited
+        if (currentGroup && currentGroup._id === groupId) {
+          setCurrentGroup(response.data.data);
         }
 
-        setLoading(false);
-        return updatedGroup;
+        // Update the group in the study groups list
+        setStudyGroups((prevGroups) =>
+          prevGroups.map((group) =>
+            group._id === groupId ? response.data.data : group
+          )
+        );
+
+        showToast("Study group updated successfully", "success");
+        return response.data.data;
       } catch (err) {
-        console.error("Error updating study group:", err);
-        setError(err.response?.data?.error || "Failed to update study group");
+        console.error(`Error updating study group ${groupId}:`, err);
         showToast("Failed to update study group", "error");
-        setLoading(false);
         throw err;
       }
     },
-    [API_URL, showToast]
+    [API_URL, currentGroup, showToast]
   );
 
-  const createStudyGroup = useCallback(
-    async (groupData) => {
-      if (stateRef.current.loading) return;
-
+  // Delete a study group
+  const deleteStudyGroup = useCallback(
+    async (groupId) => {
       try {
-        setLoading(true);
         const token = localStorage.getItem("token");
-
-        const res = await axios.post(`${API_URL}/api/study-groups`, groupData, {
+        await axios.delete(`${API_URL}/api/study-groups/${groupId}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
 
-        const newGroup = res.data.data;
-        setStudyGroups((prev) => [newGroup, ...prev]);
-        showToast("Study group created successfully", "success");
-        setLoading(false);
-        return newGroup;
+        // Remove from state
+        setStudyGroups((prevGroups) =>
+          prevGroups.filter((group) => group._id !== groupId)
+        );
+
+        // Clear current group if it's the one being deleted
+        if (currentGroup && currentGroup._id === groupId) {
+          setCurrentGroup(null);
+        }
+
+        showToast("Study group deleted successfully", "success");
       } catch (err) {
-        console.error("Error creating study group:", err);
-        setError(err.response?.data?.error || "Failed to create study group");
-        showToast("Failed to create study group", "error");
-        setLoading(false);
+        console.error(`Error deleting study group ${groupId}:`, err);
+        showToast("Failed to delete study group", "error");
         throw err;
       }
     },
-    [API_URL, showToast]
+    [API_URL, currentGroup, showToast]
   );
 
-  // Create a stable context value that only changes when the deps change
-  const contextValue = useMemo(
-    () => ({
-      studyGroups,
-      currentGroup,
-      loading,
-      error,
-      fetchStudyGroups,
-      fetchStudyGroup,
-      createStudyGroup,
-      updateStudyGroup,
-    }),
-    [
-      studyGroups,
-      currentGroup,
-      loading,
-      error,
-      fetchStudyGroups,
-      fetchStudyGroup,
-      createStudyGroup,
-      updateStudyGroup,
-    ]
-  );
-
-  // Log only once per render
-  if (process.env.NODE_ENV === "development") {
-  }
+  const contextValue = {
+    loading,
+    error,
+    studyGroups,
+    currentGroup,
+    setCurrentGroup,
+    fetchStudyGroups,
+    fetchStudyGroup,
+    createStudyGroup,
+    updateStudyGroup,
+    deleteStudyGroup,
+    getUserProfileInfo,
+    getAvailableUsers,
+    inviteToGroup,
+  };
 
   return (
     <StudyGroupContext.Provider value={contextValue}>
       {children}
     </StudyGroupContext.Provider>
   );
-};
-
-export const useStudyGroups = () => {
-  const context = useContext(StudyGroupContext);
-  if (!context) {
-    throw new Error("useStudyGroups must be used within a StudyGroupProvider");
-  }
-  return context;
 };

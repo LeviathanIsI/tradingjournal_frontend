@@ -1,8 +1,8 @@
-// src/components/Navbar/DesktopMenu.jsx
 import React from "react";
 import { Link } from "react-router-dom";
 import ThemeSwitcher from "../ThemeSwitcher";
 import NavLink from "./NavLink";
+import NotificationBell from "./NotificationBell";
 
 const DesktopMenu = ({ user, hasAccessToFeature, handleLogout }) => {
   // Styles for links
@@ -45,6 +45,7 @@ const DesktopMenu = ({ user, hasAccessToFeature, handleLogout }) => {
           )}
 
           <ThemeSwitcher />
+          <NotificationBell />
           <div className="border-l border-gray-700 h-6 mx-2"></div>
           <span className="text-gray-300 px-3 py-2 text-sm">
             Welcome, {user.username}

@@ -31,39 +31,7 @@ const SubscriptionManagement = () => {
     },
   };
 
-  useEffect(() => {
-    let mounted = true;
-    let retryTimeout;
-
-    const loadSubscription = async () => {
-      // Prevent multiple attempts if already loading
-      if (loadingAttemptedRef.current) return;
-      loadingAttemptedRef.current = true;
-
-      try {
-        if (mounted) {
-          await checkSubscriptionStatus();
-          setIsLoading(false);
-        }
-      } catch (error) {
-        console.error("Error loading subscription:", error);
-        if (mounted) {
-          showToast(
-            "Error loading subscription status. Please refresh the page.",
-            "error"
-          );
-          setIsLoading(false);
-        }
-      }
-    };
-
-    loadSubscription();
-
-    return () => {
-      mounted = false;
-      if (retryTimeout) clearTimeout(retryTimeout);
-    };
-  }, [checkSubscriptionStatus, showToast]);
+  z
 
   if (isSubscriptionLoading && !user?.subscription) {
     return (

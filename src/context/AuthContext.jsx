@@ -319,6 +319,32 @@ export const AuthProvider = ({ children }) => {
       setSubscription(completeUserData.subscription);
     }
 
+    // Load special access data immediately
+    try {
+      const token = userData.token;
+      const specialAccessResponse = await fetch(
+        `${import.meta.env.VITE_API_URL}/api/auth/me/special-access`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      if (specialAccessResponse.ok) {
+        const data = await specialAccessResponse.json();
+        const specialAccess = {
+          hasAccess: data.hasSpecialAccess,
+          expiresAt: null,
+          reason: data.reason || "other",
+        };
+
+        // Update user with special access data
+        updateUser({ specialAccess });
+      }
+    } catch (error) {
+      console.error("Error loading special access during login:", error);
+      // Continue login flow even if special access fails
+    }
+
     if (showWelcome) {
       try {
         // Get user's timezone from preferences or use UTC as fallback

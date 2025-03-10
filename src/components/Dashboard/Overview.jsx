@@ -9,10 +9,191 @@ import {
   Clock,
   Calendar,
 } from "lucide-react";
-import getTradeInsights from "../../utils/getTradeInsights";
+import { useTradingStats } from "../../context/TradingStatsContext";
 
 const TradingInsights = ({ trades, stats }) => {
-  const insights = getTradeInsights(trades, stats);
+  // Generate insights based on trading data
+  const generateInsights = (trades = [], stats = {}) => {
+    // Guard clause: need at least some trades and stats data
+    if (!trades.length || !stats) {
+      return [];
+    }
+
+    const insights = [];
+
+    // Normalize stats to avoid undefined values
+    const normalizedStats = {
+      totalTrades: stats.totalTrades || 0,
+      winRate: stats.winRate || 0,
+      winLossRatio: stats.winLossRatio || 0,
+      totalProfit: stats.totalProfit || 0,
+      winningTrades: stats.winningTrades || 0,
+      losingTrades: stats.losingTrades || 0,
+    };
+
+    // Only generate insights if we have enough trades for meaningful analysis
+    if (normalizedStats.totalTrades < 5) {
+      insights.push({
+        icon: "Clock",
+        color: "blue",
+        message:
+          "Add more trades to unlock deeper insights into your trading patterns.",
+      });
+      return insights;
+    }
+
+    // Win Rate Insights
+    if (normalizedStats.winRate >= 65) {
+      insights.push({
+        icon: "Award",
+        color: "green",
+        message: `Great job maintaining a ${Math.round(
+          normalizedStats.winRate
+        )}% win rate! Your strategy is working well.`,
+      });
+    } else if (
+      normalizedStats.winRate < 40 &&
+      normalizedStats.totalTrades >= 10
+    ) {
+      insights.push({
+        icon: "AlertTriangle",
+        color: "red",
+        message: `Your win rate of ${Math.round(
+          normalizedStats.winRate
+        )}% is below average. Consider reviewing your entry criteria.`,
+      });
+    }
+
+    // Win/Loss Ratio Insights
+    if (normalizedStats.winLossRatio >= 2) {
+      insights.push({
+        icon: "Target",
+        color: "green",
+        message: `Your win/loss ratio of ${normalizedStats.winLossRatio.toFixed(
+          2
+        )} shows you're maximizing profitable trades.`,
+      });
+    } else if (
+      normalizedStats.winLossRatio < 1 &&
+      normalizedStats.totalTrades >= 10
+    ) {
+      insights.push({
+        icon: "AlertTriangle",
+        color: "yellow",
+        message: `Your winners aren't compensating for your losers. Consider adjusting your position sizing.`,
+      });
+    }
+
+    // Trading Consistency
+    if (trades.length >= 10) {
+      // Check trading frequency and consistency
+      const lastTenTrades = trades.slice(0, 10);
+
+      // Sort trades by entry date
+      const sortedTrades = [...lastTenTrades].sort(
+        (a, b) => new Date(a.entryDate) - new Date(b.entryDate)
+      );
+
+      // Calculate days between trades
+      const tradingDays = [];
+      for (let i = 1; i < sortedTrades.length; i++) {
+        const currentDate = new Date(sortedTrades[i].entryDate);
+        const previousDate = new Date(sortedTrades[i - 1].entryDate);
+        const daysBetween = Math.round(
+          (currentDate - previousDate) / (1000 * 60 * 60 * 24)
+        );
+        tradingDays.push(daysBetween);
+      }
+
+      // Calculate standard deviation to measure consistency
+      const avgDays =
+        tradingDays.reduce((sum, days) => sum + days, 0) / tradingDays.length;
+      const variance =
+        tradingDays.reduce(
+          (sum, days) => sum + Math.pow(days - avgDays, 2),
+          0
+        ) / tradingDays.length;
+      const stdDev = Math.sqrt(variance);
+
+      // Check position sizing consistency
+      const positions = lastTenTrades.map(
+        (trade) => trade.quantity * (trade.entryPrice || 0)
+      );
+      const avgPosition =
+        positions.reduce((sum, pos) => sum + pos, 0) / positions.length;
+      const positionVariance =
+        positions.reduce(
+          (sum, pos) => sum + Math.pow(pos - avgPosition, 2),
+          0
+        ) / positions.length;
+      const positionStdDev = Math.sqrt(positionVariance);
+      const positionConsistency = positionStdDev / avgPosition;
+
+      // Determine if trading is consistent based on time between trades and position sizing
+      const isTimeConsistent = stdDev < avgDays * 0.5;
+      const isSizeConsistent = positionConsistency < 0.3;
+      const isConsistent = isTimeConsistent && isSizeConsistent;
+
+      if (isConsistent) {
+        insights.push({
+          icon: "Calendar",
+          color: "green",
+          message:
+            "You're trading consistently in both timing and position sizing. This discipline will benefit you long-term.",
+        });
+      } else if (isTimeConsistent) {
+        insights.push({
+          icon: "Calendar",
+          color: "yellow",
+          message:
+            "You trade at regular intervals, but your position sizing varies significantly. Consider standardizing your approach.",
+        });
+      } else if (isSizeConsistent) {
+        insights.push({
+          icon: "AlertTriangle",
+          color: "yellow",
+          message:
+            "Your position sizing is consistent, but your trading schedule is irregular. A consistent routine may improve results.",
+        });
+      } else {
+        insights.push({
+          icon: "AlertTriangle",
+          color: "yellow",
+          message:
+            "Your trading lacks consistency in timing and position sizing. A more structured approach might improve your results.",
+        });
+      }
+    }
+
+    // Consecutive Losses Warning
+    let maxConsecutiveLosses = 0;
+    let currentConsecutiveLosses = 0;
+
+    for (const trade of trades) {
+      if ((trade.profitLoss?.realized || 0) < 0) {
+        currentConsecutiveLosses++;
+        maxConsecutiveLosses = Math.max(
+          maxConsecutiveLosses,
+          currentConsecutiveLosses
+        );
+      } else {
+        currentConsecutiveLosses = 0;
+      }
+    }
+
+    if (maxConsecutiveLosses >= 3) {
+      insights.push({
+        icon: "AlertTriangle",
+        color: "red",
+        message: `Be careful - you've had ${maxConsecutiveLosses} consecutive losing trades recently.`,
+      });
+    }
+
+    // Limit to 4 insights maximum for UI space constraints
+    return insights.slice(0, 4);
+  };
+
+  const insights = generateInsights(trades, stats);
   const icons = {
     AlertTriangle,
     Award,
@@ -78,7 +259,22 @@ const TradingInsights = ({ trades, stats }) => {
   );
 };
 
-const Overview = ({ trades, stats }) => {
+const Overview = ({ trades }) => {
+  // Use the trading stats context
+  const { stats, formatters } = useTradingStats();
+  const { formatCurrency, formatPercent, formatRatio } = formatters || {
+    formatCurrency: (value) => {
+      return new Intl.NumberFormat("en-US", {
+        style: "currency",
+        currency: "USD",
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      }).format(value);
+    },
+    formatPercent: (value) => `${value.toFixed(1)}%`,
+    formatRatio: (value) => value.toFixed(2),
+  };
+
   // Calculate best winning streak
   const calculateBestStreak = (trades) => {
     let currentStreak = 0;
@@ -112,23 +308,6 @@ const Overview = ({ trades, stats }) => {
       const loss = trade.profitLoss?.realized || 0;
       return loss < min ? loss : min;
     }, 0) || 0;
-
-  // Format currency consistently
-  const formatCurrency = (value) => {
-    return new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: "USD",
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    }).format(value);
-  };
-
-  // Calculate win/loss ratio
-  const calculateWinLossRatio = () => {
-    if (!stats?.winRate || stats.winRate === 0) return 0;
-    const ratio = stats.winRate / (100 - stats.winRate);
-    return ratio.toFixed(2);
-  };
 
   return (
     <div className="space-y-4 sm:space-y-6">
@@ -187,7 +366,7 @@ const Overview = ({ trades, stats }) => {
             <TrendingUp className="h-4 w-4 text-blue-600 dark:text-blue-400" />
           </div>
           <div className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-gray-100">
-            {calculateWinLossRatio()}
+            {stats ? formatRatio(stats.winLossRatio) : "0.00"}
           </div>
           <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
             Win/Loss ratio

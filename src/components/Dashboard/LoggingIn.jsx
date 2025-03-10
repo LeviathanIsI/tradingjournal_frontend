@@ -105,7 +105,7 @@ const LoggingIn = () => {
       return {
         hasAccess: data.hasSpecialAccess,
         expiresAt: null,
-        reason: "other",
+        reason: data.reason || "other",
       };
     } catch (error) {
       console.error("Error loading special access data:", error);

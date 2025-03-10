@@ -16,7 +16,7 @@ const DashboardNav = () => {
     useAuth();
   const [hasPremium, setHasPremium] = useState(hasAccessToFeature("premium"));
 
-  // Define all navigation items
+  // Define all navigation items (Study Groups removed)
   const allNavItems = [
     {
       label: "Overview",
