@@ -31,8 +31,6 @@ const SubscriptionManagement = () => {
     },
   };
 
-  z
-
   if (isSubscriptionLoading && !user?.subscription) {
     return (
       <div className="bg-white dark:bg-gray-700/60 p-6 rounded-md border border-gray-200 dark:border-gray-600/50 shadow-sm">
