@@ -192,17 +192,18 @@ const PredictiveAnalysis = () => {
 
   return (
     <div className="max-w-6xl mx-auto">
-      <h2 className="text-2xl font-semibold text-gray-900 dark:text-gray-100 mb-6">
+      <h2 className="flex items-center text-2xl font-semibold text-gray-900 dark:text-gray-100 mb-6">
+        <div className="h-6 w-1.5 bg-primary rounded-full mr-3"></div>
         Predictive Trade Analysis
       </h2>
 
       {!analysisStarted && (
-        <div className="bg-white dark:bg-gray-700/80 rounded-md shadow-sm p-8 text-center mb-6">
-          <Zap className="h-12 w-12 mx-auto mb-4 text-blue-400 dark:text-blue-500" />
-          <p className="text-lg text-gray-800 dark:text-gray-200 mb-3">
+        <div className="bg-gradient-to-br from-white/95 to-gray-50/90 dark:from-gray-800/60 dark:to-gray-700/50 rounded-lg shadow-sm p-8 text-center mb-6 border border-gray-200 dark:border-gray-700/40 backdrop-blur-sm">
+          <Zap className="h-12 w-12 mx-auto mb-4 text-primary" />
+          <p className="text-lg text-gray-800 dark:text-gray-200 mb-3 font-medium">
             Discover Alternative Trade Outcomes
           </p>
-          <p className="text-sm text-gray-600 dark:text-gray-400 mb-6">
+          <p className="text-sm text-gray-600 dark:text-gray-400 mb-6 max-w-2xl mx-auto">
             Select a trade and scenario to see what could have happened with
             different entry, exit, or risk management strategies
           </p>
@@ -211,7 +212,7 @@ const PredictiveAnalysis = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Left Side - Trade Selection */}
-        <div className="lg:col-span-1 bg-white dark:bg-gray-700/80 rounded-md shadow-sm p-4">
+        <div className="lg:col-span-1 bg-white/90 dark:bg-gray-800/60 rounded-lg shadow-sm p-4 border border-gray-200 dark:border-gray-700/40 backdrop-blur-sm">
           <div className="mb-4">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-500 h-5 w-5" />
@@ -220,22 +221,24 @@ const PredictiveAnalysis = () => {
                 placeholder="Search trades..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600/70 rounded-sm 
-  bg-white dark:bg-gray-600/50 text-gray-900 dark:text-gray-100 
-  focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-transparent
-  placeholder-gray-500 dark:placeholder-gray-400"
+                className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600/70 rounded-md 
+                bg-white dark:bg-gray-700/40 text-gray-900 dark:text-gray-100 
+                focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent
+                placeholder-gray-500 dark:placeholder-gray-400"
               />
             </div>
           </div>
 
           <div className="mb-4">
-            <h3 className="font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <h3 className="font-medium text-gray-700 dark:text-gray-300 mb-3 flex items-center">
+              <div className="h-4 w-1 bg-secondary rounded-full mr-2"></div>
               Select a trade to analyze:
             </h3>
 
-            <div className="overflow-y-auto max-h-[55vh]">
+            <div className="overflow-y-auto max-h-[55vh] pr-1">
               {filteredTrades.length === 0 ? (
-                <div className="text-center py-8 text-gray-500 dark:text-gray-400">
+                <div className="text-center py-8 text-gray-500 dark:text-gray-400 bg-gray-50/50 dark:bg-gray-700/20 rounded-lg border border-dashed border-gray-300 dark:border-gray-600/50">
+                  <Search className="h-8 w-8 mx-auto mb-2 opacity-40" />
                   No trades found
                 </div>
               ) : (
@@ -243,12 +246,12 @@ const PredictiveAnalysis = () => {
                   {filteredTrades.map((trade) => (
                     <div
                       key={trade._id}
-                      className={`p-3 rounded-sm cursor-pointer transition-colors duration-150 
-  hover:bg-gray-50 dark:hover:bg-gray-600/40 border border-transparent ${
-    selectedTrade?._id === trade._id
-      ? "bg-blue-50 dark:bg-blue-700/30 border border-blue-200 dark:border-blue-700/70"
-      : "hover:bg-gray-50 dark:hover:bg-gray-600/40 border border-transparent"
-  }`}
+                      className={`p-3 rounded-md cursor-pointer transition-all duration-150 
+                      hover:bg-gray-50 dark:hover:bg-gray-700/40 border ${
+                        selectedTrade?._id === trade._id
+                          ? "bg-primary/5 dark:bg-primary/10 border-primary/30 dark:border-primary/40 shadow-sm"
+                          : "border-gray-200 dark:border-gray-700/40 hover:border-gray-300 dark:hover:border-gray-600"
+                      }`}
                       onClick={() => setSelectedTrade(trade)}
                     >
                       <div className="flex justify-between items-start">
@@ -256,12 +259,12 @@ const PredictiveAnalysis = () => {
                           {trade.symbol || trade.ticker}
                         </div>
                         <div
-                          className={`px-2 py-0.5 text-xs rounded-sm ${
+                          className={`px-2 py-0.5 text-xs rounded-full ${
                             trade.profitLoss?.realized > 0
-                              ? "bg-green-100 dark:bg-green-700/30 text-green-800 dark:text-green-300"
+                              ? "bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300"
                               : trade.profitLoss?.realized < 0
-                              ? "bg-red-100 dark:bg-red-700/30 text-red-800 dark:text-red-300"
-                              : "bg-gray-100 dark:bg-gray-600/40 text-gray-800 dark:text-gray-300"
+                              ? "bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300"
+                              : "bg-gray-100 dark:bg-gray-700/40 text-gray-800 dark:text-gray-300"
                           }`}
                         >
                           {trade.profitLoss?.realized > 0
@@ -284,9 +287,9 @@ const PredictiveAnalysis = () => {
                           <span
                             className={
                               trade.profitLoss?.realized > 0
-                                ? "text-green-600 dark:text-green-400"
+                                ? "text-green-600 dark:text-green-400 font-medium"
                                 : trade.profitLoss?.realized < 0
-                                ? "text-red-600 dark:text-red-400"
+                                ? "text-red-600 dark:text-red-400 font-medium"
                                 : "text-gray-600 dark:text-gray-400"
                             }
                           >
@@ -315,9 +318,9 @@ const PredictiveAnalysis = () => {
         {/* Right Side - Analysis Display with Integrated Scenario Selection */}
         <div className="lg:col-span-2">
           {loading ? (
-            <div className="bg-white dark:bg-gray-700/80 rounded-md shadow-sm p-8">
+            <div className="bg-white/90 dark:bg-gray-800/60 rounded-lg shadow-sm p-8 border border-gray-200 dark:border-gray-700/40 backdrop-blur-sm">
               <div className="flex flex-col items-center justify-center py-12">
-                <Loader className="animate-spin h-10 w-10 text-blue-500 mb-4" />
+                <Loader className="animate-spin h-10 w-10 text-primary mb-4" />
                 <p className="text-gray-600 dark:text-gray-400">
                   Running predictive analysis...
                 </p>
@@ -328,7 +331,7 @@ const PredictiveAnalysis = () => {
               </div>
             </div>
           ) : error ? (
-            <div className="bg-red-50 dark:bg-red-700/30 p-6 rounded-md border border-red-100 dark:border-red-600/50 shadow-sm text-red-600 dark:text-red-300">
+            <div className="bg-red-50/90 dark:bg-red-900/20 p-6 rounded-lg border border-red-200 dark:border-red-800/50 shadow-sm text-red-600 dark:text-red-300 backdrop-blur-sm">
               <div className="flex items-center mb-4">
                 <AlertTriangle className="h-5 w-5 mr-2" />
                 <h3 className="font-medium">Analysis Error</h3>
@@ -336,13 +339,13 @@ const PredictiveAnalysis = () => {
               <p>{error}</p>
               <button
                 onClick={resetAnalysis}
-                className="mt-4 px-4 py-2 bg-red-100 dark:bg-red-700/40 text-red-700 dark:text-red-300 rounded-sm"
+                className="mt-4 px-4 py-2 bg-red-100 dark:bg-red-900/40 text-red-700 dark:text-red-300 rounded-md hover:bg-red-200 dark:hover:bg-red-800/40 transition-colors"
               >
                 Try Again
               </button>
             </div>
           ) : !selectedTrade ? (
-            <div className="bg-white dark:bg-gray-700/80 rounded-md shadow-sm p-8 text-center">
+            <div className="bg-white/90 dark:bg-gray-800/60 rounded-lg shadow-sm p-8 text-center border border-gray-200 dark:border-gray-700/40 backdrop-blur-sm">
               <div className="text-gray-500 dark:text-gray-400 mb-2">
                 <HelpCircle className="h-12 w-12 mx-auto mb-4 text-gray-400 dark:text-gray-500" />
                 <p className="text-lg">Select a trade from the list</p>
@@ -355,8 +358,9 @@ const PredictiveAnalysis = () => {
           ) : (
             <div className="flex flex-col space-y-6">
               {/* Scenario Selection moved here - prominently displayed */}
-              <div className="bg-white dark:bg-gray-700/80 rounded-md shadow-sm p-4">
-                <h3 className="font-medium text-gray-700 dark:text-gray-300 mb-3 border-b border-gray-200 dark:border-gray-700 pb-2">
+              <div className="bg-white/90 dark:bg-gray-800/60 rounded-lg shadow-sm p-5 border border-gray-200 dark:border-gray-700/40 backdrop-blur-sm">
+                <h3 className="font-medium text-gray-700 dark:text-gray-300 mb-4 border-b border-gray-200 dark:border-gray-700/70 pb-2 flex items-center">
+                  <div className="h-4 w-1 bg-accent rounded-full mr-2"></div>
                   Select analysis scenario:
                 </h3>
 
@@ -364,14 +368,14 @@ const PredictiveAnalysis = () => {
                   {SCENARIOS.map((scenario) => (
                     <button
                       key={scenario.id}
-                      className={`w-full text-left p-3 rounded-sm flex items-start transition-colors ${
+                      className={`w-full text-left p-3 rounded-md flex items-start transition-all ${
                         selectedScenario.id === scenario.id
-                          ? "bg-blue-50 dark:bg-blue-700/30 border border-blue-200 dark:border-blue-700/70"
-                          : "hover:bg-gray-50 dark:hover:bg-gray-600/40 border border-transparent"
+                          ? "bg-primary/10 dark:bg-primary/20 border border-primary/30 dark:border-primary/40 shadow-sm"
+                          : "hover:bg-gray-50 dark:hover:bg-gray-700/40 border border-gray-200 dark:border-gray-700/40 hover:border-gray-300 dark:hover:border-gray-600"
                       }`}
                       onClick={() => setSelectedScenario(scenario)}
                     >
-                      <scenario.icon className="w-5 h-5 mr-3 mt-0.5 text-blue-500 dark:text-blue-400 flex-shrink-0" />
+                      <scenario.icon className="w-5 h-5 mr-3 mt-0.5 text-primary flex-shrink-0" />
                       <div>
                         <div className="font-medium text-gray-900 dark:text-gray-100">
                           {scenario.label}
@@ -385,8 +389,9 @@ const PredictiveAnalysis = () => {
                 </div>
 
                 <button
-                  className="w-full mt-4 py-2 px-4 bg-blue-600 dark:bg-blue-600/90 text-white rounded-sm 
-  disabled:opacity-50 disabled:cursor-not-allowed transition-colors cursor-pointer"
+                  className="w-full mt-4 py-2.5 px-4 bg-primary hover:bg-primary/90 text-white rounded-md
+                  disabled:opacity-50 disabled:cursor-not-allowed transition-all cursor-pointer shadow hover:shadow-md
+                  disabled:shadow-none flex items-center justify-center"
                   onClick={analyzeTrade}
                   disabled={!selectedTrade || !selectedScenario || loading}
                 >
@@ -406,9 +411,9 @@ const PredictiveAnalysis = () => {
 
               {/* Analysis Content */}
               {!analysis ? (
-                <div className="bg-white dark:bg-gray-700/80 rounded-md shadow-sm p-8 text-center">
+                <div className="bg-white/90 dark:bg-gray-800/60 rounded-lg shadow-sm p-8 text-center border border-gray-200 dark:border-gray-700/40 backdrop-blur-sm">
                   <div className="text-gray-500 dark:text-gray-400 mb-2">
-                    <ArrowRightCircle className="h-12 w-12 mx-auto mb-4 text-blue-400 dark:text-blue-500" />
+                    <ArrowRightCircle className="h-12 w-12 mx-auto mb-4 text-primary" />
                     <p className="text-lg">
                       {selectedScenario
                         ? selectedScenario.label
@@ -421,13 +426,13 @@ const PredictiveAnalysis = () => {
                   </div>
                 </div>
               ) : (
-                <div className="bg-white dark:bg-gray-700/80 rounded-md shadow-sm">
+                <div className="bg-white/90 dark:bg-gray-800/60 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700/40 backdrop-blur-sm">
                   {/* Analysis Header */}
-                  <div className="border-b border-gray-200 dark:border-gray-600/50 pb-4 px-6 pt-4">
+                  <div className="border-b border-gray-200 dark:border-gray-700/70 pb-4 px-6 pt-5">
                     <div className="flex justify-between items-start">
                       <div>
                         <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 flex items-center">
-                          <selectedScenario.icon className="mr-3 h-6 w-6 text-blue-500" />
+                          <selectedScenario.icon className="mr-3 h-6 w-6 text-primary" />
                           {selectedScenario.label}: {tradeDetails?.symbol}
                         </h3>
                         <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
@@ -449,7 +454,7 @@ const PredictiveAnalysis = () => {
 
                     {tradeDetails && (
                       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-6">
-                        <div className="bg-gray-50 dark:bg-gray-600/30 p-3 rounded-md shadow-sm border border-gray-100 dark:border-gray-600/20">
+                        <div className="bg-gray-50/80 dark:bg-gray-700/30 p-3 rounded-md shadow-sm border border-gray-200/70 dark:border-gray-600/30">
                           <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">
                             Entry
                           </p>
@@ -457,7 +462,7 @@ const PredictiveAnalysis = () => {
                             {formatCurrency(tradeDetails.entryPrice)}
                           </p>
                         </div>
-                        <div className="bg-gray-50 dark:bg-gray-600/30 p-3 rounded-md shadow-sm border border-gray-100 dark:border-gray-600/20">
+                        <div className="bg-gray-50/80 dark:bg-gray-700/30 p-3 rounded-md shadow-sm border border-gray-200/70 dark:border-gray-600/30">
                           <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">
                             Exit
                           </p>
@@ -467,7 +472,7 @@ const PredictiveAnalysis = () => {
                               : "Open"}
                           </p>
                         </div>
-                        <div className="bg-gray-50 dark:bg-gray-600/30 p-3 rounded-md shadow-sm border border-gray-100 dark:border-gray-600/20">
+                        <div className="bg-gray-50/80 dark:bg-gray-700/30 p-3 rounded-md shadow-sm border border-gray-200/70 dark:border-gray-600/30">
                           <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">
                             Trade Type
                           </p>
@@ -475,7 +480,7 @@ const PredictiveAnalysis = () => {
                             {tradeDetails.tradeType}
                           </p>
                         </div>
-                        <div className="bg-gray-50 dark:bg-gray-600/30 p-3 rounded-md shadow-sm border border-gray-100 dark:border-gray-600/20">
+                        <div className="bg-gray-50/80 dark:bg-gray-700/30 p-3 rounded-md shadow-sm border border-gray-200/70 dark:border-gray-600/30">
                           <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">
                             Holding Time
                           </p>
@@ -508,8 +513,8 @@ const PredictiveAnalysis = () => {
                               Icon = AlertTriangle;
 
                             return (
-                              <h2 className="text-xl font-semibold text-blue-600 dark:text-blue-300 mt-6 mb-3 flex items-center border-l-2 border-blue-600 dark:border-blue-500 pl-3">
-                                <Icon className="mr-2 h-5 w-5 text-blue-600 dark:text-blue-300" />
+                              <h2 className="text-xl font-semibold text-primary dark:text-primary/90 mt-6 mb-3 flex items-center border-l-2 border-primary dark:border-primary/80 pl-3">
+                                <Icon className="mr-2 h-5 w-5 text-primary dark:text-primary/90" />
                                 {props.children}
                               </h2>
                             );
@@ -526,14 +531,14 @@ const PredictiveAnalysis = () => {
                           ),
                           li: ({ node, ...props }) => (
                             <li className="text-gray-700 dark:text-gray-300 mb-2 flex items-start">
-                              <span className="text-blue-500 dark:text-blue-400 mr-2 mt-1">
+                              <span className="text-primary dark:text-primary/80 mr-2 mt-1">
                                 •
                               </span>
                               <span className="flex-1">{props.children}</span>
                             </li>
                           ),
                           strong: ({ node, ...props }) => (
-                            <strong className="font-semibold text-gray-900 dark:text-white">
+                            <strong className="font-semibold text-gray-900 dark:text-gray-100">
                               {props.children}
                             </strong>
                           ),

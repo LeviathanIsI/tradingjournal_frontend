@@ -1,27 +1,58 @@
 import { Link } from "react-router-dom";
 import { formatCurrency } from "../../utils/communityUtils";
+import { Award } from "lucide-react";
 
-const LeaderboardTableRow = ({ trader, rank }) => {
+const LeaderboardTableRow = ({ trader, rank, isCurrentUser }) => {
   if (!trader) return null;
+
+  const getRankDisplay = () => {
+    if (rank <= 3) {
+      return (
+        <div className="flex items-center">
+          <span className="mr-2">{rank}</span>
+          <Award
+            className={`h-4 w-4 ${
+              rank === 1
+                ? "text-yellow-500"
+                : rank === 2
+                ? "text-gray-400"
+                : "text-amber-600"
+            }`}
+          />
+        </div>
+      );
+    }
+    return rank;
+  };
 
   return (
     <tr
-      className={`${
-        rank % 2 === 0
-          ? "bg-white dark:bg-gray-700/60"
-          : "bg-gray-50 dark:bg-gray-600/40"
-      }`}
+      className={`
+        transition-colors
+        ${
+          isCurrentUser
+            ? "bg-primary/5 dark:bg-primary/10 border-l-2 border-primary"
+            : "hover:bg-gray-50/80 dark:hover:bg-gray-700/30"
+        }
+      `}
     >
-      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-        {rank}
+      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-600 dark:text-gray-300">
+        {getRankDisplay()}
       </td>
       <td className="px-6 py-4 whitespace-nowrap">
-        <Link
-          to={`/community/profile/${trader.username}`}
-          className="text-sm font-medium text-blue-600 dark:text-blue-400 hover:text-blue-900 dark:hover:text-blue-300"
-        >
-          {trader.username}
-        </Link>
+        <div className="flex items-center">
+          <Link
+            to={`/community/profile/${trader.username}`}
+            className="text-sm font-medium text-primary dark:text-primary/90 hover:text-primary/80 dark:hover:text-primary/70 transition-colors"
+          >
+            {trader.username}
+          </Link>
+          {isCurrentUser && (
+            <span className="ml-2 px-1.5 py-0.5 text-xs bg-primary/10 dark:bg-primary/20 text-primary dark:text-primary/90 rounded">
+              You
+            </span>
+          )}
+        </div>
       </td>
       <td className="px-6 py-4 whitespace-nowrap text-sm text-right">
         <span
@@ -34,10 +65,12 @@ const LeaderboardTableRow = ({ trader, rank }) => {
           {formatCurrency(trader.stats.totalProfit)}
         </span>
       </td>
-      <td className="px-6 py-4 whitespace-nowrap text-sm text-right text-gray-900 dark:text-gray-100">
-        {trader.stats.winRate}%
+      <td className="px-6 py-4 whitespace-nowrap text-sm text-right">
+        <span className="font-medium text-primary dark:text-primary/90">
+          {trader.stats.winRate}%
+        </span>
       </td>
-      <td className="px-6 py-4 whitespace-nowrap text-sm text-right text-gray-900 dark:text-gray-100">
+      <td className="px-6 py-4 whitespace-nowrap text-sm text-right font-medium text-accent dark:text-accent/90">
         {trader.stats.totalTrades}
       </td>
     </tr>

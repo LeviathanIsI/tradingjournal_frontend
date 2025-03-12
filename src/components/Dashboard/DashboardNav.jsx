@@ -4,7 +4,6 @@ import {
   LineChart,
   ClipboardList,
   Target,
-  Clock,
   BarChart,
   BrainCircuit,
 } from "lucide-react";
@@ -16,7 +15,7 @@ const DashboardNav = () => {
     useAuth();
   const [hasPremium, setHasPremium] = useState(hasAccessToFeature("premium"));
 
-  // Define all navigation items (Study Groups removed)
+  // Define all navigation items
   const allNavItems = [
     {
       label: "Overview",
@@ -82,23 +81,29 @@ const DashboardNav = () => {
   const isActive = (path) => location.pathname === path;
 
   return (
-    <nav className="bg-white dark:bg-gray-700/80 border-b border-gray-200 dark:border-gray-600/50 sticky top-0 z-10">
-      <div className="max-w-screen-2xl mx-auto overflow-x-auto scrollbar-none">
+    <nav className="bg-white dark:bg-gray-800/90 border-b border-gray-200 dark:border-gray-700/60 sticky top-0 z-10 shadow-sm">
+      <div className="max-w-7xl mx-auto overflow-x-auto scrollbar-none">
         <div className="flex justify-center min-w-max px-2 sm:px-0">
           {navItems.map((item) => {
             const Icon = item.icon;
+            const active = isActive(item.path);
+
             return (
               <Link
                 key={item.path}
                 to={item.path}
                 className={`flex items-center justify-center min-w-[4.5rem] sm:min-w-0 px-2 sm:px-4 py-3 sm:py-4 text-xs sm:text-sm font-medium transition-colors ${
-                  isActive(item.path)
-                    ? "border-b-2 border-blue-500 text-blue-600 dark:text-blue-400"
-                    : "text-gray-500 dark:text-gray-300 hover:text-gray-700 dark:hover:text-gray-100 hover:border-b-2 hover:border-gray-300 dark:hover:border-gray-500"
+                  active
+                    ? "border-b-2 border-primary text-primary dark:text-primary-light"
+                    : "text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-gray-100 hover:border-b-2 hover:border-gray-300 dark:hover:border-gray-600"
                 }`}
               >
                 <Icon
-                  className="h-5 w-5 sm:h-4 sm:w-4 sm:mr-2"
+                  className={`h-5 w-5 sm:h-4 sm:w-4 sm:mr-2 ${
+                    active
+                      ? "text-primary dark:text-primary-light"
+                      : "text-gray-500 dark:text-gray-400"
+                  }`}
                   aria-hidden="true"
                 />
                 <span className="hidden sm:inline">{item.label}</span>

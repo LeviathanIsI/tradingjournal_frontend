@@ -217,15 +217,15 @@ const WeeklyReview = () => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-6 bg-white dark:bg-gray-700/60 text-gray-900 dark:text-gray-100 rounded-sm shadow-sm border border-gray-200 dark:border-gray-600/50">
-      <h2 className="text-2xl font-semibold text-gray-900 dark:text-blue-400 mb-4 border-b border-gray-200 dark:border-gray-600/50 pb-2 flex items-center justify-between">
+    <div className="max-w-4xl mx-auto p-6 bg-white dark:bg-gray-800/80 text-gray-900 dark:text-gray-100 rounded-md shadow-md border border-gray-200 dark:border-gray-700/60">
+      <h2 className="text-2xl font-semibold text-gray-900 dark:text-blue-400 mb-4 border-b border-gray-200 dark:border-gray-700/40 pb-2 flex items-center justify-between">
         <div className="flex items-center">
           <BarChart className="mr-2 h-6 w-6 text-blue-600 dark:text-blue-400" />{" "}
           AI Trading Analysis
         </div>
         <button
           onClick={resetComponent}
-          className="text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 flex items-center"
+          className="text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 flex items-center transition-colors"
           title="Reset analysis"
         >
           <RefreshCw className="h-4 w-4 mr-1" />
@@ -243,11 +243,11 @@ const WeeklyReview = () => {
           id="week"
           value={selectedWeek || ""}
           onChange={handleWeekChange}
-          className="px-3 py-2 border border-gray-300 dark:border-gray-600/70 rounded-sm bg-white dark:bg-gray-600/50 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-1 focus:border-blue-400"
+          className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700/50 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500/60"
         />
         <button
-          className="px-4 py-2 bg-blue-600 dark:bg-blue-600/90 text-white rounded-sm 
-  hover:bg-blue-700 dark:hover:bg-blue-700 transition-colors cursor-pointer"
+          className="px-4 py-2 bg-blue-600 dark:bg-blue-600/90 text-white rounded-md 
+          hover:bg-blue-700 dark:hover:bg-blue-700 transition-colors cursor-pointer shadow-sm"
           onClick={handleStartReport}
           disabled={loading || !selectedWeek}
         >
@@ -263,7 +263,7 @@ const WeeklyReview = () => {
       </div>
 
       {loading && !aiAnalysis && (
-        <div className="bg-white dark:bg-gray-700/60 rounded-sm shadow-sm p-8 border border-gray-200 dark:border-gray-600/50">
+        <div className="bg-white dark:bg-gray-800/60 rounded-md shadow-md p-8 border border-gray-200 dark:border-gray-700/60">
           <div className="flex flex-col items-center justify-center py-12">
             <Loader className="animate-spin h-10 w-10 text-blue-500 mb-4" />
             <p className="text-gray-600 dark:text-gray-300">
@@ -278,7 +278,7 @@ const WeeklyReview = () => {
       )}
 
       {aiAnalysis && (
-        <div className="mt-6 p-6 border border-gray-200 dark:border-gray-600/50 bg-gray-50 dark:bg-gray-600/30 rounded-sm">
+        <div className="mt-6 p-6 border border-gray-200 dark:border-gray-700/60 bg-gray-50 dark:bg-gray-700/30 rounded-md">
           <div className="pb-6">
             {(() => {
               try {
@@ -304,7 +304,7 @@ const WeeklyReview = () => {
                         if (content.includes("Recommendations")) Icon = Target;
 
                         return (
-                          <h1 className="text-2xl font-bold text-blue-600 dark:text-blue-400 mt-8 mb-4 pb-3 border-b border-gray-200 dark:border-gray-600/50 flex items-center">
+                          <h1 className="text-2xl font-bold text-blue-600 dark:text-blue-400 mt-8 mb-4 pb-3 border-b border-gray-200 dark:border-gray-700/40 flex items-center">
                             <Icon className="mr-3 h-6 w-6 text-blue-600 dark:text-blue-400" />{" "}
                             {props.children}
                           </h1>
@@ -401,7 +401,7 @@ const WeeklyReview = () => {
                 return (
                   <div className="text-red-600 dark:text-red-400">
                     <p>Error rendering markdown. See console for details.</p>
-                    <pre className="mt-2 p-2 bg-gray-100 dark:bg-gray-600/30 rounded-sm text-xs overflow-auto border border-gray-200 dark:border-gray-600/50">
+                    <pre className="mt-2 p-2 bg-gray-100 dark:bg-gray-700/40 rounded-md text-xs overflow-auto border border-gray-200 dark:border-gray-700/60">
                       {aiAnalysis}
                     </pre>
                   </div>

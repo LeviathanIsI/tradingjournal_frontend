@@ -1,5 +1,6 @@
 // src/components/SecurityQuestions.jsx
 import { useState } from "react";
+import { ShieldCheck } from "lucide-react";
 
 const SecurityQuestions = ({ securityData, onSuccess, onError }) => {
   const [answers, setAnswers] = useState({
@@ -43,72 +44,92 @@ const SecurityQuestions = ({ securityData, onSuccess, onError }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <div className="space-y-4">
-        <div>
-          <label className="block text-sm mb-1 text-gray-900 dark:text-gray-100">
-            {securityData.questions.question1}
-          </label>
-          <input
-            type="text"
-            required
-            className="w-full px-3 py-2.5 sm:py-2 bg-white dark:bg-gray-600/50 
-            border border-gray-300 dark:border-gray-600/70 
-            text-gray-900 dark:text-gray-100 
-            rounded-sm focus:ring-1 focus:ring-blue-400 focus:border-blue-500"
-            value={answers.answer1}
-            onChange={(e) =>
-              setAnswers((prev) => ({ ...prev, answer1: e.target.value }))
-            }
-          />
+    <div className="bg-white/90 dark:bg-gray-800/80 p-5 rounded-lg border border-gray-200 dark:border-gray-700/40 shadow-md backdrop-blur-sm">
+      <div className="mb-5 flex justify-center">
+        <div className="p-3 bg-primary/10 rounded-full">
+          <ShieldCheck className="h-6 w-6 text-primary" />
         </div>
-
-        <div>
-          <label className="block text-sm mb-1 text-gray-900 dark:text-gray-100">
-            {securityData.questions.question2}
-          </label>
-          <input
-            type="text"
-            required
-            className="w-full px-3 py-2.5 sm:py-2 bg-white dark:bg-gray-600/50 
-            border border-gray-300 dark:border-gray-600/70 
-            text-gray-900 dark:text-gray-100 
-            rounded-sm focus:ring-1 focus:ring-blue-400 focus:border-blue-500"
-            value={answers.answer2}
-            onChange={(e) =>
-              setAnswers((prev) => ({ ...prev, answer2: e.target.value }))
-            }
-          />
-        </div>
-
-        <div>
-          <label className="block text-sm mb-1 text-gray-900 dark:text-gray-100">
-            {securityData.questions.question3}
-          </label>
-          <input
-            type="text"
-            required
-            className="w-full px-3 py-2.5 sm:py-2 bg-white dark:bg-gray-600/50 
-            border border-gray-300 dark:border-gray-600/70 
-            text-gray-900 dark:text-gray-100 
-            rounded-sm focus:ring-1 focus:ring-blue-400 focus:border-blue-500"
-            value={answers.answer3}
-            onChange={(e) =>
-              setAnswers((prev) => ({ ...prev, answer3: e.target.value }))
-            }
-          />
-        </div>
-
-        <button
-          type="submit"
-          disabled={loading}
-          className="w-full bg-blue-500 text-white py-2.5 sm:py-2 rounded-sm 
-          hover:bg-blue-600 dark:bg-blue-500/90 dark:hover:bg-blue-500 disabled:opacity-50 text-sm sm:text-base font-medium"
-        >
-          {loading ? "Verifying..." : "Verify Answers"}
-        </button>
       </div>
-    </form>
+
+      <h2 className="text-xl font-semibold text-center text-gray-900 dark:text-gray-100 mb-5">
+        Security Verification
+      </h2>
+
+      <form onSubmit={handleSubmit}>
+        <div className="space-y-5">
+          <div>
+            <label className="block text-sm font-medium mb-1.5 text-gray-700 dark:text-gray-300">
+              {securityData.questions.question1}
+            </label>
+            <input
+              type="text"
+              required
+              className="w-full px-3 py-2 bg-white dark:bg-gray-700/40 
+              border border-gray-300 dark:border-gray-600/70 
+              text-gray-900 dark:text-gray-100 
+              rounded-md focus:ring-2 focus:ring-primary/30 focus:border-primary/60"
+              value={answers.answer1}
+              onChange={(e) =>
+                setAnswers((prev) => ({ ...prev, answer1: e.target.value }))
+              }
+              placeholder="Your answer"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium mb-1.5 text-gray-700 dark:text-gray-300">
+              {securityData.questions.question2}
+            </label>
+            <input
+              type="text"
+              required
+              className="w-full px-3 py-2 bg-white dark:bg-gray-700/40 
+              border border-gray-300 dark:border-gray-600/70 
+              text-gray-900 dark:text-gray-100 
+              rounded-md focus:ring-2 focus:ring-primary/30 focus:border-primary/60"
+              value={answers.answer2}
+              onChange={(e) =>
+                setAnswers((prev) => ({ ...prev, answer2: e.target.value }))
+              }
+              placeholder="Your answer"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium mb-1.5 text-gray-700 dark:text-gray-300">
+              {securityData.questions.question3}
+            </label>
+            <input
+              type="text"
+              required
+              className="w-full px-3 py-2 bg-white dark:bg-gray-700/40 
+              border border-gray-300 dark:border-gray-600/70 
+              text-gray-900 dark:text-gray-100 
+              rounded-md focus:ring-2 focus:ring-primary/30 focus:border-primary/60"
+              value={answers.answer3}
+              onChange={(e) =>
+                setAnswers((prev) => ({ ...prev, answer3: e.target.value }))
+              }
+              placeholder="Your answer"
+            />
+          </div>
+
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full bg-primary hover:bg-primary/90 text-white py-2.5 px-4 rounded-md 
+            shadow hover:shadow-md dark:hover:bg-primary/80 disabled:opacity-50 
+            font-medium transition-all"
+          >
+            {loading ? "Verifying..." : "Verify Answers"}
+          </button>
+
+          <p className="text-xs text-gray-500 dark:text-gray-400 text-center mt-3">
+            Please provide exact answers to your security questions
+          </p>
+        </div>
+      </form>
+    </div>
   );
 };
 

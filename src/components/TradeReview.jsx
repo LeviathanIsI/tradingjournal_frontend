@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Eye, Check } from "lucide-react";
 
 const TradeReview = ({ trade, review, onSubmit, onClose }) => {
   const [formData, setFormData] = useState({
@@ -51,13 +52,13 @@ const TradeReview = ({ trade, review, onSubmit, onClose }) => {
   };
 
   return (
-    <div className="p-4 sm:p-6 bg-white dark:bg-gray-700/60 rounded-sm shadow-sm border border-gray-200 dark:border-gray-600/50">
-      <h2 className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-gray-100 mb-4">
+    <div className="p-5 bg-white/90 dark:bg-gray-800/80 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700/40 backdrop-blur-sm">
+      <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-5">
         Trade Review
       </h2>
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form onSubmit={handleSubmit} className="space-y-5">
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
             What I Learned
           </label>
           <textarea
@@ -68,46 +69,61 @@ const TradeReview = ({ trade, review, onSubmit, onClose }) => {
                 lessonLearned: e.target.value,
               }))
             }
-            className="w-full border border-gray-300 dark:border-gray-600/70 rounded-sm shadow-sm 
-            px-3 py-2.5 sm:py-2 bg-gray-50 dark:bg-gray-600/50 text-gray-900 dark:text-gray-100"
+            className="w-full border border-gray-300 dark:border-gray-600/70 rounded-md 
+            px-3 py-2 bg-white dark:bg-gray-700/40 text-gray-900 dark:text-gray-100
+            focus:ring-2 focus:ring-primary/30 focus:border-primary/60"
             rows="3"
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-            What Went Well
-          </label>
-          <textarea
-            value={formData.whatWentWell}
-            onChange={(e) =>
-              setFormData((prev) => ({ ...prev, whatWentWell: e.target.value }))
-            }
-            className="w-full border border-gray-300 dark:border-gray-600/70 rounded-sm shadow-sm 
-            px-3 py-2.5 sm:py-2 bg-gray-50 dark:bg-gray-600/50 text-gray-900 dark:text-gray-100"
-            rows="3"
+            placeholder="What key lessons did you learn from this trade?"
           />
         </div>
 
-        <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-            What Went Wrong
-          </label>
-          <textarea
-            value={formData.whatWentWrong}
-            onChange={(e) =>
-              setFormData((prev) => ({
-                ...prev,
-                whatWentWrong: e.target.value,
-              }))
-            }
-            className="w-full border border-gray-300 dark:border-gray-600/70 rounded-sm shadow-sm 
-            px-3 py-2.5 sm:py-2 bg-gray-50 dark:bg-gray-600/50 text-gray-900 dark:text-gray-100"
-            rows="3"
-          />
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+          <div>
+            <label className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5 flex items-center">
+              <div className="h-4 w-1 bg-green-500 rounded-full mr-2"></div>
+              What Went Well
+            </label>
+            <textarea
+              value={formData.whatWentWell}
+              onChange={(e) =>
+                setFormData((prev) => ({
+                  ...prev,
+                  whatWentWell: e.target.value,
+                }))
+              }
+              className="w-full border border-gray-300 dark:border-gray-600/70 rounded-md 
+              px-3 py-2 bg-white dark:bg-gray-700/40 text-gray-900 dark:text-gray-100
+              focus:ring-2 focus:ring-primary/30 focus:border-primary/60"
+              rows="3"
+              placeholder="What aspects of this trade were successful?"
+            />
+          </div>
+
+          <div>
+            <label className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5 flex items-center">
+              <div className="h-4 w-1 bg-red-500 rounded-full mr-2"></div>
+              What Went Wrong
+            </label>
+            <textarea
+              value={formData.whatWentWrong}
+              onChange={(e) =>
+                setFormData((prev) => ({
+                  ...prev,
+                  whatWentWrong: e.target.value,
+                }))
+              }
+              className="w-full border border-gray-300 dark:border-gray-600/70 rounded-md 
+              px-3 py-2 bg-white dark:bg-gray-700/40 text-gray-900 dark:text-gray-100
+              focus:ring-2 focus:ring-primary/30 focus:border-primary/60"
+              rows="3"
+              placeholder="What mistakes or issues occurred?"
+            />
+          </div>
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+          <label className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5 flex items-center">
+            <div className="h-4 w-1 bg-blue-500 rounded-full mr-2"></div>
             Future Adjustments
           </label>
           <textarea
@@ -118,13 +134,15 @@ const TradeReview = ({ trade, review, onSubmit, onClose }) => {
                 futureAdjustments: e.target.value,
               }))
             }
-            className="w-full border border-gray-300 dark:border-gray-600/70 rounded-sm shadow-sm 
-            px-3 py-2.5 sm:py-2 bg-gray-50 dark:bg-gray-600/50 text-gray-900 dark:text-gray-100"
+            className="w-full border border-gray-300 dark:border-gray-600/70 rounded-md 
+            px-3 py-2 bg-white dark:bg-gray-700/40 text-gray-900 dark:text-gray-100
+            focus:ring-2 focus:ring-primary/30 focus:border-primary/60"
             rows="3"
+            placeholder="What will you do differently next time?"
           />
         </div>
 
-        <div className="flex items-center p-2 hover:bg-gray-50 dark:hover:bg-gray-600/30 rounded-sm">
+        <div className="flex items-center p-2.5 bg-gray-50/80 dark:bg-gray-700/30 hover:bg-gray-100 dark:hover:bg-gray-700/50 rounded-md border border-gray-200/70 dark:border-gray-600/30 transition-colors">
           <input
             type="checkbox"
             id="isPublic"
@@ -132,31 +150,34 @@ const TradeReview = ({ trade, review, onSubmit, onClose }) => {
             onChange={(e) =>
               setFormData((prev) => ({ ...prev, isPublic: e.target.checked }))
             }
-            className="h-4 w-4 text-blue-600 dark:text-blue-400 border-gray-300 dark:border-gray-600/70 rounded-sm"
+            className="h-4 w-4 text-primary border-gray-300 dark:border-gray-600/70 rounded focus:ring-primary/30"
           />
           <label
             htmlFor="isPublic"
-            className="ml-2 text-sm text-gray-700 dark:text-gray-300"
+            className="ml-2 text-sm text-gray-700 dark:text-gray-300 flex items-center"
           >
+            <Eye className="h-4 w-4 mr-1.5 text-gray-500 dark:text-gray-400" />
             Make this review public
           </label>
         </div>
 
-        <div className="flex flex-col sm:flex-row justify-end gap-3 sm:gap-2 pt-4 border-t dark:border-gray-600/50">
+        <div className="flex flex-col sm:flex-row justify-end gap-3 sm:gap-3 pt-5 border-t border-gray-200 dark:border-gray-700/40">
           <button
             type="button"
             onClick={onClose}
-            className="w-full sm:w-auto px-4 py-2.5 sm:py-2 border border-gray-300 dark:border-gray-600/70 
-            rounded-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600/70 
-            text-sm order-2 sm:order-1 bg-white dark:bg-gray-600/50"
+            className="w-full sm:w-auto px-4 py-2 border border-gray-300 dark:border-gray-600/70 
+            rounded-md text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700/50 
+            text-sm font-medium order-2 sm:order-1 bg-white dark:bg-gray-700/40 transition-colors"
           >
             Cancel
           </button>
           <button
             type="submit"
-            className="w-full sm:w-auto px-4 py-2.5 sm:py-2 bg-blue-600 dark:bg-blue-500 text-white 
-            rounded-sm hover:bg-blue-700 dark:hover:bg-blue-600 text-sm order-1 sm:order-2"
+            className="w-full sm:w-auto px-4 py-2 bg-primary hover:bg-primary/90 text-white 
+            rounded-md shadow hover:shadow-md text-sm font-medium order-1 sm:order-2 transition-all
+            dark:hover:bg-primary/80 flex items-center justify-center gap-1.5"
           >
+            <Check className="h-4 w-4" />
             Save Review
           </button>
         </div>

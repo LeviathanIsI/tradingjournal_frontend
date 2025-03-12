@@ -1,5 +1,19 @@
 import React, { useState, useEffect } from "react";
-import { Calendar, Clock, Users, GlobeIcon, CalendarClock } from "lucide-react";
+import {
+  Calendar,
+  Clock,
+  Users,
+  GlobeIcon,
+  CalendarClock,
+  CheckCircle,
+  CalendarPlus,
+  CalendarCheck,
+  CalendarX,
+  Edit,
+  ExternalLink,
+  Calendar as CalendarIcon,
+  Check,
+} from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
 import { formatInTimeZone } from "date-fns-tz";
 import { differenceInSeconds, addMinutes } from "date-fns";
@@ -168,7 +182,7 @@ const GroupSessions = ({
       // Compare as strings to avoid reference comparison issues
       return attendeeId.toString() === userId.toString();
     });
-    
+
     return userRsvp ? userRsvp.status : null;
   };
 
@@ -186,216 +200,331 @@ const GroupSessions = ({
     };
   };
 
+  // Get event status
+  const getEventStatus = () => {
+    if (!getEventDetails()) return null;
+
+    const eventDate = new Date(getEventDetails().scheduledDate);
+    const now = new Date();
+
+    if (eventDate < now) {
+      return "past";
+    } else {
+      // Check if event is starting soon (within 1 hour)
+      const diffInSeconds = differenceInSeconds(eventDate, now);
+      if (diffInSeconds < 3600) {
+        // less than 1 hour
+        return "imminent";
+      } else {
+        return "upcoming";
+      }
+    }
+  };
+
+  // Get status badge styling
+  const getStatusBadgeStyle = () => {
+    const status = getEventStatus();
+    switch (status) {
+      case "past":
+        return "bg-gray-100 dark:bg-gray-700/70 text-gray-600 dark:text-gray-300";
+      case "imminent":
+        return "bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300";
+      case "upcoming":
+      default:
+        return "bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300";
+    }
+  };
+
+  // Get status badge text
+  const getStatusBadgeText = () => {
+    const status = getEventStatus();
+    switch (status) {
+      case "past":
+        return "Past Event";
+      case "imminent":
+        return "Starting Soon";
+      case "upcoming":
+      default:
+        return "Upcoming";
+    }
+  };
+
   return (
-    <div className="bg-white dark:bg-gray-700/60 rounded-md border border-gray-200 dark:border-gray-600 shadow-sm p-6">
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100 flex items-center">
-          <Calendar className="mr-2 h-5 w-5 text-blue-500 dark:text-blue-400" />
-          Event Details
-        </h2>
-        {isCreator && !getEventDetails() && (
-          <button
-            onClick={() => setShowSessionForm(true)}
-            className="px-3 py-2 bg-blue-500 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-500 text-white rounded-sm flex items-center text-sm transition-colors"
-          >
-            <Calendar size={16} className="mr-1.5" />
-            Set Event Details
-          </button>
-        )}
-        {isCreator && getEventDetails() && (
-          <button
-            onClick={() => setShowSessionForm(true)}
-            className="px-3 py-2 bg-blue-500 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-500 text-white rounded-sm flex items-center text-sm transition-colors"
-          >
-            <Clock size={16} className="mr-1.5" />
-            Update Event Time
-          </button>
-        )}
+    <div className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-lg border border-gray-200 dark:border-gray-700/60 shadow-sm overflow-hidden">
+      <div className="p-5 border-b border-gray-200 dark:border-gray-700/40 bg-gray-50/80 dark:bg-gray-700/50">
+        <div className="flex justify-between items-center">
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 flex items-center">
+            <Calendar className="mr-2 h-5 w-5 text-primary dark:text-primary-light" />
+            Event Details
+          </h2>
+          {isCreator && !getEventDetails() && (
+            <button
+              onClick={() => setShowSessionForm(true)}
+              className="px-3 py-2 bg-primary hover:bg-primary/90 text-white rounded-md flex items-center text-sm transition-colors font-medium shadow-sm"
+            >
+              <CalendarPlus size={16} className="mr-1.5" />
+              Set Event Details
+            </button>
+          )}
+          {isCreator && getEventDetails() && (
+            <button
+              onClick={() => setShowSessionForm(true)}
+              className="px-3 py-2 bg-primary hover:bg-primary/90 text-white rounded-md flex items-center text-sm transition-colors font-medium shadow-sm"
+            >
+              <Edit size={16} className="mr-1.5" />
+              Update Event
+            </button>
+          )}
+        </div>
       </div>
 
       {getEventDetails() ? (
-        <div className="border border-gray-200 dark:border-gray-600 rounded-sm p-4 bg-gray-50 dark:bg-gray-800/30">
-          <div className="flex justify-between items-start">
-            <h3 className="font-medium text-gray-900 dark:text-gray-100">
-              {currentGroup.name} Study Event
-            </h3>
-            <span
-              className={`px-2 py-1 rounded-sm text-xs font-medium ${
-                new Date(getEventDetails().scheduledDate) < new Date()
-                  ? "bg-gray-100 dark:bg-gray-600 text-gray-600 dark:text-gray-300"
-                  : "bg-green-100 dark:bg-green-700/30 text-green-600 dark:text-green-300"
-              }`}
-            >
-              {new Date(getEventDetails().scheduledDate) < new Date()
-                ? "Past Event"
-                : "Upcoming"}
-            </span>
-          </div>
-
-          <div className="flex items-center text-xs text-gray-500 dark:text-gray-400 mt-1 mb-3">
-            <GlobeIcon size={12} className="mr-1" />
-            All times shown in {getUserFriendlyTimezone(userTimezone)}
-          </div>
-
-          {/* Countdown timer for upcoming events */}
-          {new Date(getEventDetails().scheduledDate) > new Date() && (
-            <div className="mb-3 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-sm border border-blue-100 dark:border-blue-900/30">
-              <div className="flex items-center text-blue-700 dark:text-blue-300 font-medium">
-                <CalendarClock size={16} className="mr-2" />
-                Starting in: {timeLeft}
-              </div>
-            </div>
-          )}
-
-          <div className="mt-3 space-y-2">
-            <div className="flex items-center text-sm text-gray-600 dark:text-gray-400">
-              <Calendar size={14} className="mr-1.5" />
-              <span className="font-medium">Date:</span>
-              <span className="ml-2">{getEventTimes().date}</span>
-            </div>
-
-            <div className="flex items-center text-sm text-gray-600 dark:text-gray-400">
-              <Clock size={14} className="mr-1.5" />
-              <span className="font-medium">Time:</span>
-              <span className="ml-2">
-                {getEventTimes().start} - {getEventTimes().end}
+        <div className="p-5">
+          <div className="bg-white dark:bg-gray-700/40 rounded-lg border border-gray-200/70 dark:border-gray-600/40 p-5">
+            <div className="flex justify-between items-start flex-wrap gap-2">
+              <h3 className="font-medium text-gray-900 dark:text-gray-100 text-lg">
+                {currentGroup.name} Study Event
+              </h3>
+              <span
+                className={`px-2.5 py-1 rounded-full text-xs font-medium ${getStatusBadgeStyle()}`}
+              >
+                {getStatusBadgeText()}
               </span>
+            </div>
+
+            <div className="flex items-center text-xs text-gray-500 dark:text-gray-400 mt-1 mb-4">
+              <GlobeIcon size={12} className="mr-1" />
+              All times shown in {getUserFriendlyTimezone(userTimezone)}
+            </div>
+
+            {/* Countdown timer for upcoming events */}
+            {getEventStatus() !== "past" && (
+              <div className="mb-5 p-4 bg-primary/5 dark:bg-primary/10 rounded-lg border border-primary/10 dark:border-primary/20">
+                <div className="flex items-center text-primary-dark dark:text-primary-light font-medium">
+                  <CalendarClock size={18} className="mr-2 flex-shrink-0" />
+                  <span className="mr-2">Starting in:</span>
+                  <span className="bg-white dark:bg-gray-800 px-3 py-1 rounded-md font-mono text-primary">
+                    {timeLeft}
+                  </span>
+                </div>
+              </div>
+            )}
+
+            <div className="mt-4 space-y-3">
+              <div className="flex items-center text-sm text-gray-700 dark:text-gray-300">
+                <div className="w-8 h-8 rounded-full bg-primary/10 dark:bg-primary/20 flex items-center justify-center mr-3 flex-shrink-0">
+                  <Calendar
+                    size={16}
+                    className="text-primary dark:text-primary-light"
+                  />
+                </div>
+                <div>
+                  <span className="font-medium text-gray-900 dark:text-gray-100">
+                    Date
+                  </span>
+                  <p className="text-gray-600 dark:text-gray-400">
+                    {getEventTimes().date}
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-center text-sm text-gray-700 dark:text-gray-300">
+                <div className="w-8 h-8 rounded-full bg-primary/10 dark:bg-primary/20 flex items-center justify-center mr-3 flex-shrink-0">
+                  <Clock
+                    size={16}
+                    className="text-primary dark:text-primary-light"
+                  />
+                </div>
+                <div>
+                  <span className="font-medium text-gray-900 dark:text-gray-100">
+                    Time
+                  </span>
+                  <p className="text-gray-600 dark:text-gray-400">
+                    {getEventTimes().start} - {getEventTimes().end}
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-center text-sm text-gray-700 dark:text-gray-300">
+                <div className="w-8 h-8 rounded-full bg-primary/10 dark:bg-primary/20 flex items-center justify-center mr-3 flex-shrink-0">
+                  <Users
+                    size={16}
+                    className="text-primary dark:text-primary-light"
+                  />
+                </div>
+                <div>
+                  <span className="font-medium text-gray-900 dark:text-gray-100">
+                    Attendees
+                  </span>
+                  <p className="text-gray-600 dark:text-gray-400">
+                    {currentGroup.members?.length || 0} registered
+                  </p>
+                </div>
+              </div>
             </div>
 
             {getEventDetails().description && (
-              <div className="mt-3 text-sm text-gray-600 dark:text-gray-400">
-                <p className="mb-1 font-medium">Description:</p>
-                <p>{getEventDetails().description}</p>
+              <div className="mt-5 p-4 bg-gray-50/80 dark:bg-gray-700/30 rounded-lg border border-gray-200/70 dark:border-gray-600/40">
+                <h4 className="font-medium text-gray-900 dark:text-gray-100 mb-2">
+                  Description
+                </h4>
+                <p className="text-sm text-gray-600 dark:text-gray-400">
+                  {getEventDetails().description}
+                </p>
               </div>
             )}
 
-            <div className="mt-3 flex items-center text-sm text-gray-500 dark:text-gray-400">
-              <Users size={14} className="mr-1.5" />
-              <span>
-                {currentGroup.members?.length || 0} attendees registered
-              </span>
-            </div>
+            {/* RSVP section for upcoming events */}
+            {getEventStatus() !== "past" && (
+              <div className="mt-6 pt-5 border-t border-gray-200 dark:border-gray-700/40">
+                <h4 className="text-sm font-medium text-gray-900 dark:text-gray-100 mb-3 flex items-center">
+                  <CheckCircle
+                    size={16}
+                    className="mr-2 text-gray-500 dark:text-gray-400"
+                  />
+                  WILL YOU ATTEND THIS EVENT?
+                </h4>
+                <div className="flex flex-wrap gap-2">
+                  <button
+                    onClick={() => handleRsvp("attending")}
+                    className={`px-4 py-2 text-sm rounded-md flex items-center transition-colors ${
+                      userRsvpStatus === "attending"
+                        ? "bg-green-600 text-white shadow-sm"
+                        : "bg-white dark:bg-gray-700/50 text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-600/70 hover:bg-gray-50 dark:hover:bg-gray-700"
+                    }`}
+                  >
+                    <CalendarCheck size={16} className="mr-1.5" />
+                    Yes, I'll attend
+                  </button>
+                  <button
+                    onClick={() => handleRsvp("maybe")}
+                    className={`px-4 py-2 text-sm rounded-md flex items-center transition-colors ${
+                      userRsvpStatus === "maybe"
+                        ? "bg-amber-500 text-white shadow-sm"
+                        : "bg-white dark:bg-gray-700/50 text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-600/70 hover:bg-gray-50 dark:hover:bg-gray-700"
+                    }`}
+                  >
+                    <Calendar size={16} className="mr-1.5" />
+                    Maybe
+                  </button>
+                  <button
+                    onClick={() => handleRsvp("not_attending")}
+                    className={`px-4 py-2 text-sm rounded-md flex items-center transition-colors ${
+                      userRsvpStatus === "not_attending"
+                        ? "bg-red-600 text-white shadow-sm"
+                        : "bg-white dark:bg-gray-700/50 text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-600/70 hover:bg-gray-50 dark:hover:bg-gray-700"
+                    }`}
+                  >
+                    <CalendarX size={16} className="mr-1.5" />
+                    No, I can't make it
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* Calendar integration */}
+            {getEventStatus() !== "past" && (
+              <div className="mt-6 pt-5 border-t border-gray-200 dark:border-gray-700/40">
+                <h4 className="text-sm font-medium text-gray-900 dark:text-gray-100 mb-3 flex items-center">
+                  <CalendarIcon
+                    size={16}
+                    className="mr-2 text-gray-500 dark:text-gray-400"
+                  />
+                  ADD TO YOUR CALENDAR
+                </h4>
+                <div className="flex flex-wrap gap-2">
+                  <button
+                    className="px-4 py-2 text-sm bg-white dark:bg-gray-700/50 text-gray-700 dark:text-gray-300 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700 border border-gray-300 dark:border-gray-600/70 transition-colors flex items-center"
+                    onClick={() => {
+                      // This would generate a Google Calendar link with event details
+                      const googleCalendarUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(
+                        currentGroup.name
+                      )}&details=${encodeURIComponent(
+                        getEventDetails().description || ""
+                      )}&dates=${new Date(getEventDetails().scheduledDate)
+                        .toISOString()
+                        .replace(/-|:|\.\d+/g, "")}/${addMinutes(
+                        new Date(getEventDetails().scheduledDate),
+                        getEventDetails().duration
+                      )
+                        .toISOString()
+                        .replace(/-|:|\.\d+/g, "")}`;
+                      window.open(googleCalendarUrl, "_blank");
+                    }}
+                  >
+                    <ExternalLink size={16} className="mr-1.5" />
+                    Google Calendar
+                  </button>
+                  <button
+                    className="px-4 py-2 text-sm bg-white dark:bg-gray-700/50 text-gray-700 dark:text-gray-300 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700 border border-gray-300 dark:border-gray-600/70 transition-colors flex items-center"
+                    onClick={() => {
+                      // Generate iCal format and trigger download
+                      alert("iCal export would be implemented here");
+                    }}
+                  >
+                    <ExternalLink size={16} className="mr-1.5" />
+                    iCal/Outlook
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {isCreator && getEventStatus() !== "past" && (
+              <div className="mt-6 pt-5 border-t border-gray-200 dark:border-gray-700/40">
+                <div className="bg-amber-50/60 dark:bg-amber-900/10 rounded-lg p-3 border border-amber-100 dark:border-amber-900/20 text-amber-800 dark:text-amber-300">
+                  <p className="text-xs italic flex items-start">
+                    <Info size={14} className="mr-1.5 mt-0.5 flex-shrink-0" />
+                    <span>
+                      As the event creator, you can adjust the details of this
+                      event if needed.
+                    </span>
+                  </p>
+                </div>
+                <div className="mt-3">
+                  <button
+                    onClick={() => setShowSessionForm(true)}
+                    className="text-sm text-primary hover:text-primary-dark dark:text-primary-light dark:hover:text-primary-lighter flex items-center"
+                  >
+                    <Edit size={14} className="mr-1.5" />
+                    Update event details
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
-
-          {/* RSVP section for upcoming events */}
-          {new Date(getEventDetails().scheduledDate) > new Date() && (
-            <div className="mt-4 pt-4 border-t dark:border-gray-600/50">
-              <h4 className="text-sm font-medium text-gray-900 dark:text-gray-100 mb-2">
-                Will you attend this event?
-              </h4>
-              <div className="flex space-x-2">
-                <button
-                  onClick={() => handleRsvp("attending")}
-                  className={`px-3 py-1.5 text-sm rounded-sm flex items-center transition-colors ${
-                    userRsvpStatus === "attending"
-                      ? "bg-green-500 text-white"
-                      : "bg-gray-100 dark:bg-gray-600/70 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600"
-                  }`}
-                >
-                  Yes
-                </button>
-                <button
-                  onClick={() => handleRsvp("maybe")}
-                  className={`px-3 py-1.5 text-sm rounded-sm flex items-center transition-colors ${
-                    userRsvpStatus === "maybe"
-                      ? "bg-yellow-500 text-white"
-                      : "bg-gray-100 dark:bg-gray-600/70 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600"
-                  }`}
-                >
-                  Maybe
-                </button>
-                <button
-                  onClick={() => handleRsvp("not_attending")}
-                  className={`px-3 py-1.5 text-sm rounded-sm flex items-center transition-colors ${
-                    userRsvpStatus === "not_attending"
-                      ? "bg-red-500 text-white"
-                      : "bg-gray-100 dark:bg-gray-600/70 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600"
-                  }`}
-                >
-                  No
-                </button>
-              </div>
+        </div>
+      ) : (
+        <div className="p-5">
+          <div className="bg-white dark:bg-gray-700/40 rounded-lg border border-gray-200/70 dark:border-gray-600/40 p-5 py-10 flex flex-col items-center justify-center">
+            <div className="w-16 h-16 rounded-full bg-gray-100 dark:bg-gray-700/70 flex items-center justify-center mb-4">
+              <Calendar
+                size={32}
+                className="text-gray-400 dark:text-gray-500"
+              />
             </div>
-          )}
+            <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">
+              No Event Scheduled
+            </h3>
+            <p className="text-gray-500 dark:text-gray-400 text-center max-w-md">
+              Event details have not been finalized yet.
+            </p>
 
-          {/* Calendar integration */}
-          {new Date(getEventDetails().scheduledDate) > new Date() && (
-            <div className="mt-4 pt-4 border-t dark:border-gray-600/50">
-              <h4 className="text-sm font-medium text-gray-900 dark:text-gray-100 mb-2">
-                Add to Calendar
-              </h4>
-              <div className="flex space-x-2">
-                <button
-                  className="px-3 py-1.5 text-sm bg-gray-100 dark:bg-gray-600/70 text-gray-700 dark:text-gray-300 rounded-sm hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
-                  onClick={() => {
-                    // This would generate a Google Calendar link with event details
-                    const googleCalendarUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(
-                      currentGroup.name
-                    )}&details=${encodeURIComponent(
-                      getEventDetails().description || ""
-                    )}&dates=${new Date(getEventDetails().scheduledDate)
-                      .toISOString()
-                      .replace(/-|:|\.\d+/g, "")}/${addMinutes(
-                      new Date(getEventDetails().scheduledDate),
-                      getEventDetails().duration
-                    )
-                      .toISOString()
-                      .replace(/-|:|\.\d+/g, "")}`;
-                    window.open(googleCalendarUrl, "_blank");
-                  }}
-                >
-                  Google Calendar
-                </button>
-                <button
-                  className="px-3 py-1.5 text-sm bg-gray-100 dark:bg-gray-600/70 text-gray-700 dark:text-gray-300 rounded-sm hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
-                  onClick={() => {
-                    // Generate iCal format and trigger download
-                    alert("iCal export would be implemented here");
-                  }}
-                >
-                  iCal/Outlook
-                </button>
-              </div>
-            </div>
-          )}
-
-          {isCreator &&
-            new Date(getEventDetails().scheduledDate) > new Date() && (
-              <div className="mt-4 border-t dark:border-gray-600/50 pt-4">
-                <p className="text-xs text-gray-500 dark:text-gray-400 italic mb-2">
-                  As the event creator, you can adjust the time (but not the
-                  date) of this event if needed.
+            {isCreator && (
+              <div className="mt-8 text-center">
+                <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+                  As the creator, you can set when this study event will take
+                  place.
                 </p>
                 <button
                   onClick={() => setShowSessionForm(true)}
-                  className="text-sm text-blue-500 hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-300 flex items-center"
+                  className="px-4 py-2 bg-primary hover:bg-primary/90 text-white text-sm rounded-md shadow-sm flex items-center mx-auto"
                 >
-                  <Clock size={14} className="mr-1.5" />
-                  Update event time
+                  <CalendarPlus size={16} className="mr-1.5" />
+                  Set Event Details
                 </button>
               </div>
             )}
-        </div>
-      ) : (
-        <div className="text-center py-10 bg-gray-50 dark:bg-gray-800/20 rounded-md">
-          <Calendar size={40} className="mx-auto mb-2 text-gray-400" />
-          <p className="text-gray-500 dark:text-gray-400">
-            Event details not yet finalized.
-          </p>
-          {isCreator && (
-            <>
-              <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">
-                As the creator, you need to specify when this study event will
-                take place.
-              </p>
-              <button
-                onClick={() => setShowSessionForm(true)}
-                className="mt-4 px-4 py-2 bg-blue-500 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-500 text-white text-sm rounded-sm"
-              >
-                Set Event Details
-              </button>
-            </>
-          )}
+          </div>
         </div>
       )}
     </div>

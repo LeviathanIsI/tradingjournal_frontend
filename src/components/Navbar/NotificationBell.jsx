@@ -1,11 +1,28 @@
+// src/components/Navbar/NotificationBell.jsx
 import React, { useState, useRef, useEffect } from "react";
-import { Bell, Check, Cog, Archive, Trash2, X } from "lucide-react";
-import { formatDistanceToNow } from "date-fns";
+import { Link } from "react-router-dom";
 import { useNotifications } from "../../context/NotificationsContext";
+import { Bell, Check, Trash2, X } from "lucide-react";
+
+// Material UI components
+import {
+  Badge,
+  IconButton,
+  Popover,
+  Box,
+  Typography,
+  List,
+  ListItem,
+  ListItemText,
+  Button,
+  Divider,
+  CircularProgress,
+  useTheme,
+} from "@mui/material";
 
 const NotificationBell = () => {
-  const [isOpen, setIsOpen] = useState(false);
-  const dropdownRef = useRef(null);
+  const [anchorEl, setAnchorEl] = useState(null);
+  const theme = useTheme();
   const {
     notifications,
     unreadCount,
@@ -15,184 +32,348 @@ const NotificationBell = () => {
     deleteNotification,
   } = useNotifications();
 
-  // Handle clicking outside to close the dropdown
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setIsOpen(false);
-      }
-    };
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
 
-    if (isOpen) {
-      document.addEventListener("mousedown", handleClickOutside);
-    }
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
 
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [isOpen]);
+  const open = Boolean(anchorEl);
+  const id = open ? "notifications-popover" : undefined;
 
   // Format the notification time
   const formatTime = (date) => {
     try {
-      return formatDistanceToNow(new Date(date), { addSuffix: true });
+      const messageDate = new Date(date);
+      const now = new Date();
+      const diffMinutes = Math.floor((now - messageDate) / (1000 * 60));
+
+      if (diffMinutes < 1) return "Just now";
+      if (diffMinutes < 60) return `${diffMinutes}m ago`;
+
+      const diffHours = Math.floor(diffMinutes / 60);
+      if (diffHours < 24) return `${diffHours}h ago`;
+
+      const diffDays = Math.floor(diffHours / 24);
+      if (diffDays < 7) return `${diffDays}d ago`;
+
+      return messageDate.toLocaleDateString();
     } catch (error) {
       return "some time ago";
     }
   };
 
-  // Handle notification click
-  const handleNotificationClick = (notification) => {
-    if (!notification.read) {
-      markAsRead(notification._id);
-    }
-    // Navigate or perform action based on notification type if needed
-  };
-
   return (
-    <div className="relative" ref={dropdownRef}>
-      {/* Bell icon with notification badge */}
-      <button
-        onClick={() => setIsOpen(!isOpen)}
-        className="relative p-2 text-gray-300 hover:bg-gray-700 hover:text-white rounded-md flex items-center justify-center"
-        aria-label="Notifications"
+    <>
+      <IconButton
+        aria-describedby={id}
+        onClick={handleClick}
+        size="medium"
+        aria-label="show notifications"
+        color="inherit"
+        sx={{
+          color: theme.palette.mode === "dark" ? "gray.300" : "gray.700",
+          "&:hover": {
+            backgroundColor:
+              theme.palette.mode === "dark"
+                ? "rgba(255, 255, 255, 0.1)"
+                : "rgba(0, 0, 0, 0.05)",
+          },
+        }}
       >
-        <Bell className="h-5 w-5" />
-        {unreadCount > 0 && (
-          <span className="absolute top-0 right-0 bg-blue-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-            {unreadCount > 9 ? "9+" : unreadCount}
-          </span>
-        )}
-      </button>
+        <Badge
+          badgeContent={unreadCount}
+          color="primary"
+          invisible={unreadCount === 0}
+          sx={{
+            "& .MuiBadge-badge": {
+              backgroundColor:
+                theme.palette.mode === "dark" ? "#3b82f6" : "#2563eb",
+              color: "white",
+              fontWeight: "bold",
+              minWidth: "20px",
+              height: "20px",
+            },
+          }}
+        >
+          <Bell size={20} />
+        </Badge>
+      </IconButton>
 
-      {/* Dropdown menu */}
-      {isOpen && (
-        <div className="absolute right-0 mt-2 w-80 sm:w-96 bg-gray-800 rounded-md shadow-lg z-50 overflow-hidden border border-gray-700">
-          {/* Header */}
-          <div className="px-4 py-3 border-b border-gray-700 flex justify-between items-center bg-gray-700">
-            <h3 className="text-sm font-medium text-gray-100">Notifications</h3>
-            <div className="flex items-center space-x-2">
-              <button
-                onClick={() => setIsOpen(false)}
-                className="text-gray-400 hover:text-gray-200 p-1"
-              >
-                <X className="h-4 w-4" />
-              </button>
-            </div>
-          </div>
+      <Popover
+        id={id}
+        open={open}
+        anchorEl={anchorEl}
+        onClose={handleClose}
+        anchorOrigin={{
+          vertical: "bottom",
+          horizontal: "right",
+        }}
+        transformOrigin={{
+          vertical: "top",
+          horizontal: "right",
+        }}
+        PaperProps={{
+          sx: {
+            width: { xs: 300, sm: 360 },
+            maxHeight: 500,
+            overflow: "hidden",
+            backgroundColor:
+              theme.palette.mode === "dark" ? "#1e293b" : "white",
+            border:
+              theme.palette.mode === "dark"
+                ? "1px solid rgba(255, 255, 255, 0.1)"
+                : "1px solid rgba(0, 0, 0, 0.1)",
+            boxShadow:
+              theme.palette.mode === "dark"
+                ? "0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -2px rgba(0, 0, 0, 0.4)"
+                : "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)",
+          },
+        }}
+      >
+        {/* Header */}
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            p: 2,
+            borderBottom:
+              theme.palette.mode === "dark"
+                ? "1px solid rgba(255, 255, 255, 0.1)"
+                : "1px solid rgba(0, 0, 0, 0.05)",
+            backgroundColor:
+              theme.palette.mode === "dark" ? "#0f172a" : "#f8fafc",
+          }}
+        >
+          <Typography variant="subtitle1" fontWeight={600}>
+            Notifications
+          </Typography>
+          <IconButton size="small" onClick={handleClose} color="inherit">
+            <X size={18} />
+          </IconButton>
+        </Box>
 
-          {/* Actions Bar */}
-          <div className="px-4 py-2 border-b border-gray-700 flex justify-between bg-gray-750">
-            <div className="flex items-center">
-              <button className="text-xs text-gray-300 hover:text-gray-100 flex items-center bg-gray-700 px-3 py-1 rounded-md mr-2">
-                Filter
-              </button>
-            </div>
+        {/* Action Bar */}
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            p: 1,
+            borderBottom:
+              theme.palette.mode === "dark"
+                ? "1px solid rgba(255, 255, 255, 0.1)"
+                : "1px solid rgba(0, 0, 0, 0.05)",
+            backgroundColor:
+              theme.palette.mode === "dark"
+                ? "rgba(15, 23, 42, 0.5)"
+                : "rgba(248, 250, 252, 0.7)",
+          }}
+        >
+          <Button
+            size="small"
+            startIcon={<IconButton size="small">Filter</IconButton>}
+            sx={{
+              fontSize: "0.75rem",
+              textTransform: "none",
+              color:
+                theme.palette.mode === "dark"
+                  ? "rgba(255, 255, 255, 0.7)"
+                  : "rgba(0, 0, 0, 0.6)",
+            }}
+          >
+            Filter
+          </Button>
 
-            <div className="flex items-center space-x-2">
-              {unreadCount > 0 && (
-                <button
-                  onClick={markAllAsRead}
-                  className="text-xs text-gray-300 hover:text-gray-100 flex items-center bg-gray-700 px-3 py-1 rounded-md"
-                >
-                  <Check className="h-3 w-3 mr-1" />
-                  Mark all as read
-                </button>
-              )}
-              <button className="text-xs text-gray-300 hover:text-gray-100 flex items-center bg-gray-700 px-3 py-1 rounded-md">
-                <Cog className="h-3 w-3 mr-1" />
-                Settings
-              </button>
-            </div>
-          </div>
-
-          {/* Notification list */}
-          <div className="max-h-80 overflow-y-auto">
-            {loading && notifications.length === 0 ? (
-              <div className="flex justify-center items-center py-6">
-                <div className="h-5 w-5 border-2 border-gray-500 border-t-blue-500 rounded-full animate-spin"></div>
-                <span className="ml-2 text-sm text-gray-400">
-                  Loading notifications...
-                </span>
-              </div>
-            ) : notifications.length === 0 ? (
-              <div className="py-12 px-4 text-center">
-                <p className="text-gray-400 mb-2">
-                  You don't have any notifications
-                </p>
-                <p className="text-gray-500 text-sm">
-                  When you receive notifications, they will appear here.
-                </p>
-              </div>
-            ) : (
-              <ul className="divide-y divide-gray-700">
-                {notifications.map((notification) => (
-                  <li
-                    key={notification._id}
-                    className={`relative px-4 py-3 hover:bg-gray-700 transition-colors ${
-                      !notification.read ? "bg-gray-750" : ""
-                    }`}
-                  >
-                    <div className="flex justify-between">
-                      <div
-                        className="flex-1 cursor-pointer"
-                        onClick={() => handleNotificationClick(notification)}
-                      >
-                        <p className="text-sm font-medium text-gray-200">
-                          {notification.title}
-                        </p>
-                        <p className="text-xs text-gray-400 mt-1">
-                          {notification.message}
-                        </p>
-                        <p className="text-xs text-gray-500 mt-2">
-                          {formatTime(notification.createdAt)}
-                        </p>
-                      </div>
-                      <div className="flex items-start space-x-1 ml-2">
-                        {!notification.read && (
-                          <button
-                            onClick={() => markAsRead(notification._id)}
-                            className="text-blue-400 hover:text-blue-300 p-1 rounded-full hover:bg-gray-600"
-                            title="Mark as read"
-                          >
-                            <Check className="h-4 w-4" />
-                          </button>
-                        )}
-                        <button
-                          onClick={() => deleteNotification(notification._id)}
-                          className="text-gray-400 hover:text-red-400 p-1 rounded-full hover:bg-gray-600"
-                          title="Delete notification"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </button>
-                      </div>
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
-
-          {/* Footer */}
-          <div className="px-4 py-2 border-t border-gray-700 bg-gray-700 flex justify-between">
-            <button
-              className="text-xs text-gray-300 hover:text-gray-100"
-              onClick={() => setIsOpen(false)}
-            >
-              Close
-            </button>
-            <button
-              className="text-xs text-blue-400 hover:text-blue-300"
+          {unreadCount > 0 && (
+            <Button
+              size="small"
+              startIcon={<Check size={14} />}
               onClick={() => {
-                /* Navigate to full notifications page */
+                markAllAsRead();
+              }}
+              sx={{
+                fontSize: "0.75rem",
+                textTransform: "none",
+                color: theme.palette.primary.main,
               }}
             >
-              View all
-            </button>
-          </div>
-        </div>
-      )}
-    </div>
+              Mark all as read
+            </Button>
+          )}
+        </Box>
+
+        {/* Notification List */}
+        <List
+          sx={{
+            p: 0,
+            maxHeight: 320,
+            overflow: "auto",
+            "&::-webkit-scrollbar": {
+              width: "8px",
+            },
+            "&::-webkit-scrollbar-track": {
+              background: theme.palette.mode === "dark" ? "#1e293b" : "#f1f5f9",
+            },
+            "&::-webkit-scrollbar-thumb": {
+              background: theme.palette.mode === "dark" ? "#334155" : "#cbd5e1",
+              borderRadius: "4px",
+            },
+          }}
+        >
+          {loading ? (
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                py: 6,
+              }}
+            >
+              <CircularProgress size={24} />
+              <Typography
+                variant="body2"
+                sx={{ ml: 2, color: "text.secondary" }}
+              >
+                Loading...
+              </Typography>
+            </Box>
+          ) : notifications.length === 0 ? (
+            <Box sx={{ py: 6, textAlign: "center" }}>
+              <Typography variant="body1" color="text.secondary" sx={{ mb: 1 }}>
+                No notifications
+              </Typography>
+              <Typography variant="body2" color="text.disabled">
+                When you receive notifications, they will appear here.
+              </Typography>
+            </Box>
+          ) : (
+            notifications.map((notification) => (
+              <ListItem
+                key={notification._id}
+                divider
+                disablePadding
+                sx={{
+                  backgroundColor: !notification.read
+                    ? theme.palette.mode === "dark"
+                      ? "rgba(59, 130, 246, 0.08)"
+                      : "rgba(59, 130, 246, 0.05)"
+                    : "transparent",
+                  "&:hover": {
+                    backgroundColor:
+                      theme.palette.mode === "dark"
+                        ? "rgba(255, 255, 255, 0.05)"
+                        : "rgba(0, 0, 0, 0.02)",
+                  },
+                  cursor: "pointer",
+                }}
+                onClick={() => markAsRead(notification._id)}
+              >
+                <Box sx={{ width: "100%", p: 2 }}>
+                  <Box
+                    sx={{ display: "flex", justifyContent: "space-between" }}
+                  >
+                    <Box sx={{ flex: 1, pr: 2 }}>
+                      <Typography
+                        variant="subtitle2"
+                        sx={{
+                          color:
+                            theme.palette.mode === "dark" ? "white" : "black",
+                          fontWeight: !notification.read ? 600 : 500,
+                        }}
+                      >
+                        {notification.title}
+                      </Typography>
+                      <Typography
+                        variant="body2"
+                        sx={{
+                          color: "text.secondary",
+                          mt: 0.5,
+                          fontSize: "0.8125rem",
+                          lineHeight: 1.4,
+                        }}
+                      >
+                        {notification.message}
+                      </Typography>
+                      <Typography
+                        variant="caption"
+                        sx={{
+                          color: "text.disabled",
+                          mt: 1,
+                          display: "block",
+                        }}
+                      >
+                        {formatTime(notification.createdAt)}
+                      </Typography>
+                    </Box>
+                    <Box>
+                      <IconButton
+                        size="small"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          deleteNotification(notification._id);
+                        }}
+                        sx={{
+                          color: "text.disabled",
+                          "&:hover": {
+                            color: theme.palette.error.main,
+                          },
+                        }}
+                      >
+                        <Trash2 size={16} />
+                      </IconButton>
+                    </Box>
+                  </Box>
+                </Box>
+              </ListItem>
+            ))
+          )}
+        </List>
+
+        {/* Footer */}
+        <Box
+          sx={{
+            p: 1.5,
+            display: "flex",
+            justifyContent: "space-between",
+            borderTop:
+              theme.palette.mode === "dark"
+                ? "1px solid rgba(255, 255, 255, 0.1)"
+                : "1px solid rgba(0, 0, 0, 0.05)",
+            backgroundColor:
+              theme.palette.mode === "dark" ? "#0f172a" : "#f8fafc",
+          }}
+        >
+          <Button
+            size="small"
+            onClick={handleClose}
+            sx={{
+              fontSize: "0.75rem",
+              textTransform: "none",
+              color: "text.secondary",
+            }}
+          >
+            Close
+          </Button>
+          <Button
+            component={Link}
+            to="/notifications"
+            size="small"
+            onClick={handleClose}
+            sx={{
+              fontSize: "0.75rem",
+              textTransform: "none",
+              color: theme.palette.primary.main,
+            }}
+          >
+            View all
+          </Button>
+        </Box>
+      </Popover>
+    </>
   );
 };
 

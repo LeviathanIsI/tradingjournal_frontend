@@ -22,6 +22,8 @@ import { ThemeProvider } from "./context/ThemeContext";
 import { TradingStatsProvider } from "./context/TradingStatsContext";
 import { StudyGroupProvider } from "./context/StudyGroupContext";
 import { NotificationProvider } from "./context/NotificationsContext";
+import MUIThemeProvider from "./components/MUIThemeProvider";
+import { StyledEngineProvider } from "@mui/material/styles";
 import Navbar from "./components/Navbar";
 
 // Eagerly loaded components (critical UI)
@@ -45,6 +47,7 @@ const GoogleAuthSuccess = React.lazy(() => import("./pages/GoogleAuthSuccess"));
 const Profile = React.lazy(() => import("./components/Community/Profile.jsx"));
 const AIInsights = React.lazy(() => import("./pages/AIInsights"));
 const Notifications = React.lazy(() => import("./pages/Notifications"));
+const Admin = React.lazy(() => import("./pages/Admin"));
 
 // Lazy loaded study group components - individual imports
 const StudyGroups = React.lazy(() =>
@@ -325,6 +328,16 @@ function AppRoutes() {
           </AdminRoute>
         }
       />
+
+      {/* Admin Routes */}
+      <Route
+        path="/admin/*"
+        element={
+          <AdminRoute>
+            <Admin />
+          </AdminRoute>
+        }
+      />
     </Routes>
   );
 }
@@ -333,28 +346,30 @@ function AppRoutes() {
 const App = React.memo(() => {
   return (
     <Router>
-      <ToastProvider>
-        <AuthProvider>
-          <ThemeProvider>
-            <AIProvider>
-              <TradingStatsProvider>
-                <StudyGroupProvider>
-                  <NotificationProvider>
-                    {" "}
-                    {/* Added NotificationProvider */}
-                    <div className="min-h-screen min-w-[320px] bg-white dark:bg-gray-800/70 text-gray-900 dark:text-gray-100">
-                      <Navbar />
-                      <div className="pt-16">
-                        <AppRoutes />
-                      </div>
-                    </div>
-                  </NotificationProvider>
-                </StudyGroupProvider>
-              </TradingStatsProvider>
-            </AIProvider>
-          </ThemeProvider>
-        </AuthProvider>
-      </ToastProvider>
+      <ThemeProvider>
+        <ToastProvider>
+          <AuthProvider>
+            <StyledEngineProvider injectFirst>
+              <MUIThemeProvider>
+                <AIProvider>
+                  <TradingStatsProvider>
+                    <StudyGroupProvider>
+                      <NotificationProvider>
+                        <div className="min-h-screen min-w-[320px] bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
+                          <Navbar />
+                          <div className="pt-16">
+                            <AppRoutes />
+                          </div>
+                        </div>
+                      </NotificationProvider>
+                    </StudyGroupProvider>
+                  </TradingStatsProvider>
+                </AIProvider>
+              </MUIThemeProvider>
+            </StyledEngineProvider>
+          </AuthProvider>
+        </ToastProvider>
+      </ThemeProvider>
     </Router>
   );
 });

@@ -8,7 +8,7 @@ import React, {
 import { formatDistanceToNow } from "date-fns";
 import { useAuth } from "../../context/AuthContext";
 import { useAI } from "../../context/AIContext";
-import { RefreshCw } from "lucide-react";
+import { RefreshCw, Info } from "lucide-react";
 
 // Reducer to manage related states
 const limitsReducer = (state, action) => {
@@ -161,43 +161,32 @@ const AICreditsInfo = React.memo(() => {
 
   if (!displayLimits) {
     return (
-      <div className="bg-blue-700/20 border border-blue-500/20 rounded-md p-3 mb-4 text-sm text-center flex justify-between items-center">
-        <span className="text-blue-300 dark:text-blue-200">
+      <div className="bg-primary/10 border border-primary/20 rounded-lg p-4 mb-4 text-sm text-center flex justify-between items-center backdrop-blur-sm">
+        <span className="text-primary-dark dark:text-primary-light font-medium">
           Use an AI feature to see your remaining credits
         </span>
         <button
           onClick={handleRefresh}
           disabled={state.loading}
-          className="text-blue-400 hover:text-blue-500 dark:text-blue-300 dark:hover:text-blue-200 flex items-center"
+          className="text-primary hover:text-primary-dark dark:text-primary-light dark:hover:text-primary flex items-center gap-1.5 p-1.5 hover:bg-primary/10 rounded-md transition-colors"
         >
           <RefreshCw
-            className={`h-4 w-4 mr-1 ${state.loading ? "animate-spin" : ""}`}
+            className={`h-4 w-4 ${state.loading ? "animate-spin" : ""}`}
           />
-          <span className="text-xs">Refresh</span>
+          <span className="text-xs font-medium">Refresh</span>
         </button>
       </div>
     );
   }
 
   return (
-    <div className="bg-blue-700/20 border border-blue-500/20 rounded-md p-3 mb-4 text-sm flex items-center justify-between">
-      <div className="flex items-center">
-        <span className="text-blue-500 dark:text-blue-400 mr-2">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-5 w-5"
-            viewBox="0 0 20 20"
-            fill="currentColor"
-          >
-            <path
-              fillRule="evenodd"
-              d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2h.01a1 1 0 100-2H9z"
-              clipRule="evenodd"
-            />
-          </svg>
-        </span>
+    <div className="bg-primary/10 border border-primary/20 rounded-lg p-4 mb-4 text-sm flex items-center justify-between backdrop-blur-sm">
+      <div className="flex items-center gap-2">
+        <Info className="h-5 w-5 text-primary dark:text-primary-light" />
         <div>
-          <span className="text-blue-300 dark:text-blue-200">AI Credits: </span>
+          <span className="text-primary-dark dark:text-primary-light font-medium">
+            AI Credits:{" "}
+          </span>
           <span className="font-semibold text-gray-800 dark:text-gray-100">
             {state.updateQueued ? (
               <span className="inline-flex items-center">
@@ -213,14 +202,14 @@ const AICreditsInfo = React.memo(() => {
           </span>
         </div>
       </div>
-      <div className="flex items-center">
-        <div className="text-blue-300 dark:text-blue-200 mr-4">
+      <div className="flex items-center gap-3">
+        <div className="text-primary-dark dark:text-primary-light">
           Resets {timeUntilReset}
         </div>
         <button
           onClick={handleRefresh}
           disabled={state.loading || state.updateQueued}
-          className="text-blue-400 hover:text-blue-500 dark:text-blue-300 dark:hover:text-blue-200 flex items-center"
+          className="text-primary hover:text-primary-dark dark:text-primary-light dark:hover:text-primary p-1.5 hover:bg-primary/10 rounded-md transition-colors"
         >
           <RefreshCw
             className={`h-4 w-4 ${

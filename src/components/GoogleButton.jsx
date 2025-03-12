@@ -30,12 +30,13 @@ const GoogleButton = ({ onClick, variant = "signin" }) => {
       onClick={onClick}
       type="button"
       className="w-full flex items-center justify-center gap-3 
-        bg-white border border-gray-300 rounded-lg
-        px-4 py-2.5 sm:py-2 
-        text-sm sm:text-base text-gray-700 font-medium
-        hover:bg-gray-50 active:bg-gray-100
-        focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 
-        transition-colors"
+        bg-white dark:bg-gray-700/50 border border-gray-300 dark:border-gray-600/70 rounded-md
+        px-4 py-2.5 
+        text-sm font-medium text-gray-700 dark:text-gray-200
+        hover:bg-gray-50 dark:hover:bg-gray-700/80 hover:shadow-sm
+        active:bg-gray-100 dark:active:bg-gray-700
+        focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/60
+        transition-all duration-200"
       aria-label={buttonText}
     >
       <GoogleLogo />

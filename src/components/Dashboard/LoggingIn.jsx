@@ -294,8 +294,8 @@ const LoggingIn = () => {
   // Handle error state
   if (state.error) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-white dark:bg-gray-700/60">
-        <div className="bg-white dark:bg-gray-600/30 p-8 rounded-sm border border-gray-200 dark:border-gray-600/50 shadow-sm text-center max-w-md w-full">
+      <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 dark:bg-gray-900">
+        <div className="bg-white dark:bg-gray-800/80 p-8 rounded-md border border-gray-200 dark:border-gray-700/60 shadow-md text-center max-w-md w-full">
           <div className="text-red-500 mb-4">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -312,13 +312,13 @@ const LoggingIn = () => {
               />
             </svg>
           </div>
-          <h1 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">
+          <h1 className="text-xl font-semibold text-gray-900 dark:text-gray-50 mb-2">
             Authentication Error
           </h1>
           <p className="text-gray-600 dark:text-gray-300 mb-4">{state.error}</p>
           <button
             onClick={() => (window.location.href = "/login")}
-            className="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-sm"
+            className="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-md shadow-sm transition-colors"
           >
             Back to Login
           </button>
@@ -351,10 +351,10 @@ const LoggingIn = () => {
 
   // Loading UI
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-white dark:bg-gray-700/60">
-      <div className="bg-white dark:bg-gray-600/30 p-8 rounded-sm border border-gray-200 dark:border-gray-600/50 shadow-sm text-center max-w-md w-full">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 dark:bg-gray-900">
+      <div className="bg-white dark:bg-gray-800/80 p-8 rounded-md border border-gray-200 dark:border-gray-700/60 shadow-md text-center max-w-md w-full">
         <Loader className="animate-spin h-10 w-10 mx-auto mb-4 text-blue-500" />
-        <h1 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">
+        <h1 className="text-xl font-semibold text-gray-900 dark:text-gray-50 mb-2">
           Logging you in
         </h1>
         <p className="text-gray-600 dark:text-gray-300">
@@ -382,7 +382,7 @@ const LoggingIn = () => {
               <summary className="text-xs text-gray-500 dark:text-gray-400 cursor-pointer">
                 Debug information
               </summary>
-              <div className="mt-2 text-xs bg-gray-100 dark:bg-gray-800 p-2 rounded-sm overflow-auto max-h-40">
+              <div className="mt-2 text-xs bg-gray-100 dark:bg-gray-700/80 p-3 rounded-md overflow-auto max-h-40">
                 <p>
                   <strong>User:</strong> {user ? "Present" : "Missing"}
                 </p>

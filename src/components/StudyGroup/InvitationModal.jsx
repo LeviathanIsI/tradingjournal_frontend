@@ -55,8 +55,6 @@ const InvitationModal = ({
         const token = localStorage.getItem("token");
         const API_URL = import.meta.env.VITE_API_URL;
 
-        console.log("Fetching available users for group:", currentGroupId);
-
         const response = await fetch(
           `${API_URL}/api/study-groups/${currentGroupId}/available-users`,
           {
@@ -67,12 +65,10 @@ const InvitationModal = ({
         );
 
         const data = await response.json();
-        console.log("API Response:", data);
 
         if (data.success) {
           setAvailableUsers(data.data);
           setFilteredUsers(data.data);
-          console.log(`Found ${data.data.length} available users`);
         } else {
           console.error("API returned success: false");
           showToast("Failed to load users", "error");
