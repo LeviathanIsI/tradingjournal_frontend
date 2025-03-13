@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "../context/ToastContext";
+import { Lock } from "lucide-react";
 
 const ResetPassword = ({ onSuccess, onError }) => {
   const { showToast } = useToast();
@@ -62,50 +63,63 @@ const ResetPassword = ({ onSuccess, onError }) => {
 
   return (
     <div className="w-full max-w-md mx-auto px-4 sm:px-0">
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-            New Password
-          </label>
-          <input
-            type="password"
-            required
-            className="mt-1 block w-full rounded-sm border border-gray-300 dark:border-gray-600/70 
-            px-3 py-2.5 sm:py-2 text-gray-900 dark:text-gray-100 
-            bg-white dark:bg-gray-600/50
-            shadow-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-400"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            minLength={6}
-          />
+      <div className="bg-white/90 dark:bg-gray-800/80 p-5 rounded-lg border border-gray-200 dark:border-gray-700/40 shadow-md backdrop-blur-sm">
+        <div className="mb-5 flex justify-center">
+          <div className="p-3 bg-primary/10 rounded-full">
+            <Lock className="h-6 w-6 text-primary" />
+          </div>
         </div>
 
-        <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-            Confirm New Password
-          </label>
-          <input
-            type="password"
-            required
-            className="mt-1 block w-full rounded-sm border border-gray-300 dark:border-gray-600/70 
-            px-3 py-2.5 sm:py-2 text-gray-900 dark:text-gray-100 
-            bg-white dark:bg-gray-600/50
-            shadow-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-400"
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-            minLength={6}
-          />
-        </div>
+        <h2 className="text-xl font-semibold text-center text-gray-900 dark:text-gray-100 mb-5">
+          Reset Your Password
+        </h2>
 
-        <button
-          type="submit"
-          disabled={loading}
-          className="w-full bg-blue-500 text-white py-2.5 sm:py-2 px-4 rounded-sm 
-          hover:bg-blue-600 dark:bg-blue-500/90 dark:hover:bg-blue-500 disabled:opacity-50 text-sm sm:text-base font-medium"
-        >
-          {loading ? "Resetting..." : "Reset Password"}
-        </button>
-      </form>
+        <form onSubmit={handleSubmit} className="space-y-5">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
+              New Password
+            </label>
+            <input
+              type="password"
+              required
+              className="block w-full rounded-md border border-gray-300 dark:border-gray-600/70 
+              px-3 py-2 text-gray-900 dark:text-gray-100 
+              bg-white dark:bg-gray-700/40
+              focus:ring-2 focus:ring-primary/30 focus:border-primary/60"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              minLength={6}
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
+              Confirm New Password
+            </label>
+            <input
+              type="password"
+              required
+              className="block w-full rounded-md border border-gray-300 dark:border-gray-600/70 
+              px-3 py-2 text-gray-900 dark:text-gray-100 
+              bg-white dark:bg-gray-700/40
+              focus:ring-2 focus:ring-primary/30 focus:border-primary/60"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              minLength={6}
+            />
+          </div>
+
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full bg-primary hover:bg-primary/90 text-white py-2.5 px-4 rounded-md 
+            shadow hover:shadow-md dark:hover:bg-primary/80 disabled:opacity-50 
+            font-medium transition-all"
+          >
+            {loading ? "Resetting..." : "Reset Password"}
+          </button>
+        </form>
+      </div>
     </div>
   );
 };

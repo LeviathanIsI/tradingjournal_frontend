@@ -366,31 +366,41 @@ const PricingComponent = () => {
   };
 
   return (
-    <div className="px-3 sm:px-6 py-3 sm:py-6">
-      <div className="sm:flex sm:flex-col sm:align-center text-center mb-4 sm:mb-8">
-        <h1 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-gray-100">
+    <div className="px-4 sm:px-6 py-6 sm:py-8">
+      <div className="sm:flex sm:flex-col sm:align-center text-center mb-6 sm:mb-10">
+        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-gray-100">
           Choose Your Trading Journey
         </h1>
-        <p className="mt-3 text-sm sm:text-base text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+        <p className="mt-4 text-base sm:text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
           Select the plan that matches your trading ambitions.
         </p>
       </div>
 
-      <div className="flex flex-col space-y-4 lg:flex-row lg:space-y-0 lg:space-x-4">
+      <div className="flex flex-col space-y-6 lg:flex-row lg:space-y-0 lg:space-x-6">
         {plans.map((plan) => {
           const planStatus = getPlanStatus(plan.id);
           const isProcessing = isLoading && processingPlan.current === plan.id;
 
           // Determine card classes based on selection state
           let cardClasses =
-            "flex-1 rounded-md border transition-all duration-200 overflow-hidden ";
-          cardClasses +=
-            selectedPlan === plan.id
-              ? "scale-105 shadow-lg border-blue-500 "
-              : plan.highlight
-              ? "border-blue-500/50 shadow-sm "
-              : "border-gray-200 dark:border-gray-600/50 shadow-sm ";
-          cardClasses += "bg-white dark:bg-gray-700/60";
+            "flex-1 rounded-lg border overflow-hidden transition-all duration-300 ";
+
+          if (selectedPlan === plan.id) {
+            cardClasses += "transform scale-105 shadow-lg border-primary ";
+          } else if (plan.highlight) {
+            cardClasses += "border-primary/40 shadow-md ";
+          } else {
+            cardClasses += "border-gray-200 dark:border-gray-700 shadow ";
+          }
+
+          // Adding glassmorphism effect
+          cardClasses += "backdrop-blur-sm ";
+
+          // Background color
+          cardClasses += "bg-white/90 dark:bg-gray-800/80 ";
+
+          // Hover effect
+          cardClasses += "hover:shadow-xl ";
 
           return (
             <div
@@ -400,22 +410,22 @@ const PricingComponent = () => {
               onMouseLeave={handleMouseOut}
             >
               {plan.highlight && (
-                <div className="bg-blue-500 text-white py-1 px-4 text-center text-xs sm:text-sm font-medium">
+                <div className="bg-gradient-to-r from-primary to-primary/90 text-white py-1.5 px-4 text-center text-xs sm:text-sm font-medium">
                   MOST POPULAR
                 </div>
               )}
 
-              <div className="p-3 sm:p-4">
+              <div className="p-5 sm:p-6">
                 <div className="flex justify-between items-center">
-                  <h2 className="text-sm sm:text-base font-medium text-gray-900 dark:text-gray-100">
+                  <h2 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-gray-100">
                     {plan.name}
                   </h2>
                   {planStatus && (
                     <span
-                      className={`inline-flex items-center px-2 py-0.5 rounded-sm text-xs font-medium ${
+                      className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
                         planStatus === "Current Plan"
-                          ? "bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400"
-                          : "bg-yellow-100 dark:bg-yellow-900/30 text-yellow-600 dark:text-yellow-400"
+                          ? "bg-secondary/20 text-secondary-light"
+                          : "bg-accent/20 text-accent-light"
                       }`}
                     >
                       {planStatus}
@@ -423,32 +433,32 @@ const PricingComponent = () => {
                   )}
                 </div>
 
-                <p className="mt-2 text-xs sm:text-sm text-gray-600 dark:text-gray-300">
+                <p className="mt-2 text-sm sm:text-base text-gray-600 dark:text-gray-300">
                   {plan.description}
                 </p>
 
-                <div className="mt-3 sm:mt-4 flex items-baseline">
-                  <span className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-gray-100">
+                <div className="mt-4 sm:mt-5 flex items-baseline">
+                  <span className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-gray-100">
                     {plan.price}
                   </span>
-                  <span className="ml-1 text-xs sm:text-sm text-gray-500 dark:text-gray-400">
+                  <span className="ml-1 text-sm sm:text-base text-gray-500 dark:text-gray-400">
                     /{plan.period}
                   </span>
                 </div>
 
                 {plan.savings && (
-                  <p className="mt-1 text-xs sm:text-sm text-green-600 dark:text-green-400 font-medium">
+                  <p className="mt-1 text-sm font-medium text-secondary">
                     {plan.savings}
                   </p>
                 )}
 
-                <ul className="mt-4 space-y-2">
+                <ul className="mt-6 space-y-3">
                   {features.map((feature) => (
                     <li key={feature} className="flex items-start">
                       <div className="flex-shrink-0">
                         {plan.features[feature] ? (
                           <svg
-                            className="h-4 w-4 text-green-600 dark:text-green-400"
+                            className="h-5 w-5 text-secondary"
                             fill="currentColor"
                             viewBox="0 0 20 20"
                           >
@@ -460,7 +470,7 @@ const PricingComponent = () => {
                           </svg>
                         ) : (
                           <svg
-                            className="h-4 w-4 text-gray-500 dark:text-gray-400"
+                            className="h-5 w-5 text-gray-400 dark:text-gray-500"
                             fill="currentColor"
                             viewBox="0 0 20 20"
                           >
@@ -473,7 +483,7 @@ const PricingComponent = () => {
                         )}
                       </div>
                       <p
-                        className={`ml-2 text-xs sm:text-sm ${
+                        className={`ml-2.5 text-sm ${
                           plan.features[feature]
                             ? "text-gray-700 dark:text-gray-200"
                             : "text-gray-500 dark:text-gray-400 line-through"
@@ -490,16 +500,18 @@ const PricingComponent = () => {
                   disabled={
                     isLoading || resetting || planStatus === "Current Plan"
                   }
-                  className={`mt-4 sm:mt-6 block w-full py-2 px-3 rounded-sm text-white text-sm font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 transition-colors ${
+                  className={`mt-6 sm:mt-8 block w-full py-2.5 px-4 rounded-md text-white text-sm font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 shadow transition-all ${
                     isProcessing
                       ? "bg-gray-500/50 cursor-not-allowed"
                       : resetting
                       ? "bg-gray-600/50 cursor-not-allowed"
                       : planStatus === "Current Plan"
-                      ? "bg-green-600/90 cursor-not-allowed"
+                      ? "bg-secondary/90 cursor-not-allowed"
                       : plan.id === "free"
-                      ? "bg-gray-600 hover:bg-gray-500 focus:ring-gray-500"
-                      : "bg-blue-500 hover:bg-blue-600 focus:ring-blue-400"
+                      ? "bg-gray-600 hover:bg-gray-500 focus:ring-gray-500 hover:shadow-md"
+                      : plan.highlight
+                      ? "bg-gradient-to-r from-primary to-primary-dark hover:from-primary-dark hover:to-primary-dark focus:ring-primary/50 hover:shadow-lg hover:shadow-primary/20"
+                      : "bg-primary hover:bg-primary/90 focus:ring-primary/50 hover:shadow-md"
                   }`}
                 >
                   {isProcessing ? (
@@ -551,15 +563,15 @@ const PricingComponent = () => {
         })}
       </div>
 
-      <div className="mt-6 sm:mt-8 text-center">
-        <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">
+      <div className="mt-8 sm:mt-10 text-center">
+        <p className="text-sm text-gray-500 dark:text-gray-400">
           You can upgrade, downgrade, or cancel your subscription at any time.
         </p>
         {isAuthenticated() && !fromSignup && (
-          <p className="mt-2 text-xs sm:text-sm">
+          <p className="mt-3 text-sm">
             <button
               onClick={() => navigate("/dashboard")}
-              className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium"
+              className="text-primary hover:text-primary-dark dark:text-primary-light dark:hover:text-primary font-medium transition-colors"
               disabled={isLoading || resetting}
             >
               Skip for now and explore the dashboard →
@@ -567,12 +579,12 @@ const PricingComponent = () => {
           </p>
         )}
         {!isAuthenticated() && (
-          <p className="mt-3 text-xs sm:text-sm text-gray-500 dark:text-gray-400">
+          <p className="mt-4 text-sm text-gray-500 dark:text-gray-400">
             Already have an account?{" "}
             <button
               type="button"
               onClick={() => navigate("/login", { state: { from: location } })}
-              className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium"
+              className="text-primary hover:text-primary-dark dark:text-primary-light dark:hover:text-primary font-medium transition-colors"
               disabled={isLoading || resetting}
             >
               Log in

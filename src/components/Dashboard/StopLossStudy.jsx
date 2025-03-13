@@ -1,4 +1,15 @@
 import React, { useMemo, useState, useEffect } from "react";
+import {
+  AlertTriangle,
+  TrendingUp,
+  TrendingDown,
+  Percent,
+  Target,
+  Clock,
+  BarChart,
+  ArrowUp,
+  ArrowDown,
+} from "lucide-react";
 
 const StopLossStudy = ({ trades, user, stats, experienceLevel }) => {
   const [planEntry, setPlanEntry] = useState("");
@@ -604,89 +615,131 @@ const StopLossStudy = ({ trades, user, stats, experienceLevel }) => {
   }, [planEntry, accountBalance, supportPrice, resistancePrice, useSupRes]);
 
   return (
-    <div className="bg-white dark:bg-gray-700/60 p-3 sm:p-4 rounded-md border border-gray-200 dark:border-gray-600/50 shadow-sm h-full">
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+    <div className="bg-white/90 dark:bg-gray-800/60 p-5 sm:p-6 rounded-lg border border-gray-200 dark:border-gray-700/40 shadow-sm backdrop-blur-sm">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Left Side - Exit Analysis */}
         <div>
-          <h3 className="text-sm sm:text-base text-gray-900 dark:text-gray-100 font-medium">
+          <h3 className="flex items-center text-base font-semibold text-gray-900 dark:text-gray-100 mb-4">
+            <div className="h-5 w-1 bg-primary rounded-full mr-2"></div>
             Exit Analysis
           </h3>
-          <div className="bg-gray-100 dark:bg-gray-600/30 p-3 rounded-sm border border-gray-200 dark:border-gray-600/50 mb-4">
-            <p className="text-xs sm:text-sm text-gray-900 dark:text-gray-100">
-              Analysis of your trading patterns:
-            </p>
-            <ul className="text-xs text-gray-700 dark:text-gray-300 mt-2 space-y-1">
-              <li>• Based on your last 90 days of trades</li>
-              <li>• Analyzes winning and losing patterns</li>
-              <li>• Considers time of day and momentum</li>
-            </ul>
-            <p className="text-xs text-gray-600 dark:text-gray-300 mt-2 italic">
-              Note: Suggestions improve in accuracy as you add more trades to
-              your history
-            </p>
+          <div className="bg-gradient-to-br from-gray-50/90 to-gray-100/80 dark:from-gray-700/30 dark:to-gray-600/20 p-4 rounded-lg border border-gray-200 dark:border-gray-600/50 shadow-sm mb-5">
+            <div className="flex gap-3">
+              <div className="mt-0.5">
+                <BarChart className="h-5 w-5 text-primary" />
+              </div>
+              <div>
+                <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                  Analysis of your trading patterns:
+                </p>
+                <ul className="mt-3 space-y-2">
+                  <li className="flex items-start gap-2 text-sm text-gray-700 dark:text-gray-300">
+                    <div className="h-1.5 w-1.5 rounded-full bg-primary/80 mt-1.5"></div>
+                    <span>Based on your last 90 days of trades</span>
+                  </li>
+                  <li className="flex items-start gap-2 text-sm text-gray-700 dark:text-gray-300">
+                    <div className="h-1.5 w-1.5 rounded-full bg-primary/80 mt-1.5"></div>
+                    <span>Analyzes winning and losing patterns</span>
+                  </li>
+                  <li className="flex items-start gap-2 text-sm text-gray-700 dark:text-gray-300">
+                    <div className="h-1.5 w-1.5 rounded-full bg-primary/80 mt-1.5"></div>
+                    <span>Considers time of day and momentum</span>
+                  </li>
+                </ul>
+                <p className="text-xs italic text-gray-600 dark:text-gray-400 mt-3 pt-2 border-t border-gray-200 dark:border-gray-600/20">
+                  Note: Suggestions improve in accuracy as you add more trades
+                  to your history
+                </p>
+              </div>
+            </div>
           </div>
 
-          <div className="grid grid-cols-1 gap-3 sm:gap-4 mt-2">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
             {!trades?.length ? (
-              <div className="text-center py-2">
-                <p className="text-sm text-gray-500 dark:text-gray-300">
+              <div className="col-span-1 sm:col-span-2 bg-gray-50/50 dark:bg-gray-700/20 rounded-lg border border-dashed border-gray-300 dark:border-gray-600/50 p-6 text-center">
+                <BarChart className="h-10 w-10 mx-auto text-gray-400 dark:text-gray-500 mb-2" />
+                <p className="text-sm text-gray-500 dark:text-gray-400 font-medium">
                   Add trades to see analysis
+                </p>
+                <p className="text-xs text-gray-500 dark:text-gray-500 mt-1">
+                  Your trade history will help generate personalized
+                  recommendations
                 </p>
               </div>
             ) : (
               <>
-                <div>
-                  <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">
-                    Suggested Stop Loss
-                  </p>
-                  <p className="text-base sm:text-lg font-bold text-red-600 dark:text-red-400">
-                    {analysis?.suggestedStopLoss
-                      ? `$${analysis.suggestedStopLoss}`
-                      : "Insufficient data"}
-                  </p>
-                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                    Recommended stop loss based on historical price reversals
-                  </p>
-                </div>
-
-                <div>
-                  <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">
-                    Suggested Profit Target
-                  </p>
-                  <p className="text-base sm:text-lg font-bold text-green-600 dark:text-green-400">
-                    {analysis?.suggestedTarget
-                      ? `$${analysis.suggestedTarget}`
-                      : "Insufficient data"}
-                  </p>
-                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                    Target price based on your winning trades' profit patterns
-                  </p>
-                </div>
-
-                <div>
-                  <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">
-                    Suggested Hold Time
-                  </p>
-                  <p className="text-base sm:text-lg font-bold text-blue-600 dark:text-blue-400">
-                    {analysis?.suggestedHoldTime || "Insufficient data"}
-                  </p>
-                  {analysis?.holdTimeContext && (
-                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                      {analysis.holdTimeContext}
+                <div className="bg-white/90 dark:bg-gray-800/40 rounded-lg border border-gray-200 dark:border-gray-700/40 p-4 shadow-sm">
+                  <div className="flex justify-between">
+                    <p className="text-sm font-medium text-gray-500 dark:text-gray-400">
+                      Suggested Stop Loss
                     </p>
-                  )}
+                    <AlertTriangle className="h-5 w-5 text-red-500" />
+                  </div>
+                  <div className="mt-3">
+                    <p className="text-xl font-bold text-red-600 dark:text-red-400">
+                      {analysis?.suggestedStopLoss
+                        ? `$${analysis.suggestedStopLoss}`
+                        : "Insufficient data"}
+                    </p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
+                      Recommended stop loss based on historical price reversals
+                    </p>
+                  </div>
                 </div>
 
-                <div>
-                  <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">
-                    Experience Level
-                  </p>
-                  <p className="text-base sm:text-lg font-bold text-purple-600 dark:text-purple-400">
-                    {analysis?.experienceLevel || "Unknown"}
-                  </p>
-                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                    {analysis?.experienceContext || ""}
-                  </p>
+                <div className="bg-white/90 dark:bg-gray-800/40 rounded-lg border border-gray-200 dark:border-gray-700/40 p-4 shadow-sm">
+                  <div className="flex justify-between">
+                    <p className="text-sm font-medium text-gray-500 dark:text-gray-400">
+                      Suggested Profit Target
+                    </p>
+                    <Target className="h-5 w-5 text-green-500" />
+                  </div>
+                  <div className="mt-3">
+                    <p className="text-xl font-bold text-green-600 dark:text-green-400">
+                      {analysis?.suggestedTarget
+                        ? `$${analysis.suggestedTarget}`
+                        : "Insufficient data"}
+                    </p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
+                      Target price based on your winning trades' profit patterns
+                    </p>
+                  </div>
+                </div>
+
+                <div className="bg-white/90 dark:bg-gray-800/40 rounded-lg border border-gray-200 dark:border-gray-700/40 p-4 shadow-sm">
+                  <div className="flex justify-between">
+                    <p className="text-sm font-medium text-gray-500 dark:text-gray-400">
+                      Suggested Hold Time
+                    </p>
+                    <Clock className="h-5 w-5 text-primary" />
+                  </div>
+                  <div className="mt-3">
+                    <p className="text-xl font-bold text-primary dark:text-primary">
+                      {analysis?.suggestedHoldTime || "Insufficient data"}
+                    </p>
+                    {analysis?.holdTimeContext && (
+                      <p className="text-xs text-gray-500 dark:text-gray-400 mt-2 line-clamp-2">
+                        {analysis.holdTimeContext}
+                      </p>
+                    )}
+                  </div>
+                </div>
+
+                <div className="bg-white/90 dark:bg-gray-800/40 rounded-lg border border-gray-200 dark:border-gray-700/40 p-4 shadow-sm">
+                  <div className="flex justify-between">
+                    <p className="text-sm font-medium text-gray-500 dark:text-gray-400">
+                      Experience Level
+                    </p>
+                    <TrendingUp className="h-5 w-5 text-accent" />
+                  </div>
+                  <div className="mt-3">
+                    <p className="text-xl font-bold text-accent dark:text-accent">
+                      {analysis?.experienceLevel || "Unknown"}
+                    </p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
+                      {analysis?.experienceContext || ""}
+                    </p>
+                  </div>
                 </div>
               </>
             )}
@@ -695,45 +748,69 @@ const StopLossStudy = ({ trades, user, stats, experienceLevel }) => {
 
         {/* Right Side - Plan Your Trade */}
         <div>
-          <h4 className="text-sm sm:text-base font-medium text-gray-900 dark:text-gray-100 mb-3">
+          <h4 className="flex items-center text-base font-semibold text-gray-900 dark:text-gray-100 mb-4">
+            <div className="h-5 w-1 bg-secondary rounded-full mr-2"></div>
             Plan Your Trade
           </h4>
-          <div className="bg-gray-100 dark:bg-gray-600/30 p-3 rounded-sm border border-gray-200 dark:border-gray-600/50 mb-4">
-            <p className="text-xs sm:text-sm text-gray-900 dark:text-gray-100 mb-2">
-              Risk Management Rules:
-            </p>
-            <ul className="text-xs text-gray-700 dark:text-gray-300 mt-2 space-y-1">
-              <li>
-                • Maximum position: 10% of account ($
-                {(accountBalance * (RISK_PERCENTAGE / 100)).toFixed(2)})
-              </li>
-              <li>
-                {useSupRes
-                  ? "• Stop loss: 2% below support level"
-                  : "• Stop loss: Fixed 5% below entry price"}
-              </li>
-              <li>
-                {useSupRes
-                  ? "• Target: 2% below resistance level"
-                  : "• Target: 3x distance to stop (1:3 ratio)"}
-              </li>
-            </ul>
+          <div className="bg-gradient-to-br from-gray-50/90 to-gray-100/80 dark:from-gray-700/30 dark:to-gray-600/20 p-4 rounded-lg border border-gray-200 dark:border-gray-600/50 shadow-sm mb-5">
+            <div className="flex gap-3">
+              <div className="mt-0.5">
+                <Percent className="h-5 w-5 text-secondary" />
+              </div>
+              <div>
+                <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                  Risk Management Rules:
+                </p>
+                <ul className="mt-3 space-y-2">
+                  <li className="flex items-start gap-2 text-sm text-gray-700 dark:text-gray-300">
+                    <div className="h-1.5 w-1.5 rounded-full bg-secondary/80 mt-1.5"></div>
+                    <span>
+                      Maximum position: 10% of account ($
+                      {(accountBalance * (RISK_PERCENTAGE / 100)).toFixed(2)})
+                    </span>
+                  </li>
+                  <li className="flex items-start gap-2 text-sm text-gray-700 dark:text-gray-300">
+                    <div className="h-1.5 w-1.5 rounded-full bg-secondary/80 mt-1.5"></div>
+                    <span>
+                      {useSupRes
+                        ? "Stop loss: 2% below support level"
+                        : "Stop loss: Fixed 5% below entry price"}
+                    </span>
+                  </li>
+                  <li className="flex items-start gap-2 text-sm text-gray-700 dark:text-gray-300">
+                    <div className="h-1.5 w-1.5 rounded-full bg-secondary/80 mt-1.5"></div>
+                    <span>
+                      {useSupRes
+                        ? "Target: 2% below resistance level"
+                        : "Target: 3x distance to stop (1:3 ratio)"}
+                    </span>
+                  </li>
+                </ul>
+              </div>
+            </div>
           </div>
 
-          <div className="space-y-3 sm:space-y-4">
+          <div className="space-y-4">
             <div>
-              <label className="block text-xs text-gray-500 dark:text-gray-400 mb-1">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 Entry Price
               </label>
-              <input
-                type="number"
-                value={planEntry}
-                onChange={(e) => setPlanEntry(e.target.value)}
-                className="w-full px-3 py-2.5 sm:py-2 border border-gray-300 dark:border-gray-600/70 
-          bg-white dark:bg-gray-600/50 text-gray-900 dark:text-gray-100 rounded-sm"
-                step="0.01"
-                min="0"
-              />
+              <div className="relative">
+                <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500 dark:text-gray-400">
+                  $
+                </span>
+                <input
+                  type="number"
+                  value={planEntry}
+                  onChange={(e) => setPlanEntry(e.target.value)}
+                  className="w-full pl-8 pr-3 py-2 border border-gray-300 dark:border-gray-600/70 
+                  bg-white dark:bg-gray-700/40 text-gray-900 dark:text-gray-100 rounded-md
+                  focus:ring-primary focus:border-primary focus:ring-2 focus:ring-offset-1"
+                  step="0.01"
+                  min="0"
+                  placeholder="Enter stock price"
+                />
+              </div>
             </div>
 
             <div className="flex items-center space-x-2 my-2">
@@ -743,7 +820,7 @@ const StopLossStudy = ({ trades, user, stats, experienceLevel }) => {
                 checked={useSupRes}
                 onChange={(e) => setUseSupRes(e.target.checked)}
                 className="h-4 w-4 rounded-sm border-gray-300 dark:border-gray-600/70 
-          text-blue-500 focus:ring-1 focus:ring-blue-400"
+                text-secondary focus:ring-1 focus:ring-secondary"
               />
               <label
                 htmlFor="useSupRes"
@@ -754,73 +831,97 @@ const StopLossStudy = ({ trades, user, stats, experienceLevel }) => {
             </div>
 
             {useSupRes && (
-              <div className="space-y-3">
+              <div className="space-y-4 bg-gray-50/50 dark:bg-gray-700/20 p-4 rounded-lg border border-gray-200 dark:border-gray-700/40">
                 <div>
-                  <label className="block text-xs text-gray-500 dark:text-gray-400 mb-1">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                     Support Price
                   </label>
-                  <input
-                    type="number"
-                    value={supportPrice}
-                    onChange={(e) => setSupportPrice(e.target.value)}
-                    className="w-full px-3 py-2.5 sm:py-2 border border-gray-300 dark:border-gray-600/70 
-              bg-white dark:bg-gray-600/50 text-gray-900 dark:text-gray-100 rounded-sm"
-                    step="0.01"
-                    min="0"
-                  />
+                  <div className="relative">
+                    <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500 dark:text-gray-400">
+                      $
+                    </span>
+                    <input
+                      type="number"
+                      value={supportPrice}
+                      onChange={(e) => setSupportPrice(e.target.value)}
+                      className="w-full pl-8 pr-3 py-2 border border-gray-300 dark:border-gray-600/70 
+                      bg-white dark:bg-gray-700/40 text-gray-900 dark:text-gray-100 rounded-md
+                      focus:ring-primary focus:border-primary focus:ring-2 focus:ring-offset-1"
+                      step="0.01"
+                      min="0"
+                      placeholder="Support price"
+                    />
+                  </div>
                 </div>
                 <div>
-                  <label className="block text-xs text-gray-500 dark:text-gray-400 mb-1">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                     Resistance Price
                   </label>
-                  <input
-                    type="number"
-                    value={resistancePrice}
-                    onChange={(e) => setResistancePrice(e.target.value)}
-                    className="w-full px-3 py-2.5 sm:py-2 border border-gray-300 dark:border-gray-600/70 
-              bg-white dark:bg-gray-600/50 text-gray-900 dark:text-gray-100 rounded-sm"
-                    step="0.01"
-                    min="0"
-                  />
+                  <div className="relative">
+                    <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500 dark:text-gray-400">
+                      $
+                    </span>
+                    <input
+                      type="number"
+                      value={resistancePrice}
+                      onChange={(e) => setResistancePrice(e.target.value)}
+                      className="w-full pl-8 pr-3 py-2 border border-gray-300 dark:border-gray-600/70 
+                      bg-white dark:bg-gray-700/40 text-gray-900 dark:text-gray-100 rounded-md
+                      focus:ring-primary focus:border-primary focus:ring-2 focus:ring-offset-1"
+                      step="0.01"
+                      min="0"
+                      placeholder="Resistance price"
+                    />
+                  </div>
                 </div>
               </div>
             )}
 
             {planEntry && (
-              <>
-                <div>
-                  <label className="block text-xs text-gray-500 dark:text-gray-400 mb-1">
-                    Stop Loss Price
-                  </label>
-                  <p className="text-sm sm:text-base font-medium text-red-600 dark:text-red-400">
-                    ${calculatedStop}
-                  </p>
-                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                    {useSupRes
-                      ? "Based on support/resistance"
-                      : "5% below entry price"}
-                  </p>
+              <div className="mt-5 space-y-5 bg-white/90 dark:bg-gray-800/40 p-4 rounded-lg border border-gray-200 dark:border-gray-700/40 shadow-sm">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">
+                      Stop Loss Price
+                    </label>
+                    <p className="text-xl font-bold text-red-600 dark:text-red-400 flex items-center">
+                      <span className="text-sm mr-1">$</span>
+                      {calculatedStop}
+                    </p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                      {useSupRes
+                        ? "Based on support/resistance"
+                        : "5% below entry price"}
+                    </p>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">
+                      Target Price
+                    </label>
+                    <p className="text-xl font-bold text-green-600 dark:text-green-400 flex items-center">
+                      <span className="text-sm mr-1">$</span>
+                      {calculatedTarget}
+                    </p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                      {useSupRes
+                        ? "Based on support/resistance"
+                        : "3x the distance to stop loss"}
+                    </p>
+                  </div>
                 </div>
-                <div>
-                  <label className="block text-xs text-gray-500 dark:text-gray-400 mb-1">
-                    Target Price
-                  </label>
-                  <p className="text-sm sm:text-base font-medium text-green-600 dark:text-green-400">
-                    ${calculatedTarget}
-                  </p>
-                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                    {useSupRes
-                      ? "Based on support/resistance"
-                      : "3x the distance to stop loss"}
-                  </p>
-                </div>
-                <div>
-                  <label className="block text-xs text-gray-500 dark:text-gray-400 mb-1">
+
+                <div className="pt-3 border-t border-gray-200 dark:border-gray-700/40">
+                  <label className="block text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">
                     Position Size
                   </label>
-                  <p className="text-sm sm:text-base font-medium text-gray-900 dark:text-gray-100">
-                    {planShares} shares
-                  </p>
+                  <div className="flex items-center gap-3">
+                    <p className="text-xl font-bold text-gray-900 dark:text-gray-100">
+                      {planShares}
+                    </p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                      shares
+                    </p>
+                  </div>
                   <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                     Total position value: $
                     {(Number(planShares) * Number(planEntry)).toFixed(2)}
@@ -828,26 +929,30 @@ const StopLossStudy = ({ trades, user, stats, experienceLevel }) => {
                 </div>
 
                 {plannedRisk && plannedReward && (
-                  <div className="grid grid-cols-2 gap-3 sm:gap-4 mt-4">
+                  <div className="grid grid-cols-2 gap-4 pt-3 border-t border-gray-200 dark:border-gray-700/40">
                     <div>
-                      <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">
+                      <p className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1 flex items-center">
+                        <ArrowDown className="h-3 w-3 text-red-500 mr-1" />
                         Potential Risk
                       </p>
-                      <p className="text-sm sm:text-base font-semibold text-red-600 dark:text-red-400">
-                        ${plannedRisk}
+                      <p className="text-lg font-bold text-red-600 dark:text-red-400 flex items-center">
+                        <span className="text-xs mr-1">$</span>
+                        {plannedRisk}
                       </p>
                     </div>
                     <div>
-                      <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">
+                      <p className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1 flex items-center">
+                        <ArrowUp className="h-3 w-3 text-green-500 mr-1" />
                         Potential Reward
                       </p>
-                      <p className="text-sm sm:text-base font-semibold text-green-600 dark:text-green-400">
-                        ${plannedReward}
+                      <p className="text-lg font-bold text-green-600 dark:text-green-400 flex items-center">
+                        <span className="text-xs mr-1">$</span>
+                        {plannedReward}
                       </p>
                     </div>
                   </div>
                 )}
-              </>
+              </div>
             )}
           </div>
         </div>

@@ -1,4 +1,3 @@
-// src/components/AIResponseCountdown.jsx
 import React, { useState, useEffect } from "react";
 import { Clock } from "lucide-react";
 
@@ -39,7 +38,7 @@ const AIResponseCountdown = ({ isLoading, estimatedTime = 30 }) => {
   return (
     <div className="mt-3 text-center">
       <div className="flex items-center justify-center mb-2">
-        <Clock className="animate-pulse h-5 w-5 mr-2 text-indigo-400 dark:text-indigo-400" />
+        <Clock className="animate-pulse h-5 w-5 mr-2 text-blue-500 dark:text-blue-400" />
         {showExtendedMessage ? (
           <span className="text-gray-600 dark:text-gray-300">
             Still analyzing... AI responses may take a bit longer for complex
@@ -52,9 +51,9 @@ const AIResponseCountdown = ({ isLoading, estimatedTime = 30 }) => {
           </span>
         )}
       </div>
-      <div className="w-full bg-gray-200 dark:bg-gray-700/60 rounded-sm h-2.5">
+      <div className="w-full bg-gray-200 dark:bg-gray-700/60 rounded-md h-2.5">
         <div
-          className="bg-indigo-500 dark:bg-indigo-400 h-2.5 rounded-sm transition-all duration-300 ease-in-out"
+          className="bg-blue-500 dark:bg-blue-400 h-2.5 rounded-md transition-all duration-300 ease-in-out"
           style={{
             width: showExtendedMessage
               ? "90%" // Keep at 90% when we're past the estimated time

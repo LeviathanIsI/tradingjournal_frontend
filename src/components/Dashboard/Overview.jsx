@@ -203,9 +203,9 @@ const TradingInsights = ({ trades, stats }) => {
   };
 
   return (
-    <div className="bg-white dark:bg-gray-700/60 p-4 sm:p-6 rounded-md border border-gray-200 dark:border-gray-600/50 shadow-sm">
+    <div className="bg-white dark:bg-gray-800/80 p-4 sm:p-6 rounded-md border border-gray-200 dark:border-gray-700/60 shadow-md">
       <div className="mb-4">
-        <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-gray-100">
+        <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-gray-50">
           Trading Insights
         </h3>
         <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">
@@ -224,15 +224,15 @@ const TradingInsights = ({ trades, stats }) => {
             return (
               <div
                 key={index}
-                className={`flex items-start space-x-2 p-3 sm:p-4 rounded-sm border
+                className={`flex items-start space-x-2 p-3 sm:p-4 rounded-md transition-shadow duration-200 hover:shadow-md
                 ${
                   insight.color === "green"
-                    ? "border-green-100 dark:border-green-700/50 bg-green-50 dark:bg-green-700/20"
+                    ? "border border-green-200 dark:border-green-700/40 bg-green-50 dark:bg-green-700/20"
                     : insight.color === "yellow"
-                    ? "border-yellow-100 dark:border-yellow-700/50 bg-yellow-50 dark:bg-yellow-700/20"
+                    ? "border border-yellow-200 dark:border-yellow-700/40 bg-yellow-50 dark:bg-yellow-700/20"
                     : insight.color === "red"
-                    ? "border-red-100 dark:border-red-700/50 bg-red-50 dark:bg-red-700/20"
-                    : "border-blue-100 dark:border-blue-700/50 bg-blue-50 dark:bg-blue-700/20"
+                    ? "border border-red-200 dark:border-red-700/40 bg-red-50 dark:bg-red-700/20"
+                    : "border border-blue-200 dark:border-blue-700/40 bg-blue-50 dark:bg-blue-700/20"
                 }`}
               >
                 <Icon
@@ -313,14 +313,14 @@ const Overview = ({ trades }) => {
     <div className="space-y-4 sm:space-y-6">
       {/* Quick Stats Grid */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-        <div className="bg-white dark:bg-gray-700/60 p-3 sm:p-4 rounded-md border border-gray-200 dark:border-gray-600/50 shadow-sm">
+        <div className="bg-white dark:bg-gray-800/80 p-3 sm:p-4 rounded-md border border-gray-200 dark:border-gray-700/60 shadow-md hover:shadow-lg transition-shadow duration-200">
           <div className="flex items-center justify-between mb-2">
             <h3 className="text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-400">
               Best Winning Streak
             </h3>
             <Award className="h-4 w-4 text-blue-600 dark:text-blue-400" />
           </div>
-          <div className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-gray-100">
+          <div className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-gray-50">
             {bestStreak}
           </div>
           <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
@@ -328,7 +328,7 @@ const Overview = ({ trades }) => {
           </p>
         </div>
 
-        <div className="bg-white dark:bg-gray-700/60 p-3 sm:p-4 rounded-md border border-gray-200 dark:border-gray-600/50 shadow-sm">
+        <div className="bg-white dark:bg-gray-800/80 p-3 sm:p-4 rounded-md border border-gray-200 dark:border-gray-700/60 shadow-md hover:shadow-lg transition-shadow duration-200">
           <div className="flex items-center justify-between mb-2">
             <h3 className="text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-400">
               Largest Win
@@ -343,7 +343,7 @@ const Overview = ({ trades }) => {
           </p>
         </div>
 
-        <div className="bg-white dark:bg-gray-700/60 p-3 sm:p-4 rounded-md border border-gray-200 dark:border-gray-600/50 shadow-sm">
+        <div className="bg-white dark:bg-gray-800/80 p-3 sm:p-4 rounded-md border border-gray-200 dark:border-gray-700/60 shadow-md hover:shadow-lg transition-shadow duration-200">
           <div className="flex items-center justify-between mb-2">
             <h3 className="text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-400">
               Largest Loss
@@ -358,14 +358,14 @@ const Overview = ({ trades }) => {
           </p>
         </div>
 
-        <div className="bg-white dark:bg-gray-700/60 p-3 sm:p-4 rounded-md border border-gray-200 dark:border-gray-600/50 shadow-sm">
+        <div className="bg-white dark:bg-gray-800/80 p-3 sm:p-4 rounded-md border border-gray-200 dark:border-gray-700/60 shadow-md hover:shadow-lg transition-shadow duration-200">
           <div className="flex items-center justify-between mb-2">
             <h3 className="text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-400">
               Win/Loss Ratio
             </h3>
             <TrendingUp className="h-4 w-4 text-blue-600 dark:text-blue-400" />
           </div>
-          <div className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-gray-100">
+          <div className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-gray-50">
             {stats ? formatRatio(stats.winLossRatio) : "0.00"}
           </div>
           <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
@@ -375,9 +375,9 @@ const Overview = ({ trades }) => {
       </div>
 
       {/* Recent Activity */}
-      <div className="bg-white dark:bg-gray-700/60 p-3 sm:p-4 rounded-md border border-gray-200 dark:border-gray-600/50 shadow-sm">
+      <div className="bg-white dark:bg-gray-800/80 p-3 sm:p-4 rounded-md border border-gray-200 dark:border-gray-700/60 shadow-md">
         <div className="mb-4">
-          <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-gray-100">
+          <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-gray-50">
             Recent Activity
           </h3>
           <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">
@@ -393,7 +393,7 @@ const Overview = ({ trades }) => {
             recentTrades.map((trade) => (
               <div
                 key={trade._id}
-                className="flex items-center justify-between border-b border-gray-200 dark:border-gray-700 pb-2"
+                className="flex items-center justify-between border-b border-gray-200 dark:border-gray-700/40 pb-2 hover:bg-gray-50 dark:hover:bg-gray-700/30 -mx-2 px-2 rounded transition-colors"
               >
                 <div className="flex items-center space-x-3 sm:space-x-4">
                   <div
@@ -404,7 +404,7 @@ const Overview = ({ trades }) => {
                     }`}
                   />
                   <div>
-                    <p className="text-sm sm:text-base font-medium text-gray-900 dark:text-gray-100">
+                    <p className="text-sm sm:text-base font-medium text-gray-900 dark:text-gray-50">
                       {trade.symbol}
                     </p>
                     <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">

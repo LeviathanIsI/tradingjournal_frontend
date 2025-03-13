@@ -7,29 +7,26 @@ import {
   Loader,
   ClipboardList,
   Clock,
-  DollarSign,
-  Zap,
-  TrendingUp,
-  TrendingDown,
-  AlertTriangle,
-  BarChart2,
-  LineChart,
-  Lightbulb,
   Film,
   Play,
   Pause,
   SkipForward,
   SkipBack,
-  Camera,
-  MousePointer,
-  Crosshair,
   ArrowUp,
   ArrowDown,
   ChevronRight,
-  Maximize2,
+  Lightbulb,
+  MousePointer,
+  Crosshair,
+  Compass,
+  LineChart,
+  BarChart2,
   PieChart,
   History,
-  Compass,
+  TrendingUp,
+  TrendingDown,
+  AlertTriangle,
+  Maximize2,
 } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -185,9 +182,7 @@ const TradeExecutionReplay = () => {
       );
 
       if (data && data.success) {
-
         if (data.analysis) {
-
           // Ensure analysis is a string before setting it
           if (typeof data.analysis === "string") {
             setAnalysis(data.analysis);
@@ -197,10 +192,6 @@ const TradeExecutionReplay = () => {
               data.analysis.text ||
                 data.analysis.summary ||
                 JSON.stringify(data.analysis)
-            );
-            console.warn(
-              "API returned analysis as object instead of string:",
-              data.analysis
             );
           } else {
             setAnalysis(String(data.analysis) || "");
@@ -242,7 +233,7 @@ const TradeExecutionReplay = () => {
         );
       }
     } catch (error) {
-      console.error("Step 15: Exception caught:", error);
+      console.error("Exception caught:", error);
       if (!error.isCreditsError) {
         setError(error.message || "An unexpected error occurred");
         showToast(
@@ -257,7 +248,7 @@ const TradeExecutionReplay = () => {
     }
   }, [selectedTrade, makeAIRequest, showToast]);
 
-  // 3. Predictive Analysis Component (analyzeTrade function)
+  // Predictive Analysis Component (analyzeTrade function)
   const analyzeTrade = useCallback(async () => {
     if (!selectedTrade || !selectedScenario) return;
 
@@ -347,6 +338,7 @@ const TradeExecutionReplay = () => {
       second: "2-digit",
     });
   };
+
   // Auto-play functionality for the timeline
   useEffect(() => {
     let playbackInterval;
@@ -405,18 +397,18 @@ const TradeExecutionReplay = () => {
   };
 
   return (
-    <div className="max-w-6xl mx-auto">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <h2 className="text-2xl font-semibold text-gray-900 dark:text-gray-100 mb-6">
         AI Trade Execution Replay
       </h2>
 
       {!analysis && !loading && (
-        <div className="bg-white dark:bg-gray-700/60 rounded-sm shadow-sm p-8 text-center mb-6 border border-gray-200 dark:border-gray-600/50">
-          <Film className="h-12 w-12 mx-auto mb-4 text-indigo-400 dark:text-indigo-500" />
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-8 text-center mb-6 border border-gray-200 dark:border-gray-700">
+          <Film className="h-12 w-12 mx-auto mb-4 text-primary" />
           <p className="text-lg text-gray-800 dark:text-gray-100 mb-3">
             Review Your Trade Like a Pro Athlete Watches Game Tape
           </p>
-          <p className="text-sm text-gray-600 dark:text-gray-300 mb-6">
+          <p className="text-sm text-gray-600 dark:text-gray-400 mb-6">
             AI reconstructs your trade execution step-by-step and provides
             analysis on your decision timing, hesitations, and potential
             improvements.
@@ -426,18 +418,18 @@ const TradeExecutionReplay = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Left Side - Trade Selection */}
-        <div className="lg:col-span-1 bg-white dark:bg-gray-700/60 rounded-sm shadow-sm p-4 border border-gray-200 dark:border-gray-600/50">
+        <div className="lg:col-span-1 bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6 border border-gray-200 dark:border-gray-700">
           <div className="mb-4">
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-500 h-5 w-5" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
               <input
                 type="text"
                 placeholder="Search trades..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600/70 rounded-sm 
-                bg-white dark:bg-gray-600/50 text-gray-900 dark:text-gray-100 
-                focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500
+                className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md 
+                bg-white dark:bg-gray-700/50 text-gray-900 dark:text-gray-100 
+                focus:ring-2 focus:ring-primary/30 focus:border-primary/60
                 placeholder-gray-500 dark:placeholder-gray-400"
               />
             </div>
@@ -459,11 +451,11 @@ const TradeExecutionReplay = () => {
                 {filteredTrades.map((trade) => (
                   <div
                     key={trade._id}
-                    className={`p-3 rounded-sm cursor-pointer transition-colors duration-150 
-  hover:bg-gray-50 dark:hover:bg-gray-600/40 border border-transparent ${
+                    className={`p-4 rounded-lg cursor-pointer transition-colors duration-150 
+  hover:bg-gray-50 dark:hover:bg-gray-700/50 border ${
     selectedTrade?._id === trade._id
-      ? "bg-indigo-50 dark:bg-indigo-900/30 border border-indigo-200 dark:border-indigo-800"
-      : "hover:bg-gray-50 dark:hover:bg-gray-700/50 border border-transparent"
+      ? "bg-primary/10 dark:bg-primary/20 border-primary/20 dark:border-primary/30"
+      : "border-transparent"
   }`}
                     onClick={() => setSelectedTrade(trade)}
                   >
@@ -473,7 +465,7 @@ const TradeExecutionReplay = () => {
                         {trade.symbol || trade.ticker}
                       </div>
                       <div
-                        className={`px-2 py-0.5 text-xs rounded-sm ${
+                        className={`px-2 py-0.5 text-xs rounded-md ${
                           trade.profitLoss?.realized > 0
                             ? "bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300"
                             : trade.profitLoss?.realized < 0
@@ -531,9 +523,9 @@ const TradeExecutionReplay = () => {
         {/* Right Side - Analysis Display */}
         <div className="lg:col-span-2">
           {loading ? (
-            <div className="bg-white dark:bg-gray-700/60 rounded-sm shadow-sm p-8 border border-gray-200 dark:border-gray-600/50">
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-8 border border-gray-200 dark:border-gray-700">
               <div className="flex flex-col items-center justify-center py-12">
-                <Loader className="animate-spin h-10 w-10 text-indigo-500 mb-4" />
+                <Loader className="animate-spin h-10 w-10 text-primary mb-4" />
                 <p className="text-gray-600 dark:text-gray-300">
                   Reconstructing your trade execution...
                 </p>
@@ -544,7 +536,7 @@ const TradeExecutionReplay = () => {
               </div>
             </div>
           ) : error ? (
-            <div className="bg-red-50 dark:bg-red-900/20 p-6 rounded-sm shadow-sm text-red-600 dark:text-red-400 border border-red-200 dark:border-red-800/50">
+            <div className="bg-red-50 dark:bg-red-900/20 p-6 rounded-lg shadow-sm text-red-600 dark:text-red-400 border border-red-200 dark:border-red-800/50">
               <div className="flex items-center mb-4">
                 <AlertTriangle className="h-5 w-5 mr-2" />
                 <h3 className="font-medium">Analysis Error</h3>
@@ -552,13 +544,13 @@ const TradeExecutionReplay = () => {
               <p>{error}</p>
               <button
                 onClick={resetAnalysis}
-                className="mt-4 px-4 py-2 bg-red-100 dark:bg-red-900/40 text-red-700 dark:text-red-300 rounded-sm"
+                className="mt-4 px-4 py-2 bg-red-100 dark:bg-red-900/40 text-red-700 dark:text-red-300 rounded-md"
               >
                 Try Again
               </button>
             </div>
           ) : !selectedTrade ? (
-            <div className="bg-white dark:bg-gray-700/60 rounded-sm shadow-sm p-8 text-center border border-gray-200 dark:border-gray-600/50">
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-8 text-center border border-gray-200 dark:border-gray-700">
               <div className="text-gray-500 dark:text-gray-300 mb-2">
                 <Compass className="h-12 w-12 mx-auto mb-4 text-gray-400 dark:text-gray-500" />
                 <p className="text-lg">Select a trade from the list</p>
@@ -568,9 +560,9 @@ const TradeExecutionReplay = () => {
               </div>
             </div>
           ) : !analysis ? (
-            <div className="bg-white dark:bg-gray-700/60 rounded-sm shadow-sm p-8 text-center border border-gray-200 dark:border-gray-600/50">
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-8 text-center border border-gray-200 dark:border-gray-700">
               <div className="text-gray-700 dark:text-gray-300">
-                <History className="h-16 w-16 mx-auto mb-4 text-indigo-400 dark:text-indigo-500" />
+                <History className="h-16 w-16 mx-auto mb-4 text-primary" />
                 <p className="text-xl font-medium mb-2">
                   Trade Selected: {selectedTrade.symbol}
                 </p>
@@ -580,9 +572,9 @@ const TradeExecutionReplay = () => {
 
                 {/* Large, prominent button */}
                 <div
-                  className="w-full md:w-3/4 mx-auto py-4 px-6 bg-blue-600 dark:bg-blue-600/90 
-    hover:bg-blue-700 dark:hover:bg-blue-700 text-white text-lg font-medium rounded-sm 
-    flex items-center justify-center transition-colors shadow-sm cursor-pointer"
+                  className="w-full md:w-3/4 mx-auto py-4 px-6 bg-primary hover:bg-primary/90
+                    text-white text-lg font-medium rounded-lg 
+                    flex items-center justify-center transition-colors shadow-sm cursor-pointer"
                   tabIndex={0}
                   role="button"
                   aria-label="Run execution analysis"
@@ -602,22 +594,21 @@ const TradeExecutionReplay = () => {
             </div>
           ) : (
             <div className="flex flex-col space-y-6">
-              {/* More content follows */}
               {/* Trade Timeline Player */}
               {tradeTimeline && tradeTimeline.length > 0 && (
-                <div className="bg-white dark:bg-gray-700/60 rounded-sm shadow-sm p-4 border border-gray-200 dark:border-gray-600/50">
-                  <h3 className="font-medium text-gray-700 dark:text-gray-300 mb-3 border-b border-gray-200 dark:border-gray-600/50 pb-2 flex items-center">
-                    <Film className="w-5 h-5 mr-2 text-indigo-500" />
+                <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6 border border-gray-200 dark:border-gray-700">
+                  <h3 className="font-medium text-gray-700 dark:text-gray-300 mb-3 border-b border-gray-200 dark:border-gray-600 pb-2 flex items-center">
+                    <Film className="w-5 h-5 mr-2 text-primary" />
                     Trade Execution Timeline
                   </h3>
 
                   {/* Timeline Visualization */}
-                  <div className="mb-4 bg-gray-100 dark:bg-gray-600/30 rounded-sm p-4 border border-gray-200 dark:border-gray-600/50">
+                  <div className="mb-4 bg-gray-50 dark:bg-gray-700/30 rounded-lg p-4 border border-gray-200 dark:border-gray-600">
                     <div className="relative">
                       {/* Timeline Progress Bar */}
-                      <div className="w-full h-2 bg-gray-300 dark:bg-gray-600 rounded-sm overflow-hidden">
+                      <div className="w-full h-2 bg-gray-200 dark:bg-gray-600 rounded-full overflow-hidden">
                         <div
-                          className="h-2 bg-indigo-500"
+                          className="h-2 bg-primary"
                           style={{
                             width: `${
                               (currentStep / (tradeTimeline.length - 1)) * 100
@@ -632,11 +623,13 @@ const TradeExecutionReplay = () => {
                           <div
                             key={index}
                             className={`w-3 h-3 rounded-full cursor-pointer 
-  bg-indigo-500 ring-2 ring-indigo-300 dark:ring-indigo-400 ${
-    index <= currentStep ? "bg-indigo-500" : "bg-gray-400 dark:bg-gray-500"
-  } ${
+                            ${
+                              index <= currentStep
+                                ? "bg-primary"
+                                : "bg-gray-400 dark:bg-gray-500"
+                            } ${
                               index === currentStep
-                                ? "ring-2 ring-indigo-300 dark:ring-indigo-400"
+                                ? "ring-2 ring-primary/30"
                                 : ""
                             }`}
                             onClick={() => setCurrentStep(index)}
@@ -647,9 +640,9 @@ const TradeExecutionReplay = () => {
 
                     {/* Current Event Display */}
                     {tradeTimeline[currentStep] && (
-                      <div className="mt-6 p-4 border border-indigo-200 dark:border-indigo-800/70 bg-indigo-50 dark:bg-indigo-900/20 rounded-sm">
+                      <div className="mt-6 p-4 border border-primary/20 dark:border-primary/30 bg-primary/5 dark:bg-primary/10 rounded-lg">
                         <div className="flex items-start">
-                          <div className="p-2 bg-white dark:bg-gray-700/60 rounded-sm mr-3 border border-gray-200 dark:border-gray-600/50">
+                          <div className="p-2 bg-white dark:bg-gray-700 rounded-md mr-3 border border-gray-200 dark:border-gray-600">
                             {getActionIcon(
                               tradeTimeline[currentStep].actionType
                             )}
@@ -669,7 +662,7 @@ const TradeExecutionReplay = () => {
                               {tradeTimeline[currentStep].description}
                             </p>
                             {tradeTimeline[currentStep].insight && (
-                              <div className="mt-3 p-2 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800/70 rounded-sm text-xs text-yellow-800 dark:text-yellow-300">
+                              <div className="mt-3 p-2 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800/70 rounded-md text-xs text-yellow-800 dark:text-yellow-300">
                                 <div className="flex items-start">
                                   <Lightbulb className="h-4 w-4 mr-1 mt-0.5 flex-shrink-0" />
                                   <span>
@@ -687,40 +680,40 @@ const TradeExecutionReplay = () => {
                     <div className="flex items-center justify-center mt-4 space-x-4">
                       <button
                         onClick={goToStart}
-                        className="p-1 text-gray-600 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400"
+                        className="p-1 text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-primary-light"
                       >
                         <SkipBack className="h-5 w-5" />
                       </button>
                       <button
                         onClick={prevStep}
-                        className="p-1 text-gray-600 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400"
+                        className="p-1 text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-primary-light"
                       >
                         <ChevronRight className="h-5 w-5 transform rotate-180" />
                       </button>
                       {isPlaying ? (
                         <button
                           onClick={pausePlayback}
-                          className="p-2 bg-indigo-100 dark:bg-indigo-800/70 rounded-sm text-indigo-600 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-700"
+                          className="p-2 bg-primary/10 dark:bg-primary/20 rounded-md text-primary dark:text-primary-light border border-primary/20 dark:border-primary/30"
                         >
                           <Pause className="h-5 w-5" />
                         </button>
                       ) : (
                         <button
                           onClick={startPlayback}
-                          className="p-2 bg-indigo-100 dark:bg-indigo-800/70 rounded-sm text-indigo-600 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-700"
+                          className="p-2 bg-primary/10 dark:bg-primary/20 rounded-md text-primary dark:text-primary-light border border-primary/20 dark:border-primary/30"
                         >
                           <Play className="h-5 w-5" />
                         </button>
                       )}
                       <button
                         onClick={nextStep}
-                        className="p-1 text-gray-600 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400"
+                        className="p-1 text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-primary-light"
                       >
                         <ChevronRight className="h-5 w-5" />
                       </button>
                       <button
                         onClick={goToEnd}
-                        className="p-1 text-gray-600 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400"
+                        className="p-1 text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-primary-light"
                       >
                         <SkipForward className="h-5 w-5" />
                       </button>
@@ -732,7 +725,7 @@ const TradeExecutionReplay = () => {
                           onChange={(e) =>
                             setPlaybackSpeed(Number(e.target.value))
                           }
-                          className="text-xs p-1 bg-gray-100 dark:bg-gray-600/50 border border-gray-300 dark:border-gray-600/70 rounded-sm text-gray-700 dark:text-gray-300"
+                          className="text-xs p-1 bg-gray-50 dark:bg-gray-700/50 border border-gray-300 dark:border-gray-600 rounded-md text-gray-700 dark:text-gray-300"
                         >
                           <option value={0.5}>0.5x</option>
                           <option value={1}>1x</option>
@@ -745,22 +738,22 @@ const TradeExecutionReplay = () => {
                 </div>
               )}
               {/* Analysis Content */}
-              <div className="bg-white dark:bg-gray-700/60 rounded-sm shadow-sm border border-gray-200 dark:border-gray-600/50">
+              <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
                 {/* Analysis Header */}
-                <div className="border-b border-gray-200 dark:border-gray-600/50 p-4">
+                <div className="border-b border-gray-200 dark:border-gray-600 p-6">
                   <div className="flex justify-between items-start">
                     <div>
                       <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 flex items-center">
-                        <ClipboardList className="mr-2 h-5 w-5 text-indigo-500" />
+                        <ClipboardList className="mr-2 h-5 w-5 text-primary" />
                         Trade Execution Analysis: {tradeDetails?.symbol}
                       </h3>
-                      <p className="text-sm text-gray-600 dark:text-gray-300">
+                      <p className="text-sm text-gray-600 dark:text-gray-400">
                         Step-by-step breakdown of your decision timing and
                         execution
                       </p>
                     </div>
                     <div
-                      className={`px-3 py-1 text-sm rounded-sm font-medium ${
+                      className={`px-3 py-1 text-sm rounded-md font-medium ${
                         tradeDetails?.profitLoss > 0
                           ? "bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300"
                           : "bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300"
@@ -773,8 +766,8 @@ const TradeExecutionReplay = () => {
                   </div>
 
                   {tradeDetails && (
-                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-4">
-                      <div className="bg-gray-50 dark:bg-gray-600/30 p-2 rounded-sm border border-gray-200 dark:border-gray-600/50">
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-4">
+                      <div className="bg-gray-50 dark:bg-gray-700/30 p-3 rounded-md border border-gray-200 dark:border-gray-600">
                         <p className="text-xs text-gray-500 dark:text-gray-400">
                           Entry
                         </p>
@@ -782,7 +775,7 @@ const TradeExecutionReplay = () => {
                           {formatCurrency(tradeDetails.entryPrice)}
                         </p>
                       </div>
-                      <div className="bg-gray-50 dark:bg-gray-600/30 p-2 rounded-sm border border-gray-200 dark:border-gray-600/50">
+                      <div className="bg-gray-50 dark:bg-gray-700/30 p-3 rounded-md border border-gray-200 dark:border-gray-600">
                         <p className="text-xs text-gray-500 dark:text-gray-400">
                           Exit
                         </p>
@@ -792,7 +785,7 @@ const TradeExecutionReplay = () => {
                             : "Open"}
                         </p>
                       </div>
-                      <div className="bg-gray-50 dark:bg-gray-600/30 p-2 rounded-sm border border-gray-200 dark:border-gray-600/50">
+                      <div className="bg-gray-50 dark:bg-gray-700/30 p-3 rounded-md border border-gray-200 dark:border-gray-600">
                         <p className="text-xs text-gray-500 dark:text-gray-400">
                           Trade Type
                         </p>
@@ -800,7 +793,7 @@ const TradeExecutionReplay = () => {
                           {tradeDetails.tradeType}
                         </p>
                       </div>
-                      <div className="bg-gray-50 dark:bg-gray-600/30 p-2 rounded-sm border border-gray-200 dark:border-gray-600/50">
+                      <div className="bg-gray-50 dark:bg-gray-700/30 p-3 rounded-md border border-gray-200 dark:border-gray-600">
                         <p className="text-xs text-gray-500 dark:text-gray-400">
                           Decision Time
                         </p>
@@ -833,8 +826,8 @@ const TradeExecutionReplay = () => {
                           if (content.includes("Strengths")) Icon = PieChart;
 
                           return (
-                            <h2 className="text-xl font-semibold text-indigo-600 dark:text-indigo-300 mt-6 mb-3 flex items-center border-l-2 border-indigo-600 dark:border-indigo-500 pl-3">
-                              <Icon className="mr-2 h-5 w-5 text-indigo-600 dark:text-indigo-300" />
+                            <h2 className="text-xl font-semibold text-primary dark:text-primary-light mt-6 mb-3 flex items-center border-l-2 border-primary dark:border-primary-light pl-3">
+                              <Icon className="mr-2 h-5 w-5 text-primary dark:text-primary-light" />
                               {props.children}
                             </h2>
                           );
@@ -851,7 +844,7 @@ const TradeExecutionReplay = () => {
                         ),
                         li: ({ node, ...props }) => (
                           <li className="text-gray-700 dark:text-gray-300 mb-2 flex items-start">
-                            <span className="text-indigo-500 dark:text-indigo-400 mr-2 mt-1">
+                            <span className="text-primary dark:text-primary-light mr-2 mt-1">
                               •
                             </span>
                             <span className="flex-1">{props.children}</span>
@@ -870,12 +863,12 @@ const TradeExecutionReplay = () => {
                 </div>
               </div>
               {/* Summary & Key Takeaways */}
-              <div className="bg-white dark:bg-gray-700/60 rounded-sm shadow-sm p-6 border border-gray-200 dark:border-gray-600/50">
-                <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100 flex items-center border-l-4 border-indigo-500 dark:border-indigo-400 pl-3">
-                  <Lightbulb className="h-5 w-5 text-indigo-500 dark:text-indigo-400 mr-2" />
+              <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6 border border-gray-200 dark:border-gray-700">
+                <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100 flex items-center border-l-4 border-primary dark:border-primary-light pl-3">
+                  <Lightbulb className="h-5 w-5 text-primary dark:text-primary-light mr-2" />
                   Key Takeaways
                 </h3>
-                <p className="text-sm text-gray-700 dark:text-gray-300 mt-2">
+                <p className="text-sm text-gray-700 dark:text-gray-400 mt-2">
                   These are the most important insights from your trade
                   execution.
                 </p>
@@ -884,7 +877,7 @@ const TradeExecutionReplay = () => {
                   {analysis?.keyTakeaways?.length > 0 ? (
                     analysis.keyTakeaways.map((takeaway, index) => (
                       <li key={index} className="flex items-start">
-                        <span className="text-indigo-500 dark:text-indigo-400 mr-2">
+                        <span className="text-primary dark:text-primary-light mr-2">
                           •
                         </span>
                         <span className="flex-1">{takeaway}</span>
@@ -899,17 +892,17 @@ const TradeExecutionReplay = () => {
               </div>
 
               {/* Performance Breakdown */}
-              <div className="bg-white dark:bg-gray-700/60 rounded-sm shadow-sm p-6 border border-gray-200 dark:border-gray-600/50">
-                <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100 flex items-center border-l-4 border-indigo-500 dark:border-indigo-400 pl-3">
-                  <PieChart className="h-5 w-5 text-indigo-500 dark:text-indigo-400 mr-2" />
+              <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6 border border-gray-200 dark:border-gray-700">
+                <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100 flex items-center border-l-4 border-primary dark:border-primary-light pl-3">
+                  <PieChart className="h-5 w-5 text-primary dark:text-primary-light mr-2" />
                   Performance Breakdown
                 </h3>
-                <p className="text-sm text-gray-700 dark:text-gray-300 mt-2">
+                <p className="text-sm text-gray-700 dark:text-gray-400 mt-2">
                   A detailed breakdown of your trade execution performance.
                 </p>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
-                  <div className="p-4 border border-gray-200 dark:border-gray-600/50 rounded-sm bg-gray-50 dark:bg-gray-600/30">
+                  <div className="p-4 border border-gray-200 dark:border-gray-600 rounded-md bg-gray-50 dark:bg-gray-700/30">
                     <p className="text-sm text-gray-500 dark:text-gray-400">
                       Win Rate
                     </p>
@@ -919,7 +912,7 @@ const TradeExecutionReplay = () => {
                         : "-"}
                     </p>
                   </div>
-                  <div className="p-4 border border-gray-200 dark:border-gray-600/50 rounded-sm bg-gray-50 dark:bg-gray-600/30">
+                  <div className="p-4 border border-gray-200 dark:border-gray-600 rounded-md bg-gray-50 dark:bg-gray-700/30">
                     <p className="text-sm text-gray-500 dark:text-gray-400">
                       Avg Profit
                     </p>
@@ -929,7 +922,7 @@ const TradeExecutionReplay = () => {
                         : "-"}
                     </p>
                   </div>
-                  <div className="p-4 border border-gray-200 dark:border-gray-600/50 rounded-sm bg-gray-50 dark:bg-gray-600/30">
+                  <div className="p-4 border border-gray-200 dark:border-gray-600 rounded-md bg-gray-50 dark:bg-gray-700/30">
                     <p className="text-sm text-gray-500 dark:text-gray-400">
                       Holding Time
                     </p>
@@ -943,12 +936,12 @@ const TradeExecutionReplay = () => {
               </div>
 
               {/* Suggested Improvements */}
-              <div className="bg-white dark:bg-gray-700/60 rounded-sm shadow-sm p-6 border border-gray-200 dark:border-gray-600/50">
-                <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100 flex items-center border-l-4 border-indigo-500 dark:border-indigo-400 pl-3">
-                  <TrendingUp className="h-5 w-5 text-indigo-500 dark:text-indigo-400 mr-2" />
+              <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6 border border-gray-200 dark:border-gray-700">
+                <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100 flex items-center border-l-4 border-primary dark:border-primary-light pl-3">
+                  <TrendingUp className="h-5 w-5 text-primary dark:text-primary-light mr-2" />
                   Suggested Improvements
                 </h3>
-                <p className="text-sm text-gray-700 dark:text-gray-300 mt-2">
+                <p className="text-sm text-gray-700 dark:text-gray-400 mt-2">
                   AI-generated recommendations to improve your execution.
                 </p>
 

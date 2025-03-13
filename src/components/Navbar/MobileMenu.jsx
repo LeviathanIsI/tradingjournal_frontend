@@ -1,9 +1,25 @@
+// src/components/Navbar/MobileMenu.jsx
 import React from "react";
-import ThemeSwitcher from "../ThemeSwitcher";
-import NavLink from "./NavLink";
-import { Bell } from "lucide-react";
-import { useNotifications } from "../../context/NotificationsContext";
 import { Link } from "react-router-dom";
+import ThemeSwitcher from "./ThemeSwitcher";
+import { Bell, ShieldAlert } from "lucide-react";
+import { useNotifications } from "../../context/NotificationsContext";
+
+// Material UI imports
+import {
+  Box,
+  Drawer,
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
+  Divider,
+  Typography,
+  Button,
+  useTheme,
+  Badge,
+} from "@mui/material";
 
 const MobileMenu = ({
   isOpen,
@@ -12,105 +28,256 @@ const MobileMenu = ({
   hasAccessToFeature,
   handleLogout,
 }) => {
-  const linkStyle =
-    "block px-4 py-3 text-gray-300 hover:bg-gray-800 rounded-md transition-colors";
-
+  const theme = useTheme();
   const { unreadCount } = useNotifications();
 
+  // Check if user is admin
+  const isAdmin =
+    user?.specialAccess?.hasAccess && user?.specialAccess?.reason === "Admin";
+
+  const menuItemStyle = {
+    borderRadius: 1,
+    mb: 0.5,
+    py: 1,
+    px: 2,
+    color:
+      theme.palette.mode === "dark"
+        ? "rgba(255, 255, 255, 0.8)"
+        : "rgba(0, 0, 0, 0.7)",
+    "&:hover": {
+      backgroundColor:
+        theme.palette.mode === "dark"
+          ? "rgba(255, 255, 255, 0.1)"
+          : "rgba(0, 0, 0, 0.05)",
+    },
+  };
+
+  // Updated admin style to match the blue color scheme
+  const adminItemStyle = {
+    ...menuItemStyle,
+    backgroundColor:
+      theme.palette.mode === "dark"
+        ? "rgba(59, 130, 246, 0.2)"
+        : "rgba(37, 99, 235, 0.1)",
+    color: theme.palette.mode === "dark" ? "#60a5fa" : "#2563eb",
+    "&:hover": {
+      backgroundColor:
+        theme.palette.mode === "dark"
+          ? "rgba(59, 130, 246, 0.3)"
+          : "rgba(37, 99, 235, 0.2)",
+    },
+  };
+
   return (
-    <div
-      className={`fixed inset-0 bg-black bg-opacity-50 z-50 transition-opacity duration-300 ${
-        isOpen ? "opacity-100" : "opacity-0 pointer-events-none"
-      }`}
-      onClick={() => setIsOpen(false)}
+    <Drawer
+      anchor="right"
+      open={isOpen}
+      onClose={() => setIsOpen(false)}
+      PaperProps={{
+        sx: {
+          width: 280,
+          backgroundColor:
+            theme.palette.mode === "dark" ? "#0f172a" : "#ffffff",
+          borderLeft:
+            theme.palette.mode === "dark"
+              ? "1px solid rgba(255, 255, 255, 0.1)"
+              : "1px solid rgba(0, 0, 0, 0.1)",
+        },
+      }}
+      BackdropProps={{
+        sx: {
+          backgroundColor: "rgba(0, 0, 0, 0.5)",
+        },
+      }}
     >
-      <div
-        className={`fixed inset-y-0 right-0 w-64 bg-gray-900 transform transition-transform duration-300 ease-in-out z-50 ${
-          isOpen ? "translate-x-0" : "translate-x-full"
-        }`}
-        onClick={(e) => e.stopPropagation()}
-      >
-        {/* Menu Content */}
-        <div className="flex flex-col h-full pt-16">
-          {/* User Welcome */}
-          {user && (
-            <div className="px-4 py-3 text-sm text-gray-300 border-b border-gray-700">
+      <Box sx={{ width: "100%", pt: 8 }}>
+        {/* User Welcome */}
+        {user && (
+          <Box
+            sx={{
+              px: 3,
+              py: 2,
+              borderBottom:
+                theme.palette.mode === "dark"
+                  ? "1px solid rgba(255, 255, 255, 0.1)"
+                  : "1px solid rgba(0, 0, 0, 0.1)",
+            }}
+          >
+            <Typography
+              variant="body2"
+              sx={{
+                color:
+                  theme.palette.mode === "dark"
+                    ? "rgba(255, 255, 255, 0.7)"
+                    : "rgba(0, 0, 0, 0.7)",
+              }}
+            >
               Welcome, {user.username}
-            </div>
-          )}
-          {/* Menu Items */}
-          <div className="flex-1 overflow-y-auto">
-            <div className="px-2 py-4 space-y-1">
-              {!user ? (
-                <>
-                  <NavLink to="/pricing" className={linkStyle}>
-                    Pricing
-                  </NavLink>
-                  <NavLink to="/login" className={linkStyle}>
-                    Login
-                  </NavLink>
-                  <NavLink to="/signup" className={linkStyle}>
-                    Sign Up
-                  </NavLink>
-                </>
-              ) : (
-                <>
-                  <NavLink to="/dashboard" className={linkStyle}>
-                    Dashboard
-                  </NavLink>
+            </Typography>
+          </Box>
+        )}
 
-                  {hasAccessToFeature("premium") && (
-                    <>
-                      <NavLink to="/trade-planning" className={linkStyle}>
-                        Trade Planning
-                      </NavLink>
-                      <NavLink to="/community" className={linkStyle}>
-                        Community
-                      </NavLink>
-                    </>
-                  )}
+        {/* Menu Items */}
+        <Box sx={{ overflowY: "auto", flexGrow: 1, p: 2 }}>
+          <List disablePadding>
+            {!user ? (
+              <>
+                <ListItemButton
+                  component={Link}
+                  to="/pricing"
+                  sx={menuItemStyle}
+                >
+                  <ListItemText primary="Pricing" />
+                </ListItemButton>
 
-                  {/* Notifications Link for Mobile */}
-                  <Link
-                    to="/notifications"
-                    className={`${linkStyle} flex items-center justify-between`}
-                    onClick={() => setIsOpen(false)}
+                <ListItemButton component={Link} to="/login" sx={menuItemStyle}>
+                  <ListItemText primary="Login" />
+                </ListItemButton>
+
+                <ListItemButton
+                  component={Link}
+                  to="/signup"
+                  sx={{
+                    ...menuItemStyle,
+                    backgroundColor: theme.palette.primary.main,
+                    color: "white",
+                    "&:hover": {
+                      backgroundColor: theme.palette.primary.dark,
+                    },
+                  }}
+                >
+                  <ListItemText primary="Sign Up" />
+                </ListItemButton>
+              </>
+            ) : (
+              <>
+                <ListItemButton
+                  component={Link}
+                  to="/dashboard"
+                  sx={menuItemStyle}
+                >
+                  <ListItemText primary="Dashboard" />
+                </ListItemButton>
+
+                {hasAccessToFeature("premium") && (
+                  <>
+                    <ListItemButton
+                      component={Link}
+                      to="/trade-planning"
+                      sx={menuItemStyle}
+                    >
+                      <ListItemText primary="Trade Planning" />
+                    </ListItemButton>
+
+                    <ListItemButton
+                      component={Link}
+                      to="/community"
+                      sx={menuItemStyle}
+                    >
+                      <ListItemText primary="Community" />
+                    </ListItemButton>
+                  </>
+                )}
+
+                {/* Admin Link - Updated with new blue styling */}
+                {isAdmin && (
+                  <ListItemButton
+                    component={Link}
+                    to="/admin"
+                    sx={adminItemStyle}
                   >
-                    <div className="flex items-center">
-                      <Bell className="h-5 w-5 mr-2" />
-                      <span>Notifications</span>
-                    </div>
-                    {unreadCount > 0 && (
-                      <span className="bg-blue-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-                        {unreadCount > 9 ? "9+" : unreadCount}
-                      </span>
-                    )}
-                  </Link>
+                    <ListItemIcon sx={{ minWidth: 36, color: "inherit" }}>
+                      <ShieldAlert size={20} />
+                    </ListItemIcon>
+                    <ListItemText primary="Admin Panel" />
+                  </ListItemButton>
+                )}
 
-                  <NavLink to="/profile" className={linkStyle}>
-                    Profile
-                  </NavLink>
-                  <NavLink to="/pricing" className={linkStyle}>
-                    Pricing
-                  </NavLink>
-                </>
-              )}
-            </div>
-          </div>
-          {/* Footer Actions */}
-          <div className="border-t border-gray-700">
-            <div className="px-4 py-4 space-y-4">
-              <ThemeSwitcher />
-              {user && (
-                <NavLink onClick={handleLogout} className={linkStyle}>
-                  Logout
-                </NavLink>
-              )}
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+                {/* Notifications Link for Mobile */}
+                <ListItemButton
+                  component={Link}
+                  to="/notifications"
+                  onClick={() => setIsOpen(false)}
+                  sx={menuItemStyle}
+                >
+                  <ListItemIcon sx={{ minWidth: 36, color: "inherit" }}>
+                    <Bell size={20} />
+                  </ListItemIcon>
+                  <ListItemText primary="Notifications" />
+                  {unreadCount > 0 && (
+                    <Badge
+                      badgeContent={unreadCount > 9 ? "9+" : unreadCount}
+                      color="primary"
+                      sx={{
+                        "& .MuiBadge-badge": {
+                          backgroundColor:
+                            theme.palette.mode === "dark"
+                              ? "#3b82f6"
+                              : "#2563eb",
+                        },
+                      }}
+                    />
+                  )}
+                </ListItemButton>
+
+                <ListItemButton
+                  component={Link}
+                  to="/profile"
+                  sx={menuItemStyle}
+                >
+                  <ListItemText primary="Profile" />
+                </ListItemButton>
+
+                <ListItemButton
+                  component={Link}
+                  to="/pricing"
+                  sx={menuItemStyle}
+                >
+                  <ListItemText primary="Pricing" />
+                </ListItemButton>
+              </>
+            )}
+          </List>
+        </Box>
+
+        {/* Footer Actions */}
+        <Box
+          sx={{
+            p: 2,
+            borderTop:
+              theme.palette.mode === "dark"
+                ? "1px solid rgba(255, 255, 255, 0.1)"
+                : "1px solid rgba(0, 0, 0, 0.1)",
+            display: "flex",
+            flexDirection: "column",
+            gap: 2,
+          }}
+        >
+          <ThemeSwitcher />
+
+          {user && (
+            <Button
+              onClick={() => {
+                handleLogout();
+                setIsOpen(false);
+              }}
+              fullWidth
+              variant="outlined"
+              color="error"
+              sx={{
+                textTransform: "none",
+                borderColor:
+                  theme.palette.mode === "dark"
+                    ? "rgba(239, 68, 68, 0.5)"
+                    : "rgba(239, 68, 68, 0.5)",
+              }}
+            >
+              Logout
+            </Button>
+          )}
+        </Box>
+      </Box>
+    </Drawer>
   );
 };
 

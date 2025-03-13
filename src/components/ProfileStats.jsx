@@ -17,8 +17,11 @@ import {
 import {
   CreditCard,
   TrendingUp,
-  ChartBar,
+  BarChart2,
   PieChart as PieChartIcon,
+  Calendar,
+  ChevronDown,
+  InfoIcon,
 } from "lucide-react";
 import { useTradingStats } from "../context/TradingStatsContext";
 import { useAuth } from "../context/AuthContext";
@@ -132,38 +135,53 @@ const ProfileStats = ({ userId, trades = [], stats: propStats = {} }) => {
     return (stats?.totalProfit || 0) / stats.totalTrades;
   }, [stats]);
 
-  const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042"];
+  const COLORS = ["#3b82f6", "#10b981", "#f59e0b", "#ef4444"];
 
   return (
-    <div className="space-y-4 sm:space-y-6">
-      {/* Time frame selector */}
-      <div className="flex justify-between items-center">
-        <div className="w-full sm:w-auto">
+    <div className="space-y-6">
+      {/* Header with time frame selector */}
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
+        <h2 className="text-lg font-bold text-gray-900 dark:text-gray-100 flex items-center">
+          <div className="h-5 w-1.5 bg-primary rounded-full mr-2"></div>
+          Trading Statistics
+        </h2>
+
+        <div className="relative">
+          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <Calendar className="h-4 w-4 text-gray-400 dark:text-gray-500" />
+          </div>
           <select
             value={timeFrame}
             onChange={(e) => setTimeFrame(e.target.value)}
-            className="w-full sm:w-auto px-3 py-2 border border-gray-300 dark:border-gray-600/70 rounded-sm text-sm
-            bg-white dark:bg-gray-600/50 text-gray-900 dark:text-gray-100"
+            className="pl-9 pr-8 py-2 border border-gray-300 dark:border-gray-600/70 rounded-md text-sm
+            bg-white dark:bg-gray-700/40 text-gray-900 dark:text-gray-100
+            focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary
+            appearance-none"
           >
             <option value="all">All Time</option>
             <option value="year">This Year</option>
             <option value="6months">Last 6 Months</option>
             <option value="month">This Month</option>
           </select>
+          <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700 dark:text-gray-300">
+            <ChevronDown className="h-4 w-4" />
+          </div>
         </div>
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
-        <div className="bg-white dark:bg-gray-700/60 rounded-md border border-gray-200 dark:border-gray-600/50 shadow-sm p-3 sm:p-4">
-          <div className="flex items-center gap-2 mb-2">
-            <CreditCard className="h-5 w-5 text-blue-500 dark:text-blue-400" />
-            <h3 className="font-medium text-sm sm:text-base text-gray-900 dark:text-gray-100">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+        <div className="bg-white dark:bg-gray-800/80 rounded-lg border border-gray-200 dark:border-gray-700/60 shadow-sm p-4 hover:shadow transition-shadow">
+          <div className="flex items-center gap-3 mb-2">
+            <div className="bg-primary/10 dark:bg-primary/20 p-2 rounded-md">
+              <CreditCard className="h-5 w-5 text-primary dark:text-primary-light" />
+            </div>
+            <h3 className="font-medium text-gray-900 dark:text-gray-100">
               Total P&L
             </h3>
           </div>
           <p
-            className={`text-lg sm:text-2xl font-bold ${
+            className={`text-2xl font-bold ${
               (stats?.totalProfit || 0) >= 0
                 ? "text-green-600 dark:text-green-400"
                 : "text-red-600 dark:text-red-400"
@@ -173,39 +191,51 @@ const ProfileStats = ({ userId, trades = [], stats: propStats = {} }) => {
           </p>
         </div>
 
-        <div className="bg-white dark:bg-gray-700/60 rounded-md border border-gray-200 dark:border-gray-600/50 shadow-sm p-3 sm:p-4">
-          <div className="flex items-center gap-2 mb-2">
-            <TrendingUp className="h-5 w-5 text-green-500 dark:text-green-400" />
-            <h3 className="font-medium text-sm sm:text-base text-gray-900 dark:text-gray-100">
+        <div className="bg-white dark:bg-gray-800/80 rounded-lg border border-gray-200 dark:border-gray-700/60 shadow-sm p-4 hover:shadow transition-shadow">
+          <div className="flex items-center gap-3 mb-2">
+            <div className="bg-green-100/80 dark:bg-green-800/30 p-2 rounded-md">
+              <TrendingUp className="h-5 w-5 text-green-600 dark:text-green-400" />
+            </div>
+            <h3 className="font-medium text-gray-900 dark:text-gray-100">
               Win Rate
             </h3>
           </div>
-          <p className="text-lg sm:text-2xl font-bold text-gray-900 dark:text-gray-100">
+          <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">
             {formatPercent(winRateValue)}
           </p>
+          <div className="mt-2 w-full bg-gray-200 dark:bg-gray-700/60 rounded-full h-1.5">
+            <div
+              className="bg-green-500 dark:bg-green-400 h-1.5 rounded-full"
+              style={{ width: `${Math.min(100, winRateValue)}%` }}
+            ></div>
+          </div>
         </div>
 
-        <div className="bg-white dark:bg-gray-700/60 rounded-md border border-gray-200 dark:border-gray-600/50 shadow-sm p-3 sm:p-4">
-          <div className="flex items-center gap-2 mb-2">
-            <ChartBar className="h-5 w-5 text-purple-500 dark:text-purple-400" />
-            <h3 className="font-medium text-sm sm:text-base text-gray-900 dark:text-gray-100">
+        <div className="bg-white dark:bg-gray-800/80 rounded-lg border border-gray-200 dark:border-gray-700/60 shadow-sm p-4 hover:shadow transition-shadow">
+          <div className="flex items-center gap-3 mb-2">
+            <div className="bg-accent/10 dark:bg-accent/20 p-2 rounded-md">
+              <BarChart2 className="h-5 w-5 text-accent dark:text-accent-light" />
+            </div>
+            <h3 className="font-medium text-gray-900 dark:text-gray-100">
               Total Trades
             </h3>
           </div>
-          <p className="text-lg sm:text-2xl font-bold text-gray-900 dark:text-gray-100">
+          <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">
             {stats?.totalTrades || 0}
           </p>
         </div>
 
-        <div className="bg-white dark:bg-gray-700/60 rounded-md border border-gray-200 dark:border-gray-600/50 shadow-sm p-3 sm:p-4">
-          <div className="flex items-center gap-2 mb-2">
-            <PieChartIcon className="h-5 w-5 text-orange-500 dark:text-orange-400" />
-            <h3 className="font-medium text-sm sm:text-base text-gray-900 dark:text-gray-100">
+        <div className="bg-white dark:bg-gray-800/80 rounded-lg border border-gray-200 dark:border-gray-700/60 shadow-sm p-4 hover:shadow transition-shadow">
+          <div className="flex items-center gap-3 mb-2">
+            <div className="bg-orange-100/80 dark:bg-orange-800/30 p-2 rounded-md">
+              <PieChartIcon className="h-5 w-5 text-orange-500 dark:text-orange-400" />
+            </div>
+            <h3 className="font-medium text-gray-900 dark:text-gray-100">
               Avg. Profit
             </h3>
           </div>
           <p
-            className={`text-lg sm:text-2xl font-bold ${
+            className={`text-2xl font-bold ${
               avgProfit >= 0
                 ? "text-green-600 dark:text-green-400"
                 : "text-red-600 dark:text-red-400"
@@ -217,17 +247,21 @@ const ProfileStats = ({ userId, trades = [], stats: propStats = {} }) => {
       </div>
 
       {/* Charts */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Monthly P&L Chart */}
-        <div className="bg-white dark:bg-gray-700/60 rounded-md border border-gray-200 dark:border-gray-600/50 shadow-sm p-3 sm:p-4">
-          <h3 className="text-base sm:text-lg font-medium mb-4 text-gray-900 dark:text-gray-100">
+        <div className="bg-white dark:bg-gray-800/80 rounded-lg border border-gray-200 dark:border-gray-700/60 shadow-sm p-5 hover:shadow transition-shadow">
+          <h3 className="text-lg font-medium mb-4 text-gray-900 dark:text-gray-100">
             Monthly Performance
           </h3>
-          <div className="h-[250px] sm:h-[300px]">
+          <div className="h-[300px]">
             {monthlyPnL.length > 0 ? (
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={monthlyPnL}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+                  <CartesianGrid
+                    strokeDasharray="3 3"
+                    stroke="#374151"
+                    opacity={0.2}
+                  />
                   <XAxis dataKey="month" tick={{ fill: "#6B7280" }} />
                   <YAxis tick={{ fill: "#6B7280" }} />
                   <Tooltip
@@ -235,6 +269,9 @@ const ProfileStats = ({ userId, trades = [], stats: propStats = {} }) => {
                       backgroundColor: "rgb(31, 41, 55)",
                       border: "1px solid rgb(55, 65, 81)",
                       color: "#fff",
+                      borderRadius: "0.375rem",
+                      boxShadow:
+                        "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
                     }}
                     formatter={(value, name) => {
                       if (name === "profit") return formatCurrency(value);
@@ -246,38 +283,42 @@ const ProfileStats = ({ userId, trades = [], stats: propStats = {} }) => {
                   <Line
                     type="monotone"
                     dataKey="profit"
-                    stroke="#8884d8"
+                    stroke="#3b82f6"
+                    strokeWidth={2}
+                    activeDot={{ r: 6 }}
                     name="P&L"
                   />
                   <Line
                     type="monotone"
                     dataKey="winRate"
-                    stroke="#82ca9d"
+                    stroke="#10b981"
+                    strokeWidth={2}
                     name="Win Rate %"
                   />
                 </LineChart>
               </ResponsiveContainer>
             ) : (
-              <div className="h-full flex items-center justify-center text-gray-500 dark:text-gray-400">
-                No data available for the selected time period
+              <div className="h-full flex flex-col items-center justify-center text-gray-500 dark:text-gray-400 p-6 bg-gray-50/80 dark:bg-gray-700/30 rounded-lg">
+                <InfoIcon className="h-8 w-8 mb-2 text-gray-400 dark:text-gray-500" />
+                <p>No data available for the selected time period</p>
               </div>
             )}
           </div>
         </div>
 
         {/* Trade Type Distribution */}
-        <div className="bg-white dark:bg-gray-700/60 rounded-md border border-gray-200 dark:border-gray-600/50 shadow-sm p-3 sm:p-4">
-          <h3 className="text-base sm:text-lg font-medium mb-4 text-gray-900 dark:text-gray-100">
+        <div className="bg-white dark:bg-gray-800/80 rounded-lg border border-gray-200 dark:border-gray-700/60 shadow-sm p-5 hover:shadow transition-shadow">
+          <h3 className="text-lg font-medium mb-4 text-gray-900 dark:text-gray-100">
             Trade Type Distribution
           </h3>
-          <div className="h-[250px] sm:h-[300px]">
+          <div className="h-[300px]">
             {tradeTypeData.length > 0 ? (
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie
                     data={tradeTypeData}
                     innerRadius={60}
-                    outerRadius={80}
+                    outerRadius={90}
                     paddingAngle={5}
                     dataKey="value"
                   >
@@ -285,6 +326,8 @@ const ProfileStats = ({ userId, trades = [], stats: propStats = {} }) => {
                       <Cell
                         key={`cell-${index}`}
                         fill={COLORS[index % COLORS.length]}
+                        stroke="rgba(255,255,255,0.1)"
+                        strokeWidth={1}
                       />
                     ))}
                   </Pie>
@@ -293,6 +336,9 @@ const ProfileStats = ({ userId, trades = [], stats: propStats = {} }) => {
                       backgroundColor: "rgb(31, 41, 55)",
                       border: "1px solid rgb(55, 65, 81)",
                       color: "#fff",
+                      borderRadius: "0.375rem",
+                      boxShadow:
+                        "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
                     }}
                   />
                   <Legend
@@ -305,8 +351,9 @@ const ProfileStats = ({ userId, trades = [], stats: propStats = {} }) => {
                 </PieChart>
               </ResponsiveContainer>
             ) : (
-              <div className="h-full flex items-center justify-center text-gray-500 dark:text-gray-400">
-                No trade type data available
+              <div className="h-full flex flex-col items-center justify-center text-gray-500 dark:text-gray-400 p-6 bg-gray-50/80 dark:bg-gray-700/30 rounded-lg">
+                <InfoIcon className="h-8 w-8 mb-2 text-gray-400 dark:text-gray-500" />
+                <p>No trade type data available</p>
               </div>
             )}
           </div>

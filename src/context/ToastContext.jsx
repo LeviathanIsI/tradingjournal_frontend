@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState } from "react";
-import ToastNotification from "../components/ToastNotification";
+import ToastNotification from "../components/Navbar/ThemeSwitcher";
 
 const ToastContext = createContext(null);
 
