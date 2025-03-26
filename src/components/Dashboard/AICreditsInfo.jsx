@@ -161,14 +161,14 @@ const AICreditsInfo = React.memo(() => {
 
   if (!displayLimits) {
     return (
-      <div className="bg-primary/10 border border-primary/20 rounded-lg p-4 mb-4 text-sm text-center flex justify-between items-center backdrop-blur-sm">
+      <div className="bg-primary/10 border border-primary/20 rounded-sm p-4 mb-4 text-sm text-center flex justify-between items-center backdrop-blur-sm">
         <span className="text-primary-dark dark:text-primary-light font-medium">
           Use an AI feature to see your remaining credits
         </span>
         <button
           onClick={handleRefresh}
           disabled={state.loading}
-          className="text-primary hover:text-primary-dark dark:text-primary-light dark:hover:text-primary flex items-center gap-1.5 p-1.5 hover:bg-primary/10 rounded-md transition-colors"
+          className="text-primary hover:text-primary-dark dark:text-primary-light dark:hover:text-primary flex items-center gap-1.5 p-1.5 hover:bg-primary/10 round-sm transition-colors"
         >
           <RefreshCw
             className={`h-4 w-4 ${state.loading ? "animate-spin" : ""}`}
@@ -180,7 +180,7 @@ const AICreditsInfo = React.memo(() => {
   }
 
   return (
-    <div className="bg-primary/10 border border-primary/20 rounded-lg p-4 mb-4 text-sm flex items-center justify-between backdrop-blur-sm">
+    <div className="bg-primary/10 border border-primary/20 rounded-sm p-4 mb-4 text-sm flex items-center justify-between backdrop-blur-sm">
       <div className="flex items-center gap-2">
         <Info className="h-5 w-5 text-primary dark:text-primary-light" />
         <div>
@@ -209,7 +209,7 @@ const AICreditsInfo = React.memo(() => {
         <button
           onClick={handleRefresh}
           disabled={state.loading || state.updateQueued}
-          className="text-primary hover:text-primary-dark dark:text-primary-light dark:hover:text-primary p-1.5 hover:bg-primary/10 rounded-md transition-colors"
+          className="text-primary hover:text-primary-dark dark:text-primary-light dark:hover:text-primary p-1.5 hover:bg-primary/10 round-sm transition-colors"
         >
           <RefreshCw
             className={`h-4 w-4 ${

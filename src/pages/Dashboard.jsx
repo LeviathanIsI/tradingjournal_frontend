@@ -3,6 +3,7 @@ import { useAuth } from "../context/AuthContext";
 import { useToast } from "../context/ToastContext";
 import { useTrades } from "../hooks/useTrades";
 import { generateWelcomeMessage } from "../utils/welcomeMessages";
+import { useTradingStats } from "../context/TradingStatsContext";
 
 // Dashboard components
 import DashboardNav from "../components/Dashboard/DashboardNav";
@@ -241,6 +242,7 @@ const Dashboard = () => {
     subscription,
   } = useAuth();
   const [welcomeMessageShown, setWelcomeMessageShown] = useState(false);
+  const { refreshData } = useTradingStats();
 
   const { showToast } = useToast();
 
@@ -352,6 +354,8 @@ const Dashboard = () => {
 
       if (success) {
         showToast("Trade deleted successfully", "success");
+        // Add this line to refresh stats after successful deletion
+        setTimeout(() => refreshData(), 300);
       } else {
         showToast(
           `Failed to delete ${isOptionTrade ? "option" : "regular"} trade`,
@@ -361,6 +365,7 @@ const Dashboard = () => {
     }
   };
 
+  // Handler for bulk deleting trades
   // Handler for bulk deleting trades
   const handleBulkDelete = async () => {
     if (selectedTrades.size === 0) return;
@@ -383,6 +388,8 @@ const Dashboard = () => {
         `Successfully deleted ${selectedTrades.size} trades`,
         "success"
       );
+      // Add this line to refresh stats after successful bulk deletion
+      setTimeout(() => refreshData(), 300);
     } else {
       setBulkDeleteStatus(
         false,
@@ -466,7 +473,7 @@ const Dashboard = () => {
   if (tradesError) {
     return (
       <div className="w-full min-h-screen pt-16 px-3 sm:px-6 py-3 sm:py-6 flex items-center justify-center text-red-600 dark:text-red-400 bg-gray-50 dark:bg-gray-900">
-        <div className="bg-red-50 dark:bg-red-900/20 p-4 rounded-md border border-red-100 dark:border-red-800/50 shadow-sm">
+        <div className="bg-red-50 dark:bg-red-900/20 p-4 round-sm border border-red-100 dark:border-red-800/50 shadow-sm">
           Error: {tradesError}
         </div>
       </div>

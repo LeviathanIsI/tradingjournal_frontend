@@ -180,7 +180,7 @@ const StudyGroups = () => {
 
   return (
     <div className="p-4 sm:p-6 bg-gray-50/80 dark:bg-gray-900/60 backdrop-blur-sm">
-      <div className="bg-white/90 dark:bg-gray-800/80 rounded-lg border border-gray-200 dark:border-gray-700/60 shadow-md overflow-hidden">
+      <div className="bg-white/90 dark:bg-gray-800/80 rounded-sm border border-gray-200 dark:border-gray-700/60 shadow-md overflow-hidden">
         <div className="px-4 sm:px-6 py-5 border-b border-gray-200 dark:border-gray-700/40 bg-gray-50/80 dark:bg-gray-700/30">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div>
@@ -194,7 +194,7 @@ const StudyGroups = () => {
             </div>
             <button
               onClick={handleCreateClick}
-              className="px-4 py-2 bg-primary hover:bg-primary/90 dark:bg-primary/90 dark:hover:bg-primary text-white rounded-md flex items-center shadow transition-colors font-medium"
+              className="px-4 py-2 bg-primary hover:bg-primary/90 dark:bg-primary/90 dark:hover:bg-primary text-white round-sm flex items-center shadow transition-colors font-medium"
             >
               <Plus size={18} className="mr-2" />
               Create Study Group
@@ -216,7 +216,7 @@ const StudyGroups = () => {
                 {featuredGroups.map((group) => (
                   <div
                     key={group._id}
-                    className="relative overflow-hidden bg-gradient-to-br from-primary/5 to-accent/5 dark:from-primary/10 dark:to-accent/10 rounded-lg border border-primary/20 dark:border-primary/30 shadow-sm hover:shadow transition-shadow cursor-pointer"
+                    className="relative overflow-hidden bg-gradient-to-br from-primary/5 to-accent/5 dark:from-primary/10 dark:to-accent/10 rounded-sm border border-primary/20 dark:border-primary/30 shadow-sm hover:shadow transition-shadow cursor-pointer"
                     onClick={() => navigate(`/study-groups/${group._id}`)}
                   >
                     <div className="absolute top-0 right-0">
@@ -226,7 +226,7 @@ const StudyGroups = () => {
                     </div>
                     <div className="p-4 border-b border-primary/10 dark:border-primary/20">
                       <div className="flex items-center mb-2">
-                        <div className="w-8 h-8 flex items-center justify-center rounded-md bg-gradient-to-br from-primary to-accent text-white font-bold mr-2 shadow-sm">
+                        <div className="w-8 h-8 flex items-center justify-center round-sm bg-gradient-to-br from-primary to-accent text-white font-bold mr-2 shadow-sm">
                           {group.name.charAt(0).toUpperCase()}
                         </div>
                         <h3 className="text-base font-semibold text-gray-900 dark:text-gray-100 hover:text-primary dark:hover:text-primary-light truncate max-w-[250px]">
@@ -258,7 +258,7 @@ const StudyGroups = () => {
           )}
 
           {/* Search and Filter Controls */}
-          <div className="mb-6 p-4 bg-white/60 dark:bg-gray-800/40 rounded-lg border border-gray-200 dark:border-gray-700/60 shadow-sm backdrop-blur-sm">
+          <div className="mb-6 p-4 bg-white/60 dark:bg-gray-800/40 rounded-sm border border-gray-200 dark:border-gray-700/60 shadow-sm backdrop-blur-sm">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
               <div className="relative w-full sm:w-80">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -269,7 +269,7 @@ const StudyGroups = () => {
                   placeholder="Search groups..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="block w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600/70 rounded-md
+                  className="block w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600/70 round-sm
                     bg-white dark:bg-gray-700/50 text-gray-900 dark:text-gray-100 
                     focus:outline-none focus:ring-2 focus:ring-primary/50 dark:focus:ring-primary-light/50 focus:border-transparent
                     placeholder-gray-500 dark:placeholder-gray-400 shadow-sm"
@@ -279,7 +279,7 @@ const StudyGroups = () => {
               <div className="flex space-x-2">
                 <button
                   onClick={() => setShowFilters(!showFilters)}
-                  className="px-3 py-2 border border-gray-300 dark:border-gray-600/70 rounded-md bg-white dark:bg-gray-700/60 text-gray-700 dark:text-gray-300 flex items-center shadow-sm hover:bg-gray-50 dark:hover:bg-gray-600/60 transition-colors"
+                  className="px-3 py-2 border border-gray-300 dark:border-gray-600/70 round-sm bg-white dark:bg-gray-700/60 text-gray-700 dark:text-gray-300 flex items-center shadow-sm hover:bg-gray-50 dark:hover:bg-gray-600/60 transition-colors"
                 >
                   <Filter size={16} className="mr-1.5" />
                   Filters
@@ -298,7 +298,7 @@ const StudyGroups = () => {
                       prev === "asc" ? "desc" : "asc"
                     )
                   }
-                  className="px-3 py-2 border border-gray-300 dark:border-gray-600/70 rounded-md bg-white dark:bg-gray-700/60 text-gray-700 dark:text-gray-300 flex items-center shadow-sm hover:bg-gray-50 dark:hover:bg-gray-600/60 transition-colors"
+                  className="px-3 py-2 border border-gray-300 dark:border-gray-600/70 round-sm bg-white dark:bg-gray-700/60 text-gray-700 dark:text-gray-300 flex items-center shadow-sm hover:bg-gray-50 dark:hover:bg-gray-600/60 transition-colors"
                 >
                   {sortDirection === "asc" ? (
                     <SortAsc size={16} />
@@ -311,7 +311,7 @@ const StudyGroups = () => {
                 <div className="relative" ref={sortMenuRef}>
                   <button
                     onClick={toggleSortMenu}
-                    className="px-3 py-2 border border-gray-300 dark:border-gray-600/70 rounded-md bg-white dark:bg-gray-700/60 text-gray-700 dark:text-gray-300 flex items-center shadow-sm hover:bg-gray-50 dark:hover:bg-gray-600/60 transition-colors"
+                    className="px-3 py-2 border border-gray-300 dark:border-gray-600/70 round-sm bg-white dark:bg-gray-700/60 text-gray-700 dark:text-gray-300 flex items-center shadow-sm hover:bg-gray-50 dark:hover:bg-gray-600/60 transition-colors"
                   >
                     Sort:{" "}
                     {sortBy === "date"
@@ -330,7 +330,7 @@ const StudyGroups = () => {
                   </button>
 
                   {showSortMenu && (
-                    <div className="absolute right-0 mt-1 w-48 bg-white dark:bg-gray-700 rounded-md shadow-lg border border-gray-200 dark:border-gray-600/70 z-20">
+                    <div className="absolute right-0 mt-1 w-48 bg-white dark:bg-gray-700 round-sm shadow-lg border border-gray-200 dark:border-gray-600/70 z-20">
                       <div className="py-1">
                         <button
                           onClick={() => handleSortChange("date")}
@@ -394,7 +394,7 @@ const StudyGroups = () => {
                     <div className="flex flex-wrap gap-2">
                       <button
                         onClick={() => setEventFilter("all")}
-                        className={`px-3 py-1.5 text-sm rounded-md ${
+                        className={`px-3 py-1.5 text-sm round-sm ${
                           eventFilter === "all"
                             ? "bg-primary text-white shadow-sm"
                             : "bg-white dark:bg-gray-700/60 text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-600/70 hover:bg-gray-50 dark:hover:bg-gray-600/70"
@@ -404,7 +404,7 @@ const StudyGroups = () => {
                       </button>
                       <button
                         onClick={() => setEventFilter("upcoming")}
-                        className={`px-3 py-1.5 text-sm rounded-md ${
+                        className={`px-3 py-1.5 text-sm round-sm ${
                           eventFilter === "upcoming"
                             ? "bg-primary text-white shadow-sm"
                             : "bg-white dark:bg-gray-700/60 text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-600/70 hover:bg-gray-50 dark:hover:bg-gray-600/70"
@@ -414,7 +414,7 @@ const StudyGroups = () => {
                       </button>
                       <button
                         onClick={() => setEventFilter("past")}
-                        className={`px-3 py-1.5 text-sm rounded-md ${
+                        className={`px-3 py-1.5 text-sm round-sm ${
                           eventFilter === "past"
                             ? "bg-primary text-white shadow-sm"
                             : "bg-white dark:bg-gray-700/60 text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-600/70 hover:bg-gray-50 dark:hover:bg-gray-600/70"
@@ -424,7 +424,7 @@ const StudyGroups = () => {
                       </button>
                       <button
                         onClick={() => setEventFilter("my")}
-                        className={`px-3 py-1.5 text-sm rounded-md ${
+                        className={`px-3 py-1.5 text-sm round-sm ${
                           eventFilter === "my"
                             ? "bg-primary text-white shadow-sm"
                             : "bg-white dark:bg-gray-700/60 text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-600/70 hover:bg-gray-50 dark:hover:bg-gray-600/70"
@@ -442,7 +442,7 @@ const StudyGroups = () => {
                     <select
                       value={selectedCategory}
                       onChange={(e) => setSelectedCategory(e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600/70 rounded-md bg-white dark:bg-gray-700/60 text-gray-700 dark:text-gray-300 focus:outline-none focus:ring-2 focus:ring-primary/50 dark:focus:ring-primary-light/50 focus:border-transparent"
+                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600/70 round-sm bg-white dark:bg-gray-700/60 text-gray-700 dark:text-gray-300 focus:outline-none focus:ring-2 focus:ring-primary/50 dark:focus:ring-primary-light/50 focus:border-transparent"
                     >
                       {CATEGORIES.map((category) => (
                         <option key={category.value} value={category.value}>
@@ -459,7 +459,7 @@ const StudyGroups = () => {
                     <div className="flex space-x-2">
                       <button
                         onClick={() => setShowPublic(false)}
-                        className={`px-3 py-1.5 text-sm rounded-md ${
+                        className={`px-3 py-1.5 text-sm round-sm ${
                           !showPublic
                             ? "bg-primary text-white shadow-sm"
                             : "bg-white dark:bg-gray-700/60 text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-600/70 hover:bg-gray-50 dark:hover:bg-gray-600/70"
@@ -469,7 +469,7 @@ const StudyGroups = () => {
                       </button>
                       <button
                         onClick={() => setShowPublic(true)}
-                        className={`px-3 py-1.5 text-sm rounded-md ${
+                        className={`px-3 py-1.5 text-sm round-sm ${
                           showPublic
                             ? "bg-primary text-white shadow-sm"
                             : "bg-white dark:bg-gray-700/60 text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-600/70 hover:bg-gray-50 dark:hover:bg-gray-600/70"
@@ -486,7 +486,7 @@ const StudyGroups = () => {
 
           {loading ? (
             <div className="flex items-center justify-center min-h-64">
-              <div className="bg-white/90 dark:bg-gray-800/80 p-5 rounded-lg border border-gray-200 dark:border-gray-700/60 shadow-sm backdrop-blur-sm">
+              <div className="bg-white/90 dark:bg-gray-800/80 p-5 rounded-sm border border-gray-200 dark:border-gray-700/60 shadow-sm backdrop-blur-sm">
                 <div className="animate-pulse flex flex-col items-center space-y-3">
                   <div className="h-8 w-8 bg-primary/40 dark:bg-primary/30 rounded-full"></div>
                   <div className="text-lg font-medium text-gray-700 dark:text-gray-200">
@@ -502,13 +502,13 @@ const StudyGroups = () => {
                   {filteredAndSortedGroups().map((group) => (
                     <div
                       key={group._id}
-                      className="relative overflow-hidden bg-white/95 dark:bg-gray-800/90 rounded-lg border border-gray-200 dark:border-gray-700/60 shadow-sm hover:shadow transition-shadow cursor-pointer group"
+                      className="relative overflow-hidden bg-white/95 dark:bg-gray-800/90 rounded-sm border border-gray-200 dark:border-gray-700/60 shadow-sm hover:shadow transition-shadow cursor-pointer group"
                       onClick={() => navigate(`/study-groups/${group._id}`)}
                     >
                       {/* Header with group name */}
                       <div className="p-4 border-b border-gray-200 dark:border-gray-700/40 bg-gray-50/80 dark:bg-gray-700/30">
                         <div className="flex items-center mb-2">
-                          <div className="w-8 h-8 flex items-center justify-center rounded-md bg-primary dark:bg-primary/80 text-white font-bold mr-2 shadow-sm">
+                          <div className="w-8 h-8 flex items-center justify-center round-sm bg-primary dark:bg-primary/80 text-white font-bold mr-2 shadow-sm">
                             {group.name.charAt(0).toUpperCase()}
                           </div>
                           <h3 className="text-base font-semibold text-gray-900 dark:text-gray-100 group-hover:text-primary dark:group-hover:text-primary-light truncate max-w-[250px]">
@@ -589,7 +589,7 @@ const StudyGroups = () => {
                         {/* Stats row */}
                         <div className="grid grid-cols-3 gap-2 pt-3 border-t border-gray-200 dark:border-gray-600/50">
                           <div className="flex flex-col items-center">
-                            <div className="bg-primary/10 dark:bg-primary/15 w-full rounded-md py-2 flex justify-center mb-1">
+                            <div className="bg-primary/10 dark:bg-primary/15 w-full round-sm py-2 flex justify-center mb-1">
                               <Users className="h-4 w-4 text-primary dark:text-primary-light mr-1" />
                               <span className="font-semibold text-gray-900 dark:text-gray-100">
                                 {group.members?.length || 0}
@@ -601,7 +601,7 @@ const StudyGroups = () => {
                           </div>
 
                           <div className="flex flex-col items-center">
-                            <div className="bg-accent/10 dark:bg-accent/15 w-full rounded-md py-2 flex justify-center mb-1">
+                            <div className="bg-accent/10 dark:bg-accent/15 w-full round-sm py-2 flex justify-center mb-1">
                               <Calendar className="h-4 w-4 text-accent dark:text-accent-light mr-1" />
                               <span className="font-semibold text-gray-900 dark:text-gray-100">
                                 {group.sessions?.length || 0}
@@ -613,7 +613,7 @@ const StudyGroups = () => {
                           </div>
 
                           <div className="flex flex-col items-center">
-                            <div className="bg-secondary/10 dark:bg-secondary/15 w-full rounded-md py-2 flex justify-center mb-1">
+                            <div className="bg-secondary/10 dark:bg-secondary/15 w-full round-sm py-2 flex justify-center mb-1">
                               <MessageSquare className="h-4 w-4 text-secondary dark:text-secondary-light mr-1" />
                               <span className="font-semibold text-gray-900 dark:text-gray-100">
                                 {group.messages?.length || 0}
@@ -646,7 +646,7 @@ const StudyGroups = () => {
                   ))}
                 </div>
               ) : (
-                <div className="text-center py-10 bg-gray-50/80 dark:bg-gray-800/40 rounded-lg border border-gray-200 dark:border-gray-700/60 shadow-sm backdrop-blur-sm">
+                <div className="text-center py-10 bg-gray-50/80 dark:bg-gray-800/40 rounded-sm border border-gray-200 dark:border-gray-700/60 shadow-sm backdrop-blur-sm">
                   <div className="mb-4">
                     <BookOpen
                       size={48}
@@ -665,7 +665,7 @@ const StudyGroups = () => {
                   </p>
                   <button
                     onClick={handleCreateClick}
-                    className="mt-6 px-4 py-2 bg-primary hover:bg-primary/90 dark:bg-primary/90 dark:hover:bg-primary text-white rounded-md flex items-center shadow transition-colors font-medium mx-auto"
+                    className="mt-6 px-4 py-2 bg-primary hover:bg-primary/90 dark:bg-primary/90 dark:hover:bg-primary text-white round-sm flex items-center shadow transition-colors font-medium mx-auto"
                   >
                     <Plus size={18} className="mr-2" />
                     Create Study Group

@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { X } from "lucide-react";
 import { formatInTimeZone, getTimezoneOffset } from "date-fns-tz";
+import { useTradingStats } from "../../context/TradingStatsContext";
 
 const convertToUTC = (date, timeZone) => {
   const offset = getTimezoneOffset(timeZone);
@@ -10,6 +11,8 @@ const convertToUTC = (date, timeZone) => {
 
 const TradeModal = ({ isOpen, onClose, onSubmit, trade, userTimeZone }) => {
   const modalRef = useRef(null);
+  const { refreshData } = useTradingStats(); // Add this to get refreshData function
+
   const initialFormState = {
     symbol: "",
     type: "LONG",
@@ -234,7 +237,12 @@ const TradeModal = ({ isOpen, onClose, onSubmit, trade, userTimeZone }) => {
         submissionData.postExitAnalysis.timeOfHigh = highDate.toISOString();
       }
 
+      // Submit the trade
       await onSubmit(submissionData);
+
+      // Add this line to refresh stats after successful submission
+      setTimeout(() => refreshData(), 300); // Small delay to ensure backend has processed
+
       onClose();
     } catch (error) {
       console.error("Error submitting trade:", error);
@@ -250,7 +258,7 @@ const TradeModal = ({ isOpen, onClose, onSubmit, trade, userTimeZone }) => {
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
       <div
         ref={modalRef}
-        className="bg-white dark:bg-gray-800/90 rounded-lg p-6 w-full max-w-6xl h-[90vh] sm:max-h-[80vh] 
+        className="bg-white dark:bg-gray-800/90 rounded-sm p-6 w-full max-w-6xl h-[90vh] sm:max-h-[80vh] 
         overflow-y-auto border border-gray-200 dark:border-gray-700 shadow-lg"
       >
         <div className="flex justify-between items-center mb-6">
@@ -259,7 +267,7 @@ const TradeModal = ({ isOpen, onClose, onSubmit, trade, userTimeZone }) => {
           </h2>
           <button
             onClick={onClose}
-            className="p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700/50 
+            className="p-2 round-sm hover:bg-gray-100 dark:hover:bg-gray-700/50 
             text-gray-500 dark:text-gray-400 transition-colors"
           >
             <X className="h-6 w-6" />
@@ -279,7 +287,7 @@ const TradeModal = ({ isOpen, onClose, onSubmit, trade, userTimeZone }) => {
                 name="symbol"
                 value={formData.symbol}
                 onChange={handleChange}
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md 
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 round-sm 
                 bg-white dark:bg-gray-700/50 text-gray-900 dark:text-gray-100 
                 focus:ring-2 focus:ring-primary/30 focus:border-primary/60"
                 required
@@ -295,7 +303,7 @@ const TradeModal = ({ isOpen, onClose, onSubmit, trade, userTimeZone }) => {
                 name="type"
                 value={formData.type}
                 onChange={handleChange}
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md 
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 round-sm 
                 bg-white dark:bg-gray-700/50 text-gray-900 dark:text-gray-100
                 focus:ring-2 focus:ring-primary/30 focus:border-primary/60"
                 required
@@ -313,7 +321,7 @@ const TradeModal = ({ isOpen, onClose, onSubmit, trade, userTimeZone }) => {
                 name="tradeType"
                 value={formData.tradeType}
                 onChange={handleChange}
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md 
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 round-sm 
                 bg-white dark:bg-gray-700/50 text-gray-900 dark:text-gray-100
                 focus:ring-2 focus:ring-primary/30 focus:border-primary/60"
                 required
@@ -339,7 +347,7 @@ const TradeModal = ({ isOpen, onClose, onSubmit, trade, userTimeZone }) => {
                     name="entryQuantity"
                     value={formData.entryQuantity}
                     onChange={handleChange}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md 
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 round-sm 
                     bg-white dark:bg-gray-700/50 text-gray-900 dark:text-gray-100
                     focus:ring-2 focus:ring-primary/30 focus:border-primary/60"
                     min="1"
@@ -357,7 +365,7 @@ const TradeModal = ({ isOpen, onClose, onSubmit, trade, userTimeZone }) => {
                     name="entryPrice"
                     value={formData.entryPrice}
                     onChange={handleChange}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md 
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 round-sm 
                     bg-white dark:bg-gray-700/50 text-gray-900 dark:text-gray-100
                     focus:ring-2 focus:ring-primary/30 focus:border-primary/60"
                     min="0"
@@ -375,7 +383,7 @@ const TradeModal = ({ isOpen, onClose, onSubmit, trade, userTimeZone }) => {
                     name="entryDate"
                     value={formData.entryDate}
                     onChange={handleChange}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md 
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 round-sm 
                     bg-white dark:bg-gray-700/50 text-gray-900 dark:text-gray-100
                     focus:ring-2 focus:ring-primary/30 focus:border-primary/60"
                     required
@@ -400,7 +408,7 @@ const TradeModal = ({ isOpen, onClose, onSubmit, trade, userTimeZone }) => {
                     name="exitQuantity"
                     value={formData.exitQuantity}
                     onChange={handleChange}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md 
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 round-sm 
                     bg-white dark:bg-gray-700/50 text-gray-900 dark:text-gray-100
                     focus:ring-2 focus:ring-primary/30 focus:border-primary/60"
                     min="1"
@@ -417,7 +425,7 @@ const TradeModal = ({ isOpen, onClose, onSubmit, trade, userTimeZone }) => {
                     name="exitPrice"
                     value={formData.exitPrice}
                     onChange={handleChange}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md 
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 round-sm 
                     bg-white dark:bg-gray-700/50 text-gray-900 dark:text-gray-100
                     focus:ring-2 focus:ring-primary/30 focus:border-primary/60"
                     min="0"
@@ -434,7 +442,7 @@ const TradeModal = ({ isOpen, onClose, onSubmit, trade, userTimeZone }) => {
                     name="exitDate"
                     value={formData.exitDate}
                     onChange={handleChange}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md 
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 round-sm 
                     bg-white dark:bg-gray-700/50 text-gray-900 dark:text-gray-100
                     focus:ring-2 focus:ring-primary/30 focus:border-primary/60"
                   />
@@ -458,7 +466,7 @@ const TradeModal = ({ isOpen, onClose, onSubmit, trade, userTimeZone }) => {
                     name="postExitHigh"
                     value={formData.postExitHigh}
                     onChange={handleChange}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md 
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 round-sm 
                     bg-white dark:bg-gray-700/50 text-gray-900 dark:text-gray-100
                     focus:ring-2 focus:ring-primary/30 focus:border-primary/60"
                     step="0.000001"
@@ -474,7 +482,7 @@ const TradeModal = ({ isOpen, onClose, onSubmit, trade, userTimeZone }) => {
                     name="postExitLow"
                     value={formData.postExitLow}
                     onChange={handleChange}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md 
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 round-sm 
                     bg-white dark:bg-gray-700/50 text-gray-900 dark:text-gray-100
                     focus:ring-2 focus:ring-primary/30 focus:border-primary/60"
                     step="0.000001"
@@ -494,7 +502,7 @@ const TradeModal = ({ isOpen, onClose, onSubmit, trade, userTimeZone }) => {
                     name="postExitAnalysis.timeOfHigh"
                     value={formData.postExitAnalysis?.timeOfHigh || ""}
                     onChange={handleChange}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md 
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 round-sm 
                     bg-white dark:bg-gray-700/50 text-gray-900 dark:text-gray-100
                     focus:ring-2 focus:ring-primary/30 focus:border-primary/60"
                   />
@@ -512,7 +520,7 @@ const TradeModal = ({ isOpen, onClose, onSubmit, trade, userTimeZone }) => {
                     name="postExitAnalysis.timeOfLow"
                     value={formData.postExitAnalysis?.timeOfLow || ""}
                     onChange={handleChange}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md 
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 round-sm 
                     bg-white dark:bg-gray-700/50 text-gray-900 dark:text-gray-100
                     focus:ring-2 focus:ring-primary/30 focus:border-primary/60"
                   />
@@ -559,7 +567,7 @@ const TradeModal = ({ isOpen, onClose, onSubmit, trade, userTimeZone }) => {
                     name="pattern"
                     value={formData.pattern || ""}
                     onChange={handleChange}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md 
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 round-sm 
                     bg-white dark:bg-gray-700/50 text-gray-900 dark:text-gray-100
                     focus:ring-2 focus:ring-primary/30 focus:border-primary/60"
                   >
@@ -590,7 +598,7 @@ const TradeModal = ({ isOpen, onClose, onSubmit, trade, userTimeZone }) => {
                     name="session"
                     value={formData.session || ""}
                     onChange={handleChange}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md 
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 round-sm 
                     bg-white dark:bg-gray-700/50 text-gray-900 dark:text-gray-100
                     focus:ring-2 focus:ring-primary/30 focus:border-primary/60"
                     required
@@ -617,7 +625,7 @@ const TradeModal = ({ isOpen, onClose, onSubmit, trade, userTimeZone }) => {
                     {/* Decrement Button */}
                     <button
                       type="button"
-                      className="p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-gray-100 dark:bg-gray-700/50 hover:bg-gray-200 
+                      className="p-2 border border-gray-300 dark:border-gray-600 round-sm bg-gray-100 dark:bg-gray-700/50 hover:bg-gray-200 
                       dark:hover:bg-gray-600 text-gray-800 dark:text-gray-200 transition-colors"
                       onClick={() =>
                         setFormData({
@@ -648,7 +656,7 @@ const TradeModal = ({ isOpen, onClose, onSubmit, trade, userTimeZone }) => {
                           },
                         })
                       }
-                      className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md 
+                      className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 round-sm 
                       bg-white dark:bg-gray-700/50 text-gray-900 dark:text-gray-100
                       focus:ring-2 focus:ring-primary/30 focus:border-primary/60"
                     >
@@ -662,7 +670,7 @@ const TradeModal = ({ isOpen, onClose, onSubmit, trade, userTimeZone }) => {
                     {/* Increment Button */}
                     <button
                       type="button"
-                      className="p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-gray-100 dark:bg-gray-700/50 hover:bg-gray-200 
+                      className="p-2 border border-gray-300 dark:border-gray-600 round-sm bg-gray-100 dark:bg-gray-700/50 hover:bg-gray-200 
                       dark:hover:bg-gray-600 text-gray-800 dark:text-gray-200 transition-colors"
                       onClick={() =>
                         setFormData({
@@ -690,7 +698,7 @@ const TradeModal = ({ isOpen, onClose, onSubmit, trade, userTimeZone }) => {
                     name="mentalState.emotion"
                     value={formData.mentalState?.emotion || ""}
                     onChange={handleChange}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md 
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 round-sm 
                     bg-white dark:bg-gray-700/50 text-gray-900 dark:text-gray-100
                     focus:ring-2 focus:ring-primary/30 focus:border-primary/60"
                   >
@@ -730,7 +738,7 @@ const TradeModal = ({ isOpen, onClose, onSubmit, trade, userTimeZone }) => {
                   ].map((mistake) => (
                     <label
                       key={mistake}
-                      className="flex items-center gap-2 p-2 hover:bg-gray-50 dark:hover:bg-gray-700/30 rounded-md transition-colors"
+                      className="flex items-center gap-2 p-2 hover:bg-gray-50 dark:hover:bg-gray-700/30 round-sm transition-colors"
                     >
                       <input
                         type="checkbox"
@@ -776,7 +784,7 @@ const TradeModal = ({ isOpen, onClose, onSubmit, trade, userTimeZone }) => {
                     name="strategy"
                     value={formData.strategy}
                     onChange={handleChange}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md 
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 round-sm 
                    bg-white dark:bg-gray-700/50 text-gray-900 dark:text-gray-100
                    focus:ring-2 focus:ring-primary/30 focus:border-primary/60"
                   />
@@ -792,7 +800,7 @@ const TradeModal = ({ isOpen, onClose, onSubmit, trade, userTimeZone }) => {
                     value={formData.notes}
                     onChange={handleChange}
                     rows="3"
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md 
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 round-sm 
                    bg-white dark:bg-gray-700/50 text-gray-900 dark:text-gray-100
                    focus:ring-2 focus:ring-primary/30 focus:border-primary/60"
                   />
@@ -808,7 +816,7 @@ const TradeModal = ({ isOpen, onClose, onSubmit, trade, userTimeZone }) => {
               <button
                 type="button"
                 onClick={onClose}
-                className="w-full sm:w-auto px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md 
+                className="w-full sm:w-auto px-4 py-2 border border-gray-300 dark:border-gray-600 round-sm 
                bg-white dark:bg-gray-700/50 text-gray-700 dark:text-gray-300 
                hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors"
               >
@@ -817,7 +825,7 @@ const TradeModal = ({ isOpen, onClose, onSubmit, trade, userTimeZone }) => {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full sm:w-auto px-4 py-2 bg-primary hover:bg-primary/90 text-white rounded-md 
+                className="w-full sm:w-auto px-4 py-2 bg-primary hover:bg-primary/90 text-white round-sm 
                dark:hover:bg-primary/80 disabled:opacity-50 shadow transition-colors"
               >
                 {loading

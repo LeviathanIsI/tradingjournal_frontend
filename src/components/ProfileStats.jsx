@@ -153,7 +153,7 @@ const ProfileStats = ({ userId, trades = [], stats: propStats = {} }) => {
           <select
             value={timeFrame}
             onChange={(e) => setTimeFrame(e.target.value)}
-            className="pl-9 pr-8 py-2 border border-gray-300 dark:border-gray-600/70 rounded-md text-sm
+            className="pl-9 pr-8 py-2 border border-gray-300 dark:border-gray-600/70 round-sm text-sm
             bg-white dark:bg-gray-700/40 text-gray-900 dark:text-gray-100
             focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary
             appearance-none"
@@ -171,9 +171,9 @@ const ProfileStats = ({ userId, trades = [], stats: propStats = {} }) => {
 
       {/* Stats Cards */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-        <div className="bg-white dark:bg-gray-800/80 rounded-lg border border-gray-200 dark:border-gray-700/60 shadow-sm p-4 hover:shadow transition-shadow">
+        <div className="bg-white dark:bg-gray-800/80 rounded-sm border border-gray-200 dark:border-gray-700/60 shadow-sm p-4 hover:shadow transition-shadow">
           <div className="flex items-center gap-3 mb-2">
-            <div className="bg-primary/10 dark:bg-primary/20 p-2 rounded-md">
+            <div className="bg-primary/10 dark:bg-primary/20 p-2 round-sm">
               <CreditCard className="h-5 w-5 text-primary dark:text-primary-light" />
             </div>
             <h3 className="font-medium text-gray-900 dark:text-gray-100">
@@ -191,9 +191,9 @@ const ProfileStats = ({ userId, trades = [], stats: propStats = {} }) => {
           </p>
         </div>
 
-        <div className="bg-white dark:bg-gray-800/80 rounded-lg border border-gray-200 dark:border-gray-700/60 shadow-sm p-4 hover:shadow transition-shadow">
+        <div className="bg-white dark:bg-gray-800/80 rounded-sm border border-gray-200 dark:border-gray-700/60 shadow-sm p-4 hover:shadow transition-shadow">
           <div className="flex items-center gap-3 mb-2">
-            <div className="bg-green-100/80 dark:bg-green-800/30 p-2 rounded-md">
+            <div className="bg-green-100/80 dark:bg-green-800/30 p-2 round-sm">
               <TrendingUp className="h-5 w-5 text-green-600 dark:text-green-400" />
             </div>
             <h3 className="font-medium text-gray-900 dark:text-gray-100">
@@ -211,9 +211,9 @@ const ProfileStats = ({ userId, trades = [], stats: propStats = {} }) => {
           </div>
         </div>
 
-        <div className="bg-white dark:bg-gray-800/80 rounded-lg border border-gray-200 dark:border-gray-700/60 shadow-sm p-4 hover:shadow transition-shadow">
+        <div className="bg-white dark:bg-gray-800/80 rounded-sm border border-gray-200 dark:border-gray-700/60 shadow-sm p-4 hover:shadow transition-shadow">
           <div className="flex items-center gap-3 mb-2">
-            <div className="bg-accent/10 dark:bg-accent/20 p-2 rounded-md">
+            <div className="bg-accent/10 dark:bg-accent/20 p-2 round-sm">
               <BarChart2 className="h-5 w-5 text-accent dark:text-accent-light" />
             </div>
             <h3 className="font-medium text-gray-900 dark:text-gray-100">
@@ -225,9 +225,9 @@ const ProfileStats = ({ userId, trades = [], stats: propStats = {} }) => {
           </p>
         </div>
 
-        <div className="bg-white dark:bg-gray-800/80 rounded-lg border border-gray-200 dark:border-gray-700/60 shadow-sm p-4 hover:shadow transition-shadow">
+        <div className="bg-white dark:bg-gray-800/80 rounded-sm border border-gray-200 dark:border-gray-700/60 shadow-sm p-4 hover:shadow transition-shadow">
           <div className="flex items-center gap-3 mb-2">
-            <div className="bg-orange-100/80 dark:bg-orange-800/30 p-2 rounded-md">
+            <div className="bg-orange-100/80 dark:bg-orange-800/30 p-2 round-sm">
               <PieChartIcon className="h-5 w-5 text-orange-500 dark:text-orange-400" />
             </div>
             <h3 className="font-medium text-gray-900 dark:text-gray-100">
@@ -249,7 +249,7 @@ const ProfileStats = ({ userId, trades = [], stats: propStats = {} }) => {
       {/* Charts */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Monthly P&L Chart */}
-        <div className="bg-white dark:bg-gray-800/80 rounded-lg border border-gray-200 dark:border-gray-700/60 shadow-sm p-5 hover:shadow transition-shadow">
+        <div className="bg-white dark:bg-gray-800/80 rounded-sm border border-gray-200 dark:border-gray-700/60 shadow-sm p-5 hover:shadow transition-shadow">
           <h3 className="text-lg font-medium mb-4 text-gray-900 dark:text-gray-100">
             Monthly Performance
           </h3>
@@ -298,7 +298,7 @@ const ProfileStats = ({ userId, trades = [], stats: propStats = {} }) => {
                 </LineChart>
               </ResponsiveContainer>
             ) : (
-              <div className="h-full flex flex-col items-center justify-center text-gray-500 dark:text-gray-400 p-6 bg-gray-50/80 dark:bg-gray-700/30 rounded-lg">
+              <div className="h-full flex flex-col items-center justify-center text-gray-500 dark:text-gray-400 p-6 bg-gray-50/80 dark:bg-gray-700/30 rounded-sm">
                 <InfoIcon className="h-8 w-8 mb-2 text-gray-400 dark:text-gray-500" />
                 <p>No data available for the selected time period</p>
               </div>
@@ -307,7 +307,7 @@ const ProfileStats = ({ userId, trades = [], stats: propStats = {} }) => {
         </div>
 
         {/* Trade Type Distribution */}
-        <div className="bg-white dark:bg-gray-800/80 rounded-lg border border-gray-200 dark:border-gray-700/60 shadow-sm p-5 hover:shadow transition-shadow">
+        <div className="bg-white dark:bg-gray-800/80 rounded-sm border border-gray-200 dark:border-gray-700/60 shadow-sm p-5 hover:shadow transition-shadow">
           <h3 className="text-lg font-medium mb-4 text-gray-900 dark:text-gray-100">
             Trade Type Distribution
           </h3>
@@ -351,7 +351,7 @@ const ProfileStats = ({ userId, trades = [], stats: propStats = {} }) => {
                 </PieChart>
               </ResponsiveContainer>
             ) : (
-              <div className="h-full flex flex-col items-center justify-center text-gray-500 dark:text-gray-400 p-6 bg-gray-50/80 dark:bg-gray-700/30 rounded-lg">
+              <div className="h-full flex flex-col items-center justify-center text-gray-500 dark:text-gray-400 p-6 bg-gray-50/80 dark:bg-gray-700/30 rounded-sm">
                 <InfoIcon className="h-8 w-8 mb-2 text-gray-400 dark:text-gray-500" />
                 <p>No trade type data available</p>
               </div>

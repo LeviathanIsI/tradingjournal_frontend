@@ -13,7 +13,7 @@ const SubscriptionRequired = ({ children, allowFree = false }) => {
   if (isSubscriptionLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-gray-50 dark:bg-gray-900">
-        <div className="bg-white/90 dark:bg-gray-800/80 p-6 rounded-lg border border-gray-200 dark:border-gray-700/60 shadow-md backdrop-blur-sm flex flex-col items-center space-y-4">
+        <div className="bg-white/90 dark:bg-gray-800/80 p-6 rounded-sm border border-gray-200 dark:border-gray-700/60 shadow-md backdrop-blur-sm flex flex-col items-center space-y-4">
           <Loader className="h-8 w-8 text-primary animate-spin" />
           <p className="text-base font-medium text-gray-700 dark:text-gray-200">
             Verifying subscription status...
@@ -54,7 +54,7 @@ const SubscriptionRequired = ({ children, allowFree = false }) => {
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-50 dark:bg-gray-900">
-      <div className="bg-white/90 dark:bg-gray-800/80 p-6 rounded-lg border border-gray-200 dark:border-gray-700/60 shadow-md backdrop-blur-sm max-w-md w-full">
+      <div className="bg-white/90 dark:bg-gray-800/80 p-6 rounded-sm border border-gray-200 dark:border-gray-700/60 shadow-md backdrop-blur-sm max-w-md w-full">
         <div className="flex flex-col items-center text-center space-y-4">
           <div className="bg-primary/10 dark:bg-primary/20 p-3 rounded-full">
             <Lock className="h-8 w-8 text-primary" />
@@ -67,7 +67,7 @@ const SubscriptionRequired = ({ children, allowFree = false }) => {
             redirected to our pricing page.
           </p>
 
-          <div className="bg-yellow-50/90 dark:bg-yellow-900/20 p-4 rounded-md w-full mt-4 border border-yellow-100 dark:border-yellow-800/40 flex items-start gap-3">
+          <div className="bg-yellow-50/90 dark:bg-yellow-900/20 p-4 round-sm w-full mt-4 border border-yellow-100 dark:border-yellow-800/40 flex items-start gap-3">
             <AlertCircle className="h-5 w-5 text-yellow-500 dark:text-yellow-400 flex-shrink-0 mt-0.5" />
             <p className="text-sm text-yellow-800 dark:text-yellow-200">
               Upgrade your account to access all features and enhance your

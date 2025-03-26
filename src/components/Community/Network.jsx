@@ -94,7 +94,7 @@ const Network = ({ userId }) => {
 
   if (error) {
     return (
-      <div className="p-6 text-red-600 dark:text-red-400 bg-red-50/90 dark:bg-red-900/20 rounded-lg border border-red-200 dark:border-red-800/50 shadow-sm">
+      <div className="p-6 text-red-600 dark:text-red-400 bg-red-50/90 dark:bg-red-900/20 rounded-sm border border-red-200 dark:border-red-800/50 shadow-sm">
         <div className="flex items-center gap-2 mb-1">
           <div className="p-1 rounded-full bg-red-100 dark:bg-red-800/30">
             <svg
@@ -121,7 +121,7 @@ const Network = ({ userId }) => {
 
   if (!networkData || networkData.length === 0) {
     return (
-      <div className="text-center p-8 bg-white/90 dark:bg-gray-800/60 rounded-lg border border-gray-200 dark:border-gray-700/40 shadow-sm backdrop-blur-sm">
+      <div className="text-center p-8 bg-white/90 dark:bg-gray-800/60 rounded-sm border border-gray-200 dark:border-gray-700/40 shadow-sm backdrop-blur-sm">
         <div className="p-3 rounded-full bg-gray-100 dark:bg-gray-700/50 inline-flex mx-auto mb-4">
           <UserX className="h-10 w-10 text-gray-400 dark:text-gray-500" />
         </div>
@@ -133,7 +133,7 @@ const Network = ({ userId }) => {
         </p>
         <Link
           to="/community/traders"
-          className="mt-4 inline-block px-4 py-2 bg-primary hover:bg-primary/90 text-white rounded-md shadow text-sm transition-all"
+          className="mt-4 inline-block px-4 py-2 bg-primary hover:bg-primary/90 text-white round-sm shadow text-sm transition-all"
         >
           Discover Traders
         </Link>
@@ -158,7 +158,7 @@ const Network = ({ userId }) => {
             <select
               value={filter}
               onChange={(e) => setFilter(e.target.value)}
-              className="pl-3 pr-8 py-2 border border-gray-300 dark:border-gray-600/70 rounded-md 
+              className="pl-3 pr-8 py-2 border border-gray-300 dark:border-gray-600/70 round-sm 
               bg-white dark:bg-gray-700/40 text-gray-900 dark:text-gray-100 
               focus:ring-2 focus:ring-primary focus:border-primary text-sm appearance-none"
             >
@@ -183,7 +183,7 @@ const Network = ({ userId }) => {
           return (
             <div
               key={connection._id}
-              className="bg-white/90 dark:bg-gray-800/60 p-5 rounded-lg border border-gray-200 dark:border-gray-700/40 shadow-sm hover:shadow-md transition-shadow backdrop-blur-sm"
+              className="bg-white/90 dark:bg-gray-800/60 p-5 rounded-sm border border-gray-200 dark:border-gray-700/40 shadow-sm hover:shadow-md transition-shadow backdrop-blur-sm"
             >
               <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-2 sm:gap-0 mb-4">
                 <div>
@@ -199,12 +199,12 @@ const Network = ({ userId }) => {
                   {isViewingOwnProfile && connection.relationship && (
                     <div className="flex flex-wrap gap-2 mt-2">
                       {connection.relationship.isFollower && (
-                        <span className="text-xs bg-primary/10 dark:bg-primary/20 text-primary dark:text-primary/90 px-2 py-1 rounded-md font-medium">
+                        <span className="text-xs bg-primary/10 dark:bg-primary/20 text-primary dark:text-primary/90 px-2 py-1 round-sm font-medium">
                           Follows you
                         </span>
                       )}
                       {connection.relationship.isFollowing && (
-                        <span className="text-xs bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300 px-2 py-1 rounded-md font-medium">
+                        <span className="text-xs bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300 px-2 py-1 round-sm font-medium">
                           Following
                         </span>
                       )}
@@ -236,7 +236,7 @@ const Network = ({ userId }) => {
               </div>
 
               <div className="grid grid-cols-3 gap-3 text-center">
-                <div className="bg-gray-50/80 dark:bg-gray-700/30 p-3 rounded-md flex flex-col items-center">
+                <div className="bg-gray-50/80 dark:bg-gray-700/30 p-3 round-sm flex flex-col items-center">
                   <BarChart2 className="h-4 w-4 text-primary/70 mb-1" />
                   <p className="text-xs text-gray-500 dark:text-gray-400">
                     Trades
@@ -245,7 +245,7 @@ const Network = ({ userId }) => {
                     {connection.stats?.totalTrades || 0}
                   </p>
                 </div>
-                <div className="bg-gray-50/80 dark:bg-gray-700/30 p-3 rounded-md flex flex-col items-center">
+                <div className="bg-gray-50/80 dark:bg-gray-700/30 p-3 round-sm flex flex-col items-center">
                   <TrendingUp className="h-4 w-4 text-accent/70 mb-1" />
                   <p className="text-xs text-gray-500 dark:text-gray-400">
                     Win Rate
@@ -261,7 +261,7 @@ const Network = ({ userId }) => {
                     %
                   </p>
                 </div>
-                <div className="bg-gray-50/80 dark:bg-gray-700/30 p-3 rounded-md flex flex-col items-center">
+                <div className="bg-gray-50/80 dark:bg-gray-700/30 p-3 round-sm flex flex-col items-center">
                   <Users className="h-4 w-4 text-secondary/70 mb-1" />
                   <p className="text-xs text-gray-500 dark:text-gray-400">
                     Followers

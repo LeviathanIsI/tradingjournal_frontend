@@ -6,7 +6,7 @@ const TradePlanStats = ({ stats }) => {
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
-      <div className="bg-white/90 dark:bg-gray-800/60 p-4 rounded-lg border border-gray-200 dark:border-gray-700/40 shadow-sm backdrop-blur-sm transition-all hover:shadow group">
+      <div className="bg-white/90 dark:bg-gray-800/60 p-4 rounded-sm border border-gray-200 dark:border-gray-700/40 shadow-sm backdrop-blur-sm transition-all hover:shadow group">
         <div className="flex justify-between items-start">
           <h3 className="text-sm text-gray-600 dark:text-gray-400 font-medium">
             Planned Trades
@@ -19,7 +19,7 @@ const TradePlanStats = ({ stats }) => {
         <div className="h-1 w-16 bg-primary/20 rounded-full mt-3"></div>
       </div>
 
-      <div className="bg-white/90 dark:bg-gray-800/60 p-4 rounded-lg border border-gray-200 dark:border-gray-700/40 shadow-sm backdrop-blur-sm transition-all hover:shadow group">
+      <div className="bg-white/90 dark:bg-gray-800/60 p-4 rounded-sm border border-gray-200 dark:border-gray-700/40 shadow-sm backdrop-blur-sm transition-all hover:shadow group">
         <div className="flex justify-between items-start">
           <h3 className="text-sm text-gray-600 dark:text-gray-400 font-medium">
             Executed Trades
@@ -32,7 +32,7 @@ const TradePlanStats = ({ stats }) => {
         <div className="h-1 w-16 bg-green-500/20 rounded-full mt-3"></div>
       </div>
 
-      <div className="bg-white/90 dark:bg-gray-800/60 p-4 rounded-lg border border-gray-200 dark:border-gray-700/40 shadow-sm backdrop-blur-sm transition-all hover:shadow group">
+      <div className="bg-white/90 dark:bg-gray-800/60 p-4 rounded-sm border border-gray-200 dark:border-gray-700/40 shadow-sm backdrop-blur-sm transition-all hover:shadow group">
         <div className="flex justify-between items-start">
           <h3 className="text-sm text-gray-600 dark:text-gray-400 font-medium">
             Cancelled Trades

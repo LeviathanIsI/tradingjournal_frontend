@@ -119,7 +119,7 @@ const CreateStudyGroup = () => {
         </h1>
       </div>
 
-      <div className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-lg border border-gray-200 dark:border-gray-700/60 shadow-sm overflow-hidden">
+      <div className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-sm border border-gray-200 dark:border-gray-700/60 shadow-sm overflow-hidden">
         {/* Info Section */}
         <div className="p-6 border-b border-gray-200 dark:border-gray-700/40">
           <div className="flex items-start space-x-3 mb-5">
@@ -132,7 +132,7 @@ const CreateStudyGroup = () => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
-            <div className="flex flex-col items-center bg-primary/5 dark:bg-primary/10 rounded-lg p-4 transform transition-transform hover:scale-[1.02]">
+            <div className="flex flex-col items-center bg-primary/5 dark:bg-primary/10 rounded-sm p-4 transform transition-transform hover:scale-[1.02]">
               <div className="w-12 h-12 rounded-full bg-primary/10 dark:bg-primary/20 flex items-center justify-center mb-3">
                 <Users className="h-6 w-6 text-primary dark:text-primary-light" />
               </div>
@@ -144,7 +144,7 @@ const CreateStudyGroup = () => {
               </p>
             </div>
 
-            <div className="flex flex-col items-center bg-accent/5 dark:bg-accent/10 rounded-lg p-4 transform transition-transform hover:scale-[1.02]">
+            <div className="flex flex-col items-center bg-accent/5 dark:bg-accent/10 rounded-sm p-4 transform transition-transform hover:scale-[1.02]">
               <div className="w-12 h-12 rounded-full bg-accent/10 dark:bg-accent/20 flex items-center justify-center mb-3">
                 <Calendar className="h-6 w-6 text-accent dark:text-accent-light" />
               </div>
@@ -156,7 +156,7 @@ const CreateStudyGroup = () => {
               </p>
             </div>
 
-            <div className="flex flex-col items-center bg-secondary/5 dark:bg-secondary/10 rounded-lg p-4 transform transition-transform hover:scale-[1.02]">
+            <div className="flex flex-col items-center bg-secondary/5 dark:bg-secondary/10 rounded-sm p-4 transform transition-transform hover:scale-[1.02]">
               <div className="w-12 h-12 rounded-full bg-secondary/10 dark:bg-secondary/20 flex items-center justify-center mb-3">
                 <Tag className="h-6 w-6 text-secondary dark:text-secondary-light" />
               </div>
@@ -173,7 +173,7 @@ const CreateStudyGroup = () => {
         {/* Form Section */}
         <form onSubmit={handleSubmit} className="p-6">
           {errors.submit && (
-            <div className="mb-6 p-4 bg-red-50 dark:bg-red-900/20 border-l-4 border-red-500 dark:border-red-600 rounded-md text-red-600 dark:text-red-400 text-sm">
+            <div className="mb-6 p-4 bg-red-50 dark:bg-red-900/20 border-l-4 border-red-500 dark:border-red-600 round-sm text-red-600 dark:text-red-400 text-sm">
               <div className="flex">
                 <div className="flex-shrink-0">
                   <svg
@@ -210,7 +210,7 @@ const CreateStudyGroup = () => {
                   errors.name
                     ? "border-red-500 dark:border-red-400 focus:ring-red-500"
                     : "border-gray-300 dark:border-gray-600 focus:ring-primary/50"
-                } rounded-md bg-white dark:bg-gray-700/50 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 transition-colors`}
+                } round-sm bg-white dark:bg-gray-700/50 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 transition-colors`}
                 id="name"
                 name="name"
                 type="text"
@@ -249,7 +249,7 @@ const CreateStudyGroup = () => {
                   errors.description
                     ? "border-red-500 dark:border-red-400 focus:ring-red-500"
                     : "border-gray-300 dark:border-gray-600 focus:ring-primary/50"
-                } rounded-md bg-white dark:bg-gray-700/50 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 transition-colors`}
+                } round-sm bg-white dark:bg-gray-700/50 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 transition-colors`}
                 id="description"
                 name="description"
                 rows="4"
@@ -291,7 +291,7 @@ const CreateStudyGroup = () => {
                     errors.tags
                       ? "border-red-500 dark:border-red-400 focus:ring-red-500"
                       : "border-gray-300 dark:border-gray-600 focus:ring-primary/50"
-                  } rounded-md bg-white dark:bg-gray-700/50 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 transition-colors`}
+                  } round-sm bg-white dark:bg-gray-700/50 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 transition-colors`}
                   id="tags"
                   name="tags"
                   type="text"
@@ -359,7 +359,7 @@ const CreateStudyGroup = () => {
                       errors.scheduledDate
                         ? "border-red-500 dark:border-red-400 focus:ring-red-500"
                         : "border-gray-300 dark:border-gray-600 focus:ring-primary/50"
-                    } rounded-md bg-white dark:bg-gray-700/50 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 transition-colors`}
+                    } round-sm bg-white dark:bg-gray-700/50 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 transition-colors`}
                     id="scheduledDate"
                     name="scheduledDate"
                     type="datetime-local"
@@ -404,7 +404,7 @@ const CreateStudyGroup = () => {
                     <Clock className="h-4 w-4 text-gray-400" />
                   </div>
                   <input
-                    className="w-full pl-10 pr-3 py-2.5 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700/50 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-primary/50 transition-colors"
+                    className="w-full pl-10 pr-3 py-2.5 border border-gray-300 dark:border-gray-600 round-sm bg-white dark:bg-gray-700/50 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-primary/50 transition-colors"
                     id="duration"
                     name="duration"
                     type="number"
@@ -434,7 +434,7 @@ const CreateStudyGroup = () => {
                   <Clock className="h-4 w-4 text-gray-400" />
                 </div>
                 <input
-                  className="w-full pl-10 pr-3 py-2.5 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700/50 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-primary/50 transition-colors"
+                  className="w-full pl-10 pr-3 py-2.5 border border-gray-300 dark:border-gray-600 round-sm bg-white dark:bg-gray-700/50 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-primary/50 transition-colors"
                   id="joinDeadline"
                   name="joinDeadline"
                   type="datetime-local"
@@ -448,7 +448,7 @@ const CreateStudyGroup = () => {
             </div>
 
             {/* Privacy Toggle */}
-            <div className="bg-gray-50 dark:bg-gray-700/30 rounded-lg p-4">
+            <div className="bg-gray-50 dark:bg-gray-700/30 rounded-sm p-4">
               <label className="flex items-start cursor-pointer">
                 <div className="flex items-center h-5">
                   <input
@@ -482,14 +482,14 @@ const CreateStudyGroup = () => {
             <button
               type="button"
               onClick={() => navigate("/study-groups")}
-              className="w-full sm:w-auto px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700/50 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors text-sm font-medium"
+              className="w-full sm:w-auto px-4 py-2.5 border border-gray-300 dark:border-gray-600 round-sm bg-white dark:bg-gray-700/50 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors text-sm font-medium"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={loading}
-              className="w-full sm:w-auto px-4 py-2.5 bg-primary hover:bg-primary/90 text-white rounded-md shadow transition-colors disabled:opacity-50 text-sm font-medium flex items-center justify-center"
+              className="w-full sm:w-auto px-4 py-2.5 bg-primary hover:bg-primary/90 text-white round-sm shadow transition-colors disabled:opacity-50 text-sm font-medium flex items-center justify-center"
             >
               {loading ? (
                 <>

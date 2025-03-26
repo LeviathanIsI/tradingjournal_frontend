@@ -138,7 +138,7 @@ const NotificationsPage = () => {
             {unreadCount > 0 && (
               <button
                 onClick={markAllAsRead}
-                className="text-sm text-primary bg-primary/10 hover:bg-primary/20 dark:hover:bg-primary/30 transition-colors flex items-center rounded-md px-3 py-2 shadow-sm"
+                className="text-sm text-primary bg-primary/10 hover:bg-primary/20 dark:hover:bg-primary/30 transition-colors flex items-center round-sm px-3 py-2 shadow-sm"
               >
                 <Check className="h-4 w-4 mr-2" />
                 Mark all as read
@@ -148,19 +148,19 @@ const NotificationsPage = () => {
         </div>
 
         {loading && notifications.length === 0 ? (
-          <div className="bg-white/90 dark:bg-gray-800/80 border border-gray-200 dark:border-gray-700/60 rounded-lg shadow-md backdrop-blur-sm p-12 flex flex-col items-center justify-center">
+          <div className="bg-white/90 dark:bg-gray-800/80 border border-gray-200 dark:border-gray-700/60 rounded-sm shadow-md backdrop-blur-sm p-12 flex flex-col items-center justify-center">
             <div className="h-10 w-10 border-4 border-gray-200 dark:border-gray-700 border-t-primary rounded-full animate-spin mb-4"></div>
             <p className="text-gray-600 dark:text-gray-400">
               Loading notifications...
             </p>
           </div>
         ) : error ? (
-          <div className="bg-red-50 dark:bg-red-900/20 border border-red-100 dark:border-red-800/50 text-red-700 dark:text-red-300 px-4 py-3 rounded-lg shadow-sm flex items-start gap-3">
+          <div className="bg-red-50 dark:bg-red-900/20 border border-red-100 dark:border-red-800/50 text-red-700 dark:text-red-300 px-4 py-3 rounded-sm shadow-sm flex items-start gap-3">
             <AlertCircle className="h-5 w-5 text-red-500 dark:text-red-400 flex-shrink-0 mt-0.5" />
             <p>Error loading notifications. Please try again.</p>
           </div>
         ) : notifications.length === 0 ? (
-          <div className="bg-white/90 dark:bg-gray-800/80 border border-gray-200 dark:border-gray-700/60 rounded-lg shadow-md backdrop-blur-sm p-12 text-center">
+          <div className="bg-white/90 dark:bg-gray-800/80 border border-gray-200 dark:border-gray-700/60 rounded-sm shadow-md backdrop-blur-sm p-12 text-center">
             <div className="bg-gray-100 dark:bg-gray-700/50 h-16 w-16 rounded-full flex items-center justify-center mx-auto mb-4">
               <Bell className="h-8 w-8 text-gray-400 dark:text-gray-500" />
             </div>
@@ -173,7 +173,7 @@ const NotificationsPage = () => {
             </p>
           </div>
         ) : (
-          <div className="bg-white/90 dark:bg-gray-800/80 border border-gray-200 dark:border-gray-700/60 rounded-lg overflow-hidden shadow-md backdrop-blur-sm">
+          <div className="bg-white/90 dark:bg-gray-800/80 border border-gray-200 dark:border-gray-700/60 rounded-sm overflow-hidden shadow-md backdrop-blur-sm">
             {Object.entries(groupedNotifications).map(([date, notifs]) => (
               <div key={date}>
                 <div className="bg-gray-50/80 dark:bg-gray-700/30 px-4 py-3 border-b border-gray-200 dark:border-gray-700/40 flex items-center">
@@ -225,7 +225,7 @@ const NotificationsPage = () => {
                             {!notification.read && (
                               <button
                                 onClick={() => markAsRead(notification._id)}
-                                className="text-primary hover:bg-primary/10 dark:hover:bg-primary/20 p-2 rounded-md transition-colors"
+                                className="text-primary hover:bg-primary/10 dark:hover:bg-primary/20 p-2 round-sm transition-colors"
                                 title="Mark as read"
                               >
                                 <Check className="h-5 w-5" />
@@ -235,7 +235,7 @@ const NotificationsPage = () => {
                               onClick={() =>
                                 deleteNotification(notification._id)
                               }
-                              className="text-gray-400 hover:text-red-500 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 p-2 rounded-md transition-colors"
+                              className="text-gray-400 hover:text-red-500 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 p-2 round-sm transition-colors"
                               title="Delete notification"
                             >
                               <Trash2 className="h-5 w-5" />

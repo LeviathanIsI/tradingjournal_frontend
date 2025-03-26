@@ -67,7 +67,7 @@ const GroupInfo = ({ currentGroup, formatDate, onSettingsNavigate }) => {
   };
 
   return (
-    <div className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-lg border border-gray-200 dark:border-gray-700/60 shadow-sm overflow-hidden">
+    <div className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-sm border border-gray-200 dark:border-gray-700/60 shadow-sm overflow-hidden">
       <div className="p-5 border-b border-gray-200 dark:border-gray-700/40 bg-gray-50/80 dark:bg-gray-700/50">
         <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 flex items-center">
           <Info className="mr-2 h-5 w-5 text-primary dark:text-primary-light" />
@@ -77,7 +77,7 @@ const GroupInfo = ({ currentGroup, formatDate, onSettingsNavigate }) => {
 
       <div className="p-5 space-y-6">
         {/* About section */}
-        <div className="bg-white/70 dark:bg-gray-700/40 rounded-lg p-4 border border-gray-200/70 dark:border-gray-600/40">
+        <div className="bg-white/70 dark:bg-gray-700/40 rounded-sm p-4 border border-gray-200/70 dark:border-gray-600/40">
           <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 flex items-center mb-2">
             <Bookmark className="mr-1.5 h-4 w-4 text-gray-500 dark:text-gray-400" />
             ABOUT
@@ -92,7 +92,7 @@ const GroupInfo = ({ currentGroup, formatDate, onSettingsNavigate }) => {
           <div className="space-y-5">
             {/* Category */}
             {currentGroup.category && (
-              <div className="bg-white/70 dark:bg-gray-700/40 rounded-lg p-4 border border-gray-200/70 dark:border-gray-600/40">
+              <div className="bg-white/70 dark:bg-gray-700/40 rounded-sm p-4 border border-gray-200/70 dark:border-gray-600/40">
                 <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 flex items-center mb-3">
                   <Tag className="mr-1.5 h-4 w-4 text-gray-500 dark:text-gray-400" />
                   CATEGORY
@@ -107,7 +107,7 @@ const GroupInfo = ({ currentGroup, formatDate, onSettingsNavigate }) => {
 
             {/* Tags */}
             {currentGroup.tags && currentGroup.tags.length > 0 && (
-              <div className="bg-white/70 dark:bg-gray-700/40 rounded-lg p-4 border border-gray-200/70 dark:border-gray-600/40">
+              <div className="bg-white/70 dark:bg-gray-700/40 rounded-sm p-4 border border-gray-200/70 dark:border-gray-600/40">
                 <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 flex items-center mb-3">
                   <Tag className="mr-1.5 h-4 w-4 text-gray-500 dark:text-gray-400" />
                   TAGS
@@ -127,7 +127,7 @@ const GroupInfo = ({ currentGroup, formatDate, onSettingsNavigate }) => {
             )}
 
             {/* Privacy */}
-            <div className="bg-white/70 dark:bg-gray-700/40 rounded-lg p-4 border border-gray-200/70 dark:border-gray-600/40">
+            <div className="bg-white/70 dark:bg-gray-700/40 rounded-sm p-4 border border-gray-200/70 dark:border-gray-600/40">
               <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 flex items-center mb-3">
                 <Users className="mr-1.5 h-4 w-4 text-gray-500 dark:text-gray-400" />
                 PRIVACY
@@ -162,7 +162,7 @@ const GroupInfo = ({ currentGroup, formatDate, onSettingsNavigate }) => {
           {/* Right column */}
           <div className="space-y-5">
             {/* Timezone */}
-            <div className="bg-white/70 dark:bg-gray-700/40 rounded-lg p-4 border border-gray-200/70 dark:border-gray-600/40">
+            <div className="bg-white/70 dark:bg-gray-700/40 rounded-sm p-4 border border-gray-200/70 dark:border-gray-600/40">
               <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 flex items-center mb-3">
                 <GlobeIcon className="mr-1.5 h-4 w-4 text-gray-500 dark:text-gray-400" />
                 YOUR TIMEZONE
@@ -184,7 +184,7 @@ const GroupInfo = ({ currentGroup, formatDate, onSettingsNavigate }) => {
             </div>
 
             {/* Time-related information */}
-            <div className="bg-white/70 dark:bg-gray-700/40 rounded-lg p-4 border border-gray-200/70 dark:border-gray-600/40">
+            <div className="bg-white/70 dark:bg-gray-700/40 rounded-sm p-4 border border-gray-200/70 dark:border-gray-600/40">
               <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 flex items-center mb-3">
                 <Clock className="mr-1.5 h-4 w-4 text-gray-500 dark:text-gray-400" />
                 ACTIVITY
@@ -233,14 +233,14 @@ const GroupInfo = ({ currentGroup, formatDate, onSettingsNavigate }) => {
 
         {/* Social sharing section */}
         {!currentGroup.isPrivate && (
-          <div className="bg-white/70 dark:bg-gray-700/40 rounded-lg p-4 border border-gray-200/70 dark:border-gray-600/40">
+          <div className="bg-white/70 dark:bg-gray-700/40 rounded-sm p-4 border border-gray-200/70 dark:border-gray-600/40">
             <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 flex items-center mb-3">
               <Share2 className="mr-1.5 h-4 w-4 text-gray-500 dark:text-gray-400" />
               SHARE GROUP
             </h3>
             <button
               onClick={copyLinkToClipboard}
-              className="text-sm px-4 py-2 bg-gray-100 dark:bg-gray-600/70 text-gray-700 dark:text-gray-300 rounded-md flex items-center hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+              className="text-sm px-4 py-2 bg-gray-100 dark:bg-gray-600/70 text-gray-700 dark:text-gray-300 round-sm flex items-center hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
             >
               <CheckCircle size={14} className="mr-1.5" />
               Copy Link

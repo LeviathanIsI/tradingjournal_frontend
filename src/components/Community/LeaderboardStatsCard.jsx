@@ -2,7 +2,7 @@ import React from "react";
 import { LineChart, Trophy, Target } from "lucide-react";
 
 const LeaderboardStatsCard = ({ icon, label, value, valueColor, detail }) => (
-  <div className="bg-white/90 dark:bg-gray-800/60 p-4 rounded-lg border border-gray-200 dark:border-gray-700/40 shadow-sm backdrop-blur-sm transition-all hover:shadow">
+  <div className="bg-white/90 dark:bg-gray-800/60 p-4 rounded-sm border border-gray-200 dark:border-gray-700/40 shadow-sm backdrop-blur-sm transition-all hover:shadow">
     <div className="flex items-center gap-3">
       <div className="p-2.5 rounded-full bg-primary/10 dark:bg-primary/20 flex-shrink-0">
         {icon}

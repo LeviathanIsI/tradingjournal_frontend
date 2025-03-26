@@ -615,7 +615,7 @@ const StopLossStudy = ({ trades, user, stats, experienceLevel }) => {
   }, [planEntry, accountBalance, supportPrice, resistancePrice, useSupRes]);
 
   return (
-    <div className="bg-white/90 dark:bg-gray-800/60 p-5 sm:p-6 rounded-lg border border-gray-200 dark:border-gray-700/40 shadow-sm backdrop-blur-sm">
+    <div className="bg-white/90 dark:bg-gray-800/60 p-5 sm:p-6 rounded-sm border border-gray-200 dark:border-gray-700/40 shadow-sm backdrop-blur-sm">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Left Side - Exit Analysis */}
         <div>
@@ -623,7 +623,7 @@ const StopLossStudy = ({ trades, user, stats, experienceLevel }) => {
             <div className="h-5 w-1 bg-primary rounded-full mr-2"></div>
             Exit Analysis
           </h3>
-          <div className="bg-gradient-to-br from-gray-50/90 to-gray-100/80 dark:from-gray-700/30 dark:to-gray-600/20 p-4 rounded-lg border border-gray-200 dark:border-gray-600/50 shadow-sm mb-5">
+          <div className="bg-gradient-to-br from-gray-50/90 to-gray-100/80 dark:from-gray-700/30 dark:to-gray-600/20 p-4 rounded-sm border border-gray-200 dark:border-gray-600/50 shadow-sm mb-5">
             <div className="flex gap-3">
               <div className="mt-0.5">
                 <BarChart className="h-5 w-5 text-primary" />
@@ -656,7 +656,7 @@ const StopLossStudy = ({ trades, user, stats, experienceLevel }) => {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
             {!trades?.length ? (
-              <div className="col-span-1 sm:col-span-2 bg-gray-50/50 dark:bg-gray-700/20 rounded-lg border border-dashed border-gray-300 dark:border-gray-600/50 p-6 text-center">
+              <div className="col-span-1 sm:col-span-2 bg-gray-50/50 dark:bg-gray-700/20 rounded-sm border border-dashed border-gray-300 dark:border-gray-600/50 p-6 text-center">
                 <BarChart className="h-10 w-10 mx-auto text-gray-400 dark:text-gray-500 mb-2" />
                 <p className="text-sm text-gray-500 dark:text-gray-400 font-medium">
                   Add trades to see analysis
@@ -668,7 +668,7 @@ const StopLossStudy = ({ trades, user, stats, experienceLevel }) => {
               </div>
             ) : (
               <>
-                <div className="bg-white/90 dark:bg-gray-800/40 rounded-lg border border-gray-200 dark:border-gray-700/40 p-4 shadow-sm">
+                <div className="bg-white/90 dark:bg-gray-800/40 rounded-sm border border-gray-200 dark:border-gray-700/40 p-4 shadow-sm">
                   <div className="flex justify-between">
                     <p className="text-sm font-medium text-gray-500 dark:text-gray-400">
                       Suggested Stop Loss
@@ -687,7 +687,7 @@ const StopLossStudy = ({ trades, user, stats, experienceLevel }) => {
                   </div>
                 </div>
 
-                <div className="bg-white/90 dark:bg-gray-800/40 rounded-lg border border-gray-200 dark:border-gray-700/40 p-4 shadow-sm">
+                <div className="bg-white/90 dark:bg-gray-800/40 rounded-sm border border-gray-200 dark:border-gray-700/40 p-4 shadow-sm">
                   <div className="flex justify-between">
                     <p className="text-sm font-medium text-gray-500 dark:text-gray-400">
                       Suggested Profit Target
@@ -706,7 +706,7 @@ const StopLossStudy = ({ trades, user, stats, experienceLevel }) => {
                   </div>
                 </div>
 
-                <div className="bg-white/90 dark:bg-gray-800/40 rounded-lg border border-gray-200 dark:border-gray-700/40 p-4 shadow-sm">
+                <div className="bg-white/90 dark:bg-gray-800/40 rounded-sm border border-gray-200 dark:border-gray-700/40 p-4 shadow-sm">
                   <div className="flex justify-between">
                     <p className="text-sm font-medium text-gray-500 dark:text-gray-400">
                       Suggested Hold Time
@@ -725,7 +725,7 @@ const StopLossStudy = ({ trades, user, stats, experienceLevel }) => {
                   </div>
                 </div>
 
-                <div className="bg-white/90 dark:bg-gray-800/40 rounded-lg border border-gray-200 dark:border-gray-700/40 p-4 shadow-sm">
+                <div className="bg-white/90 dark:bg-gray-800/40 rounded-sm border border-gray-200 dark:border-gray-700/40 p-4 shadow-sm">
                   <div className="flex justify-between">
                     <p className="text-sm font-medium text-gray-500 dark:text-gray-400">
                       Experience Level
@@ -752,7 +752,7 @@ const StopLossStudy = ({ trades, user, stats, experienceLevel }) => {
             <div className="h-5 w-1 bg-secondary rounded-full mr-2"></div>
             Plan Your Trade
           </h4>
-          <div className="bg-gradient-to-br from-gray-50/90 to-gray-100/80 dark:from-gray-700/30 dark:to-gray-600/20 p-4 rounded-lg border border-gray-200 dark:border-gray-600/50 shadow-sm mb-5">
+          <div className="bg-gradient-to-br from-gray-50/90 to-gray-100/80 dark:from-gray-700/30 dark:to-gray-600/20 p-4 rounded-sm border border-gray-200 dark:border-gray-600/50 shadow-sm mb-5">
             <div className="flex gap-3">
               <div className="mt-0.5">
                 <Percent className="h-5 w-5 text-secondary" />
@@ -804,7 +804,7 @@ const StopLossStudy = ({ trades, user, stats, experienceLevel }) => {
                   value={planEntry}
                   onChange={(e) => setPlanEntry(e.target.value)}
                   className="w-full pl-8 pr-3 py-2 border border-gray-300 dark:border-gray-600/70 
-                  bg-white dark:bg-gray-700/40 text-gray-900 dark:text-gray-100 rounded-md
+                  bg-white dark:bg-gray-700/40 text-gray-900 dark:text-gray-100 round-sm
                   focus:ring-primary focus:border-primary focus:ring-2 focus:ring-offset-1"
                   step="0.01"
                   min="0"
@@ -831,7 +831,7 @@ const StopLossStudy = ({ trades, user, stats, experienceLevel }) => {
             </div>
 
             {useSupRes && (
-              <div className="space-y-4 bg-gray-50/50 dark:bg-gray-700/20 p-4 rounded-lg border border-gray-200 dark:border-gray-700/40">
+              <div className="space-y-4 bg-gray-50/50 dark:bg-gray-700/20 p-4 rounded-sm border border-gray-200 dark:border-gray-700/40">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                     Support Price
@@ -845,7 +845,7 @@ const StopLossStudy = ({ trades, user, stats, experienceLevel }) => {
                       value={supportPrice}
                       onChange={(e) => setSupportPrice(e.target.value)}
                       className="w-full pl-8 pr-3 py-2 border border-gray-300 dark:border-gray-600/70 
-                      bg-white dark:bg-gray-700/40 text-gray-900 dark:text-gray-100 rounded-md
+                      bg-white dark:bg-gray-700/40 text-gray-900 dark:text-gray-100 round-sm
                       focus:ring-primary focus:border-primary focus:ring-2 focus:ring-offset-1"
                       step="0.01"
                       min="0"
@@ -866,7 +866,7 @@ const StopLossStudy = ({ trades, user, stats, experienceLevel }) => {
                       value={resistancePrice}
                       onChange={(e) => setResistancePrice(e.target.value)}
                       className="w-full pl-8 pr-3 py-2 border border-gray-300 dark:border-gray-600/70 
-                      bg-white dark:bg-gray-700/40 text-gray-900 dark:text-gray-100 rounded-md
+                      bg-white dark:bg-gray-700/40 text-gray-900 dark:text-gray-100 round-sm
                       focus:ring-primary focus:border-primary focus:ring-2 focus:ring-offset-1"
                       step="0.01"
                       min="0"
@@ -878,7 +878,7 @@ const StopLossStudy = ({ trades, user, stats, experienceLevel }) => {
             )}
 
             {planEntry && (
-              <div className="mt-5 space-y-5 bg-white/90 dark:bg-gray-800/40 p-4 rounded-lg border border-gray-200 dark:border-gray-700/40 shadow-sm">
+              <div className="mt-5 space-y-5 bg-white/90 dark:bg-gray-800/40 p-4 rounded-sm border border-gray-200 dark:border-gray-700/40 shadow-sm">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">

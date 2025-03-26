@@ -30,7 +30,7 @@ const GoogleButton = ({ onClick, variant = "signin" }) => {
       onClick={onClick}
       type="button"
       className="w-full flex items-center justify-center gap-3 
-        bg-white dark:bg-gray-700/50 border border-gray-300 dark:border-gray-600/70 rounded-md
+        bg-white dark:bg-gray-700/50 border border-gray-300 dark:border-gray-600/70 round-sm
         px-4 py-2.5 
         text-sm font-medium text-gray-700 dark:text-gray-200
         hover:bg-gray-50 dark:hover:bg-gray-700/80 hover:shadow-sm

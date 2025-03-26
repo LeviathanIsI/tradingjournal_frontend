@@ -24,7 +24,7 @@ const SessionModal = ({
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-[fadeIn_0.2s_ease-out]">
       <div
         ref={modalRef}
-        className="bg-white/95 dark:bg-gray-800/95 rounded-lg p-5 w-full max-w-md 
+        className="bg-white/95 dark:bg-gray-800/95 rounded-sm p-5 w-full max-w-md 
         border border-gray-200 dark:border-gray-700/60 shadow-lg animate-[scaleIn_0.2s_ease-out] overflow-hidden"
       >
         {/* Header */}
@@ -54,7 +54,7 @@ const SessionModal = ({
 
         {/* Info alert for update mode */}
         {currentGroup.scheduledDate && (
-          <div className="mb-5 p-3 bg-primary/5 dark:bg-primary/10 rounded-lg text-sm text-primary-dark dark:text-primary-light border border-primary/10 dark:border-primary/20">
+          <div className="mb-5 p-3 bg-primary/5 dark:bg-primary/10 rounded-sm text-sm text-primary-dark dark:text-primary-light border border-primary/10 dark:border-primary/20">
             <p className="flex items-start">
               <Info className="h-4 w-4 mr-2 mt-0.5 flex-shrink-0" />
               <span>
@@ -86,7 +86,7 @@ const SessionModal = ({
                         topic: e.target.value,
                       })
                     }
-                    className="w-full pl-10 pr-3 py-2.5 border border-gray-300 dark:border-gray-600/70 rounded-md 
+                    className="w-full pl-10 pr-3 py-2.5 border border-gray-300 dark:border-gray-600/70 round-sm 
                     bg-white dark:bg-gray-700/50 text-gray-900 dark:text-gray-100
                     focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-transparent
                     transition-colors"
@@ -109,7 +109,7 @@ const SessionModal = ({
                       description: e.target.value,
                     })
                   }
-                  className="w-full px-3 py-2.5 border border-gray-300 dark:border-gray-600/70 rounded-md 
+                  className="w-full px-3 py-2.5 border border-gray-300 dark:border-gray-600/70 round-sm 
                   bg-white dark:bg-gray-700/50 text-gray-900 dark:text-gray-100
                   focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-transparent
                   transition-colors"
@@ -138,7 +138,7 @@ const SessionModal = ({
                       scheduledDate: e.target.value,
                     })
                   }
-                  className="w-full pl-10 pr-3 py-2.5 border border-gray-300 dark:border-gray-600/70 rounded-md 
+                  className="w-full pl-10 pr-3 py-2.5 border border-gray-300 dark:border-gray-600/70 round-sm 
                   bg-white dark:bg-gray-700/50 text-gray-900 dark:text-gray-100
                   focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-transparent
                   transition-colors"
@@ -174,7 +174,7 @@ const SessionModal = ({
                       timeOnly: e.target.value,
                     })
                   }
-                  className="w-full pl-10 pr-3 py-2.5 border border-gray-300 dark:border-gray-600/70 rounded-md 
+                  className="w-full pl-10 pr-3 py-2.5 border border-gray-300 dark:border-gray-600/70 round-sm 
                   bg-white dark:bg-gray-700/50 text-gray-900 dark:text-gray-100
                   focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-transparent
                   transition-colors"
@@ -204,7 +204,7 @@ const SessionModal = ({
                 onChange={(e) =>
                   setSessionForm({ ...sessionForm, duration: e.target.value })
                 }
-                className="w-full pl-10 pr-3 py-2.5 border border-gray-300 dark:border-gray-600/70 rounded-md 
+                className="w-full pl-10 pr-3 py-2.5 border border-gray-300 dark:border-gray-600/70 round-sm 
                 bg-white dark:bg-gray-700/50 text-gray-900 dark:text-gray-100
                 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-transparent
                 transition-colors"
@@ -223,7 +223,7 @@ const SessionModal = ({
             <button
               type="button"
               onClick={() => setShowSessionForm(false)}
-              className="w-full sm:w-auto px-4 py-2.5 border border-gray-300 dark:border-gray-600/70 rounded-md 
+              className="w-full sm:w-auto px-4 py-2.5 border border-gray-300 dark:border-gray-600/70 round-sm 
               bg-white dark:bg-gray-700/50 text-gray-700 dark:text-gray-300 
               hover:bg-gray-50 dark:hover:bg-gray-600/70 transition-colors text-sm font-medium"
             >
@@ -231,7 +231,7 @@ const SessionModal = ({
             </button>
             <button
               type="submit"
-              className="w-full sm:w-auto px-4 py-2.5 bg-primary hover:bg-primary/90 text-white rounded-md
+              className="w-full sm:w-auto px-4 py-2.5 bg-primary hover:bg-primary/90 text-white round-sm
               shadow-sm transition-colors text-sm font-medium flex items-center justify-center"
             >
               {currentGroup.scheduledDate ? (

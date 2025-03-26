@@ -148,7 +148,7 @@ const SmartTradeCoaching = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Left Side - Trade Selection */}
-        <div className="col-span-1 bg-white dark:bg-gray-700/60 rounded-md border border-gray-200 dark:border-gray-600/50 shadow-sm p-4">
+        <div className="col-span-1 bg-white dark:bg-gray-700/60 round-sm border border-gray-200 dark:border-gray-600/50 shadow-sm p-4">
           <div className="mb-4">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-400 h-5 w-5" />
@@ -250,7 +250,7 @@ const SmartTradeCoaching = () => {
         {/* Right Side - Analysis Display */}
         <div className="col-span-1 lg:col-span-2">
           {!selectedTrade ? (
-            <div className="bg-white dark:bg-gray-700/60 rounded-md border border-gray-200 dark:border-gray-600/50 shadow-sm p-8 text-center">
+            <div className="bg-white dark:bg-gray-700/60 round-sm border border-gray-200 dark:border-gray-600/50 shadow-sm p-8 text-center">
               <div className="text-gray-500 dark:text-gray-300 mb-2">
                 <Target className="h-12 w-12 mx-auto mb-4 text-gray-400 dark:text-gray-400" />
                 <p className="text-lg">
@@ -263,7 +263,7 @@ const SmartTradeCoaching = () => {
               </div>
             </div>
           ) : (
-            <div className="bg-white dark:bg-gray-700/60 rounded-md border border-gray-200 dark:border-gray-600/50 shadow-sm">
+            <div className="bg-white dark:bg-gray-700/60 round-sm border border-gray-200 dark:border-gray-600/50 shadow-sm">
               {/* Trade Summary Header */}
               <div className="border-b border-gray-200 dark:border-gray-600/50 p-4">
                 <div className="flex justify-between items-start">

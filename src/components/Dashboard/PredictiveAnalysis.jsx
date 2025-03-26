@@ -198,7 +198,7 @@ const PredictiveAnalysis = () => {
       </h2>
 
       {!analysisStarted && (
-        <div className="bg-gradient-to-br from-white/95 to-gray-50/90 dark:from-gray-800/60 dark:to-gray-700/50 rounded-lg shadow-sm p-8 text-center mb-6 border border-gray-200 dark:border-gray-700/40 backdrop-blur-sm">
+        <div className="bg-gradient-to-br from-white/95 to-gray-50/90 dark:from-gray-800/60 dark:to-gray-700/50 rounded-sm shadow-sm p-8 text-center mb-6 border border-gray-200 dark:border-gray-700/40 backdrop-blur-sm">
           <Zap className="h-12 w-12 mx-auto mb-4 text-primary" />
           <p className="text-lg text-gray-800 dark:text-gray-200 mb-3 font-medium">
             Discover Alternative Trade Outcomes
@@ -212,7 +212,7 @@ const PredictiveAnalysis = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Left Side - Trade Selection */}
-        <div className="lg:col-span-1 bg-white/90 dark:bg-gray-800/60 rounded-lg shadow-sm p-4 border border-gray-200 dark:border-gray-700/40 backdrop-blur-sm">
+        <div className="lg:col-span-1 bg-white/90 dark:bg-gray-800/60 rounded-sm shadow-sm p-4 border border-gray-200 dark:border-gray-700/40 backdrop-blur-sm">
           <div className="mb-4">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-500 h-5 w-5" />
@@ -221,7 +221,7 @@ const PredictiveAnalysis = () => {
                 placeholder="Search trades..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600/70 rounded-md 
+                className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600/70 round-sm 
                 bg-white dark:bg-gray-700/40 text-gray-900 dark:text-gray-100 
                 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent
                 placeholder-gray-500 dark:placeholder-gray-400"
@@ -237,7 +237,7 @@ const PredictiveAnalysis = () => {
 
             <div className="overflow-y-auto max-h-[55vh] pr-1">
               {filteredTrades.length === 0 ? (
-                <div className="text-center py-8 text-gray-500 dark:text-gray-400 bg-gray-50/50 dark:bg-gray-700/20 rounded-lg border border-dashed border-gray-300 dark:border-gray-600/50">
+                <div className="text-center py-8 text-gray-500 dark:text-gray-400 bg-gray-50/50 dark:bg-gray-700/20 rounded-sm border border-dashed border-gray-300 dark:border-gray-600/50">
                   <Search className="h-8 w-8 mx-auto mb-2 opacity-40" />
                   No trades found
                 </div>
@@ -246,7 +246,7 @@ const PredictiveAnalysis = () => {
                   {filteredTrades.map((trade) => (
                     <div
                       key={trade._id}
-                      className={`p-3 rounded-md cursor-pointer transition-all duration-150 
+                      className={`p-3 round-sm cursor-pointer transition-all duration-150 
                       hover:bg-gray-50 dark:hover:bg-gray-700/40 border ${
                         selectedTrade?._id === trade._id
                           ? "bg-primary/5 dark:bg-primary/10 border-primary/30 dark:border-primary/40 shadow-sm"
@@ -318,7 +318,7 @@ const PredictiveAnalysis = () => {
         {/* Right Side - Analysis Display with Integrated Scenario Selection */}
         <div className="lg:col-span-2">
           {loading ? (
-            <div className="bg-white/90 dark:bg-gray-800/60 rounded-lg shadow-sm p-8 border border-gray-200 dark:border-gray-700/40 backdrop-blur-sm">
+            <div className="bg-white/90 dark:bg-gray-800/60 rounded-sm shadow-sm p-8 border border-gray-200 dark:border-gray-700/40 backdrop-blur-sm">
               <div className="flex flex-col items-center justify-center py-12">
                 <Loader className="animate-spin h-10 w-10 text-primary mb-4" />
                 <p className="text-gray-600 dark:text-gray-400">
@@ -331,7 +331,7 @@ const PredictiveAnalysis = () => {
               </div>
             </div>
           ) : error ? (
-            <div className="bg-red-50/90 dark:bg-red-900/20 p-6 rounded-lg border border-red-200 dark:border-red-800/50 shadow-sm text-red-600 dark:text-red-300 backdrop-blur-sm">
+            <div className="bg-red-50/90 dark:bg-red-900/20 p-6 rounded-sm border border-red-200 dark:border-red-800/50 shadow-sm text-red-600 dark:text-red-300 backdrop-blur-sm">
               <div className="flex items-center mb-4">
                 <AlertTriangle className="h-5 w-5 mr-2" />
                 <h3 className="font-medium">Analysis Error</h3>
@@ -339,13 +339,13 @@ const PredictiveAnalysis = () => {
               <p>{error}</p>
               <button
                 onClick={resetAnalysis}
-                className="mt-4 px-4 py-2 bg-red-100 dark:bg-red-900/40 text-red-700 dark:text-red-300 rounded-md hover:bg-red-200 dark:hover:bg-red-800/40 transition-colors"
+                className="mt-4 px-4 py-2 bg-red-100 dark:bg-red-900/40 text-red-700 dark:text-red-300 round-sm hover:bg-red-200 dark:hover:bg-red-800/40 transition-colors"
               >
                 Try Again
               </button>
             </div>
           ) : !selectedTrade ? (
-            <div className="bg-white/90 dark:bg-gray-800/60 rounded-lg shadow-sm p-8 text-center border border-gray-200 dark:border-gray-700/40 backdrop-blur-sm">
+            <div className="bg-white/90 dark:bg-gray-800/60 rounded-sm shadow-sm p-8 text-center border border-gray-200 dark:border-gray-700/40 backdrop-blur-sm">
               <div className="text-gray-500 dark:text-gray-400 mb-2">
                 <HelpCircle className="h-12 w-12 mx-auto mb-4 text-gray-400 dark:text-gray-500" />
                 <p className="text-lg">Select a trade from the list</p>
@@ -358,7 +358,7 @@ const PredictiveAnalysis = () => {
           ) : (
             <div className="flex flex-col space-y-6">
               {/* Scenario Selection moved here - prominently displayed */}
-              <div className="bg-white/90 dark:bg-gray-800/60 rounded-lg shadow-sm p-5 border border-gray-200 dark:border-gray-700/40 backdrop-blur-sm">
+              <div className="bg-white/90 dark:bg-gray-800/60 rounded-sm shadow-sm p-5 border border-gray-200 dark:border-gray-700/40 backdrop-blur-sm">
                 <h3 className="font-medium text-gray-700 dark:text-gray-300 mb-4 border-b border-gray-200 dark:border-gray-700/70 pb-2 flex items-center">
                   <div className="h-4 w-1 bg-accent rounded-full mr-2"></div>
                   Select analysis scenario:
@@ -368,7 +368,7 @@ const PredictiveAnalysis = () => {
                   {SCENARIOS.map((scenario) => (
                     <button
                       key={scenario.id}
-                      className={`w-full text-left p-3 rounded-md flex items-start transition-all ${
+                      className={`w-full text-left p-3 round-sm flex items-start transition-all ${
                         selectedScenario.id === scenario.id
                           ? "bg-primary/10 dark:bg-primary/20 border border-primary/30 dark:border-primary/40 shadow-sm"
                           : "hover:bg-gray-50 dark:hover:bg-gray-700/40 border border-gray-200 dark:border-gray-700/40 hover:border-gray-300 dark:hover:border-gray-600"
@@ -389,7 +389,7 @@ const PredictiveAnalysis = () => {
                 </div>
 
                 <button
-                  className="w-full mt-4 py-2.5 px-4 bg-primary hover:bg-primary/90 text-white rounded-md
+                  className="w-full mt-4 py-2.5 px-4 bg-primary hover:bg-primary/90 text-white round-sm
                   disabled:opacity-50 disabled:cursor-not-allowed transition-all cursor-pointer shadow hover:shadow-md
                   disabled:shadow-none flex items-center justify-center"
                   onClick={analyzeTrade}
@@ -411,7 +411,7 @@ const PredictiveAnalysis = () => {
 
               {/* Analysis Content */}
               {!analysis ? (
-                <div className="bg-white/90 dark:bg-gray-800/60 rounded-lg shadow-sm p-8 text-center border border-gray-200 dark:border-gray-700/40 backdrop-blur-sm">
+                <div className="bg-white/90 dark:bg-gray-800/60 rounded-sm shadow-sm p-8 text-center border border-gray-200 dark:border-gray-700/40 backdrop-blur-sm">
                   <div className="text-gray-500 dark:text-gray-400 mb-2">
                     <ArrowRightCircle className="h-12 w-12 mx-auto mb-4 text-primary" />
                     <p className="text-lg">
@@ -426,7 +426,7 @@ const PredictiveAnalysis = () => {
                   </div>
                 </div>
               ) : (
-                <div className="bg-white/90 dark:bg-gray-800/60 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700/40 backdrop-blur-sm">
+                <div className="bg-white/90 dark:bg-gray-800/60 rounded-sm shadow-sm border border-gray-200 dark:border-gray-700/40 backdrop-blur-sm">
                   {/* Analysis Header */}
                   <div className="border-b border-gray-200 dark:border-gray-700/70 pb-4 px-6 pt-5">
                     <div className="flex justify-between items-start">
@@ -454,7 +454,7 @@ const PredictiveAnalysis = () => {
 
                     {tradeDetails && (
                       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-6">
-                        <div className="bg-gray-50/80 dark:bg-gray-700/30 p-3 rounded-md shadow-sm border border-gray-200/70 dark:border-gray-600/30">
+                        <div className="bg-gray-50/80 dark:bg-gray-700/30 p-3 round-sm shadow-sm border border-gray-200/70 dark:border-gray-600/30">
                           <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">
                             Entry
                           </p>
@@ -462,7 +462,7 @@ const PredictiveAnalysis = () => {
                             {formatCurrency(tradeDetails.entryPrice)}
                           </p>
                         </div>
-                        <div className="bg-gray-50/80 dark:bg-gray-700/30 p-3 rounded-md shadow-sm border border-gray-200/70 dark:border-gray-600/30">
+                        <div className="bg-gray-50/80 dark:bg-gray-700/30 p-3 round-sm shadow-sm border border-gray-200/70 dark:border-gray-600/30">
                           <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">
                             Exit
                           </p>
@@ -472,7 +472,7 @@ const PredictiveAnalysis = () => {
                               : "Open"}
                           </p>
                         </div>
-                        <div className="bg-gray-50/80 dark:bg-gray-700/30 p-3 rounded-md shadow-sm border border-gray-200/70 dark:border-gray-600/30">
+                        <div className="bg-gray-50/80 dark:bg-gray-700/30 p-3 round-sm shadow-sm border border-gray-200/70 dark:border-gray-600/30">
                           <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">
                             Trade Type
                           </p>
@@ -480,7 +480,7 @@ const PredictiveAnalysis = () => {
                             {tradeDetails.tradeType}
                           </p>
                         </div>
-                        <div className="bg-gray-50/80 dark:bg-gray-700/30 p-3 rounded-md shadow-sm border border-gray-200/70 dark:border-gray-600/30">
+                        <div className="bg-gray-50/80 dark:bg-gray-700/30 p-3 round-sm shadow-sm border border-gray-200/70 dark:border-gray-600/30">
                           <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">
                             Holding Time
                           </p>

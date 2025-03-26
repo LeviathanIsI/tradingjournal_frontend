@@ -11,6 +11,7 @@ import {
   Calendar,
   ArrowUpDown,
 } from "lucide-react";
+import { useTradingStats } from "../../context/TradingStatsContext";
 
 const TradeJournal = ({
   trades,
@@ -38,6 +39,7 @@ const TradeJournal = ({
     end: "",
   });
   const [activeTradeType, setActiveTradeType] = useState("stock");
+  const { refreshData } = useTradingStats();
 
   // Split trades by type first for better performance
   const tradesByType = useMemo(() => {
@@ -277,7 +279,7 @@ const TradeJournal = ({
               setCurrentPage(1);
             }}
             className="w-full sm:w-auto pl-9 pr-3 py-2 text-sm 
-            border border-gray-300 dark:border-gray-600/70 rounded-md
+            border border-gray-300 dark:border-gray-600/70 round-sm
             bg-white dark:bg-gray-700/40 text-gray-900 dark:text-gray-100
             focus:ring-primary focus:border-primary focus:ring-2 focus:ring-offset-1
             appearance-none"
@@ -293,7 +295,7 @@ const TradeJournal = ({
         </div>
 
         {timeFilter === "custom" && (
-          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 bg-gray-50 dark:bg-gray-700/20 px-3 py-2 rounded-md border border-gray-200 dark:border-gray-600/50">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 bg-gray-50 dark:bg-gray-700/20 px-3 py-2 round-sm border border-gray-200 dark:border-gray-600/50">
             <Calendar className="hidden sm:block h-4 w-4 text-primary" />
             <input
               type="date"
@@ -304,7 +306,7 @@ const TradeJournal = ({
                   start: e.target.value,
                 }))
               }
-              className="w-full sm:w-auto border border-gray-300 dark:border-gray-600/70 rounded-md px-3 py-1 text-sm 
+              className="w-full sm:w-auto border border-gray-300 dark:border-gray-600/70 round-sm px-3 py-1 text-sm 
             bg-white dark:bg-gray-700/40 text-gray-900 dark:text-gray-100
             focus:ring-primary focus:border-primary focus:ring-2 focus:ring-offset-1"
             />
@@ -315,7 +317,7 @@ const TradeJournal = ({
               onChange={(e) =>
                 setCustomDateRange((prev) => ({ ...prev, end: e.target.value }))
               }
-              className="w-full sm:w-auto border border-gray-300 dark:border-gray-600/70 rounded-md px-3 py-1 text-sm 
+              className="w-full sm:w-auto border border-gray-300 dark:border-gray-600/70 round-sm px-3 py-1 text-sm 
             bg-white dark:bg-gray-700/40 text-gray-900 dark:text-gray-100
             focus:ring-primary focus:border-primary focus:ring-2 focus:ring-offset-1"
             />
@@ -330,7 +332,7 @@ const TradeJournal = ({
               setCurrentPage(1);
             }}
             className="w-full sm:w-auto pl-9 pr-3 py-2 text-sm 
-            border border-gray-300 dark:border-gray-600/70 rounded-md
+            border border-gray-300 dark:border-gray-600/70 round-sm
             bg-white dark:bg-gray-700/40 text-gray-900 dark:text-gray-100
             focus:ring-primary focus:border-primary focus:ring-2 focus:ring-offset-1
             appearance-none"
@@ -345,7 +347,7 @@ const TradeJournal = ({
         </div>
       </div>
 
-      <div className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 w-full sm:w-auto text-center sm:text-right bg-gray-50 dark:bg-gray-700/20 px-3 py-2 rounded-md">
+      <div className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 w-full sm:w-auto text-center sm:text-right bg-gray-50 dark:bg-gray-700/20 px-3 py-2 round-sm">
         Showing {indexOfFirstTrade + 1} to{" "}
         {Math.min(indexOfLastTrade, filteredTrades.length)} of{" "}
         {filteredTrades.length} entries
@@ -359,7 +361,7 @@ const TradeJournal = ({
       <button
         onClick={() => handlePageChange(currentPage - 1)}
         disabled={currentPage === 1}
-        className="w-full sm:w-auto flex items-center justify-center gap-1 px-3 py-2 rounded-md
+        className="w-full sm:w-auto flex items-center justify-center gap-1 px-3 py-2 round-sm
       border border-gray-300 dark:border-gray-600/70
       enabled:hover:bg-primary/5 dark:enabled:hover:bg-primary/10
       disabled:opacity-50 text-sm text-gray-700 dark:text-gray-300
@@ -374,7 +376,7 @@ const TradeJournal = ({
           <button
             key={number}
             onClick={() => handlePageChange(number)}
-            className={`min-w-[2.5rem] px-3 py-2 rounded-md border text-sm transition-all
+            className={`min-w-[2.5rem] px-3 py-2 round-sm border text-sm transition-all
           ${
             currentPage === number
               ? "bg-primary text-white border-primary dark:bg-primary/90 dark:border-primary"
@@ -389,7 +391,7 @@ const TradeJournal = ({
       <button
         onClick={() => handlePageChange(currentPage + 1)}
         disabled={currentPage === totalPages}
-        className="w-full sm:w-auto flex items-center justify-center gap-1 px-3 py-2 rounded-md
+        className="w-full sm:w-auto flex items-center justify-center gap-1 px-3 py-2 round-sm
       border border-gray-300 dark:border-gray-600/70
       enabled:hover:bg-primary/5 dark:enabled:hover:bg-primary/10
       disabled:opacity-50 text-sm text-gray-700 dark:text-gray-300
@@ -419,7 +421,7 @@ const TradeJournal = ({
   return (
     <div className="space-y-4">
       {/* Features Info Card */}
-      <div className="bg-gradient-to-br from-gray-50/90 to-gray-100/80 dark:from-gray-700/30 dark:to-gray-600/20 p-4 rounded-lg border border-gray-200 dark:border-gray-600/50 shadow-sm backdrop-blur-sm">
+      <div className="bg-gradient-to-br from-gray-50/90 to-gray-100/80 dark:from-gray-700/30 dark:to-gray-600/20 p-4 rounded-sm border border-gray-200 dark:border-gray-600/50 shadow-sm backdrop-blur-sm">
         <p className="text-sm text-gray-900 dark:text-gray-100 font-medium">
           Trade Journal Features:
         </p>
@@ -448,7 +450,7 @@ const TradeJournal = ({
       </div>
 
       {/* Main Content Card */}
-      <div className="bg-white/90 dark:bg-gray-800/60 p-4 sm:p-5 rounded-lg border border-gray-200 dark:border-gray-600/50 shadow-sm backdrop-blur-sm">
+      <div className="bg-white/90 dark:bg-gray-800/60 p-4 sm:p-5 rounded-sm border border-gray-200 dark:border-gray-600/50 shadow-sm backdrop-blur-sm">
         {/* Header Section */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4 mb-5">
           <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 flex items-center">
@@ -460,7 +462,7 @@ const TradeJournal = ({
               <button
                 onClick={handleBulkDelete}
                 disabled={isDeleting}
-                className="flex-1 sm:flex-none bg-red-500 dark:bg-red-500/90 text-white px-4 py-2 rounded-md
+                className="flex-1 sm:flex-none bg-red-500 dark:bg-red-500/90 text-white px-4 py-2 round-sm
                 hover:bg-red-600 dark:hover:bg-red-600/90 shadow hover:shadow-md
                 disabled:bg-red-400 disabled:dark:bg-red-400/80 
                 disabled:shadow-none transition-all
@@ -473,13 +475,13 @@ const TradeJournal = ({
             )}
             <button
               onClick={handleAddTradeClick}
-              className="flex-1 sm:flex-none bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-md shadow hover:shadow-md transition-all text-sm"
+              className="flex-1 sm:flex-none bg-primary hover:bg-primary/90 text-white px-4 py-2 round-sm shadow hover:shadow-md transition-all text-sm"
             >
               Add Stock Trade
             </button>
             <button
               onClick={handleAddOptionTradeClick}
-              className="flex-1 sm:flex-none bg-secondary hover:bg-secondary/90 text-white px-4 py-2 rounded-md shadow hover:shadow-md transition-all text-sm"
+              className="flex-1 sm:flex-none bg-secondary hover:bg-secondary/90 text-white px-4 py-2 round-sm shadow hover:shadow-md transition-all text-sm"
             >
               Add Option Trade
             </button>
@@ -489,7 +491,7 @@ const TradeJournal = ({
         {/* Error Message */}
         {bulkDeleteError && (
           <div
-            className="bg-red-50 dark:bg-red-900/20 border border-red-100 dark:border-red-800/50 text-red-700 dark:text-red-300 px-4 py-3 rounded-md mb-4 
+            className="bg-red-50 dark:bg-red-900/20 border border-red-100 dark:border-red-800/50 text-red-700 dark:text-red-300 px-4 py-3 round-sm mb-4 
             flex justify-between items-center text-sm shadow-sm"
           >
             <span>{bulkDeleteError}</span>
@@ -536,7 +538,7 @@ const TradeJournal = ({
 
         {/* Controls and Table */}
         {renderControls()}
-        <div className="overflow-x-auto -mx-3 sm:-mx-5 rounded-md">
+        <div className="overflow-x-auto -mx-3 sm:-mx-5 round-sm">
           <div className="inline-block min-w-full align-middle">
             <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-600/50">
               <thead>

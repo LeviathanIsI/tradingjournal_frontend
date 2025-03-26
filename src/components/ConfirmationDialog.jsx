@@ -44,7 +44,7 @@ const ConfirmationDialog = ({ isOpen, onClose, title, children, footer }) => {
       <div className="flex min-h-full items-center justify-center p-4">
         <div
           ref={dialogRef}
-          className="relative transform overflow-hidden rounded-lg bg-white/95 dark:bg-gray-800/90 px-5 pb-5 pt-5 text-left shadow-lg transition-all border border-gray-200 dark:border-gray-700/40 sm:my-8 sm:w-full sm:max-w-lg sm:p-6"
+          className="relative transform overflow-hidden rounded-sm bg-white/95 dark:bg-gray-800/90 px-5 pb-5 pt-5 text-left shadow-lg transition-all border border-gray-200 dark:border-gray-700/40 sm:my-8 sm:w-full sm:max-w-lg sm:p-6"
           role="dialog"
           aria-modal="true"
           aria-labelledby="dialog-title"

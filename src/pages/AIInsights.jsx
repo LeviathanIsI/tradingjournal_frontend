@@ -77,7 +77,7 @@ const AISubNav = () => {
               key={item.path}
               to={item.path}
               onClick={handleLinkClick}
-              className={`flex items-center gap-2 px-3 md:px-4 py-2 rounded-md transition-all text-sm font-medium whitespace-nowrap
+              className={`flex items-center gap-2 px-3 md:px-4 py-2 round-sm transition-all text-sm font-medium whitespace-nowrap
                 ${
                   isActive
                     ? "bg-primary/10 dark:bg-primary/20 text-primary border border-primary/20 dark:border-primary/30 shadow-sm"
@@ -114,7 +114,7 @@ const AIInsights = () => {
     >
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-3">
-          <div className="bg-gradient-to-br from-primary/20 to-accent/20 p-2 rounded-md">
+          <div className="bg-gradient-to-br from-primary/20 to-accent/20 p-2 round-sm">
             <Sparkles className="h-6 w-6 text-primary" />
           </div>
           <div>
@@ -128,13 +128,13 @@ const AIInsights = () => {
         </div>
       </div>
 
-      <div className="bg-white/90 dark:bg-gray-800/80 rounded-lg border border-gray-200 dark:border-gray-700/60 shadow-md backdrop-blur-sm mb-6">
+      <div className="bg-white/90 dark:bg-gray-800/80 rounded-sm border border-gray-200 dark:border-gray-700/60 shadow-md backdrop-blur-sm mb-6">
         <div className="p-4 sm:p-6">
           <AICreditsInfo />
         </div>
       </div>
 
-      <div className="bg-white/90 dark:bg-gray-800/80 rounded-lg border border-gray-200 dark:border-gray-700/60 shadow-md backdrop-blur-sm">
+      <div className="bg-white/90 dark:bg-gray-800/80 rounded-sm border border-gray-200 dark:border-gray-700/60 shadow-md backdrop-blur-sm">
         <div className="p-4 sm:p-6">
           <AISubNav />
 

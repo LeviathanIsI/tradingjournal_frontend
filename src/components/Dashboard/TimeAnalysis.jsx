@@ -143,7 +143,7 @@ const TimeAnalysis = ({ trades }) => {
             onClick={() =>
               setSelectedSession(session === selectedSession ? "all" : session)
             }
-            className={`p-4 rounded-lg border shadow-sm cursor-pointer transition-all duration-200 bg-white dark:bg-gray-800/60 backdrop-blur-sm
+            className={`p-4 rounded-sm border shadow-sm cursor-pointer transition-all duration-200 bg-white dark:bg-gray-800/60 backdrop-blur-sm
             ${
               session === selectedSession
                 ? `border-${
@@ -211,7 +211,7 @@ const TimeAnalysis = ({ trades }) => {
       </div>
 
       {/* Hourly Performance Chart */}
-      <div className="bg-white/90 dark:bg-gray-800/60 p-5 sm:p-6 rounded-lg border border-gray-200 dark:border-gray-700/40 shadow-sm backdrop-blur-sm">
+      <div className="bg-white/90 dark:bg-gray-800/60 p-5 sm:p-6 rounded-sm border border-gray-200 dark:border-gray-700/40 shadow-sm backdrop-blur-sm">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4">
           <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-gray-100 flex items-center">
             <div className="h-6 w-1 bg-primary rounded-full mr-2 hidden sm:block"></div>
@@ -230,7 +230,7 @@ const TimeAnalysis = ({ trades }) => {
           </div>
         </div>
 
-        <div className="bg-gradient-to-br from-gray-50/90 to-gray-100/80 dark:from-gray-700/30 dark:to-gray-600/20 p-4 rounded-lg border border-gray-200 dark:border-gray-600/50 shadow-sm mb-5">
+        <div className="bg-gradient-to-br from-gray-50/90 to-gray-100/80 dark:from-gray-700/30 dark:to-gray-600/20 p-4 rounded-sm border border-gray-200 dark:border-gray-600/50 shadow-sm mb-5">
           <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
             Understanding the chart:
           </p>
@@ -361,7 +361,7 @@ const TimeAnalysis = ({ trades }) => {
               </BarChart>
             </ResponsiveContainer>
           ) : (
-            <div className="flex items-center justify-center h-full bg-gray-50/50 dark:bg-gray-700/20 rounded-lg border border-dashed border-gray-300 dark:border-gray-600/50">
+            <div className="flex items-center justify-center h-full bg-gray-50/50 dark:bg-gray-700/20 rounded-sm border border-dashed border-gray-300 dark:border-gray-600/50">
               <div className="text-center">
                 <BarChart2 className="h-12 w-12 mx-auto text-gray-400 dark:text-gray-500 mb-2" />
                 <p className="text-gray-500 dark:text-gray-400 font-medium">

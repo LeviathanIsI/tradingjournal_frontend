@@ -275,7 +275,7 @@ const Traders = () => {
   // Error state
   if (error) {
     return (
-      <div className="bg-red-50 dark:bg-red-900/20 p-6 rounded-lg border border-red-100 dark:border-red-800/50 shadow-sm max-w-2xl mx-auto">
+      <div className="bg-red-50 dark:bg-red-900/20 p-6 rounded-sm border border-red-100 dark:border-red-800/50 shadow-sm max-w-2xl mx-auto">
         <div className="flex items-center gap-3 mb-2">
           <div className="p-2 rounded-full bg-red-100 dark:bg-red-800/30">
             <svg
@@ -326,7 +326,7 @@ const Traders = () => {
               placeholder="Search by username or trading style..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="block w-full pl-11 pr-4 py-3 border border-gray-300 dark:border-gray-600/70 rounded-lg
+              className="block w-full pl-11 pr-4 py-3 border border-gray-300 dark:border-gray-600/70 rounded-sm
               bg-white dark:bg-gray-700/40 text-gray-900 dark:text-gray-100 
               focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary
               placeholder-gray-400 dark:placeholder-gray-500 shadow-sm"
@@ -336,7 +336,7 @@ const Traders = () => {
           {/* Filter Toggle Button */}
           <button
             onClick={() => setShowFilters(!showFilters)}
-            className={`relative flex items-center gap-2 px-4 py-3 border rounded-lg 
+            className={`relative flex items-center gap-2 px-4 py-3 border rounded-sm 
             ${
               showFilters
                 ? "bg-primary/10 dark:bg-primary/20 text-primary dark:text-primary-light border-primary/30 dark:border-primary/30"
@@ -356,7 +356,7 @@ const Traders = () => {
 
         {/* Advanced Filters */}
         {showFilters && (
-          <div className="bg-white dark:bg-gray-800/60 p-4 rounded-lg border border-gray-200 dark:border-gray-700/60 shadow-sm transition-all">
+          <div className="bg-white dark:bg-gray-800/60 p-4 rounded-sm border border-gray-200 dark:border-gray-700/60 shadow-sm transition-all">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-sm font-medium text-gray-900 dark:text-gray-100">
                 Advanced Filters
@@ -383,7 +383,7 @@ const Traders = () => {
                   <select
                     value={timeFilter}
                     onChange={(e) => setTimeFilter(e.target.value)}
-                    className="block w-full pl-3 pr-10 py-2 text-sm border border-gray-300 dark:border-gray-600/70 rounded-md
+                    className="block w-full pl-3 pr-10 py-2 text-sm border border-gray-300 dark:border-gray-600/70 round-sm
                       bg-white dark:bg-gray-700/40 text-gray-900 dark:text-gray-100 
                       focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary"
                   >
@@ -415,7 +415,7 @@ const Traders = () => {
                             start: e.target.value,
                           }))
                         }
-                        className="w-full text-sm p-1.5 border border-gray-300 dark:border-gray-600/70 rounded-md
+                        className="w-full text-sm p-1.5 border border-gray-300 dark:border-gray-600/70 round-sm
                           bg-white dark:bg-gray-700/40 text-gray-900 dark:text-gray-100 
                           focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary"
                       />
@@ -433,7 +433,7 @@ const Traders = () => {
                             end: e.target.value,
                           }))
                         }
-                        className="w-full text-sm p-1.5 border border-gray-300 dark:border-gray-600/70 rounded-md
+                        className="w-full text-sm p-1.5 border border-gray-300 dark:border-gray-600/70 round-sm
                           bg-white dark:bg-gray-700/40 text-gray-900 dark:text-gray-100 
                           focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary"
                       />
@@ -454,7 +454,7 @@ const Traders = () => {
                     onChange={(e) =>
                       setFilters({ ...filters, winRate: e.target.value })
                     }
-                    className="block w-full pl-3 pr-10 py-2 text-sm border border-gray-300 dark:border-gray-600/70 rounded-md
+                    className="block w-full pl-3 pr-10 py-2 text-sm border border-gray-300 dark:border-gray-600/70 round-sm
                       bg-white dark:bg-gray-700/40 text-gray-900 dark:text-gray-100 
                       focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary"
                   >
@@ -481,7 +481,7 @@ const Traders = () => {
                     onChange={(e) =>
                       setFilters({ ...filters, tradeCount: e.target.value })
                     }
-                    className="block w-full pl-3 pr-10 py-2 text-sm border border-gray-300 dark:border-gray-600/70 rounded-md
+                    className="block w-full pl-3 pr-10 py-2 text-sm border border-gray-300 dark:border-gray-600/70 round-sm
                       bg-white dark:bg-gray-700/40 text-gray-900 dark:text-gray-100 
                       focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary"
                   >
@@ -539,7 +539,7 @@ const Traders = () => {
                 setTradersPerPage(Number(e.target.value));
                 setCurrentPage(1);
               }}
-              className="block pl-9 pr-8 py-2 text-sm border border-gray-300 dark:border-gray-600/70 rounded-md
+              className="block pl-9 pr-8 py-2 text-sm border border-gray-300 dark:border-gray-600/70 round-sm
               bg-white dark:bg-gray-700/40 text-gray-900 dark:text-gray-100 
               focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary
               appearance-none"
@@ -561,7 +561,7 @@ const Traders = () => {
         </div>
 
         {filteredTraders.length > 0 && (
-          <div className="text-sm text-gray-500 dark:text-gray-400 flex items-center gap-2 bg-gray-50/80 dark:bg-gray-700/30 px-3 py-2 rounded-md">
+          <div className="text-sm text-gray-500 dark:text-gray-400 flex items-center gap-2 bg-gray-50/80 dark:bg-gray-700/30 px-3 py-2 round-sm">
             <Users className="h-4 w-4" />
             <span>
               Showing {(currentPage - 1) * tradersPerPage + 1}-
@@ -574,7 +574,7 @@ const Traders = () => {
 
       {/* No traders found message */}
       {filteredTraders.length === 0 && (
-        <div className="bg-gray-50/80 dark:bg-gray-800/40 rounded-lg border border-gray-200/70 dark:border-gray-700/40 p-8 text-center">
+        <div className="bg-gray-50/80 dark:bg-gray-800/40 rounded-sm border border-gray-200/70 dark:border-gray-700/40 p-8 text-center">
           <div className="inline-flex items-center justify-center p-3 bg-gray-100 dark:bg-gray-700/50 rounded-full mb-4">
             <Users className="h-6 w-6 text-gray-500 dark:text-gray-400" />
           </div>
@@ -591,7 +591,7 @@ const Traders = () => {
           {activeFiltersCount > 0 && (
             <button
               onClick={resetFilters}
-              className="mt-4 px-4 py-2 bg-primary hover:bg-primary/90 text-white rounded-md shadow text-sm font-medium flex items-center gap-2 mx-auto"
+              className="mt-4 px-4 py-2 bg-primary hover:bg-primary/90 text-white round-sm shadow text-sm font-medium flex items-center gap-2 mx-auto"
             >
               <X className="h-4 w-4" />
               Reset Filters
@@ -621,7 +621,7 @@ const Traders = () => {
                 <button
                   onClick={() => handlePageChange(currentPage - 1)}
                   disabled={currentPage === 1}
-                  className="p-2 rounded-md border border-gray-300 dark:border-gray-600/70 
+                  className="p-2 round-sm border border-gray-300 dark:border-gray-600/70 
                     bg-white dark:bg-gray-800/60 text-gray-700 dark:text-gray-300
                     hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors
                     disabled:opacity-50 disabled:cursor-not-allowed"
@@ -647,7 +647,7 @@ const Traders = () => {
                         <button
                           key={pageNumber}
                           onClick={() => handlePageChange(pageNumber)}
-                          className={`w-10 h-10 flex items-center justify-center rounded-md transition-colors 
+                          className={`w-10 h-10 flex items-center justify-center round-sm transition-colors 
                             ${
                               isCurrentPage
                                 ? "bg-primary text-white font-medium"
@@ -680,7 +680,7 @@ const Traders = () => {
                 <button
                   onClick={() => handlePageChange(currentPage + 1)}
                   disabled={currentPage === totalPages}
-                  className="p-2 rounded-md border border-gray-300 dark:border-gray-600/70 
+                  className="p-2 round-sm border border-gray-300 dark:border-gray-600/70 
                     bg-white dark:bg-gray-800/60 text-gray-700 dark:text-gray-300
                     hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors
                     disabled:opacity-50 disabled:cursor-not-allowed"

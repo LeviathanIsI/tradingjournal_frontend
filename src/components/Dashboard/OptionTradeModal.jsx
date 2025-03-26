@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { X } from "lucide-react";
 import { formatInTimeZone } from "date-fns-tz";
+import { useTradingStats } from "../../context/TradingStatsContext";
 
 const OptionTradeModal = ({
   isOpen,
@@ -10,6 +11,8 @@ const OptionTradeModal = ({
   userTimeZone,
 }) => {
   const modalRef = useRef(null);
+  const { refreshData } = useTradingStats(); // Add this to get refreshData function
+
   const initialFormState = {
     symbol: "",
     underlyingPrice: "",
@@ -173,6 +176,10 @@ const OptionTradeModal = ({
       };
 
       await onSubmit(submissionData);
+
+      // Add this line to refresh stats after successful submission
+      setTimeout(() => refreshData(), 300); // Small delay to ensure backend has processed
+
       onClose();
     } catch (error) {
       console.error("Error submitting option trade:", error);
@@ -188,7 +195,7 @@ const OptionTradeModal = ({
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
       <div
         ref={modalRef}
-        className="bg-white dark:bg-gray-800/90 rounded-md border border-gray-200 dark:border-gray-700/60 p-6 w-full max-w-6xl h-[90vh] overflow-y-auto shadow-lg"
+        className="bg-white dark:bg-gray-800/90 round-sm border border-gray-200 dark:border-gray-700/60 p-6 w-full max-w-6xl h-[90vh] overflow-y-auto shadow-lg"
       >
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-50">
@@ -215,7 +222,7 @@ const OptionTradeModal = ({
                 autoComplete="off"
                 value={formData.symbol}
                 onChange={handleChange}
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md 
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 round-sm 
                 bg-white dark:bg-gray-700/50 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500/60"
                 required
               />
@@ -228,7 +235,7 @@ const OptionTradeModal = ({
                 name="contractType"
                 value={formData.contractType}
                 onChange={handleChange}
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md 
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 round-sm 
                 bg-white dark:bg-gray-700/50 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500/60"
                 required
               >
@@ -244,7 +251,7 @@ const OptionTradeModal = ({
                 name="type"
                 value={formData.type}
                 onChange={handleChange}
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md 
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 round-sm 
                 bg-white dark:bg-gray-700/50 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500/60"
                 required
               >
@@ -266,7 +273,7 @@ const OptionTradeModal = ({
                 value={formData.strike}
                 onChange={handleChange}
                 step="0.01"
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md 
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 round-sm 
                 bg-white dark:bg-gray-700/50 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500/60"
                 required
               />
@@ -281,7 +288,7 @@ const OptionTradeModal = ({
                 value={formData.underlyingPrice}
                 onChange={handleChange}
                 step="0.01"
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md 
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 round-sm 
                 bg-white dark:bg-gray-700/50 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500/60"
                 required
               />
@@ -296,7 +303,7 @@ const OptionTradeModal = ({
                 value={formData.contracts}
                 onChange={handleChange}
                 min="1"
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md 
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 round-sm 
                 bg-white dark:bg-gray-700/50 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500/60"
                 required
               />
@@ -310,7 +317,7 @@ const OptionTradeModal = ({
                 name="expiration"
                 value={formData.expiration}
                 onChange={handleChange}
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md 
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 round-sm 
                 bg-white dark:bg-gray-700/50 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500/60"
                 required
               />
@@ -329,7 +336,7 @@ const OptionTradeModal = ({
                 value={formData.entryPrice}
                 onChange={handleChange}
                 step="0.01"
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md 
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 round-sm 
                 bg-white dark:bg-gray-700/50 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500/60"
                 required
               />
@@ -343,7 +350,7 @@ const OptionTradeModal = ({
                 name="entryDate"
                 value={formData.entryDate}
                 onChange={handleChange}
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md 
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 round-sm 
                 bg-white dark:bg-gray-700/50 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500/60"
                 required
               />
@@ -362,7 +369,7 @@ const OptionTradeModal = ({
                 value={formData.exitPrice}
                 onChange={handleChange}
                 step="0.01"
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md 
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 round-sm 
                 bg-white dark:bg-gray-700/50 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500/60"
               />
             </div>
@@ -375,7 +382,7 @@ const OptionTradeModal = ({
                 name="exitDate"
                 value={formData.exitDate}
                 onChange={handleChange}
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md 
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 round-sm 
                 bg-white dark:bg-gray-700/50 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500/60"
               />
             </div>
@@ -398,7 +405,7 @@ const OptionTradeModal = ({
                     value={formData.greeksAtEntry[greek]}
                     onChange={handleChange}
                     step="0.0001"
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md 
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 round-sm 
                     bg-white dark:bg-gray-700/50 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500/60"
                   />
                 </div>
@@ -418,7 +425,7 @@ const OptionTradeModal = ({
                 value={formData.marketConditions.vix}
                 onChange={handleChange}
                 step="0.01"
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md 
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 round-sm 
                 bg-white dark:bg-gray-700/50 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500/60"
               />
             </div>
@@ -430,7 +437,7 @@ const OptionTradeModal = ({
                 name="marketConditions.overallMarketTrend"
                 value={formData.marketConditions.overallMarketTrend}
                 onChange={handleChange}
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md 
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 round-sm 
                 bg-white dark:bg-gray-700/50 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500/60"
               >
                 <option value="Bullish">Bullish</option>
@@ -451,7 +458,7 @@ const OptionTradeModal = ({
                 name="strategy"
                 value={formData.strategy}
                 onChange={handleChange}
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md 
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 round-sm 
                 bg-white dark:bg-gray-700/50 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500/60"
               >
                 <option value="">Select Strategy</option>
@@ -478,7 +485,7 @@ const OptionTradeModal = ({
                 name="setupType"
                 value={formData.setupType}
                 onChange={handleChange}
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md 
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 round-sm 
                 bg-white dark:bg-gray-700/50 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500/60"
               >
                 <option value="">Select Setup</option>
@@ -559,7 +566,7 @@ const OptionTradeModal = ({
                 value={formData.notes}
                 onChange={handleChange}
                 rows="3"
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md 
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 round-sm 
                 bg-white dark:bg-gray-700/50 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500/60"
                 placeholder="Add any additional notes about the trade..."
               />
@@ -571,14 +578,14 @@ const OptionTradeModal = ({
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-700/50 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-600/50 focus:outline-none focus:ring-2 focus:ring-gray-500/30 transition-colors"
+              className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-700/50 border border-gray-300 dark:border-gray-600 round-sm hover:bg-gray-50 dark:hover:bg-gray-600/50 focus:outline-none focus:ring-2 focus:ring-gray-500/30 transition-colors"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={loading}
-              className="px-4 py-2 text-sm font-medium text-white bg-blue-500 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700 border border-transparent rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-colors"
+              className="px-4 py-2 text-sm font-medium text-white bg-blue-500 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700 border border-transparent round-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-colors"
             >
               {loading ? "Saving..." : trade ? "Update Trade" : "Add Trade"}
             </button>

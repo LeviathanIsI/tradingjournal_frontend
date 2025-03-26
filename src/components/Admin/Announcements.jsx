@@ -183,7 +183,7 @@ const Announcements = () => {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
       {/* Compose Message Form */}
-      <div className="lg:col-span-2 bg-white dark:bg-gray-800/80 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700/60 p-6">
+      <div className="lg:col-span-2 bg-white dark:bg-gray-800/80 rounded-sm shadow-sm border border-gray-200 dark:border-gray-700/60 p-6">
         <div className="flex items-center mb-6">
           <Bell className="h-5 w-5 text-primary mr-2" />
           <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
@@ -235,7 +235,7 @@ const Announcements = () => {
                     value={formData.specificRecipients}
                     onChange={handleChange}
                     placeholder="Enter email addresses, separated by commas"
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md 
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 round-sm 
                                bg-white dark:bg-gray-800/60 text-gray-900 dark:text-gray-100
                                focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary"
                   />
@@ -256,7 +256,7 @@ const Announcements = () => {
                   name="messageType"
                   value={formData.messageType}
                   onChange={handleChange}
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md 
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 round-sm 
                              bg-white dark:bg-gray-800/60 text-gray-900 dark:text-gray-100
                              focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary"
                 >
@@ -274,7 +274,7 @@ const Announcements = () => {
                   name="priority"
                   value={formData.priority}
                   onChange={handleChange}
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md 
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 round-sm 
                              bg-white dark:bg-gray-800/60 text-gray-900 dark:text-gray-100
                              focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary"
                 >
@@ -295,7 +295,7 @@ const Announcements = () => {
                 name="subject"
                 value={formData.subject}
                 onChange={handleChange}
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md 
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 round-sm 
                            bg-white dark:bg-gray-800/60 text-gray-900 dark:text-gray-100
                            focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary"
                 placeholder="Enter message subject"
@@ -312,7 +312,7 @@ const Announcements = () => {
                 value={formData.message}
                 onChange={handleChange}
                 rows={6}
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md 
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 round-sm 
                            bg-white dark:bg-gray-800/60 text-gray-900 dark:text-gray-100
                            focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary"
                 placeholder="Enter your message here"
@@ -325,7 +325,7 @@ const Announcements = () => {
                 type="submit"
                 disabled={loading}
                 className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium 
-                           rounded-md text-white bg-primary hover:bg-primary/90 transition-colors
+                           round-sm text-white bg-primary hover:bg-primary/90 transition-colors
                            focus:outline-none focus:ring-2 focus:ring-primary/50 shadow
                            disabled:opacity-50 disabled:cursor-not-allowed"
               >
@@ -338,7 +338,7 @@ const Announcements = () => {
       </div>
 
       {/* Previous Messages */}
-      <div className="bg-white dark:bg-gray-800/80 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700/60 p-6">
+      <div className="bg-white dark:bg-gray-800/80 rounded-sm shadow-sm border border-gray-200 dark:border-gray-700/60 p-6">
         <div className="flex items-center mb-4">
           <Clock className="h-5 w-5 text-primary mr-2" />
           <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">
@@ -360,7 +360,7 @@ const Announcements = () => {
             {previousMessages.map((msg) => (
               <div
                 key={msg._id}
-                className="p-4 border border-gray-200 dark:border-gray-700/40 rounded-md
+                className="p-4 border border-gray-200 dark:border-gray-700/40 round-sm
                            hover:shadow-md transition-shadow bg-white/50 dark:bg-gray-800/50"
               >
                 <div className="flex justify-between items-start mb-2">

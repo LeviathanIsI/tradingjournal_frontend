@@ -58,7 +58,7 @@ const TradePlanDetails = ({ isOpen, onClose, plan, onStatusChange }) => {
   };
 
   return (
-    <div className="bg-white dark:bg-gray-800/80 rounded-lg border border-gray-200 dark:border-gray-700/60 shadow-lg p-6 space-y-6">
+    <div className="bg-white dark:bg-gray-800/80 rounded-sm border border-gray-200 dark:border-gray-700/60 shadow-lg p-6 space-y-6">
       {/* Header with Ticker and Direction */}
       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4">
         <div>
@@ -67,7 +67,7 @@ const TradePlanDetails = ({ isOpen, onClose, plan, onStatusChange }) => {
               {plan.ticker}
             </h2>
             <span
-              className={`px-3 py-1 text-sm font-medium rounded-md ${getStatusStyles(
+              className={`px-3 py-1 text-sm font-medium round-sm ${getStatusStyles(
                 plan.status
               )}`}
             >
@@ -84,7 +84,7 @@ const TradePlanDetails = ({ isOpen, onClose, plan, onStatusChange }) => {
           <select
             value={plan.status}
             onChange={handleStatusChange}
-            className="pl-3 pr-8 py-2 text-sm border border-gray-300 dark:border-gray-600/70 rounded-md
+            className="pl-3 pr-8 py-2 text-sm border border-gray-300 dark:border-gray-600/70 round-sm
             bg-white dark:bg-gray-700/40 text-gray-900 dark:text-gray-100
             focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary
             appearance-none"
@@ -102,7 +102,7 @@ const TradePlanDetails = ({ isOpen, onClose, plan, onStatusChange }) => {
       {/* Two-column layout for details */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
         {/* Trade Attributes */}
-        <div className="bg-gray-50/80 dark:bg-gray-700/30 rounded-lg p-4 border border-gray-200/70 dark:border-gray-600/40">
+        <div className="bg-gray-50/80 dark:bg-gray-700/30 rounded-sm p-4 border border-gray-200/70 dark:border-gray-600/40">
           <h3 className="text-sm font-medium text-gray-800 dark:text-gray-200 mb-3 flex items-center">
             <Check className="h-4 w-4 mr-2 text-primary dark:text-primary-light" />
             Trade Attributes
@@ -110,7 +110,7 @@ const TradePlanDetails = ({ isOpen, onClose, plan, onStatusChange }) => {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
             {Object.entries(plan.attributes).map(([key, value]) => (
-              <div key={key} className="flex items-center p-1.5 rounded-md">
+              <div key={key} className="flex items-center p-1.5 round-sm">
                 <div
                   className={`w-5 h-5 rounded-full mr-2 flex items-center justify-center 
                   ${
@@ -134,7 +134,7 @@ const TradePlanDetails = ({ isOpen, onClose, plan, onStatusChange }) => {
         </div>
 
         {/* Quality and Setup */}
-        <div className="bg-gray-50/80 dark:bg-gray-700/30 rounded-lg p-4 border border-gray-200/70 dark:border-gray-600/40">
+        <div className="bg-gray-50/80 dark:bg-gray-700/30 rounded-sm p-4 border border-gray-200/70 dark:border-gray-600/40">
           <h3 className="text-sm font-medium text-gray-800 dark:text-gray-200 mb-3 flex items-center">
             <AlertTriangle className="h-4 w-4 mr-2 text-primary dark:text-primary-light" />
             Quality & Setup
@@ -175,7 +175,7 @@ const TradePlanDetails = ({ isOpen, onClose, plan, onStatusChange }) => {
                 Setup Grade
               </div>
               <div
-                className={`inline-block px-3 py-1 rounded-md text-sm font-medium ${getGradeColor(
+                className={`inline-block px-3 py-1 round-sm text-sm font-medium ${getGradeColor(
                   plan.setup.setupGrade
                 )}`}
               >
@@ -187,14 +187,14 @@ const TradePlanDetails = ({ isOpen, onClose, plan, onStatusChange }) => {
       </div>
 
       {/* Execution Plan */}
-      <div className="bg-gray-50/80 dark:bg-gray-700/30 rounded-lg p-4 border border-gray-200/70 dark:border-gray-600/40">
+      <div className="bg-gray-50/80 dark:bg-gray-700/30 rounded-sm p-4 border border-gray-200/70 dark:border-gray-600/40">
         <h3 className="text-sm font-medium text-gray-800 dark:text-gray-200 mb-3 flex items-center">
           <FileEdit className="h-4 w-4 mr-2 text-primary dark:text-primary-light" />
           Execution Plan
         </h3>
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <div className="p-3 bg-white/80 dark:bg-gray-800/40 rounded-md border border-gray-200/60 dark:border-gray-600/30">
+          <div className="p-3 bg-white/80 dark:bg-gray-800/40 round-sm border border-gray-200/60 dark:border-gray-600/30">
             <div className="text-xs text-gray-500 dark:text-gray-400 mb-1">
               Entry Price
             </div>
@@ -205,7 +205,7 @@ const TradePlanDetails = ({ isOpen, onClose, plan, onStatusChange }) => {
             </div>
           </div>
 
-          <div className="p-3 bg-white/80 dark:bg-gray-800/40 rounded-md border border-gray-200/60 dark:border-gray-600/30">
+          <div className="p-3 bg-white/80 dark:bg-gray-800/40 round-sm border border-gray-200/60 dark:border-gray-600/30">
             <div className="text-xs text-gray-500 dark:text-gray-400 mb-1">
               Profit Target
             </div>
@@ -216,7 +216,7 @@ const TradePlanDetails = ({ isOpen, onClose, plan, onStatusChange }) => {
             </div>
           </div>
 
-          <div className="p-3 bg-white/80 dark:bg-gray-800/40 rounded-md border border-gray-200/60 dark:border-gray-600/30">
+          <div className="p-3 bg-white/80 dark:bg-gray-800/40 round-sm border border-gray-200/60 dark:border-gray-600/30">
             <div className="text-xs text-gray-500 dark:text-gray-400 mb-1">
               Stop Loss
             </div>
@@ -231,7 +231,7 @@ const TradePlanDetails = ({ isOpen, onClose, plan, onStatusChange }) => {
 
       {/* Notes */}
       {plan.notes && (
-        <div className="bg-gray-50/80 dark:bg-gray-700/30 rounded-lg p-4 border border-gray-200/70 dark:border-gray-600/40">
+        <div className="bg-gray-50/80 dark:bg-gray-700/30 rounded-sm p-4 border border-gray-200/70 dark:border-gray-600/40">
           <h3 className="text-sm font-medium text-gray-800 dark:text-gray-200 mb-3 flex items-center">
             <Clipboard className="h-4 w-4 mr-2 text-primary dark:text-primary-light" />
             Notes

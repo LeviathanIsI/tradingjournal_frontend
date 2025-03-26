@@ -15,7 +15,7 @@ const ReviewCard = ({ review, onUpdate }) => {
   if (!review) return null;
 
   return (
-    <div className="bg-white dark:bg-gray-800/80 rounded-lg border border-gray-200 dark:border-gray-700/60 shadow-sm hover:shadow-md transition-shadow p-6">
+    <div className="bg-white dark:bg-gray-800/80 rounded-sm border border-gray-200 dark:border-gray-700/60 shadow-sm hover:shadow-md transition-shadow p-6">
       <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 sm:gap-0 mb-5">
         <div>
           <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">
@@ -38,7 +38,7 @@ const ReviewCard = ({ review, onUpdate }) => {
         </div>
         {review.trade?.profitLoss?.realized !== undefined && (
           <div
-            className={`self-start sm:self-center px-4 py-1.5 rounded-md text-sm font-medium ${
+            className={`self-start sm:self-center px-4 py-1.5 round-sm text-sm font-medium ${
               review.trade.profitLoss.realized >= 0
                 ? "bg-green-100/90 dark:bg-green-800/30 text-green-800 dark:text-green-300"
                 : "bg-red-100/90 dark:bg-red-800/30 text-red-800 dark:text-red-300"
@@ -50,7 +50,7 @@ const ReviewCard = ({ review, onUpdate }) => {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-5">
-        <div className="bg-gray-50/80 dark:bg-gray-700/30 p-4 rounded-md">
+        <div className="bg-gray-50/80 dark:bg-gray-700/30 p-4 round-sm">
           <h4 className="font-medium text-gray-900 dark:text-gray-100 mb-2 flex items-center">
             <Award className="h-4 w-4 mr-2 text-green-500 dark:text-green-400" />
             What Went Well
@@ -59,7 +59,7 @@ const ReviewCard = ({ review, onUpdate }) => {
             {review.whatWentWell}
           </p>
         </div>
-        <div className="bg-gray-50/80 dark:bg-gray-700/30 p-4 rounded-md">
+        <div className="bg-gray-50/80 dark:bg-gray-700/30 p-4 round-sm">
           <h4 className="font-medium text-gray-900 dark:text-gray-100 mb-2 flex items-center">
             <Award className="h-4 w-4 mr-2 text-red-500 dark:text-red-400" />
             What Went Wrong
@@ -68,7 +68,7 @@ const ReviewCard = ({ review, onUpdate }) => {
             {review.whatWentWrong}
           </p>
         </div>
-        <div className="col-span-1 sm:col-span-2 bg-gray-50/80 dark:bg-gray-700/30 p-4 rounded-md">
+        <div className="col-span-1 sm:col-span-2 bg-gray-50/80 dark:bg-gray-700/30 p-4 round-sm">
           <h4 className="font-medium text-gray-900 dark:text-gray-100 mb-2 flex items-center">
             <LineChart className="h-4 w-4 mr-2 text-primary dark:text-primary-light" />
             Lessons Learned
@@ -77,7 +77,7 @@ const ReviewCard = ({ review, onUpdate }) => {
             {review.lessonLearned}
           </p>
         </div>
-        <div className="col-span-1 sm:col-span-2 bg-gray-50/80 dark:bg-gray-700/30 p-4 rounded-md">
+        <div className="col-span-1 sm:col-span-2 bg-gray-50/80 dark:bg-gray-700/30 p-4 round-sm">
           <h4 className="font-medium text-gray-900 dark:text-gray-100 mb-2 flex items-center">
             <LineChart className="h-4 w-4 mr-2 text-primary dark:text-primary-light" />
             Future Adjustments
@@ -93,7 +93,7 @@ const ReviewCard = ({ review, onUpdate }) => {
           <Info className="h-4 w-4 mr-2 text-gray-500 dark:text-gray-400" />
           Trade Details
         </h4>
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 bg-gray-50/80 dark:bg-gray-700/30 p-4 rounded-md">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 bg-gray-50/80 dark:bg-gray-700/30 p-4 round-sm">
           <div>
             <span className="block text-xs text-gray-500 dark:text-gray-400 mb-1">
               Entry Price

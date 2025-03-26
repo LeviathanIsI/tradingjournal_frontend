@@ -17,7 +17,7 @@ const PrivacyPolicy = () => {
   return (
     <div className="min-h-screen pt-16 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
       <div className="max-w-3xl mx-auto py-8 sm:py-12 px-4 sm:px-6">
-        <div className="bg-white/90 dark:bg-gray-800/80 p-6 sm:p-8 rounded-lg border border-gray-200 dark:border-gray-700/60 shadow-md backdrop-blur-sm">
+        <div className="bg-white/90 dark:bg-gray-800/80 p-6 sm:p-8 rounded-sm border border-gray-200 dark:border-gray-700/60 shadow-md backdrop-blur-sm">
           <div className="flex items-center gap-3 mb-6">
             <div className="bg-blue-50 dark:bg-blue-900/20 p-2 rounded-full">
               <Shield className="h-6 w-6 text-primary" />
@@ -146,7 +146,7 @@ const TermsOfService = () => {
   return (
     <div className="min-h-screen pt-16 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
       <div className="max-w-3xl mx-auto py-8 sm:py-12 px-4 sm:px-6">
-        <div className="bg-white/90 dark:bg-gray-800/80 p-6 sm:p-8 rounded-lg border border-gray-200 dark:border-gray-700/60 shadow-md backdrop-blur-sm">
+        <div className="bg-white/90 dark:bg-gray-800/80 p-6 sm:p-8 rounded-sm border border-gray-200 dark:border-gray-700/60 shadow-md backdrop-blur-sm">
           <div className="flex items-center gap-3 mb-6">
             <div className="bg-purple-50 dark:bg-purple-900/20 p-2 rounded-full">
               <FileText className="h-6 w-6 text-accent" />

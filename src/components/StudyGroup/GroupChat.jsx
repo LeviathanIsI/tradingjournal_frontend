@@ -360,13 +360,13 @@ const GroupChat = ({
       return "bg-gray-100/70 dark:bg-gray-800/40 text-center py-2";
     }
     if (message.isPinned) {
-      return "hover:bg-gray-100/80 dark:hover:bg-gray-700/40 rounded-lg px-3 py-3 mb-2 bg-amber-50/60 dark:bg-amber-900/10 border-l-2 border-amber-400 dark:border-amber-500/50";
+      return "hover:bg-gray-100/80 dark:hover:bg-gray-700/40 rounded-sm px-3 py-3 mb-2 bg-amber-50/60 dark:bg-amber-900/10 border-l-2 border-amber-400 dark:border-amber-500/50";
     }
-    return "hover:bg-gray-100/80 dark:hover:bg-gray-700/40 rounded-lg px-3 py-3 mb-2";
+    return "hover:bg-gray-100/80 dark:hover:bg-gray-700/40 rounded-sm px-3 py-3 mb-2";
   };
 
   return (
-    <div className="bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm rounded-lg border border-gray-200 dark:border-gray-700/60 shadow-sm overflow-hidden flex flex-col h-[600px]">
+    <div className="bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm rounded-sm border border-gray-200 dark:border-gray-700/60 shadow-sm overflow-hidden flex flex-col h-[600px]">
       <div className="p-4 border-b dark:border-gray-700/40 bg-gray-50/80 dark:bg-gray-700/50">
         <div className="flex justify-between items-center">
           <h2 className="font-semibold text-gray-900 dark:text-gray-100 flex items-center">
@@ -505,7 +505,7 @@ const GroupChat = ({
                                 <div key={idx} className="poll-option">
                                   <button
                                     onClick={() => handleVote(message._id, idx)}
-                                    className={`w-full p-2 rounded-md text-left relative overflow-hidden transition-all ${
+                                    className={`w-full p-2 round-sm text-left relative overflow-hidden transition-all ${
                                       userVoted
                                         ? "border-2 border-primary dark:border-primary-light"
                                         : "border border-gray-300 dark:border-gray-600"
@@ -642,7 +642,7 @@ const GroupChat = ({
                 {showEmojiPicker[message._id] && (
                   <div
                     ref={(el) => (emojiPickerRefs.current[message._id] = el)}
-                    className="mt-1 ml-11 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600/80 rounded-lg shadow-lg absolute z-20"
+                    className="mt-1 ml-11 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600/80 rounded-sm shadow-lg absolute z-20"
                   >
                     <div className="flex justify-between items-center p-2 border-b border-gray-200 dark:border-gray-600/80">
                       <div className="text-sm font-medium">Add Reaction</div>
@@ -667,7 +667,7 @@ const GroupChat = ({
                             onClick={() =>
                               handleAddReaction(message._id, emoji)
                             }
-                            className="text-lg hover:bg-gray-100 dark:hover:bg-gray-600/70 p-2 rounded-md transition-colors"
+                            className="text-lg hover:bg-gray-100 dark:hover:bg-gray-600/70 p-2 round-sm transition-colors"
                           >
                             {emoji}
                           </button>
@@ -697,7 +697,7 @@ const GroupChat = ({
           })
         ) : (
           <div className="flex items-center justify-center h-full text-gray-500 dark:text-gray-400">
-            <div className="text-center p-6 bg-white/80 dark:bg-gray-700/40 rounded-lg border border-gray-200 dark:border-gray-600/50 shadow-sm">
+            <div className="text-center p-6 bg-white/80 dark:bg-gray-700/40 rounded-sm border border-gray-200 dark:border-gray-600/50 shadow-sm">
               <MessageSquare
                 size={40}
                 className="mx-auto mb-3 text-gray-400 dark:text-gray-500"
@@ -743,7 +743,7 @@ const GroupChat = ({
                 value={pollQuestion}
                 onChange={(e) => setPollQuestion(e.target.value)}
                 placeholder="Ask a question..."
-                className="w-full px-3 py-2.5 border border-gray-300 dark:border-gray-600/70 dark:bg-gray-700/50 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-transparent text-gray-900 dark:text-gray-100 transition-colors"
+                className="w-full px-3 py-2.5 border border-gray-300 dark:border-gray-600/70 dark:bg-gray-700/50 round-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-transparent text-gray-900 dark:text-gray-100 transition-colors"
                 required
               />
             </div>
@@ -763,7 +763,7 @@ const GroupChat = ({
                       setPollOptions(newOptions);
                     }}
                     placeholder={`Option ${index + 1}`}
-                    className="flex-grow px-3 py-2.5 border border-gray-300 dark:border-gray-600/70 dark:bg-gray-700/50 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-transparent text-gray-900 dark:text-gray-100 transition-colors"
+                    className="flex-grow px-3 py-2.5 border border-gray-300 dark:border-gray-600/70 dark:bg-gray-700/50 round-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-transparent text-gray-900 dark:text-gray-100 transition-colors"
                     required
                   />
                   {index > 1 && (
@@ -774,7 +774,7 @@ const GroupChat = ({
                         newOptions.splice(index, 1);
                         setPollOptions(newOptions);
                       }}
-                      className="ml-2 p-2 text-gray-500 hover:text-red-500 dark:text-gray-400 dark:hover:text-red-400 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700/50 transition-colors"
+                      className="ml-2 p-2 text-gray-500 hover:text-red-500 dark:text-gray-400 dark:hover:text-red-400 round-sm hover:bg-gray-100 dark:hover:bg-gray-700/50 transition-colors"
                     >
                       <X size={16} />
                     </button>
@@ -786,7 +786,7 @@ const GroupChat = ({
                 <button
                   type="button"
                   onClick={() => setPollOptions([...pollOptions, ""])}
-                  className="text-sm text-primary dark:text-primary-light flex items-center mt-2 px-2 py-1 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700/50 transition-colors"
+                  className="text-sm text-primary dark:text-primary-light flex items-center mt-2 px-2 py-1 round-sm hover:bg-gray-100 dark:hover:bg-gray-700/50 transition-colors"
                 >
                   <PlusCircle size={14} className="mr-1.5" />
                   Add Option
@@ -802,13 +802,13 @@ const GroupChat = ({
                   setPollQuestion("");
                   setPollOptions(["", ""]);
                 }}
-                className="px-4 py-2 border border-gray-300 dark:border-gray-600/70 text-gray-700 dark:text-gray-300 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
+                className="px-4 py-2 border border-gray-300 dark:border-gray-600/70 text-gray-700 dark:text-gray-300 round-sm hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
               >
                 Cancel
               </button>
               <button
                 type="submit"
-                className="px-4 py-2 bg-primary hover:bg-primary/90 text-white rounded-md shadow-sm transition-colors"
+                className="px-4 py-2 bg-primary hover:bg-primary/90 text-white round-sm shadow-sm transition-colors"
               >
                 Create Poll
               </button>
@@ -819,7 +819,7 @@ const GroupChat = ({
             <div className="relative">
               {showEmojiPickerForInput && (
                 <div className="absolute bottom-full mb-2 right-0 z-10">
-                  <div className="bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600/80 rounded-lg shadow-lg">
+                  <div className="bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600/80 rounded-sm shadow-lg">
                     <div className="flex justify-between items-center p-2 border-b border-gray-200 dark:border-gray-600/80">
                       <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
                         Choose an emoji
@@ -854,7 +854,7 @@ const GroupChat = ({
                 <button
                   type="button"
                   onClick={() => setShowPollForm(true)}
-                  className="p-2 text-gray-500 hover:text-primary dark:text-gray-400 dark:hover:text-primary-light rounded-md hover:bg-gray-100 dark:hover:bg-gray-700/50 transition-colors"
+                  className="p-2 text-gray-500 hover:text-primary dark:text-gray-400 dark:hover:text-primary-light round-sm hover:bg-gray-100 dark:hover:bg-gray-700/50 transition-colors"
                   title="Create Poll"
                 >
                   <BarChart2 size={20} />
@@ -866,7 +866,7 @@ const GroupChat = ({
                   onClick={() =>
                     setShowEmojiPickerForInput(!showEmojiPickerForInput)
                   }
-                  className="p-2 text-gray-500 hover:text-primary dark:text-gray-400 dark:hover:text-primary-light rounded-md hover:bg-gray-100 dark:hover:bg-gray-700/50 transition-colors"
+                  className="p-2 text-gray-500 hover:text-primary dark:text-gray-400 dark:hover:text-primary-light round-sm hover:bg-gray-100 dark:hover:bg-gray-700/50 transition-colors"
                   title="Add Emoji"
                 >
                   <Smile size={20} />

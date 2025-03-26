@@ -403,7 +403,7 @@ const TradeExecutionReplay = () => {
       </h2>
 
       {!analysis && !loading && (
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-8 text-center mb-6 border border-gray-200 dark:border-gray-700">
+        <div className="bg-white dark:bg-gray-800 rounded-sm shadow-sm p-8 text-center mb-6 border border-gray-200 dark:border-gray-700">
           <Film className="h-12 w-12 mx-auto mb-4 text-primary" />
           <p className="text-lg text-gray-800 dark:text-gray-100 mb-3">
             Review Your Trade Like a Pro Athlete Watches Game Tape
@@ -418,7 +418,7 @@ const TradeExecutionReplay = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Left Side - Trade Selection */}
-        <div className="lg:col-span-1 bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6 border border-gray-200 dark:border-gray-700">
+        <div className="lg:col-span-1 bg-white dark:bg-gray-800 rounded-sm shadow-sm p-6 border border-gray-200 dark:border-gray-700">
           <div className="mb-4">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
@@ -427,7 +427,7 @@ const TradeExecutionReplay = () => {
                 placeholder="Search trades..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md 
+                className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 round-sm 
                 bg-white dark:bg-gray-700/50 text-gray-900 dark:text-gray-100 
                 focus:ring-2 focus:ring-primary/30 focus:border-primary/60
                 placeholder-gray-500 dark:placeholder-gray-400"
@@ -451,7 +451,7 @@ const TradeExecutionReplay = () => {
                 {filteredTrades.map((trade) => (
                   <div
                     key={trade._id}
-                    className={`p-4 rounded-lg cursor-pointer transition-colors duration-150 
+                    className={`p-4 rounded-sm cursor-pointer transition-colors duration-150 
   hover:bg-gray-50 dark:hover:bg-gray-700/50 border ${
     selectedTrade?._id === trade._id
       ? "bg-primary/10 dark:bg-primary/20 border-primary/20 dark:border-primary/30"
@@ -465,7 +465,7 @@ const TradeExecutionReplay = () => {
                         {trade.symbol || trade.ticker}
                       </div>
                       <div
-                        className={`px-2 py-0.5 text-xs rounded-md ${
+                        className={`px-2 py-0.5 text-xs round-sm ${
                           trade.profitLoss?.realized > 0
                             ? "bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300"
                             : trade.profitLoss?.realized < 0
@@ -523,7 +523,7 @@ const TradeExecutionReplay = () => {
         {/* Right Side - Analysis Display */}
         <div className="lg:col-span-2">
           {loading ? (
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-8 border border-gray-200 dark:border-gray-700">
+            <div className="bg-white dark:bg-gray-800 rounded-sm shadow-sm p-8 border border-gray-200 dark:border-gray-700">
               <div className="flex flex-col items-center justify-center py-12">
                 <Loader className="animate-spin h-10 w-10 text-primary mb-4" />
                 <p className="text-gray-600 dark:text-gray-300">
@@ -536,7 +536,7 @@ const TradeExecutionReplay = () => {
               </div>
             </div>
           ) : error ? (
-            <div className="bg-red-50 dark:bg-red-900/20 p-6 rounded-lg shadow-sm text-red-600 dark:text-red-400 border border-red-200 dark:border-red-800/50">
+            <div className="bg-red-50 dark:bg-red-900/20 p-6 rounded-sm shadow-sm text-red-600 dark:text-red-400 border border-red-200 dark:border-red-800/50">
               <div className="flex items-center mb-4">
                 <AlertTriangle className="h-5 w-5 mr-2" />
                 <h3 className="font-medium">Analysis Error</h3>
@@ -544,13 +544,13 @@ const TradeExecutionReplay = () => {
               <p>{error}</p>
               <button
                 onClick={resetAnalysis}
-                className="mt-4 px-4 py-2 bg-red-100 dark:bg-red-900/40 text-red-700 dark:text-red-300 rounded-md"
+                className="mt-4 px-4 py-2 bg-red-100 dark:bg-red-900/40 text-red-700 dark:text-red-300 round-sm"
               >
                 Try Again
               </button>
             </div>
           ) : !selectedTrade ? (
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-8 text-center border border-gray-200 dark:border-gray-700">
+            <div className="bg-white dark:bg-gray-800 rounded-sm shadow-sm p-8 text-center border border-gray-200 dark:border-gray-700">
               <div className="text-gray-500 dark:text-gray-300 mb-2">
                 <Compass className="h-12 w-12 mx-auto mb-4 text-gray-400 dark:text-gray-500" />
                 <p className="text-lg">Select a trade from the list</p>
@@ -560,7 +560,7 @@ const TradeExecutionReplay = () => {
               </div>
             </div>
           ) : !analysis ? (
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-8 text-center border border-gray-200 dark:border-gray-700">
+            <div className="bg-white dark:bg-gray-800 rounded-sm shadow-sm p-8 text-center border border-gray-200 dark:border-gray-700">
               <div className="text-gray-700 dark:text-gray-300">
                 <History className="h-16 w-16 mx-auto mb-4 text-primary" />
                 <p className="text-xl font-medium mb-2">
@@ -573,7 +573,7 @@ const TradeExecutionReplay = () => {
                 {/* Large, prominent button */}
                 <div
                   className="w-full md:w-3/4 mx-auto py-4 px-6 bg-primary hover:bg-primary/90
-                    text-white text-lg font-medium rounded-lg 
+                    text-white text-lg font-medium rounded-sm 
                     flex items-center justify-center transition-colors shadow-sm cursor-pointer"
                   tabIndex={0}
                   role="button"
@@ -596,14 +596,14 @@ const TradeExecutionReplay = () => {
             <div className="flex flex-col space-y-6">
               {/* Trade Timeline Player */}
               {tradeTimeline && tradeTimeline.length > 0 && (
-                <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6 border border-gray-200 dark:border-gray-700">
+                <div className="bg-white dark:bg-gray-800 rounded-sm shadow-sm p-6 border border-gray-200 dark:border-gray-700">
                   <h3 className="font-medium text-gray-700 dark:text-gray-300 mb-3 border-b border-gray-200 dark:border-gray-600 pb-2 flex items-center">
                     <Film className="w-5 h-5 mr-2 text-primary" />
                     Trade Execution Timeline
                   </h3>
 
                   {/* Timeline Visualization */}
-                  <div className="mb-4 bg-gray-50 dark:bg-gray-700/30 rounded-lg p-4 border border-gray-200 dark:border-gray-600">
+                  <div className="mb-4 bg-gray-50 dark:bg-gray-700/30 rounded-sm p-4 border border-gray-200 dark:border-gray-600">
                     <div className="relative">
                       {/* Timeline Progress Bar */}
                       <div className="w-full h-2 bg-gray-200 dark:bg-gray-600 rounded-full overflow-hidden">
@@ -640,9 +640,9 @@ const TradeExecutionReplay = () => {
 
                     {/* Current Event Display */}
                     {tradeTimeline[currentStep] && (
-                      <div className="mt-6 p-4 border border-primary/20 dark:border-primary/30 bg-primary/5 dark:bg-primary/10 rounded-lg">
+                      <div className="mt-6 p-4 border border-primary/20 dark:border-primary/30 bg-primary/5 dark:bg-primary/10 rounded-sm">
                         <div className="flex items-start">
-                          <div className="p-2 bg-white dark:bg-gray-700 rounded-md mr-3 border border-gray-200 dark:border-gray-600">
+                          <div className="p-2 bg-white dark:bg-gray-700 round-sm mr-3 border border-gray-200 dark:border-gray-600">
                             {getActionIcon(
                               tradeTimeline[currentStep].actionType
                             )}
@@ -662,7 +662,7 @@ const TradeExecutionReplay = () => {
                               {tradeTimeline[currentStep].description}
                             </p>
                             {tradeTimeline[currentStep].insight && (
-                              <div className="mt-3 p-2 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800/70 rounded-md text-xs text-yellow-800 dark:text-yellow-300">
+                              <div className="mt-3 p-2 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800/70 round-sm text-xs text-yellow-800 dark:text-yellow-300">
                                 <div className="flex items-start">
                                   <Lightbulb className="h-4 w-4 mr-1 mt-0.5 flex-shrink-0" />
                                   <span>
@@ -693,14 +693,14 @@ const TradeExecutionReplay = () => {
                       {isPlaying ? (
                         <button
                           onClick={pausePlayback}
-                          className="p-2 bg-primary/10 dark:bg-primary/20 rounded-md text-primary dark:text-primary-light border border-primary/20 dark:border-primary/30"
+                          className="p-2 bg-primary/10 dark:bg-primary/20 round-sm text-primary dark:text-primary-light border border-primary/20 dark:border-primary/30"
                         >
                           <Pause className="h-5 w-5" />
                         </button>
                       ) : (
                         <button
                           onClick={startPlayback}
-                          className="p-2 bg-primary/10 dark:bg-primary/20 rounded-md text-primary dark:text-primary-light border border-primary/20 dark:border-primary/30"
+                          className="p-2 bg-primary/10 dark:bg-primary/20 round-sm text-primary dark:text-primary-light border border-primary/20 dark:border-primary/30"
                         >
                           <Play className="h-5 w-5" />
                         </button>
@@ -725,7 +725,7 @@ const TradeExecutionReplay = () => {
                           onChange={(e) =>
                             setPlaybackSpeed(Number(e.target.value))
                           }
-                          className="text-xs p-1 bg-gray-50 dark:bg-gray-700/50 border border-gray-300 dark:border-gray-600 rounded-md text-gray-700 dark:text-gray-300"
+                          className="text-xs p-1 bg-gray-50 dark:bg-gray-700/50 border border-gray-300 dark:border-gray-600 round-sm text-gray-700 dark:text-gray-300"
                         >
                           <option value={0.5}>0.5x</option>
                           <option value={1}>1x</option>
@@ -738,7 +738,7 @@ const TradeExecutionReplay = () => {
                 </div>
               )}
               {/* Analysis Content */}
-              <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+              <div className="bg-white dark:bg-gray-800 rounded-sm shadow-sm border border-gray-200 dark:border-gray-700">
                 {/* Analysis Header */}
                 <div className="border-b border-gray-200 dark:border-gray-600 p-6">
                   <div className="flex justify-between items-start">
@@ -753,7 +753,7 @@ const TradeExecutionReplay = () => {
                       </p>
                     </div>
                     <div
-                      className={`px-3 py-1 text-sm rounded-md font-medium ${
+                      className={`px-3 py-1 text-sm round-sm font-medium ${
                         tradeDetails?.profitLoss > 0
                           ? "bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300"
                           : "bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300"
@@ -767,7 +767,7 @@ const TradeExecutionReplay = () => {
 
                   {tradeDetails && (
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-4">
-                      <div className="bg-gray-50 dark:bg-gray-700/30 p-3 rounded-md border border-gray-200 dark:border-gray-600">
+                      <div className="bg-gray-50 dark:bg-gray-700/30 p-3 round-sm border border-gray-200 dark:border-gray-600">
                         <p className="text-xs text-gray-500 dark:text-gray-400">
                           Entry
                         </p>
@@ -775,7 +775,7 @@ const TradeExecutionReplay = () => {
                           {formatCurrency(tradeDetails.entryPrice)}
                         </p>
                       </div>
-                      <div className="bg-gray-50 dark:bg-gray-700/30 p-3 rounded-md border border-gray-200 dark:border-gray-600">
+                      <div className="bg-gray-50 dark:bg-gray-700/30 p-3 round-sm border border-gray-200 dark:border-gray-600">
                         <p className="text-xs text-gray-500 dark:text-gray-400">
                           Exit
                         </p>
@@ -785,7 +785,7 @@ const TradeExecutionReplay = () => {
                             : "Open"}
                         </p>
                       </div>
-                      <div className="bg-gray-50 dark:bg-gray-700/30 p-3 rounded-md border border-gray-200 dark:border-gray-600">
+                      <div className="bg-gray-50 dark:bg-gray-700/30 p-3 round-sm border border-gray-200 dark:border-gray-600">
                         <p className="text-xs text-gray-500 dark:text-gray-400">
                           Trade Type
                         </p>
@@ -793,7 +793,7 @@ const TradeExecutionReplay = () => {
                           {tradeDetails.tradeType}
                         </p>
                       </div>
-                      <div className="bg-gray-50 dark:bg-gray-700/30 p-3 rounded-md border border-gray-200 dark:border-gray-600">
+                      <div className="bg-gray-50 dark:bg-gray-700/30 p-3 round-sm border border-gray-200 dark:border-gray-600">
                         <p className="text-xs text-gray-500 dark:text-gray-400">
                           Decision Time
                         </p>
@@ -863,7 +863,7 @@ const TradeExecutionReplay = () => {
                 </div>
               </div>
               {/* Summary & Key Takeaways */}
-              <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6 border border-gray-200 dark:border-gray-700">
+              <div className="bg-white dark:bg-gray-800 rounded-sm shadow-sm p-6 border border-gray-200 dark:border-gray-700">
                 <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100 flex items-center border-l-4 border-primary dark:border-primary-light pl-3">
                   <Lightbulb className="h-5 w-5 text-primary dark:text-primary-light mr-2" />
                   Key Takeaways
@@ -892,7 +892,7 @@ const TradeExecutionReplay = () => {
               </div>
 
               {/* Performance Breakdown */}
-              <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6 border border-gray-200 dark:border-gray-700">
+              <div className="bg-white dark:bg-gray-800 rounded-sm shadow-sm p-6 border border-gray-200 dark:border-gray-700">
                 <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100 flex items-center border-l-4 border-primary dark:border-primary-light pl-3">
                   <PieChart className="h-5 w-5 text-primary dark:text-primary-light mr-2" />
                   Performance Breakdown
@@ -902,7 +902,7 @@ const TradeExecutionReplay = () => {
                 </p>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
-                  <div className="p-4 border border-gray-200 dark:border-gray-600 rounded-md bg-gray-50 dark:bg-gray-700/30">
+                  <div className="p-4 border border-gray-200 dark:border-gray-600 round-sm bg-gray-50 dark:bg-gray-700/30">
                     <p className="text-sm text-gray-500 dark:text-gray-400">
                       Win Rate
                     </p>
@@ -912,7 +912,7 @@ const TradeExecutionReplay = () => {
                         : "-"}
                     </p>
                   </div>
-                  <div className="p-4 border border-gray-200 dark:border-gray-600 rounded-md bg-gray-50 dark:bg-gray-700/30">
+                  <div className="p-4 border border-gray-200 dark:border-gray-600 round-sm bg-gray-50 dark:bg-gray-700/30">
                     <p className="text-sm text-gray-500 dark:text-gray-400">
                       Avg Profit
                     </p>
@@ -922,7 +922,7 @@ const TradeExecutionReplay = () => {
                         : "-"}
                     </p>
                   </div>
-                  <div className="p-4 border border-gray-200 dark:border-gray-600 rounded-md bg-gray-50 dark:bg-gray-700/30">
+                  <div className="p-4 border border-gray-200 dark:border-gray-600 round-sm bg-gray-50 dark:bg-gray-700/30">
                     <p className="text-sm text-gray-500 dark:text-gray-400">
                       Holding Time
                     </p>
@@ -936,7 +936,7 @@ const TradeExecutionReplay = () => {
               </div>
 
               {/* Suggested Improvements */}
-              <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6 border border-gray-200 dark:border-gray-700">
+              <div className="bg-white dark:bg-gray-800 rounded-sm shadow-sm p-6 border border-gray-200 dark:border-gray-700">
                 <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100 flex items-center border-l-4 border-primary dark:border-primary-light pl-3">
                   <TrendingUp className="h-5 w-5 text-primary dark:text-primary-light mr-2" />
                   Suggested Improvements

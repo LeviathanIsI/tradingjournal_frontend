@@ -466,7 +466,7 @@ const PricingPage = () => {
       {/* Page Content */}
       <div className="max-w-4xl mx-auto px-4 sm:px-6 py-6 sm:py-8 relative z-10">
         <div
-          className={`${messageClass} p-4 sm:p-5 rounded-lg border border-gray-200 dark:border-gray-700 shadow-lg mb-6 sm:mb-8 backdrop-blur-md`}
+          className={`${messageClass} p-4 sm:p-5 rounded-sm border border-gray-200 dark:border-gray-700 shadow-lg mb-6 sm:mb-8 backdrop-blur-md`}
         >
           <div className="flex items-center">
             <div className="flex-shrink-0">{messageIcon}</div>
@@ -485,7 +485,7 @@ const PricingPage = () => {
           </div>
         </div>
 
-        <div className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-md rounded-lg border border-gray-200 dark:border-gray-700 shadow-lg">
+        <div className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-md rounded-sm border border-gray-200 dark:border-gray-700 shadow-lg">
           <PricingComponent />
         </div>
       </div>

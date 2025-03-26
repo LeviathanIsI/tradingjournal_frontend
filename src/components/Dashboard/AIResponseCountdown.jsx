@@ -51,9 +51,9 @@ const AIResponseCountdown = ({ isLoading, estimatedTime = 30 }) => {
           </span>
         )}
       </div>
-      <div className="w-full bg-gray-200 dark:bg-gray-700/60 rounded-md h-2.5">
+      <div className="w-full bg-gray-200 dark:bg-gray-700/60 round-sm h-2.5">
         <div
-          className="bg-blue-500 dark:bg-blue-400 h-2.5 rounded-md transition-all duration-300 ease-in-out"
+          className="bg-blue-500 dark:bg-blue-400 h-2.5 round-sm transition-all duration-300 ease-in-out"
           style={{
             width: showExtendedMessage
               ? "90%" // Keep at 90% when we're past the estimated time

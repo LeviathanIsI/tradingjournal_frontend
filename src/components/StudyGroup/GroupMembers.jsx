@@ -207,7 +207,7 @@ const GroupMembers = ({
   };
 
   return (
-    <div className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-lg border border-gray-200 dark:border-gray-700/60 shadow-sm overflow-hidden">
+    <div className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-sm border border-gray-200 dark:border-gray-700/60 shadow-sm overflow-hidden">
       <div className="p-5 border-b border-gray-200 dark:border-gray-700/40 bg-gray-50/80 dark:bg-gray-700/50">
         <div className="flex justify-between items-center">
           <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 flex items-center">
@@ -220,7 +220,7 @@ const GroupMembers = ({
           {(isCreator || isMember) && (
             <button
               onClick={() => setShowInviteForm(true)}
-              className="px-3 py-2 bg-secondary hover:bg-secondary/90 dark:hover:bg-secondary-light text-white rounded-md flex items-center text-sm font-medium transition-colors shadow-sm"
+              className="px-3 py-2 bg-secondary hover:bg-secondary/90 dark:hover:bg-secondary-light text-white round-sm flex items-center text-sm font-medium transition-colors shadow-sm"
             >
               <UserPlus size={16} className="mr-1.5" />
               Invite
@@ -241,7 +241,7 @@ const GroupMembers = ({
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               placeholder="Search members..."
-              className="pl-10 pr-4 py-2.5 w-full border border-gray-300 dark:border-gray-600/70 rounded-md bg-white dark:bg-gray-700/50 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-transparent transition-colors"
+              className="pl-10 pr-4 py-2.5 w-full border border-gray-300 dark:border-gray-600/70 round-sm bg-white dark:bg-gray-700/50 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-transparent transition-colors"
             />
             {searchTerm && (
               <button
@@ -256,7 +256,7 @@ const GroupMembers = ({
           <div className="flex-shrink-0 relative sort-dropdown">
             <button
               onClick={() => setShowSortOptions(!showSortOptions)}
-              className="px-3 py-2.5 border border-gray-300 dark:border-gray-600/70 rounded-md bg-white dark:bg-gray-700/50 text-gray-700 dark:text-gray-300 flex items-center space-x-1 hover:bg-gray-50 dark:hover:bg-gray-600/50 transition-colors focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-transparent"
+              className="px-3 py-2.5 border border-gray-300 dark:border-gray-600/70 round-sm bg-white dark:bg-gray-700/50 text-gray-700 dark:text-gray-300 flex items-center space-x-1 hover:bg-gray-50 dark:hover:bg-gray-600/50 transition-colors focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-transparent"
             >
               <Filter size={16} className="mr-1.5" />
               <span>{getSortLabel()}</span>
@@ -269,7 +269,7 @@ const GroupMembers = ({
             </button>
 
             {showSortOptions && (
-              <div className="absolute right-0 mt-1 w-48 bg-white dark:bg-gray-700 rounded-md shadow-lg border border-gray-200 dark:border-gray-600/80 z-10">
+              <div className="absolute right-0 mt-1 w-48 bg-white dark:bg-gray-700 round-sm shadow-lg border border-gray-200 dark:border-gray-600/80 z-10">
                 <div className="py-1">
                   <button
                     onClick={() => {
@@ -341,7 +341,7 @@ const GroupMembers = ({
             {filteredMembers.map((member) => (
               <div
                 key={member.user._id}
-                className="flex items-center justify-between p-3 border border-gray-200 dark:border-gray-600/70 rounded-lg bg-white/80 dark:bg-gray-700/40 hover:bg-gray-50 dark:hover:bg-gray-700/60 transition-colors"
+                className="flex items-center justify-between p-3 border border-gray-200 dark:border-gray-600/70 rounded-sm bg-white/80 dark:bg-gray-700/40 hover:bg-gray-50 dark:hover:bg-gray-700/60 transition-colors"
               >
                 <div className="flex items-center">
                   <div className="w-10 h-10 rounded-full bg-primary-light dark:bg-primary flex items-center justify-center text-white font-bold mr-3 shadow-sm">
@@ -407,7 +407,7 @@ const GroupMembers = ({
                     </button>
 
                     {showMemberActions[member.user._id] && (
-                      <div className="absolute right-0 mt-1 w-48 bg-white dark:bg-gray-700 rounded-lg shadow-lg border border-gray-200 dark:border-gray-600/80 z-10 overflow-hidden">
+                      <div className="absolute right-0 mt-1 w-48 bg-white dark:bg-gray-700 rounded-sm shadow-lg border border-gray-200 dark:border-gray-600/80 z-10 overflow-hidden">
                         <div className="py-1">
                           {member.role !== "moderator" && (
                             <button
@@ -453,7 +453,7 @@ const GroupMembers = ({
             ))}
           </div>
         ) : (
-          <div className="flex items-center justify-center py-12 bg-gray-50/80 dark:bg-gray-700/30 rounded-lg border border-gray-200/70 dark:border-gray-600/40">
+          <div className="flex items-center justify-center py-12 bg-gray-50/80 dark:bg-gray-700/30 rounded-sm border border-gray-200/70 dark:border-gray-600/40">
             <div className="text-center">
               <Users
                 size={40}
@@ -483,7 +483,7 @@ const GroupMembers = ({
             {currentGroup.invitees.map((invite) => (
               <div
                 key={invite.user._id}
-                className="flex items-center justify-between p-3 border border-gray-200 dark:border-gray-600/70 rounded-lg bg-white/80 dark:bg-gray-700/40"
+                className="flex items-center justify-between p-3 border border-gray-200 dark:border-gray-600/70 rounded-sm bg-white/80 dark:bg-gray-700/40"
               >
                 <div className="flex items-center">
                   <div className="w-8 h-8 rounded-full bg-gray-400 dark:bg-gray-600 flex items-center justify-center text-white font-bold mr-3">

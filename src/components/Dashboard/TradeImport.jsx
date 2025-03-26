@@ -90,7 +90,7 @@ const TradeImport = ({ onImport }) => {
 
   if (step === "map" && csvData) {
     return (
-      <div className="bg-white dark:bg-gray-800/90 border border-gray-200 dark:border-gray-700/60 rounded-md shadow-sm p-4 sm:p-6">
+      <div className="bg-white dark:bg-gray-800/90 border border-gray-200 dark:border-gray-700/60 round-sm shadow-sm p-4 sm:p-6">
         <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
           Map CSV Columns
         </h3>
@@ -105,7 +105,7 @@ const TradeImport = ({ onImport }) => {
                 {field.required && <span className="text-red-500 ml-1">*</span>}
               </label>
               <select
-                className="w-full sm:w-2/3 px-3 py-2 border border-gray-300 dark:border-gray-600/70 rounded-md 
+                className="w-full sm:w-2/3 px-3 py-2 border border-gray-300 dark:border-gray-600/70 round-sm 
                 bg-white dark:bg-gray-700/50 text-gray-900 dark:text-gray-100 
                 focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500/60"
                 value={columnMap[field.key] || ""}
@@ -123,7 +123,7 @@ const TradeImport = ({ onImport }) => {
         </div>
         <div className="mt-6 flex flex-col sm:flex-row justify-end gap-3 sm:gap-4 border-t dark:border-gray-700/40 pt-4">
           <button
-            className="px-4 py-2 border border-gray-300 dark:border-gray-600/70 rounded-md 
+            className="px-4 py-2 border border-gray-300 dark:border-gray-600/70 round-sm 
             bg-white dark:bg-gray-700/50 text-gray-700 dark:text-gray-300 
             hover:bg-gray-50 dark:hover:bg-gray-600/70 text-sm sm:text-base"
             onClick={() => setStep("upload")}
@@ -132,7 +132,7 @@ const TradeImport = ({ onImport }) => {
           </button>
           <button
             className="px-4 py-2 bg-blue-600 dark:bg-blue-600/90 hover:bg-blue-700 dark:hover:bg-blue-500 
-            text-white rounded-md shadow-sm text-sm sm:text-base"
+            text-white round-sm shadow-sm text-sm sm:text-base"
             onClick={handleImport}
           >
             Import Trades
@@ -143,12 +143,12 @@ const TradeImport = ({ onImport }) => {
   }
 
   return (
-    <div className="bg-white dark:bg-gray-800/90 border border-gray-200 dark:border-gray-700/60 rounded-md shadow-sm">
+    <div className="bg-white dark:bg-gray-800/90 border border-gray-200 dark:border-gray-700/60 round-sm shadow-sm">
       <div className="p-6 flex flex-col items-center space-y-4">
         <label
           className="flex flex-col items-center justify-center w-full sm:w-2/3 h-40 px-4 py-6 
           bg-gray-50 dark:bg-gray-700/40 border-2 border-dashed 
-          border-gray-300 dark:border-gray-600/70 rounded-md cursor-pointer 
+          border-gray-300 dark:border-gray-600/70 round-sm cursor-pointer 
           hover:bg-gray-100 dark:hover:bg-gray-700/60 transition-colors"
         >
           <Upload className="w-10 h-10 text-gray-400 dark:text-gray-500 mb-2" />
@@ -170,7 +170,7 @@ const TradeImport = ({ onImport }) => {
         {error && (
           <div
             className="w-full sm:w-2/3 bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-300 
-            p-3 rounded-md border border-red-200 dark:border-red-700/50 text-sm flex items-start"
+            p-3 round-sm border border-red-200 dark:border-red-700/50 text-sm flex items-start"
           >
             <X className="h-5 w-5 mr-2 flex-shrink-0 text-red-500" />
             <span>{error}</span>

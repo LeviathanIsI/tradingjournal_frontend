@@ -383,7 +383,7 @@ const PricingComponent = () => {
 
           // Determine card classes based on selection state
           let cardClasses =
-            "flex-1 rounded-lg border overflow-hidden transition-all duration-300 ";
+            "flex-1 rounded-sm border overflow-hidden transition-all duration-300 ";
 
           if (selectedPlan === plan.id) {
             cardClasses += "transform scale-105 shadow-lg border-primary ";
@@ -500,7 +500,7 @@ const PricingComponent = () => {
                   disabled={
                     isLoading || resetting || planStatus === "Current Plan"
                   }
-                  className={`mt-6 sm:mt-8 block w-full py-2.5 px-4 rounded-md text-white text-sm font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 shadow transition-all ${
+                  className={`mt-6 sm:mt-8 block w-full py-2.5 px-4 round-sm text-white text-sm font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 shadow transition-all ${
                     isProcessing
                       ? "bg-gray-500/50 cursor-not-allowed"
                       : resetting
