@@ -44,7 +44,7 @@ const SecurityQuestions = ({ securityData, onSuccess, onError }) => {
   };
 
   return (
-    <div className="bg-white/90 dark:bg-gray-800/80 p-5 rounded-lg border border-gray-200 dark:border-gray-700/40 shadow-md backdrop-blur-sm">
+    <div className="bg-white/90 dark:bg-gray-800/80 p-5 rounded-sm border border-gray-200 dark:border-gray-700/40 shadow-md backdrop-blur-sm">
       <div className="mb-5 flex justify-center">
         <div className="p-3 bg-primary/10 rounded-full">
           <ShieldCheck className="h-6 w-6 text-primary" />
@@ -67,7 +67,7 @@ const SecurityQuestions = ({ securityData, onSuccess, onError }) => {
               className="w-full px-3 py-2 bg-white dark:bg-gray-700/40 
               border border-gray-300 dark:border-gray-600/70 
               text-gray-900 dark:text-gray-100 
-              rounded-md focus:ring-2 focus:ring-primary/30 focus:border-primary/60"
+              round-sm focus:ring-2 focus:ring-primary/30 focus:border-primary/60"
               value={answers.answer1}
               onChange={(e) =>
                 setAnswers((prev) => ({ ...prev, answer1: e.target.value }))
@@ -86,7 +86,7 @@ const SecurityQuestions = ({ securityData, onSuccess, onError }) => {
               className="w-full px-3 py-2 bg-white dark:bg-gray-700/40 
               border border-gray-300 dark:border-gray-600/70 
               text-gray-900 dark:text-gray-100 
-              rounded-md focus:ring-2 focus:ring-primary/30 focus:border-primary/60"
+              round-sm focus:ring-2 focus:ring-primary/30 focus:border-primary/60"
               value={answers.answer2}
               onChange={(e) =>
                 setAnswers((prev) => ({ ...prev, answer2: e.target.value }))
@@ -105,7 +105,7 @@ const SecurityQuestions = ({ securityData, onSuccess, onError }) => {
               className="w-full px-3 py-2 bg-white dark:bg-gray-700/40 
               border border-gray-300 dark:border-gray-600/70 
               text-gray-900 dark:text-gray-100 
-              rounded-md focus:ring-2 focus:ring-primary/30 focus:border-primary/60"
+              round-sm focus:ring-2 focus:ring-primary/30 focus:border-primary/60"
               value={answers.answer3}
               onChange={(e) =>
                 setAnswers((prev) => ({ ...prev, answer3: e.target.value }))
@@ -117,7 +117,7 @@ const SecurityQuestions = ({ securityData, onSuccess, onError }) => {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-primary hover:bg-primary/90 text-white py-2.5 px-4 rounded-md 
+            className="w-full bg-primary hover:bg-primary/90 text-white py-2.5 px-4 round-sm 
             shadow hover:shadow-md dark:hover:bg-primary/80 disabled:opacity-50 
             font-medium transition-all"
           >

@@ -104,7 +104,7 @@ const ImportTradeModal = ({ isOpen, onClose, onImport }) => {
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-      <div className="bg-white rounded-lg p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+      <div className="bg-white rounded-sm p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-bold">Import Trades</h2>
           <button
@@ -117,7 +117,7 @@ const ImportTradeModal = ({ isOpen, onClose, onImport }) => {
 
         {step === "upload" && (
           <div className="flex flex-col items-center p-6">
-            <label className="w-full flex flex-col items-center px-4 py-6 bg-white rounded-lg border-2 border-dashed border-gray-300 cursor-pointer hover:bg-gray-50">
+            <label className="w-full flex flex-col items-center px-4 py-6 bg-white rounded-sm border-2 border-dashed border-gray-300 cursor-pointer hover:bg-gray-50">
               <Upload className="h-8 w-8 text-gray-400" />
               <span className="mt-2 text-gray-500">Select CSV file</span>
               <input

@@ -72,11 +72,25 @@ const useAccessControl = () => {
   const { user, loading, subscription, isSubscriptionLoading } = useAuth();
   const [hasSpecialAccess, setHasSpecialAccess] = useState(false);
   const [accessLoading, setAccessLoading] = useState(true);
+  const [specialAccessChecked, setSpecialAccessChecked] = useState(false);
 
   useEffect(() => {
     const checkAccess = async () => {
       if (!user) {
         setAccessLoading(false);
+        setSpecialAccessChecked(true);
+        return;
+      }
+
+      // Skip API call if user already has specialAccess in their data
+      if (user.specialAccess && typeof user.specialAccess.hasAccess === 'boolean') {
+        const specialAccessActive = user.specialAccess.hasAccess;
+        
+        // If the user has specialAccess, we don't need to check subscription
+        // This is the key optimization for special access users
+        setHasSpecialAccess(specialAccessActive);
+        setAccessLoading(false);
+        setSpecialAccessChecked(true);
         return;
       }
 
@@ -92,23 +106,33 @@ const useAccessControl = () => {
 
         if (response.ok) {
           const data = await response.json();
-          setHasSpecialAccess(data.hasSpecialAccess);
+          const specialAccessActive = data.hasSpecialAccess;
+          setHasSpecialAccess(specialAccessActive);
         }
       } catch (error) {
         console.error("Error checking special access:", error);
       } finally {
         setAccessLoading(false);
+        setSpecialAccessChecked(true);
       }
     };
 
     checkAccess();
-  }, [user?.id]); // Only recheck if user ID changes
+  }, [user]); // Depend on user object
 
+  // Determine if the user has special access from either source
+  const userHasSpecialAccess = 
+    hasSpecialAccess || 
+    (user?.specialAccess?.hasAccess === true);
+
+  // Return simplified loading state and clarify priority of special access
   return {
     isAuthenticated: !!user,
-    hasActiveSubscription: subscription?.active,
-    hasSpecialAccess,
-    isLoading: loading || isSubscriptionLoading || accessLoading,
+    hasActiveSubscription: subscription?.active || false,
+    hasSpecialAccess: userHasSpecialAccess,
+    isLoading: loading || (accessLoading && !specialAccessChecked) || 
+               // Only consider subscription loading if user doesn't have special access
+               (!userHasSpecialAccess && isSubscriptionLoading),
     user,
   };
 };
@@ -120,21 +144,36 @@ const SubscriptionRoute = ({ children, allowFree = false }) => {
     hasActiveSubscription,
     hasSpecialAccess,
     isLoading,
+    user,
   } = useAccessControl();
   const location = useLocation();
 
+  // Show loading state while auth checks are in progress
   if (isLoading) {
     return <LoadingFallback />;
   }
 
+  // Redirect to login if not authenticated
   if (!isAuthenticated) {
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
-  if (hasSpecialAccess || allowFree || hasActiveSubscription) {
+  // Priority check: If user has special access, grant access immediately
+  // This ensures beta testers and admins always get access
+  if (hasSpecialAccess || user?.specialAccess?.hasAccess === true) {
     return <Suspense fallback={<LoadingFallback />}>{children}</Suspense>;
   }
 
+  // Secondary checks only if user doesn't have special access
+  if (
+    allowFree ||
+    hasActiveSubscription ||
+    user?.subscription?.active === true
+  ) {
+    return <Suspense fallback={<LoadingFallback />}>{children}</Suspense>;
+  }
+
+  // Only redirect to pricing if all access checks fail
   return <Navigate to="/pricing" state={{ from: location }} replace />;
 };
 

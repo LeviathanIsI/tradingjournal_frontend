@@ -13,7 +13,7 @@ const StatsOverview = () => {
   if (!stats) {
     return (
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 bg-transparent">
-        <div className="bg-white dark:bg-gray-800/80 p-3 sm:p-4 rounded-md border border-gray-200 dark:border-gray-700/60 shadow-sm">
+        <div className="bg-white dark:bg-gray-800/80 p-3 sm:p-4 round-sm border border-gray-200 dark:border-gray-700/60 shadow-sm">
           <p className="text-gray-500 dark:text-gray-400">Loading stats...</p>
         </div>
       </div>
@@ -31,7 +31,7 @@ const StatsOverview = () => {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 bg-transparent">
       {/* Capital Card */}
-      <div className="bg-white dark:bg-gray-800/80 p-3 sm:p-4 rounded-md border border-gray-200 dark:border-gray-700/60 shadow-sm hover:shadow-md transition-shadow duration-200">
+      <div className="bg-white dark:bg-gray-800/80 p-3 sm:p-4 rounded-sm border border-gray-200 dark:border-gray-700/60 shadow-sm hover:shadow-md transition-shadow duration-200">
         <div className="flex flex-col sm:flex-row sm:justify-between gap-3 sm:gap-0">
           <div>
             <h3 className="text-xs sm:text-sm text-gray-600 dark:text-gray-300 flex items-center">
@@ -84,7 +84,7 @@ const StatsOverview = () => {
       </div>
 
       {/* Trade Stats Card */}
-      <div className="bg-white dark:bg-gray-800/80 p-3 sm:p-4 rounded-md border border-gray-200 dark:border-gray-700/60 shadow-sm hover:shadow-md transition-shadow duration-200">
+      <div className="bg-white dark:bg-gray-800/80 p-3 sm:p-4 round-sm border border-gray-200 dark:border-gray-700/60 shadow-sm hover:shadow-md transition-shadow duration-200">
         <div className="flex justify-between">
           <div>
             <h3 className="text-xs sm:text-sm text-gray-600 dark:text-gray-300 flex items-center">
@@ -116,7 +116,7 @@ const StatsOverview = () => {
       </div>
 
       {/* Win/Loss Ratio Card */}
-      <div className="bg-white dark:bg-gray-800/80 p-3 sm:p-4 rounded-md border border-gray-200 dark:border-gray-700/60 shadow-sm hover:shadow-md transition-shadow duration-200">
+      <div className="bg-white dark:bg-gray-800/80 p-3 sm:p-4 round-sm border border-gray-200 dark:border-gray-700/60 shadow-sm hover:shadow-md transition-shadow duration-200">
         <div>
           <h3 className="text-xs sm:text-sm text-gray-600 dark:text-gray-300 flex items-center">
             <TrendingUp className="h-4 w-4 mr-1 text-blue-500 dark:text-blue-400" />
@@ -137,7 +137,7 @@ const StatsOverview = () => {
       </div>
 
       {/* Total P/L Card */}
-      <div className="bg-white dark:bg-gray-800/80 p-3 sm:p-4 rounded-md border border-gray-200 dark:border-gray-700/60 shadow-sm hover:shadow-md transition-shadow duration-200">
+      <div className="bg-white dark:bg-gray-800/80 p-3 sm:p-4 round-sm border border-gray-200 dark:border-gray-700/60 shadow-sm hover:shadow-md transition-shadow duration-200">
         <h3 className="text-xs sm:text-sm text-gray-600 dark:text-gray-300 flex items-center">
           {(stats.totalProfit || 0) >= 0 ? (
             <TrendingUp className="h-4 w-4 mr-1 text-green-500 dark:text-green-400" />

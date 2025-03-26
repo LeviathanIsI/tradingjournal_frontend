@@ -16,7 +16,7 @@ const FiltersBar = ({
   setSearchQuery,
 }) => {
   return (
-    <div className="bg-white/90 dark:bg-gray-800/60 rounded-lg border border-gray-200 dark:border-gray-700/40 shadow-sm p-5 sm:p-6 mb-6 backdrop-blur-sm">
+    <div className="bg-white/90 dark:bg-gray-800/60 rounded-sm border border-gray-200 dark:border-gray-700/40 shadow-sm p-5 sm:p-6 mb-6 backdrop-blur-sm">
       <div className="grid gap-5">
         {/* Search Bar */}
         <div className="relative w-full">
@@ -26,7 +26,7 @@ const FiltersBar = ({
             placeholder="Search by username..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-10 pr-4 py-2.5 border border-gray-300 dark:border-gray-600/70 rounded-md 
+            className="w-full pl-10 pr-4 py-2.5 border border-gray-300 dark:border-gray-600/70 round-sm 
             bg-white dark:bg-gray-700/40 text-gray-900 dark:text-gray-100 
             placeholder-gray-500 dark:placeholder-gray-400 
             focus:ring-2 focus:ring-primary focus:border-primary focus:outline-none transition-all"
@@ -34,7 +34,7 @@ const FiltersBar = ({
         </div>
 
         {/* Filter & Sort Controls */}
-        <div className="flex flex-col md:flex-row gap-5 justify-between bg-gray-50/80 dark:bg-gray-700/30 p-4 rounded-lg border border-gray-200/70 dark:border-gray-600/30">
+        <div className="flex flex-col md:flex-row gap-5 justify-between bg-gray-50/80 dark:bg-gray-700/30 p-4 rounded-sm border border-gray-200/70 dark:border-gray-600/30">
           {/* Filters Section */}
           <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
             <div className="flex items-center gap-2">
@@ -56,7 +56,7 @@ const FiltersBar = ({
                       profitType: e.target.value,
                     }))
                   }
-                  className="pl-3 pr-8 py-2 border border-gray-300 dark:border-gray-600/70 rounded-md text-sm 
+                  className="pl-3 pr-8 py-2 border border-gray-300 dark:border-gray-600/70 round-sm text-sm 
                   bg-white dark:bg-gray-700/40 text-gray-900 dark:text-gray-100 
                   cursor-pointer transition-all hover:border-primary focus:ring-2 focus:ring-primary focus:border-primary appearance-none"
                 >
@@ -90,7 +90,7 @@ const FiltersBar = ({
                       timeFrame: e.target.value,
                     }))
                   }
-                  className="pl-8 pr-8 py-2 border border-gray-300 dark:border-gray-600/70 rounded-md text-sm 
+                  className="pl-8 pr-8 py-2 border border-gray-300 dark:border-gray-600/70 round-sm text-sm 
                   bg-white dark:bg-gray-700/40 text-gray-900 dark:text-gray-100 
                   cursor-pointer transition-all hover:border-primary focus:ring-2 focus:ring-primary focus:border-primary appearance-none"
                 >
@@ -134,7 +134,7 @@ const FiltersBar = ({
               <select
                 value={currentSort}
                 onChange={(e) => setSort(e.target.value)}
-                className="pl-3 pr-8 py-2 border border-gray-300 dark:border-gray-600/70 rounded-md text-sm 
+                className="pl-3 pr-8 py-2 border border-gray-300 dark:border-gray-600/70 round-sm text-sm 
                 bg-white dark:bg-gray-700/40 text-gray-900 dark:text-gray-100 
                 cursor-pointer transition-all hover:border-secondary focus:ring-2 focus:ring-secondary focus:border-secondary appearance-none"
               >

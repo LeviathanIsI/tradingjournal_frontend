@@ -14,7 +14,7 @@ import {
 
 // Updated LeaderboardStatsCard component
 const LeaderboardStatsCard = ({ icon, label, value, valueColor, detail }) => (
-  <div className="bg-white/90 dark:bg-gray-800/60 p-4 rounded-lg border border-gray-200 dark:border-gray-700/40 shadow-sm backdrop-blur-sm transition-all hover:shadow">
+  <div className="bg-white/90 dark:bg-gray-800/60 p-4 rounded-sm border border-gray-200 dark:border-gray-700/40 shadow-sm backdrop-blur-sm transition-all hover:shadow">
     <div className="flex items-center gap-3">
       <div className="p-2.5 rounded-full bg-primary/10 dark:bg-primary/20 flex-shrink-0">
         {icon}
@@ -160,7 +160,7 @@ const Leaderboard = () => {
 
   if (loading)
     return (
-      <div className="flex items-center justify-center p-8 rounded-lg bg-white/90 dark:bg-gray-800/60 border border-gray-200 dark:border-gray-700/40 shadow-sm">
+      <div className="flex items-center justify-center p-8 rounded-sm bg-white/90 dark:bg-gray-800/60 border border-gray-200 dark:border-gray-700/40 shadow-sm">
         <div className="animate-pulse flex space-x-2 items-center">
           <div className="h-2.5 w-2.5 bg-primary rounded-full"></div>
           <div className="h-2.5 w-2.5 bg-primary/70 rounded-full"></div>
@@ -174,7 +174,7 @@ const Leaderboard = () => {
 
   if (error)
     return (
-      <div className="p-6 text-red-600 dark:text-red-400 bg-red-50/90 dark:bg-red-900/20 rounded-lg border border-red-200 dark:border-red-800/50 shadow-sm">
+      <div className="p-6 text-red-600 dark:text-red-400 bg-red-50/90 dark:bg-red-900/20 rounded-sm border border-red-200 dark:border-red-800/50 shadow-sm">
         <div className="flex items-center gap-2 mb-1">
           <div className="p-1 rounded-full bg-red-100 dark:bg-red-800/30">
             <svg
@@ -233,7 +233,7 @@ const Leaderboard = () => {
       </div>
 
       {/* Filter Controls */}
-      <div className="bg-gray-50/80 dark:bg-gray-700/30 p-4 rounded-lg border border-gray-200/70 dark:border-gray-600/30 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-5">
+      <div className="bg-gray-50/80 dark:bg-gray-700/30 p-4 rounded-sm border border-gray-200/70 dark:border-gray-600/30 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-5">
         <div className="flex items-center gap-2">
           <div className="p-1.5 bg-primary/10 dark:bg-primary/20 rounded-full">
             <Calendar className="h-4 w-4 text-primary" />
@@ -245,7 +245,7 @@ const Leaderboard = () => {
             <select
               value={timeFrame}
               onChange={(e) => setTimeFrame(e.target.value)}
-              className="pl-3 pr-8 py-2 border border-gray-300 dark:border-gray-600/70 rounded-md 
+              className="pl-3 pr-8 py-2 border border-gray-300 dark:border-gray-600/70 round-sm 
               bg-white dark:bg-gray-700/40 text-gray-900 dark:text-gray-100 
               focus:ring-2 focus:ring-primary focus:border-primary text-sm appearance-none"
             >
@@ -275,7 +275,7 @@ const Leaderboard = () => {
 
         <button
           onClick={() => handleSort("stats.totalProfit")}
-          className="px-4 py-2 bg-primary hover:bg-primary/90 text-white rounded-md shadow 
+          className="px-4 py-2 bg-primary hover:bg-primary/90 text-white round-sm shadow 
           hover:shadow-md transition-all text-sm flex items-center gap-1.5"
         >
           <Filter className="h-4 w-4" />
@@ -290,7 +290,7 @@ const Leaderboard = () => {
       </div>
 
       {/* Leaderboard Table */}
-      <div className="overflow-x-auto bg-white/90 dark:bg-gray-800/60 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700/40 backdrop-blur-sm">
+      <div className="overflow-x-auto bg-white/90 dark:bg-gray-800/60 rounded-sm shadow-sm border border-gray-200 dark:border-gray-700/40 backdrop-blur-sm">
         <table className="min-w-full">
           <thead>
             <tr className="bg-gray-50/80 dark:bg-gray-700/40 text-left text-xs uppercase">

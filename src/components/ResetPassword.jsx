@@ -63,7 +63,7 @@ const ResetPassword = ({ onSuccess, onError }) => {
 
   return (
     <div className="w-full max-w-md mx-auto px-4 sm:px-0">
-      <div className="bg-white/90 dark:bg-gray-800/80 p-5 rounded-lg border border-gray-200 dark:border-gray-700/40 shadow-md backdrop-blur-sm">
+      <div className="bg-white/90 dark:bg-gray-800/80 p-5 rounded-sm border border-gray-200 dark:border-gray-700/40 shadow-md backdrop-blur-sm">
         <div className="mb-5 flex justify-center">
           <div className="p-3 bg-primary/10 rounded-full">
             <Lock className="h-6 w-6 text-primary" />
@@ -82,7 +82,7 @@ const ResetPassword = ({ onSuccess, onError }) => {
             <input
               type="password"
               required
-              className="block w-full rounded-md border border-gray-300 dark:border-gray-600/70 
+              className="block w-full round-sm border border-gray-300 dark:border-gray-600/70 
               px-3 py-2 text-gray-900 dark:text-gray-100 
               bg-white dark:bg-gray-700/40
               focus:ring-2 focus:ring-primary/30 focus:border-primary/60"
@@ -99,7 +99,7 @@ const ResetPassword = ({ onSuccess, onError }) => {
             <input
               type="password"
               required
-              className="block w-full rounded-md border border-gray-300 dark:border-gray-600/70 
+              className="block w-full round-sm border border-gray-300 dark:border-gray-600/70 
               px-3 py-2 text-gray-900 dark:text-gray-100 
               bg-white dark:bg-gray-700/40
               focus:ring-2 focus:ring-primary/30 focus:border-primary/60"
@@ -112,7 +112,7 @@ const ResetPassword = ({ onSuccess, onError }) => {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-primary hover:bg-primary/90 text-white py-2.5 px-4 rounded-md 
+            className="w-full bg-primary hover:bg-primary/90 text-white py-2.5 px-4 round-sm 
             shadow hover:shadow-md dark:hover:bg-primary/80 disabled:opacity-50 
             font-medium transition-all"
           >

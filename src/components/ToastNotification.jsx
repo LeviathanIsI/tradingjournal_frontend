@@ -181,7 +181,7 @@ const ToastNotification = ({
         ref={toastRef}
       >
         <div
-          className={`${getTypeStyles()} shadow-lg rounded-lg backdrop-blur-sm p-4 overflow-hidden`}
+          className={`${getTypeStyles()} shadow-lg rounded-sm backdrop-blur-sm p-4 overflow-hidden`}
         >
           <div className="flex items-start gap-3">
             {getTypeIcon()}

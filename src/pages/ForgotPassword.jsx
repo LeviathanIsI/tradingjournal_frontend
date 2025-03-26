@@ -87,8 +87,8 @@ const ForgotPassword = () => {
   return (
     <div className="min-h-screen px-4 sm:px-6 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 flex items-center justify-center py-12">
       <div className="w-full max-w-md mx-auto">
-        <div className="relative bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-lg shadow-md border border-gray-200 dark:border-gray-700/60 p-6 sm:p-8">
-          <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(115,115,115,0.075)_1px,transparent_1px),linear-gradient(to_bottom,rgba(115,115,115,0.075)_1px,transparent_1px)] bg-[size:14px_14px] pointer-events-none rounded-lg dark:bg-[linear-gradient(to_right,rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.03)_1px,transparent_1px)]"></div>
+        <div className="relative bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-sm shadow-md border border-gray-200 dark:border-gray-700/60 p-6 sm:p-8">
+          <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(115,115,115,0.075)_1px,transparent_1px),linear-gradient(to_bottom,rgba(115,115,115,0.075)_1px,transparent_1px)] bg-[size:14px_14px] pointer-events-none rounded-sm dark:bg-[linear-gradient(to_right,rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.03)_1px,transparent_1px)]"></div>
 
           <div className="relative z-10">
             <div className="text-center mb-6">
@@ -107,7 +107,7 @@ const ForgotPassword = () => {
             {renderStepIndicator()}
 
             {error && (
-              <div className="mb-6 bg-red-50 dark:bg-red-900/20 border-l-4 border-red-500 dark:border-red-600 text-red-700 dark:text-red-400 p-4 rounded-md">
+              <div className="mb-6 bg-red-50 dark:bg-red-900/20 border-l-4 border-red-500 dark:border-red-600 text-red-700 dark:text-red-400 p-4 round-sm">
                 <div className="flex">
                   <div className="flex-shrink-0">
                     <svg
@@ -150,7 +150,7 @@ const ForgotPassword = () => {
                       id="email"
                       type="email"
                       required
-                      className="block w-full pl-10 pr-3 py-2.5 bg-white dark:bg-gray-700/50 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary placeholder-gray-400 dark:placeholder-gray-500 text-sm transition-colors"
+                      className="block w-full pl-10 pr-3 py-2.5 bg-white dark:bg-gray-700/50 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100 round-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary placeholder-gray-400 dark:placeholder-gray-500 text-sm transition-colors"
                       placeholder="your@email.com"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
@@ -161,7 +161,7 @@ const ForgotPassword = () => {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full flex justify-center items-center bg-primary hover:bg-primary/90 text-white py-2.5 px-4 rounded-md shadow transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium"
+                  className="w-full flex justify-center items-center bg-primary hover:bg-primary/90 text-white py-2.5 px-4 round-sm shadow transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium"
                 >
                   {loading ? (
                     <>

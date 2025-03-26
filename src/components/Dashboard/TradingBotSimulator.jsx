@@ -273,7 +273,7 @@ const TradingBotSimulator = () => {
       </h2>
 
       {/* Top section - Inputs and Controls */}
-      <div className="bg-white dark:bg-gray-800/80 rounded-md shadow-md p-4 mb-6 border border-gray-200 dark:border-gray-700/60">
+      <div className="bg-white dark:bg-gray-800/80 round-sm shadow-md p-4 mb-6 border border-gray-200 dark:border-gray-700/60">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {/* Symbol Selection */}
           <div>
@@ -287,14 +287,14 @@ const TradingBotSimulator = () => {
                 placeholder="Search symbols..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md 
+                className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 round-sm 
                 bg-white dark:bg-gray-700/50 text-gray-900 dark:text-gray-50 
                 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500/60
                 placeholder-gray-500 dark:placeholder-gray-400"
               />
             </div>
 
-            <div className="mt-2 max-h-40 overflow-y-auto bg-gray-50 dark:bg-gray-700/30 rounded-md border border-gray-200 dark:border-gray-700/60">
+            <div className="mt-2 max-h-40 overflow-y-auto bg-gray-50 dark:bg-gray-700/30 round-sm border border-gray-200 dark:border-gray-700/60">
               {filteredSymbols.length === 0 ? (
                 <div className="p-3 text-sm text-gray-500 dark:text-gray-400 text-center">
                   No symbols found
@@ -304,7 +304,7 @@ const TradingBotSimulator = () => {
                   {filteredSymbols.map((symbol) => (
                     <button
                       key={symbol}
-                      className={`w-full text-left px-3 py-2 text-sm rounded-md mb-1 ${
+                      className={`w-full text-left px-3 py-2 text-sm round-sm mb-1 ${
                         selectedSymbol === symbol
                           ? "bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300"
                           : "hover:bg-gray-100 dark:hover:bg-gray-600/30 text-gray-700 dark:text-gray-300"
@@ -327,7 +327,7 @@ const TradingBotSimulator = () => {
             <select
               value={timeframe}
               onChange={(e) => setTimeframe(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md 
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 round-sm 
               bg-white dark:bg-gray-700/50 text-gray-900 dark:text-gray-50 
               focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500/60"
             >
@@ -347,7 +347,7 @@ const TradingBotSimulator = () => {
                 placeholder="e.g., Breakout, Reversal, Gap-and-Go"
                 value={strategy}
                 onChange={(e) => setStrategy(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md 
+                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 round-sm 
                 bg-white dark:bg-gray-700/50 text-gray-900 dark:text-gray-50 
                 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500/60
                 placeholder-gray-500 dark:placeholder-gray-400"
@@ -358,7 +358,7 @@ const TradingBotSimulator = () => {
           {/* Generate Button */}
           <div className="flex flex-col justify-end">
             <button
-              className="w-full py-3 px-4 bg-blue-600 dark:bg-blue-600 text-white rounded-md 
+              className="w-full py-3 px-4 bg-blue-600 dark:bg-blue-600 text-white round-sm 
               hover:bg-blue-700 dark:hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed 
               transition-colors flex items-center justify-center gap-2 mt-auto cursor-pointer shadow-md"
               onClick={generateTradingSimulation}
@@ -380,7 +380,7 @@ const TradingBotSimulator = () => {
             {/* Selected Symbol Display */}
             {selectedSymbol && (
               <div className="mt-4 text-center">
-                <span className="inline-flex items-center px-3 py-1 rounded-md bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300 text-sm font-medium">
+                <span className="inline-flex items-center px-3 py-1 round-sm bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300 text-sm font-medium">
                   <Target className="h-4 w-4 mr-1" />
                   {selectedSymbol}
                 </span>
@@ -392,7 +392,7 @@ const TradingBotSimulator = () => {
 
       {/* Loading State */}
       {loading && (
-        <div className="bg-white dark:bg-gray-800/80 rounded-md shadow-md p-8 text-center border border-gray-200 dark:border-gray-700/60">
+        <div className="bg-white dark:bg-gray-800/80 round-sm shadow-md p-8 text-center border border-gray-200 dark:border-gray-700/60">
           <div className="flex flex-col items-center justify-center py-12">
             <div className="relative">
               <Loader className="animate-spin h-12 w-12 text-blue-500" />
@@ -412,7 +412,7 @@ const TradingBotSimulator = () => {
 
       {/* Error State */}
       {error && (
-        <div className="bg-red-50 dark:bg-red-900/20 p-6 rounded-md shadow-md text-red-600 dark:text-red-400 border border-red-200 dark:border-red-800/50">
+        <div className="bg-red-50 dark:bg-red-900/20 p-6 round-sm shadow-md text-red-600 dark:text-red-400 border border-red-200 dark:border-red-800/50">
           <div className="flex items-center mb-4">
             <AlertTriangle className="h-5 w-5 mr-2" />
             <h3 className="font-medium">Simulation Error</h3>
@@ -427,7 +427,7 @@ const TradingBotSimulator = () => {
           {/* Left Side - Trade History and Summary */}
           <div className="lg:col-span-1 space-y-6">
             {/* Trade History Card */}
-            <div className="bg-white dark:bg-gray-800/80 rounded-md shadow-md p-4 border border-gray-200 dark:border-gray-700/60">
+            <div className="bg-white dark:bg-gray-800/80 round-sm shadow-md p-4 border border-gray-200 dark:border-gray-700/60">
               <h3 className="font-semibold text-lg text-gray-900 dark:text-gray-50 mb-4 flex items-center">
                 <BarChart className="h-5 w-5 mr-2 text-blue-500" />
                 Trade History: {selectedSymbol}
@@ -436,7 +436,7 @@ const TradingBotSimulator = () => {
               {tradeHistory && (
                 <div className="space-y-4">
                   <div className="grid grid-cols-2 gap-4">
-                    <div className="bg-blue-50 dark:bg-blue-900/20 rounded-md p-3 border border-blue-100 dark:border-blue-800/50">
+                    <div className="bg-blue-50 dark:bg-blue-900/20 round-sm p-3 border border-blue-100 dark:border-blue-800/50">
                       <div className="text-xs text-blue-700 dark:text-blue-300 font-medium mb-1">
                         Total Trades
                       </div>
@@ -444,7 +444,7 @@ const TradingBotSimulator = () => {
                         {tradeHistory.totalTrades}
                       </div>
                     </div>
-                    <div className="bg-green-50 dark:bg-green-900/20 rounded-md p-3 border border-green-100 dark:border-green-800/50">
+                    <div className="bg-green-50 dark:bg-green-900/20 round-sm p-3 border border-green-100 dark:border-green-800/50">
                       <div className="text-xs text-green-700 dark:text-green-300 font-medium mb-1">
                         Win Rate
                       </div>
@@ -455,7 +455,7 @@ const TradingBotSimulator = () => {
                   </div>
 
                   <div className="grid grid-cols-2 gap-4">
-                    <div className="bg-green-50 dark:bg-green-900/20 rounded-md p-3 border border-green-100 dark:border-green-800/50">
+                    <div className="bg-green-50 dark:bg-green-900/20 round-sm p-3 border border-green-100 dark:border-green-800/50">
                       <div className="text-xs text-green-700 dark:text-green-300 font-medium mb-1">
                         Avg. Win
                       </div>
@@ -463,7 +463,7 @@ const TradingBotSimulator = () => {
                         {formatCurrency(tradeHistory.avgWin)}
                       </div>
                     </div>
-                    <div className="bg-red-50 dark:bg-red-900/20 rounded-md p-3 border border-red-100 dark:border-red-800/50">
+                    <div className="bg-red-50 dark:bg-red-900/20 round-sm p-3 border border-red-100 dark:border-red-800/50">
                       <div className="text-xs text-red-700 dark:text-red-300 font-medium mb-1">
                         Avg. Loss
                       </div>
@@ -478,12 +478,12 @@ const TradingBotSimulator = () => {
 
             {/* Position Sizing Recommendation */}
             {simulationData?.positionSizing && (
-              <div className="bg-white dark:bg-gray-800/80 rounded-md shadow-md p-4 border border-gray-200 dark:border-gray-700/60">
+              <div className="bg-white dark:bg-gray-800/80 round-sm shadow-md p-4 border border-gray-200 dark:border-gray-700/60">
                 <h3 className="font-semibold text-lg text-gray-900 dark:text-gray-50 mb-3 flex items-center">
                   <DollarSign className="h-5 w-5 mr-2 text-green-500" />
                   Position Sizing
                 </h3>
-                <div className="bg-green-50 dark:bg-green-900/20 p-3 rounded-md border border-green-100 dark:border-green-800/50">
+                <div className="bg-green-50 dark:bg-green-900/20 p-3 round-sm border border-green-100 dark:border-green-800/50">
                   <p className="text-green-800 dark:text-green-200 font-medium">
                     {simulationData.positionSizing.recommendation}
                   </p>
@@ -496,12 +496,12 @@ const TradingBotSimulator = () => {
 
             {/* Stop Loss Strategy */}
             {simulationData?.stopLossStrategy && (
-              <div className="bg-white dark:bg-gray-800/80 rounded-md shadow-md p-4 border border-gray-200 dark:border-gray-700/60">
+              <div className="bg-white dark:bg-gray-800/80 round-sm shadow-md p-4 border border-gray-200 dark:border-gray-700/60">
                 <h3 className="font-semibold text-lg text-gray-900 dark:text-gray-50 mb-3 flex items-center">
                   <AlertTriangle className="h-5 w-5 mr-2 text-red-500" />
                   Stop Loss Strategy
                 </h3>
-                <div className="bg-red-50 dark:bg-red-900/20 p-3 rounded-md border border-red-100 dark:border-red-800/50">
+                <div className="bg-red-50 dark:bg-red-900/20 p-3 round-sm border border-red-100 dark:border-red-800/50">
                   <p className="text-red-800 dark:text-red-200 font-medium">
                     {simulationData.stopLossStrategy.recommendation}
                   </p>
@@ -516,12 +516,12 @@ const TradingBotSimulator = () => {
           {/* Right Side - Strategy and Entry Points */}
           <div className="lg:col-span-2 space-y-6">
             {/* Optimal Entry Strategy */}
-            <div className="bg-white dark:bg-gray-800/80 rounded-md shadow-md p-4 border border-gray-200 dark:border-gray-700/60">
+            <div className="bg-white dark:bg-gray-800/80 round-sm shadow-md p-4 border border-gray-200 dark:border-gray-700/60">
               <h3 className="font-semibold text-lg text-gray-900 dark:text-gray-50 mb-3 flex items-center">
                 <Zap className="h-5 w-5 mr-2 text-yellow-500" />
                 Optimal Entry Strategy
               </h3>
-              <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-md border border-blue-100 dark:border-blue-800/50">
+              <div className="bg-blue-50 dark:bg-blue-900/20 p-4 round-sm border border-blue-100 dark:border-blue-800/50">
                 <p className="text-gray-800 dark:text-gray-200">
                   {simulationData?.optimalEntryStrategy}
                 </p>
@@ -531,7 +531,7 @@ const TradingBotSimulator = () => {
             {/* Entry Points */}
             {simulationData?.entryPoints &&
               simulationData.entryPoints.length > 0 && (
-                <div className="bg-white dark:bg-gray-800/80 rounded-md shadow-md p-4 border border-gray-200 dark:border-gray-700/60">
+                <div className="bg-white dark:bg-gray-800/80 round-sm shadow-md p-4 border border-gray-200 dark:border-gray-700/60">
                   <h3 className="font-semibold text-lg text-gray-900 dark:text-gray-50 mb-3 flex items-center">
                     <Crosshair className="h-5 w-5 mr-2 text-blue-500" />
                     Recommended Entry Points
@@ -540,7 +540,7 @@ const TradingBotSimulator = () => {
                     {simulationData.entryPoints.map((entry, index) => (
                       <div
                         key={index}
-                        className="bg-gray-50 dark:bg-gray-700/30 p-3 rounded-md border border-gray-200 dark:border-gray-700/60"
+                        className="bg-gray-50 dark:bg-gray-700/30 p-3 round-sm border border-gray-200 dark:border-gray-700/60"
                       >
                         <div className="flex justify-between items-center mb-2">
                           <span className="text-sm text-gray-500 dark:text-gray-400">
@@ -561,12 +561,12 @@ const TradingBotSimulator = () => {
 
             {/* Exit Strategy Optimization */}
             {simulationData?.exitStrategyOptimization && (
-              <div className="bg-white dark:bg-gray-800/80 rounded-md shadow-md p-4 border border-gray-200 dark:border-gray-700/60">
+              <div className="bg-white dark:bg-gray-800/80 round-sm shadow-md p-4 border border-gray-200 dark:border-gray-700/60">
                 <h3 className="font-semibold text-lg text-gray-900 dark:text-gray-50 mb-3 flex items-center">
                   <ArrowRight className="h-5 w-5 mr-2 text-purple-500" />
                   Exit Strategy Optimization
                 </h3>
-                <div className="bg-purple-50 dark:bg-purple-900/20 p-3 rounded-md border border-purple-100 dark:border-purple-800/50">
+                <div className="bg-purple-50 dark:bg-purple-900/20 p-3 round-sm border border-purple-100 dark:border-purple-800/50">
                   <p className="text-purple-800 dark:text-purple-200 font-medium">
                     {simulationData.exitStrategyOptimization.recommendation}
                   </p>
@@ -580,7 +580,7 @@ const TradingBotSimulator = () => {
             {/* What-If Scenarios */}
             {simulationData?.scenarios &&
               simulationData.scenarios.length > 0 && (
-                <div className="bg-white dark:bg-gray-800/80 rounded-md shadow-md p-4 border border-gray-200 dark:border-gray-700/60">
+                <div className="bg-white dark:bg-gray-800/80 round-sm shadow-md p-4 border border-gray-200 dark:border-gray-700/60">
                   <h3 className="font-semibold text-lg text-gray-900 dark:text-gray-50 mb-3 flex items-center">
                     <Shuffle className="h-5 w-5 mr-2 text-indigo-500" />
                     What-If Scenarios
@@ -589,7 +589,7 @@ const TradingBotSimulator = () => {
                     {simulationData.scenarios.map((scenario, index) => (
                       <div
                         key={index}
-                        className={`p-3 rounded-md border ${
+                        className={`p-3 round-sm border ${
                           index === 0
                             ? "bg-green-50 dark:bg-green-900/20 border-green-100 dark:border-green-800/50"
                             : index === 1
@@ -599,7 +599,7 @@ const TradingBotSimulator = () => {
                       >
                         <div className="font-medium mb-1 flex items-center">
                           <span
-                            className={`mr-2 text-xs px-2 py-0.5 rounded-md ${
+                            className={`mr-2 text-xs px-2 py-0.5 round-sm ${
                               index === 0
                                 ? "bg-green-200 dark:bg-green-800 text-green-800 dark:text-green-200"
                                 : index === 1
@@ -627,7 +627,7 @@ const TradingBotSimulator = () => {
 
       {/* Empty State - No simulation yet */}
       {!loading && !error && !simulationData && (
-        <div className="bg-white dark:bg-gray-800/80 rounded-md shadow-md p-8 text-center border border-gray-200 dark:border-gray-700/60">
+        <div className="bg-white dark:bg-gray-800/80 round-sm shadow-md p-8 text-center border border-gray-200 dark:border-gray-700/60">
           <Bot className="h-16 w-16 mx-auto text-blue-400 dark:text-blue-500 mb-4" />
           <h3 className="text-xl font-medium text-gray-800 dark:text-gray-200 mb-2">
             AI Trading Bot Simulator
@@ -663,7 +663,7 @@ const TradingBotSimulator = () => {
         <div className="mt-6 flex justify-center">
           <button
             onClick={resetSimulation}
-            className="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-md border border-gray-300 dark:border-gray-600 hover:bg-gray-300 dark:hover:bg-gray-600 shadow-sm transition-colors"
+            className="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 round-sm border border-gray-300 dark:border-gray-600 hover:bg-gray-300 dark:hover:bg-gray-600 shadow-sm transition-colors"
           >
             Reset Simulation
           </button>

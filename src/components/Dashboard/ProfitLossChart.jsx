@@ -38,7 +38,7 @@ const CustomTooltip = ({ active, payload, label, displayMode }) => {
     const tooltipDate = new Date(year, month - 1, day);
 
     return (
-      <div className="bg-white/95 dark:bg-gray-800/90 border border-gray-200 dark:border-gray-700/40 rounded-lg p-3 shadow-md backdrop-blur-sm">
+      <div className="bg-white/95 dark:bg-gray-800/90 border border-gray-200 dark:border-gray-700/40 rounded-sm p-3 shadow-md backdrop-blur-sm">
         <p className="font-semibold text-gray-900 dark:text-gray-100">
           {tooltipDate.toLocaleDateString()}
         </p>
@@ -170,7 +170,7 @@ const filterTradesByTimeframe = (trades, selectedDate, timeframe) => {
 
 const TradesTable = ({ trades }) => {
   return (
-    <div className="mt-4 border dark:border-gray-700/40 rounded-lg overflow-hidden shadow-sm">
+    <div className="mt-4 border dark:border-gray-700/40 rounded-sm overflow-hidden shadow-sm">
       <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700/40">
         <thead className="bg-gray-50/80 dark:bg-gray-700/30">
           <tr>
@@ -311,7 +311,7 @@ const ProfitLossChart = ({ trades }) => {
         Profit/Loss Over Time
       </h2>
 
-      <div className="bg-gray-50/80 dark:bg-gray-700/30 p-4 rounded-lg border border-gray-200/70 dark:border-gray-600/30 flex items-start gap-3">
+      <div className="bg-gray-50/80 dark:bg-gray-700/30 p-4 rounded-sm border border-gray-200/70 dark:border-gray-600/30 flex items-start gap-3">
         <Info className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
         <div>
           <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
@@ -331,7 +331,7 @@ const ProfitLossChart = ({ trades }) => {
           <button
             onClick={() => setShowTrades(!showTrades)}
             disabled={!selectedDate}
-            className={`flex items-center gap-2 px-4 py-2 text-sm bg-white/90 dark:bg-gray-700/40 border border-gray-300 dark:border-gray-600/70 rounded-md w-full sm:w-auto justify-center sm:justify-start text-gray-900 dark:text-gray-100 shadow-sm
+            className={`flex items-center gap-2 px-4 py-2 text-sm bg-white/90 dark:bg-gray-700/40 border border-gray-300 dark:border-gray-600/70 round-sm w-full sm:w-auto justify-center sm:justify-start text-gray-900 dark:text-gray-100 shadow-sm
             ${
               !selectedDate
                 ? "opacity-50 cursor-not-allowed"
@@ -342,14 +342,14 @@ const ProfitLossChart = ({ trades }) => {
             {showTrades ? "Hide Trades" : "Show Trades"}
           </button>
           {selectedDate && (
-            <span className="text-sm text-gray-600 dark:text-gray-300 bg-gray-100/80 dark:bg-gray-700/30 px-3 py-1 rounded-md border border-gray-200/70 dark:border-gray-600/30">
+            <span className="text-sm text-gray-600 dark:text-gray-300 bg-gray-100/80 dark:bg-gray-700/30 px-3 py-1 round-sm border border-gray-200/70 dark:border-gray-600/30">
               Selected: {selectedDate}
             </span>
           )}
         </div>
 
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full sm:w-auto">
-          <div className="flex border border-gray-300 dark:border-gray-600/70 rounded-md shadow-sm overflow-hidden">
+          <div className="flex border border-gray-300 dark:border-gray-600/70 round-sm shadow-sm overflow-hidden">
             <button
               onClick={() => setDisplayMode("currency")}
               className={`flex-1 sm:flex-none px-4 py-2 text-sm ${
@@ -377,7 +377,7 @@ const ProfitLossChart = ({ trades }) => {
               <button
                 key={key}
                 onClick={() => setTimeframe(key)}
-                className={`px-4 py-2 rounded-md text-sm shadow-sm ${
+                className={`px-4 py-2 round-sm text-sm shadow-sm ${
                   timeframe === key
                     ? "bg-primary text-white"
                     : "bg-white/90 dark:bg-gray-700/40 text-gray-700 dark:text-gray-200 border border-gray-300 dark:border-gray-600/70 hover:bg-gray-50/90 dark:hover:bg-gray-700/60 hover:shadow transition-all"
@@ -390,7 +390,7 @@ const ProfitLossChart = ({ trades }) => {
         </div>
       </div>
 
-      <div className="h-[400px] sm:h-[600px] bg-white/90 dark:bg-gray-800/80 p-4 rounded-lg border border-gray-200/70 dark:border-gray-700/40 shadow-sm">
+      <div className="h-[400px] sm:h-[600px] bg-white/90 dark:bg-gray-800/80 p-4 rounded-sm border border-gray-200/70 dark:border-gray-700/40 shadow-sm">
         <ResponsiveContainer width="100%" height="100%">
           <LineChart
             data={chartData}
@@ -495,7 +495,7 @@ const ProfitLossChart = ({ trades }) => {
               </div>
             </div>
           ) : (
-            <div className="text-center py-8 bg-white/90 dark:bg-gray-800/80 rounded-lg border border-gray-200/70 dark:border-gray-700/40 shadow-sm">
+            <div className="text-center py-8 bg-white/90 dark:bg-gray-800/80 rounded-sm border border-gray-200/70 dark:border-gray-700/40 shadow-sm">
               <p className="text-gray-600 dark:text-gray-400">
                 No trades found for {timeframe === "WEEK" ? "Week of " : ""}
                 {timeframe === "MONTH"

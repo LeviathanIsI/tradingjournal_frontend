@@ -35,7 +35,7 @@ const FeaturedReviews = () => {
 
   if (loading) {
     return (
-      <div className="bg-white/90 dark:bg-gray-800/60 rounded-lg border border-gray-200 dark:border-gray-700/40 shadow-sm p-5 sm:p-6 mb-6 backdrop-blur-sm">
+      <div className="bg-white/90 dark:bg-gray-800/60 rounded-sm border border-gray-200 dark:border-gray-700/40 shadow-sm p-5 sm:p-6 mb-6 backdrop-blur-sm">
         <div className="flex items-center gap-2 mb-4">
           <Star className="h-5 w-5 text-yellow-400 fill-current" />
           <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
@@ -57,7 +57,7 @@ const FeaturedReviews = () => {
   if (error || !featuredReviews.length) return null;
 
   return (
-    <div className="bg-white/90 dark:bg-gray-800/60 rounded-lg border border-gray-200 dark:border-gray-700/40 shadow-sm p-5 sm:p-6 mb-6 backdrop-blur-sm">
+    <div className="bg-white/90 dark:bg-gray-800/60 rounded-sm border border-gray-200 dark:border-gray-700/40 shadow-sm p-5 sm:p-6 mb-6 backdrop-blur-sm">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-4 mb-5">
         <div className="flex items-center gap-2">
           <div className="p-1.5 bg-yellow-100 dark:bg-yellow-500/20 rounded-full">
@@ -77,7 +77,7 @@ const FeaturedReviews = () => {
         {featuredReviews.map((review) => (
           <div
             key={review._id}
-            className="border border-gray-100 dark:border-gray-700/30 rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow bg-white/50 dark:bg-gray-800/30"
+            className="border border-gray-100 dark:border-gray-700/30 rounded-sm p-4 shadow-sm hover:shadow-md transition-shadow bg-white/50 dark:bg-gray-800/30"
           >
             <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-2 sm:gap-4 mb-4">
               <div>
@@ -116,7 +116,7 @@ const FeaturedReviews = () => {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-5">
-              <div className="bg-green-50/70 dark:bg-green-900/10 p-3 rounded-lg border border-green-100 dark:border-green-900/20">
+              <div className="bg-green-50/70 dark:bg-green-900/10 p-3 rounded-sm border border-green-100 dark:border-green-900/20">
                 <h4 className="text-sm font-medium text-green-700 dark:text-green-400 mb-2 flex items-center">
                   <TrendingUp className="h-4 w-4 mr-1.5" />
                   What Went Well
@@ -125,7 +125,7 @@ const FeaturedReviews = () => {
                   {review.whatWentWell}
                 </p>
               </div>
-              <div className="bg-red-50/70 dark:bg-red-900/10 p-3 rounded-lg border border-red-100 dark:border-red-900/20">
+              <div className="bg-red-50/70 dark:bg-red-900/10 p-3 rounded-sm border border-red-100 dark:border-red-900/20">
                 <h4 className="text-sm font-medium text-red-700 dark:text-red-400 mb-2 flex items-center">
                   <TrendingDown className="h-4 w-4 mr-1.5" />
                   What Went Wrong
@@ -136,7 +136,7 @@ const FeaturedReviews = () => {
               </div>
             </div>
 
-            <div className="mb-5 bg-blue-50/70 dark:bg-blue-900/10 p-3 rounded-lg border border-blue-100 dark:border-blue-900/20">
+            <div className="mb-5 bg-blue-50/70 dark:bg-blue-900/10 p-3 rounded-sm border border-blue-100 dark:border-blue-900/20">
               <h4 className="text-sm font-medium text-blue-700 dark:text-blue-400 mb-2 flex items-center">
                 <BookOpen className="h-4 w-4 mr-1.5" />
                 Lesson Learned
@@ -146,7 +146,7 @@ const FeaturedReviews = () => {
               </p>
             </div>
 
-            <div className="bg-gray-50/80 dark:bg-gray-700/30 p-4 rounded-lg mb-4">
+            <div className="bg-gray-50/80 dark:bg-gray-700/30 p-4 rounded-sm mb-4">
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-sm">
                 <div className="flex flex-col">
                   <span className="text-gray-500 dark:text-gray-400 mb-1">

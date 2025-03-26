@@ -34,7 +34,7 @@ const Admin = () => {
       {/* Admin Header */}
       <div className="px-4 sm:px-6 lg:px-8 py-4 sm:py-6 bg-white/90 dark:bg-gray-800/50 backdrop-blur-sm border-b border-gray-200 dark:border-gray-700/40">
         <div className="max-w-7xl mx-auto">
-          <div className="bg-gradient-to-r from-primary/10 to-accent/5 dark:from-primary/20 dark:to-accent/10 p-6 rounded-lg border border-gray-200 dark:border-gray-700/40 shadow-sm">
+          <div className="bg-gradient-to-r from-primary/10 to-accent/5 dark:from-primary/20 dark:to-accent/10 p-6 rounded-sm border border-gray-200 dark:border-gray-700/40 shadow-sm">
             <h1 className="text-xl sm:text-2xl font-semibold text-gray-900 dark:text-gray-100">
               Admin Portal
             </h1>

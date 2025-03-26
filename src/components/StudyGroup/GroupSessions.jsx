@@ -250,7 +250,7 @@ const GroupSessions = ({
   };
 
   return (
-    <div className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-lg border border-gray-200 dark:border-gray-700/60 shadow-sm overflow-hidden">
+    <div className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-sm border border-gray-200 dark:border-gray-700/60 shadow-sm overflow-hidden">
       <div className="p-5 border-b border-gray-200 dark:border-gray-700/40 bg-gray-50/80 dark:bg-gray-700/50">
         <div className="flex justify-between items-center">
           <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 flex items-center">
@@ -260,7 +260,7 @@ const GroupSessions = ({
           {isCreator && !getEventDetails() && (
             <button
               onClick={() => setShowSessionForm(true)}
-              className="px-3 py-2 bg-primary hover:bg-primary/90 text-white rounded-md flex items-center text-sm transition-colors font-medium shadow-sm"
+              className="px-3 py-2 bg-primary hover:bg-primary/90 text-white round-sm flex items-center text-sm transition-colors font-medium shadow-sm"
             >
               <CalendarPlus size={16} className="mr-1.5" />
               Set Event Details
@@ -269,7 +269,7 @@ const GroupSessions = ({
           {isCreator && getEventDetails() && (
             <button
               onClick={() => setShowSessionForm(true)}
-              className="px-3 py-2 bg-primary hover:bg-primary/90 text-white rounded-md flex items-center text-sm transition-colors font-medium shadow-sm"
+              className="px-3 py-2 bg-primary hover:bg-primary/90 text-white round-sm flex items-center text-sm transition-colors font-medium shadow-sm"
             >
               <Edit size={16} className="mr-1.5" />
               Update Event
@@ -280,7 +280,7 @@ const GroupSessions = ({
 
       {getEventDetails() ? (
         <div className="p-5">
-          <div className="bg-white dark:bg-gray-700/40 rounded-lg border border-gray-200/70 dark:border-gray-600/40 p-5">
+          <div className="bg-white dark:bg-gray-700/40 rounded-sm border border-gray-200/70 dark:border-gray-600/40 p-5">
             <div className="flex justify-between items-start flex-wrap gap-2">
               <h3 className="font-medium text-gray-900 dark:text-gray-100 text-lg">
                 {currentGroup.name} Study Event
@@ -299,11 +299,11 @@ const GroupSessions = ({
 
             {/* Countdown timer for upcoming events */}
             {getEventStatus() !== "past" && (
-              <div className="mb-5 p-4 bg-primary/5 dark:bg-primary/10 rounded-lg border border-primary/10 dark:border-primary/20">
+              <div className="mb-5 p-4 bg-primary/5 dark:bg-primary/10 rounded-sm border border-primary/10 dark:border-primary/20">
                 <div className="flex items-center text-primary-dark dark:text-primary-light font-medium">
                   <CalendarClock size={18} className="mr-2 flex-shrink-0" />
                   <span className="mr-2">Starting in:</span>
-                  <span className="bg-white dark:bg-gray-800 px-3 py-1 rounded-md font-mono text-primary">
+                  <span className="bg-white dark:bg-gray-800 px-3 py-1 round-sm font-mono text-primary">
                     {timeLeft}
                   </span>
                 </div>
@@ -364,7 +364,7 @@ const GroupSessions = ({
             </div>
 
             {getEventDetails().description && (
-              <div className="mt-5 p-4 bg-gray-50/80 dark:bg-gray-700/30 rounded-lg border border-gray-200/70 dark:border-gray-600/40">
+              <div className="mt-5 p-4 bg-gray-50/80 dark:bg-gray-700/30 rounded-sm border border-gray-200/70 dark:border-gray-600/40">
                 <h4 className="font-medium text-gray-900 dark:text-gray-100 mb-2">
                   Description
                 </h4>
@@ -387,7 +387,7 @@ const GroupSessions = ({
                 <div className="flex flex-wrap gap-2">
                   <button
                     onClick={() => handleRsvp("attending")}
-                    className={`px-4 py-2 text-sm rounded-md flex items-center transition-colors ${
+                    className={`px-4 py-2 text-sm round-sm flex items-center transition-colors ${
                       userRsvpStatus === "attending"
                         ? "bg-green-600 text-white shadow-sm"
                         : "bg-white dark:bg-gray-700/50 text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-600/70 hover:bg-gray-50 dark:hover:bg-gray-700"
@@ -398,7 +398,7 @@ const GroupSessions = ({
                   </button>
                   <button
                     onClick={() => handleRsvp("maybe")}
-                    className={`px-4 py-2 text-sm rounded-md flex items-center transition-colors ${
+                    className={`px-4 py-2 text-sm round-sm flex items-center transition-colors ${
                       userRsvpStatus === "maybe"
                         ? "bg-amber-500 text-white shadow-sm"
                         : "bg-white dark:bg-gray-700/50 text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-600/70 hover:bg-gray-50 dark:hover:bg-gray-700"
@@ -409,7 +409,7 @@ const GroupSessions = ({
                   </button>
                   <button
                     onClick={() => handleRsvp("not_attending")}
-                    className={`px-4 py-2 text-sm rounded-md flex items-center transition-colors ${
+                    className={`px-4 py-2 text-sm round-sm flex items-center transition-colors ${
                       userRsvpStatus === "not_attending"
                         ? "bg-red-600 text-white shadow-sm"
                         : "bg-white dark:bg-gray-700/50 text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-600/70 hover:bg-gray-50 dark:hover:bg-gray-700"
@@ -434,7 +434,7 @@ const GroupSessions = ({
                 </h4>
                 <div className="flex flex-wrap gap-2">
                   <button
-                    className="px-4 py-2 text-sm bg-white dark:bg-gray-700/50 text-gray-700 dark:text-gray-300 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700 border border-gray-300 dark:border-gray-600/70 transition-colors flex items-center"
+                    className="px-4 py-2 text-sm bg-white dark:bg-gray-700/50 text-gray-700 dark:text-gray-300 round-sm hover:bg-gray-50 dark:hover:bg-gray-700 border border-gray-300 dark:border-gray-600/70 transition-colors flex items-center"
                     onClick={() => {
                       // This would generate a Google Calendar link with event details
                       const googleCalendarUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(
@@ -456,7 +456,7 @@ const GroupSessions = ({
                     Google Calendar
                   </button>
                   <button
-                    className="px-4 py-2 text-sm bg-white dark:bg-gray-700/50 text-gray-700 dark:text-gray-300 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700 border border-gray-300 dark:border-gray-600/70 transition-colors flex items-center"
+                    className="px-4 py-2 text-sm bg-white dark:bg-gray-700/50 text-gray-700 dark:text-gray-300 round-sm hover:bg-gray-50 dark:hover:bg-gray-700 border border-gray-300 dark:border-gray-600/70 transition-colors flex items-center"
                     onClick={() => {
                       // Generate iCal format and trigger download
                       alert("iCal export would be implemented here");
@@ -471,7 +471,7 @@ const GroupSessions = ({
 
             {isCreator && getEventStatus() !== "past" && (
               <div className="mt-6 pt-5 border-t border-gray-200 dark:border-gray-700/40">
-                <div className="bg-amber-50/60 dark:bg-amber-900/10 rounded-lg p-3 border border-amber-100 dark:border-amber-900/20 text-amber-800 dark:text-amber-300">
+                <div className="bg-amber-50/60 dark:bg-amber-900/10 rounded-sm p-3 border border-amber-100 dark:border-amber-900/20 text-amber-800 dark:text-amber-300">
                   <p className="text-xs italic flex items-start">
                     <Info size={14} className="mr-1.5 mt-0.5 flex-shrink-0" />
                     <span>
@@ -495,7 +495,7 @@ const GroupSessions = ({
         </div>
       ) : (
         <div className="p-5">
-          <div className="bg-white dark:bg-gray-700/40 rounded-lg border border-gray-200/70 dark:border-gray-600/40 p-5 py-10 flex flex-col items-center justify-center">
+          <div className="bg-white dark:bg-gray-700/40 rounded-sm border border-gray-200/70 dark:border-gray-600/40 p-5 py-10 flex flex-col items-center justify-center">
             <div className="w-16 h-16 rounded-full bg-gray-100 dark:bg-gray-700/70 flex items-center justify-center mb-4">
               <Calendar
                 size={32}
@@ -517,7 +517,7 @@ const GroupSessions = ({
                 </p>
                 <button
                   onClick={() => setShowSessionForm(true)}
-                  className="px-4 py-2 bg-primary hover:bg-primary/90 text-white text-sm rounded-md shadow-sm flex items-center mx-auto"
+                  className="px-4 py-2 bg-primary hover:bg-primary/90 text-white text-sm round-sm shadow-sm flex items-center mx-auto"
                 >
                   <CalendarPlus size={16} className="mr-1.5" />
                   Set Event Details

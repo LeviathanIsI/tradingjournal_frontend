@@ -76,7 +76,7 @@ const PublicReviews = () => {
 
   if (error) {
     return (
-      <div className="bg-red-50 dark:bg-red-900/20 p-4 rounded-lg border border-red-100 dark:border-red-800/50 shadow-sm">
+      <div className="bg-red-50 dark:bg-red-900/20 p-4 rounded-sm border border-red-100 dark:border-red-800/50 shadow-sm">
         <div className="flex items-center gap-2 mb-1">
           <div className="p-1 rounded-full bg-red-100 dark:bg-red-800/30">
             <svg
@@ -105,7 +105,7 @@ const PublicReviews = () => {
 
   if (!reviews.length) {
     return (
-      <div className="bg-white dark:bg-gray-800/80 p-6 rounded-lg border border-gray-200 dark:border-gray-700/60 shadow-sm text-center">
+      <div className="bg-white dark:bg-gray-800/80 p-6 rounded-sm border border-gray-200 dark:border-gray-700/60 shadow-sm text-center">
         <div className="inline-flex items-center justify-center p-3 bg-primary/10 dark:bg-primary/20 rounded-full mb-4">
           <Info className="h-6 w-6 text-primary dark:text-primary-light" />
         </div>
@@ -140,7 +140,7 @@ const PublicReviews = () => {
       />
 
       {filteredAndSortedReviews.length === 0 ? (
-        <div className="bg-gray-50/80 dark:bg-gray-800/40 rounded-lg border border-gray-200/70 dark:border-gray-700/40 p-8 text-center">
+        <div className="bg-gray-50/80 dark:bg-gray-800/40 rounded-sm border border-gray-200/70 dark:border-gray-700/40 p-8 text-center">
           <div className="inline-flex items-center justify-center p-3 bg-gray-100 dark:bg-gray-700/50 rounded-full mb-4">
             <Info className="h-6 w-6 text-gray-500 dark:text-gray-400" />
           </div>
@@ -157,7 +157,7 @@ const PublicReviews = () => {
           {filteredAndSortedReviews.map((review) => (
             <div
               key={review._id}
-              className="bg-white dark:bg-gray-800/80 rounded-lg border border-gray-200 dark:border-gray-700/60 shadow-sm hover:shadow-md transition-shadow p-6"
+              className="bg-white dark:bg-gray-800/80 rounded-sm border border-gray-200 dark:border-gray-700/60 shadow-sm hover:shadow-md transition-shadow p-6"
             >
               <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 sm:gap-0 mb-5">
                 <div>
@@ -185,7 +185,7 @@ const PublicReviews = () => {
                 </div>
                 {review.trade?.profitLoss?.realized !== undefined && (
                   <div
-                    className={`self-start sm:self-center px-4 py-1.5 rounded-md text-sm font-medium ${
+                    className={`self-start sm:self-center px-4 py-1.5 round-sm text-sm font-medium ${
                       review.trade.profitLoss.realized >= 0
                         ? "bg-green-100/90 dark:bg-green-800/30 text-green-800 dark:text-green-300"
                         : "bg-red-100/90 dark:bg-red-800/30 text-red-800 dark:text-red-300"
@@ -197,7 +197,7 @@ const PublicReviews = () => {
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-5">
-                <div className="bg-gray-50/80 dark:bg-gray-700/30 p-4 rounded-md">
+                <div className="bg-gray-50/80 dark:bg-gray-700/30 p-4 round-sm">
                   <h4 className="font-medium text-gray-900 dark:text-gray-100 mb-2 flex items-center">
                     <Award className="h-4 w-4 mr-2 text-green-500 dark:text-green-400" />
                     What Went Well
@@ -206,7 +206,7 @@ const PublicReviews = () => {
                     {review.whatWentWell}
                   </p>
                 </div>
-                <div className="bg-gray-50/80 dark:bg-gray-700/30 p-4 rounded-md">
+                <div className="bg-gray-50/80 dark:bg-gray-700/30 p-4 round-sm">
                   <h4 className="font-medium text-gray-900 dark:text-gray-100 mb-2 flex items-center">
                     <Award className="h-4 w-4 mr-2 text-red-500 dark:text-red-400" />
                     What Went Wrong
@@ -215,7 +215,7 @@ const PublicReviews = () => {
                     {review.whatWentWrong}
                   </p>
                 </div>
-                <div className="col-span-1 sm:col-span-2 bg-gray-50/80 dark:bg-gray-700/30 p-4 rounded-md">
+                <div className="col-span-1 sm:col-span-2 bg-gray-50/80 dark:bg-gray-700/30 p-4 round-sm">
                   <h4 className="font-medium text-gray-900 dark:text-gray-100 mb-2 flex items-center">
                     <LineChart className="h-4 w-4 mr-2 text-primary dark:text-primary-light" />
                     Lessons Learned
@@ -224,7 +224,7 @@ const PublicReviews = () => {
                     {review.lessonLearned}
                   </p>
                 </div>
-                <div className="col-span-1 sm:col-span-2 bg-gray-50/80 dark:bg-gray-700/30 p-4 rounded-md">
+                <div className="col-span-1 sm:col-span-2 bg-gray-50/80 dark:bg-gray-700/30 p-4 round-sm">
                   <h4 className="font-medium text-gray-900 dark:text-gray-100 mb-2 flex items-center">
                     <LineChart className="h-4 w-4 mr-2 text-primary dark:text-primary-light" />
                     Future Adjustments
@@ -240,7 +240,7 @@ const PublicReviews = () => {
                   <Info className="h-4 w-4 mr-2 text-gray-500 dark:text-gray-400" />
                   Trade Details
                 </h4>
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 bg-gray-50/80 dark:bg-gray-700/30 p-4 rounded-md">
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 bg-gray-50/80 dark:bg-gray-700/30 p-4 round-sm">
                   <div>
                     <span className="block text-xs text-gray-500 dark:text-gray-400 mb-1">
                       Entry Price

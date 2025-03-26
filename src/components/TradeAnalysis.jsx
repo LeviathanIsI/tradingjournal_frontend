@@ -153,7 +153,7 @@ const TradeAnalysis = ({ trades }) => {
   );
 
   return (
-    <div className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-lg border border-gray-200 dark:border-gray-700/60 shadow-sm p-4 sm:p-6">
+    <div className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-sm border border-gray-200 dark:border-gray-700/60 shadow-sm p-4 sm:p-6">
       <div className="border-b border-gray-200 dark:border-gray-700/40 pb-4 mb-4">
         <h2 className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-gray-100">
           Trade Analytics
@@ -167,7 +167,7 @@ const TradeAnalysis = ({ trades }) => {
       <div className="flex gap-2 sm:gap-3 overflow-x-auto pb-2 sm:pb-0 -mx-4 sm:mx-0 px-4 sm:px-0 mb-4 sm:mb-6 no-scrollbar">
         <button
           onClick={() => setActiveSection(SECTIONS.PATTERNS)}
-          className={`flex items-center px-3 sm:px-4 py-2 rounded-md whitespace-nowrap flex-shrink-0 text-sm transition-colors ${
+          className={`flex items-center px-3 sm:px-4 py-2 round-sm whitespace-nowrap flex-shrink-0 text-sm transition-colors ${
             activeSection === SECTIONS.PATTERNS
               ? "bg-primary text-white shadow-sm"
               : "bg-gray-100 dark:bg-gray-700/70 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700"
@@ -178,7 +178,7 @@ const TradeAnalysis = ({ trades }) => {
         </button>
         <button
           onClick={() => setActiveSection(SECTIONS.TIME)}
-          className={`flex items-center px-3 sm:px-4 py-2 rounded-md whitespace-nowrap flex-shrink-0 text-sm transition-colors ${
+          className={`flex items-center px-3 sm:px-4 py-2 round-sm whitespace-nowrap flex-shrink-0 text-sm transition-colors ${
             activeSection === SECTIONS.TIME
               ? "bg-primary text-white shadow-sm"
               : "bg-gray-100 dark:bg-gray-700/70 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700"
@@ -189,7 +189,7 @@ const TradeAnalysis = ({ trades }) => {
         </button>
         <button
           onClick={() => setActiveSection(SECTIONS.PSYCHOLOGY)}
-          className={`flex items-center px-3 sm:px-4 py-2 rounded-md whitespace-nowrap flex-shrink-0 text-sm transition-colors ${
+          className={`flex items-center px-3 sm:px-4 py-2 round-sm whitespace-nowrap flex-shrink-0 text-sm transition-colors ${
             activeSection === SECTIONS.PSYCHOLOGY
               ? "bg-primary text-white shadow-sm"
               : "bg-gray-100 dark:bg-gray-700/70 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700"
@@ -200,7 +200,7 @@ const TradeAnalysis = ({ trades }) => {
         </button>
         <button
           onClick={() => setActiveSection(SECTIONS.MISTAKES)}
-          className={`flex items-center px-3 sm:px-4 py-2 rounded-md whitespace-nowrap flex-shrink-0 text-sm transition-colors ${
+          className={`flex items-center px-3 sm:px-4 py-2 round-sm whitespace-nowrap flex-shrink-0 text-sm transition-colors ${
             activeSection === SECTIONS.MISTAKES
               ? "bg-primary text-white shadow-sm"
               : "bg-gray-100 dark:bg-gray-700/70 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700"
@@ -215,8 +215,8 @@ const TradeAnalysis = ({ trades }) => {
       {isLoading ? (
         <div className="flex justify-center items-center h-64 sm:h-80">
           <div className="animate-pulse flex flex-col items-center">
-            <div className="rounded-md bg-gray-200 dark:bg-gray-700 h-8 w-48 mb-4"></div>
-            <div className="h-64 w-full bg-gray-200 dark:bg-gray-700 rounded-md"></div>
+            <div className="round-sm bg-gray-200 dark:bg-gray-700 h-8 w-48 mb-4"></div>
+            <div className="h-64 w-full bg-gray-200 dark:bg-gray-700 round-sm"></div>
           </div>
         </div>
       ) : (
@@ -431,14 +431,14 @@ const TradeAnalysis = ({ trades }) => {
               </div>
 
               {Object.keys(mistakesAnalysis).length > 0 ? (
-                <div className="bg-gray-50/80 dark:bg-gray-700/40 rounded-lg border border-gray-200/80 dark:border-gray-600/30 p-4 sm:p-5 mt-2">
+                <div className="bg-gray-50/80 dark:bg-gray-700/40 rounded-sm border border-gray-200/80 dark:border-gray-600/30 p-4 sm:p-5 mt-2">
                   <ul className="space-y-2">
                     {Object.entries(mistakesAnalysis)
                       .sort(([, a], [, b]) => b - a)
                       .map(([mistake, count]) => (
                         <li
                           key={mistake}
-                          className="flex justify-between items-center p-3 rounded-md bg-white/90 dark:bg-gray-800/60 border border-gray-200 dark:border-gray-700/40 shadow-sm"
+                          className="flex justify-between items-center p-3 round-sm bg-white/90 dark:bg-gray-800/60 border border-gray-200 dark:border-gray-700/40 shadow-sm"
                         >
                           <span className="text-sm text-gray-900 dark:text-gray-100">
                             {mistake}

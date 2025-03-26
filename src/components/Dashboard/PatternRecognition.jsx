@@ -160,7 +160,7 @@ const PatternRecognition = () => {
 
       {/* Show button when analysis hasn't been started */}
       {!analysisStarted && !loading && (
-        <div className="bg-white dark:bg-gray-700/60 rounded-md border border-gray-200 dark:border-gray-600/50 shadow-sm p-8 text-center mb-6">
+        <div className="bg-white dark:bg-gray-700/60 round-sm border border-gray-200 dark:border-gray-600/50 shadow-sm p-8 text-center mb-6">
           <Lightbulb className="h-12 w-12 mx-auto mb-4 text-blue-400 dark:text-blue-500" />
           <p className="text-lg text-gray-800 dark:text-gray-200 mb-3">
             Discover patterns in your trading performance
@@ -215,7 +215,7 @@ const PatternRecognition = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Left side - Pattern stats */}
           <div className="lg:col-span-1 space-y-6">
-            <div className="bg-white dark:bg-gray-700/60 rounded-md border border-gray-200 dark:border-gray-600/50 shadow-sm p-4">
+            <div className="bg-white dark:bg-gray-700/60 round-sm border border-gray-200 dark:border-gray-600/50 shadow-sm p-4">
               <div className="flex justify-between items-center border-b border-gray-200 dark:border-gray-600/50 pb-3 mb-3">
                 <h3 className="font-semibold text-gray-800 dark:text-gray-200">
                   Performance Metrics
@@ -467,7 +467,7 @@ const PatternRecognition = () => {
 
           {/* Right side - AI analysis */}
           <div className="lg:col-span-2">
-            <div className="bg-white dark:bg-gray-700/60 rounded-md border border-gray-200 dark:border-gray-600/50 shadow-sm p-6">
+            <div className="bg-white dark:bg-gray-700/60 round-sm border border-gray-200 dark:border-gray-600/50 shadow-sm p-6">
               <div className="border-b border-gray-200 dark:border-gray-600/50 pb-4 mb-4">
                 <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 flex items-center">
                   <Target className="mr-2 h-5 w-5 text-blue-500" />

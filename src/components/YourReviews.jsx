@@ -312,7 +312,7 @@ const YourReviews = ({ userId }) => {
         <button
           onClick={() => handlePageChange(currentPage - 1)}
           disabled={currentPage === 1}
-          className="p-2 rounded-md border border-gray-200 dark:border-gray-700 
+          className="p-2 round-sm border border-gray-200 dark:border-gray-700 
                    disabled:opacity-50 disabled:cursor-not-allowed
                    hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
         >
@@ -324,7 +324,7 @@ const YourReviews = ({ userId }) => {
         <button
           onClick={() => handlePageChange(currentPage + 1)}
           disabled={currentPage === totalPages}
-          className="p-2 rounded-md border border-gray-200 dark:border-gray-700 
+          className="p-2 round-sm border border-gray-200 dark:border-gray-700 
                    disabled:opacity-50 disabled:cursor-not-allowed
                    hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
         >
@@ -401,7 +401,7 @@ const YourReviews = ({ userId }) => {
     <button
       key={pageNum}
       onClick={() => handlePageChange(pageNum)}
-      className={`w-8 h-8 rounded-md text-sm font-medium ${
+      className={`w-8 h-8 round-sm text-sm font-medium ${
         currentPage === pageNum
           ? "bg-primary text-white"
           : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
@@ -417,7 +417,7 @@ const YourReviews = ({ userId }) => {
       onClick={() =>
         setFilters({ ...filters, isFilterOpen: !filters.isFilterOpen })
       }
-      className={`p-2 rounded-md border border-gray-200 dark:border-gray-700 
+      className={`p-2 round-sm border border-gray-200 dark:border-gray-700 
                 flex items-center gap-1.5 ${
                   filters.isFilterOpen
                     ? "bg-primary/10 border-primary/50"
@@ -448,7 +448,7 @@ const YourReviews = ({ userId }) => {
     if (!filters.isFilterOpen) return null;
 
     return (
-      <div className="mt-3 mb-5 p-4 bg-white/90 dark:bg-gray-800/80 rounded-lg shadow-md border border-gray-200 dark:border-gray-700/40 backdrop-blur-sm">
+      <div className="mt-3 mb-5 p-4 bg-white/90 dark:bg-gray-800/80 rounded-sm shadow-md border border-gray-200 dark:border-gray-700/40 backdrop-blur-sm">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
           <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300">
             Filter Reviews
@@ -482,7 +482,7 @@ const YourReviews = ({ userId }) => {
                 onChange={(e) =>
                   setFilters({ ...filters, search: e.target.value })
                 }
-                className="block w-full pl-10 rounded-md border border-gray-300 dark:border-gray-600/70 
+                className="block w-full pl-10 round-sm border border-gray-300 dark:border-gray-600/70 
                       px-3 py-2 bg-white dark:bg-gray-700/40 text-gray-900 dark:text-gray-100
                       focus:ring-2 focus:ring-primary/30 focus:border-primary/60 text-sm"
               />
@@ -499,7 +499,7 @@ const YourReviews = ({ userId }) => {
               onChange={(e) =>
                 setFilters({ ...filters, profitType: e.target.value })
               }
-              className="block w-full rounded-md border border-gray-300 dark:border-gray-600/70 
+              className="block w-full round-sm border border-gray-300 dark:border-gray-600/70 
                       px-3 py-2 bg-white dark:bg-gray-700/40 text-gray-900 dark:text-gray-100
                       focus:ring-2 focus:ring-primary/30 focus:border-primary/60 text-sm"
             >
@@ -519,7 +519,7 @@ const YourReviews = ({ userId }) => {
               onChange={(e) =>
                 setFilters({ ...filters, dateRange: e.target.value })
               }
-              className="block w-full rounded-md border border-gray-300 dark:border-gray-600/70 
+              className="block w-full round-sm border border-gray-300 dark:border-gray-600/70 
                       px-3 py-2 bg-white dark:bg-gray-700/40 text-gray-900 dark:text-gray-100
                       focus:ring-2 focus:ring-primary/30 focus:border-primary/60 text-sm"
             >
@@ -631,14 +631,14 @@ const YourReviews = ({ userId }) => {
 
   if (error)
     return (
-      <div className="flex justify-center p-6 text-red-500 dark:text-red-400 bg-red-50 dark:bg-red-900/10 rounded-md border border-red-100 dark:border-red-800/30">
+      <div className="flex justify-center p-6 text-red-500 dark:text-red-400 bg-red-50 dark:bg-red-900/10 round-sm border border-red-100 dark:border-red-800/30">
         Error: {error}
       </div>
     );
 
   if (!allReviews.length)
     return (
-      <div className="flex flex-col items-center justify-center p-6 bg-white/90 dark:bg-gray-800/60 rounded-lg border border-gray-200 dark:border-gray-700/40 text-center space-y-3 backdrop-blur-sm shadow-sm">
+      <div className="flex flex-col items-center justify-center p-6 bg-white/90 dark:bg-gray-800/60 rounded-sm border border-gray-200 dark:border-gray-700/40 text-center space-y-3 backdrop-blur-sm shadow-sm">
         <p className="text-lg text-gray-700 dark:text-gray-200">
           No reviews yet
         </p>
@@ -669,7 +669,7 @@ const YourReviews = ({ userId }) => {
           <select
             value={reviewsPerPage}
             onChange={(e) => setReviewsPerPage(Number(e.target.value))}
-            className="block rounded-md border border-gray-300 dark:border-gray-600/70 
+            className="block round-sm border border-gray-300 dark:border-gray-600/70 
                       px-2 py-1 bg-white dark:bg-gray-700/40 text-gray-900 dark:text-gray-100
                       focus:ring-2 focus:ring-primary/30 focus:border-primary/60 text-sm"
           >
@@ -685,7 +685,7 @@ const YourReviews = ({ userId }) => {
       {renderActiveFilters()}
 
       {filteredReviews.length === 0 ? (
-        <div className="bg-white/90 dark:bg-gray-800/60 rounded-lg p-6 border border-gray-200 dark:border-gray-700/40 text-center backdrop-blur-sm shadow-sm">
+        <div className="bg-white/90 dark:bg-gray-800/60 rounded-sm p-6 border border-gray-200 dark:border-gray-700/40 text-center backdrop-blur-sm shadow-sm">
           <p className="text-gray-700 dark:text-gray-300">
             No reviews match your filters.
           </p>
@@ -702,7 +702,7 @@ const YourReviews = ({ userId }) => {
             {displayedReviews.map((review) => (
               <div
                 key={review._id}
-                className="bg-white/90 dark:bg-gray-800/80 rounded-lg shadow-sm p-5 border border-gray-200 dark:border-gray-700/40 backdrop-blur-sm hover:shadow-md transition-shadow duration-200"
+                className="bg-white/90 dark:bg-gray-800/80 rounded-sm shadow-sm p-5 border border-gray-200 dark:border-gray-700/40 backdrop-blur-sm hover:shadow-md transition-shadow duration-200"
               >
                 <div className="flex justify-between items-start mb-4">
                   <div>
@@ -717,7 +717,7 @@ const YourReviews = ({ userId }) => {
                     <div className="flex items-center gap-2">
                       <button
                         onClick={() => handleVisibilityToggle(review)}
-                        className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700/30 rounded-md transition-colors"
+                        className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700/30 round-sm transition-colors"
                         title={review.isPublic ? "Make Private" : "Make Public"}
                       >
                         {review.isPublic ? (
@@ -728,14 +728,14 @@ const YourReviews = ({ userId }) => {
                       </button>
                       <button
                         onClick={() => handleEditClick(review)}
-                        className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700/30 rounded-md transition-colors"
+                        className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700/30 round-sm transition-colors"
                         title="Edit Review"
                       >
                         <Edit className="h-5 w-5 text-primary" />
                       </button>
                       <button
                         onClick={() => handleDelete(review._id)}
-                        className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700/30 rounded-md transition-colors"
+                        className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700/30 round-sm transition-colors"
                         title="Delete Review"
                       >
                         <Trash2 className="h-5 w-5 text-red-500" />
@@ -745,7 +745,7 @@ const YourReviews = ({ userId }) => {
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-4">
-                  <div className="bg-gray-50/80 dark:bg-gray-700/30 p-4 rounded-md border border-gray-200/70 dark:border-gray-600/30">
+                  <div className="bg-gray-50/80 dark:bg-gray-700/30 p-4 round-sm border border-gray-200/70 dark:border-gray-600/30">
                     <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 flex items-center">
                       <div className="h-4 w-1 bg-green-500 rounded-full mr-2"></div>
                       What Went Well
@@ -754,7 +754,7 @@ const YourReviews = ({ userId }) => {
                       {review.whatWentWell}
                     </p>
                   </div>
-                  <div className="bg-gray-50/80 dark:bg-gray-700/30 p-4 rounded-md border border-gray-200/70 dark:border-gray-600/30">
+                  <div className="bg-gray-50/80 dark:bg-gray-700/30 p-4 round-sm border border-gray-200/70 dark:border-gray-600/30">
                     <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 flex items-center">
                       <div className="h-4 w-1 bg-red-500 rounded-full mr-2"></div>
                       What Went Wrong
@@ -763,7 +763,7 @@ const YourReviews = ({ userId }) => {
                       {review.whatWentWrong}
                     </p>
                   </div>
-                  <div className="col-span-1 sm:col-span-2 bg-gray-50/80 dark:bg-gray-700/30 p-4 rounded-md border border-gray-200/70 dark:border-gray-600/30">
+                  <div className="col-span-1 sm:col-span-2 bg-gray-50/80 dark:bg-gray-700/30 p-4 round-sm border border-gray-200/70 dark:border-gray-600/30">
                     <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 flex items-center">
                       <div className="h-4 w-1 bg-primary rounded-full mr-2"></div>
                       Lessons Learned
@@ -773,7 +773,7 @@ const YourReviews = ({ userId }) => {
                     </p>
                   </div>
                   {review.futureAdjustments && (
-                    <div className="col-span-1 sm:col-span-2 bg-gray-50/80 dark:bg-gray-700/30 p-4 rounded-md border border-gray-200/70 dark:border-gray-600/30">
+                    <div className="col-span-1 sm:col-span-2 bg-gray-50/80 dark:bg-gray-700/30 p-4 round-sm border border-gray-200/70 dark:border-gray-600/30">
                       <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 flex items-center">
                         <div className="h-4 w-1 bg-blue-500 rounded-full mr-2"></div>
                         Future Adjustments
@@ -797,7 +797,7 @@ const YourReviews = ({ userId }) => {
                     </div>
                   </div>
                   <div
-                    className={`px-3 py-1 rounded-md text-sm font-medium ${
+                    className={`px-3 py-1 round-sm text-sm font-medium ${
                       review.trade.profitLoss.realized >= 0
                         ? "bg-green-100 dark:bg-green-800/30 text-green-800 dark:text-green-300"
                         : "bg-red-100 dark:bg-red-800/30 text-red-800 dark:text-red-300"

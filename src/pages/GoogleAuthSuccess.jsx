@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { Loader, CheckCircle, XCircle, ArrowRight } from "lucide-react";
@@ -7,8 +7,12 @@ const GoogleAuthSuccess = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const { login } = useAuth();
-  const [status, setStatus] = useState("initializing");
+  const [status, setStatus] = useState("processing");
   const [errorMessage, setErrorMessage] = useState("");
+  const [progress, setProgress] = useState(0);
+  const [authData, setAuthData] = useState(null);
+  const progressIntervalRef = useRef(null);
+  const authCompletedRef = useRef(false);
 
   useEffect(() => {
     const token = searchParams.get("token");
@@ -16,7 +20,6 @@ const GoogleAuthSuccess = () => {
     if (!token) {
       setStatus("error");
       setErrorMessage("No authentication token found");
-      console.warn("⚠️ No token found, redirecting...");
       setTimeout(() => navigate("/login"), 2000);
       return;
     }
@@ -25,10 +28,19 @@ const GoogleAuthSuccess = () => {
       import.meta.env.VITE_API_URL
     }/api/auth/google/success?token=${token}`;
 
+    // Simulate gradual progress
+    progressIntervalRef.current = setInterval(() => {
+      setProgress((prev) => {
+        if (prev >= 100) {
+          clearInterval(progressIntervalRef.current);
+          return 100;
+        }
+        return prev + 2;
+      });
+    }, 150);
+
     const handleGoogleSuccess = async () => {
       try {
-        setStatus("verifying");
-
         const response = await fetch(apiUrl, {
           credentials: "include",
           headers: {
@@ -44,17 +56,24 @@ const GoogleAuthSuccess = () => {
         const data = await response.json();
 
         if (data.success) {
+          // Set auth data for login later
+          setAuthData(data.data);
+
+          // Auth is successful - now prepare for next stage
           setStatus("success");
+          authCompletedRef.current = true;
 
-          // Pass false for both shouldRedirect and showWelcome
-          // We'll show the welcome message after loading the complete profile
-          await login(data.data, false, false);
-
-          // IMPORTANT: Navigate to logging-in component
-          navigate("/logging-in", {
-            state: { from: "/dashboard", referrer: "login" },
-            replace: true,
-          });
+          // Set a timeout to transition to loading page
+          setTimeout(() => {
+            // Navigate to the loading page which will show the longer simulation
+            navigate("/logging-in", {
+              state: {
+                from: "/dashboard",
+                referrer: "google-auth",
+              },
+              replace: true,
+            });
+          }, 5000); // 5 second delay showing success before transition
         } else {
           throw new Error(data.error || "Authentication failed");
         }
@@ -63,79 +82,39 @@ const GoogleAuthSuccess = () => {
         setStatus("error");
         setErrorMessage(error.message);
         setTimeout(() => navigate("/login"), 2000);
+      } finally {
+        clearInterval(progressIntervalRef.current);
       }
     };
 
     handleGoogleSuccess();
-  }, [searchParams, login, navigate]);
 
-  const renderStatusContent = () => {
-    switch (status) {
-      case "initializing":
-        return (
-          <div className="flex flex-col items-center">
-            <Loader className="h-8 w-8 text-gray-400 animate-spin mb-4" />
-            <p className="text-gray-600 dark:text-gray-300">
-              Initializing authentication process...
-            </p>
-          </div>
-        );
-      case "verifying":
-        return (
-          <div className="flex flex-col items-center">
-            <Loader className="h-8 w-8 text-primary animate-spin mb-4" />
-            <p className="text-gray-700 dark:text-gray-300">
-              Verifying your Google account...
-            </p>
-            <div className="w-full mt-6">
-              <div className="h-1.5 w-full bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
-                <div className="h-full bg-primary rounded-full animate-pulse w-1/2"></div>
-              </div>
-            </div>
-          </div>
-        );
-      case "success":
-        return (
-          <div className="flex flex-col items-center">
-            <CheckCircle className="h-12 w-12 text-green-500 mb-4" />
-            <p className="text-gray-700 dark:text-gray-300">
-              Authentication successful!
-            </p>
-            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-              Redirecting to your dashboard...
-            </p>
-            <div className="w-full mt-6">
-              <div className="h-1.5 w-full bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
-                <div className="h-full bg-green-500 rounded-full animate-[progress_2s_linear]"></div>
-              </div>
-            </div>
-          </div>
-        );
-      case "error":
-        return (
-          <div className="flex flex-col items-center">
-            <XCircle className="h-12 w-12 text-red-500 mb-4" />
-            <p className="text-gray-700 dark:text-gray-200 font-medium">
-              Authentication failed
-            </p>
-            <p className="text-sm text-red-600 dark:text-red-400 mt-1">
-              {errorMessage}
-            </p>
-            <p className="text-xs text-gray-500 dark:text-gray-400 mt-4">
-              Redirecting to login page...
-            </p>
-          </div>
-        );
-      default:
-        return null;
-    }
-  };
+    // Cleanup
+    return () => {
+      if (progressIntervalRef.current) {
+        clearInterval(progressIntervalRef.current);
+      }
+    };
+  }, [searchParams, navigate]);
 
+  // Effect to handle login when component unmounts
+  useEffect(() => {
+    return () => {
+      // Only perform login if auth was successful
+      if (authCompletedRef.current && authData) {
+        // When navigating away, we can run the login function
+        // We're passing false for redirectAfterLogin since we're already handling that
+        login(authData, false, false);
+      }
+    };
+  }, [authData, login]);
+
+  // Content based on status
   return (
     <div className="min-h-screen px-4 sm:px-6 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 flex items-center justify-center py-12">
       <div className="w-full max-w-md mx-auto">
-        <div className="relative bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-lg shadow-md border border-gray-200 dark:border-gray-700/60 p-8">
-          <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(115,115,115,0.075)_1px,transparent_1px),linear-gradient(to_bottom,rgba(115,115,115,0.075)_1px,transparent_1px)] bg-[size:14px_14px] pointer-events-none rounded-lg dark:bg-[linear-gradient(to_right,rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.03)_1px,transparent_1px)]"></div>
+        <div className="relative bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-sm shadow-md border border-gray-200 dark:border-gray-700/60 p-8">
+          <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(115,115,115,0.075)_1px,transparent_1px),linear-gradient(to_bottom,rgba(115,115,115,0.075)_1px,transparent_1px)] bg-[size:14px_14px] pointer-events-none rounded-sm dark:bg-[linear-gradient(to_right,rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.03)_1px,transparent_1px)]"></div>
 
           <div className="relative z-10">
             <div className="flex items-center justify-center mb-6">
@@ -170,9 +149,59 @@ const GoogleAuthSuccess = () => {
               </h2>
             </div>
 
-            <div className="py-6">{renderStatusContent()}</div>
+            <div className="py-6">
+              {status === "processing" ? (
+                <div className="flex flex-col items-center">
+                  <Loader className="h-10 w-10 text-primary animate-spin mb-4" />
+                  <p className="text-gray-700 dark:text-gray-300 font-medium">
+                    Verifying your Google account...
+                  </p>
+                  <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                    Please wait while we process your sign-in
+                  </p>
+                  <div className="w-full mt-6">
+                    <div className="h-1.5 w-full bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                      <div
+                        className="h-full bg-primary rounded-full transition-all duration-300 ease-in-out"
+                        style={{ width: `${progress}%` }}
+                      ></div>
+                    </div>
+                  </div>
+                </div>
+              ) : status === "success" ? (
+                <div className="flex flex-col items-center">
+                  <CheckCircle className="h-12 w-12 text-green-500 mb-4" />
+                  <p className="text-gray-700 dark:text-gray-300 font-medium">
+                    Authentication successful!
+                  </p>
+                  <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                    You'll now be redirected to prepare your trading
+                    dashboard...
+                  </p>
+                  <div className="w-full mt-6">
+                    <div className="h-1.5 w-full bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                      <div className="h-full bg-green-500 rounded-full w-full"></div>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <div className="flex flex-col items-center">
+                  <XCircle className="h-12 w-12 text-red-500 mb-4" />
+                  <p className="text-gray-700 dark:text-gray-200 font-medium">
+                    Authentication failed
+                  </p>
+                  <p className="text-sm text-red-600 dark:text-red-400 mt-1">
+                    {errorMessage}
+                  </p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-4">
+                    Redirecting to login page...
+                  </p>
+                </div>
+              )}
+            </div>
 
-            <div className="mt-6 bg-gray-50 dark:bg-gray-700/40 rounded-lg border border-gray-200 dark:border-gray-700/40 p-4">
+            {/* Show token status */}
+            <div className="mt-6 bg-gray-50 dark:bg-gray-700/40 rounded-sm border border-gray-200 dark:border-gray-700/40 p-4">
               <div className="flex items-center justify-between">
                 <span className="text-sm text-gray-600 dark:text-gray-400">
                   Authentication Token
@@ -189,15 +218,18 @@ const GoogleAuthSuccess = () => {
               </div>
             </div>
 
-            <div className="mt-6 text-center">
-              <button
-                onClick={() => navigate("/login")}
-                className="inline-flex items-center text-sm text-primary hover:text-primary-dark transition-colors"
-              >
-                Return to login
-                <ArrowRight className="ml-1 h-4 w-4" />
-              </button>
-            </div>
+            {/* Show return to login button only on error */}
+            {status === "error" && (
+              <div className="mt-6 text-center">
+                <button
+                  onClick={() => navigate("/login")}
+                  className="inline-flex items-center text-sm text-primary hover:text-primary-dark transition-colors"
+                >
+                  Return to login
+                  <ArrowRight className="ml-1 h-4 w-4" />
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </div>

@@ -171,7 +171,7 @@ const TradePlanModal = ({ isOpen, onClose, onSubmit, plan }) => {
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
       <div
         ref={modalRef}
-        className="bg-white dark:bg-gray-800/80 rounded-lg w-full max-w-4xl h-[90vh] sm:max-h-[90vh] overflow-y-auto border border-gray-200 dark:border-gray-700/60 shadow-lg relative"
+        className="bg-white dark:bg-gray-800/80 rounded-sm w-full max-w-4xl h-[90vh] sm:max-h-[90vh] overflow-y-auto border border-gray-200 dark:border-gray-700/60 shadow-lg relative"
       >
         <div className="sticky top-0 z-10 bg-white dark:bg-gray-800/95 backdrop-blur-sm border-b border-gray-200 dark:border-gray-700/40 p-4 sm:p-6 flex justify-between items-center">
           <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100 flex items-center">
@@ -180,7 +180,7 @@ const TradePlanModal = ({ isOpen, onClose, onSubmit, plan }) => {
           </h2>
           <button
             onClick={onClose}
-            className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700/50 rounded-md 
+            className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700/50 round-sm 
             text-gray-500 dark:text-gray-400 transition-colors"
             aria-label="Close"
           >
@@ -191,7 +191,7 @@ const TradePlanModal = ({ isOpen, onClose, onSubmit, plan }) => {
         <div className="p-4 sm:p-6 pt-0 sm:pt-0">
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Basic Info */}
-            <div className="bg-gray-50/80 dark:bg-gray-700/30 rounded-lg p-4 sm:p-5 border border-gray-200/70 dark:border-gray-600/40 mt-6">
+            <div className="bg-gray-50/80 dark:bg-gray-700/30 rounded-sm p-4 sm:p-5 border border-gray-200/70 dark:border-gray-600/40 mt-6">
               <h3 className="text-md font-medium text-gray-900 dark:text-gray-100 mb-4 flex items-center">
                 <Clipboard className="h-4 w-4 mr-2 text-primary dark:text-primary-light" />
                 Basic Information
@@ -208,7 +208,7 @@ const TradePlanModal = ({ isOpen, onClose, onSubmit, plan }) => {
                     name="ticker"
                     value={formData.ticker}
                     onChange={handleChange}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600/70 rounded-md 
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600/70 round-sm 
                     bg-white dark:bg-gray-700/40 text-gray-900 dark:text-gray-100
                     focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary"
                     required
@@ -223,7 +223,7 @@ const TradePlanModal = ({ isOpen, onClose, onSubmit, plan }) => {
                       name="direction"
                       value={formData.direction}
                       onChange={handleChange}
-                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600/70 rounded-md 
+                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600/70 round-sm 
                       bg-white dark:bg-gray-700/40 text-gray-900 dark:text-gray-100
                       focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary
                       appearance-none"
@@ -242,7 +242,7 @@ const TradePlanModal = ({ isOpen, onClose, onSubmit, plan }) => {
             </div>
 
             {/* Trade Attributes */}
-            <div className="bg-gray-50/80 dark:bg-gray-700/30 rounded-lg p-4 sm:p-5 border border-gray-200/70 dark:border-gray-600/40">
+            <div className="bg-gray-50/80 dark:bg-gray-700/30 rounded-sm p-4 sm:p-5 border border-gray-200/70 dark:border-gray-600/40">
               <h3 className="text-md font-medium text-gray-900 dark:text-gray-100 mb-4 flex items-center">
                 <Check className="h-4 w-4 mr-2 text-primary dark:text-primary-light" />
                 Trade Attributes
@@ -250,7 +250,7 @@ const TradePlanModal = ({ isOpen, onClose, onSubmit, plan }) => {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                 <div className="space-y-2">
-                  <label className="flex items-center p-2 hover:bg-gray-100/70 dark:hover:bg-gray-600/40 rounded-md transition-colors">
+                  <label className="flex items-center p-2 hover:bg-gray-100/70 dark:hover:bg-gray-600/40 round-sm transition-colors">
                     <input
                       type="checkbox"
                       name="attributes.lowFloat"
@@ -263,7 +263,7 @@ const TradePlanModal = ({ isOpen, onClose, onSubmit, plan }) => {
                       Low Float
                     </span>
                   </label>
-                  <label className="flex items-center p-2 hover:bg-gray-100/70 dark:hover:bg-gray-600/40 rounded-md transition-colors">
+                  <label className="flex items-center p-2 hover:bg-gray-100/70 dark:hover:bg-gray-600/40 round-sm transition-colors">
                     <input
                       type="checkbox"
                       name="attributes.upMoreThan10Percent"
@@ -276,7 +276,7 @@ const TradePlanModal = ({ isOpen, onClose, onSubmit, plan }) => {
                       Up more than 10%
                     </span>
                   </label>
-                  <label className="flex items-center p-2 hover:bg-gray-100/70 dark:hover:bg-gray-600/40 rounded-md transition-colors">
+                  <label className="flex items-center p-2 hover:bg-gray-100/70 dark:hover:bg-gray-600/40 round-sm transition-colors">
                     <input
                       type="checkbox"
                       name="attributes.unusualVolume"
@@ -289,7 +289,7 @@ const TradePlanModal = ({ isOpen, onClose, onSubmit, plan }) => {
                       Have Unusual Volume
                     </span>
                   </label>
-                  <label className="flex items-center p-2 hover:bg-gray-100/70 dark:hover:bg-gray-600/40 rounded-md transition-colors">
+                  <label className="flex items-center p-2 hover:bg-gray-100/70 dark:hover:bg-gray-600/40 round-sm transition-colors">
                     <input
                       type="checkbox"
                       name="attributes.formerRunner"
@@ -304,7 +304,7 @@ const TradePlanModal = ({ isOpen, onClose, onSubmit, plan }) => {
                   </label>
                 </div>
                 <div className="space-y-2">
-                  <label className="flex items-center p-2 hover:bg-gray-100/70 dark:hover:bg-gray-600/40 rounded-md transition-colors">
+                  <label className="flex items-center p-2 hover:bg-gray-100/70 dark:hover:bg-gray-600/40 round-sm transition-colors">
                     <input
                       type="checkbox"
                       name="attributes.hasCatalyst"
@@ -317,7 +317,7 @@ const TradePlanModal = ({ isOpen, onClose, onSubmit, plan }) => {
                       Has Catalyst
                     </span>
                   </label>
-                  <label className="flex items-center p-2 hover:bg-gray-100/70 dark:hover:bg-gray-600/40 rounded-md transition-colors">
+                  <label className="flex items-center p-2 hover:bg-gray-100/70 dark:hover:bg-gray-600/40 round-sm transition-colors">
                     <input
                       type="checkbox"
                       name="attributes.wholeHalfDollarBreak"
@@ -330,7 +330,7 @@ const TradePlanModal = ({ isOpen, onClose, onSubmit, plan }) => {
                       Whole/Half $ Break
                     </span>
                   </label>
-                  <label className="flex items-center p-2 hover:bg-gray-100/70 dark:hover:bg-gray-600/40 rounded-md transition-colors">
+                  <label className="flex items-center p-2 hover:bg-gray-100/70 dark:hover:bg-gray-600/40 round-sm transition-colors">
                     <input
                       type="checkbox"
                       name="attributes.clearSupport"
@@ -348,7 +348,7 @@ const TradePlanModal = ({ isOpen, onClose, onSubmit, plan }) => {
             </div>
 
             {/* Quality Metrics */}
-            <div className="bg-gray-50/80 dark:bg-gray-700/30 rounded-lg p-4 sm:p-5 border border-gray-200/70 dark:border-gray-600/40">
+            <div className="bg-gray-50/80 dark:bg-gray-700/30 rounded-sm p-4 sm:p-5 border border-gray-200/70 dark:border-gray-600/40">
               <h3 className="text-md font-medium text-gray-900 dark:text-gray-100 mb-4 flex items-center">
                 <AlertTriangle className="h-4 w-4 mr-2 text-primary dark:text-primary-light" />
                 Quality of Setup
@@ -365,7 +365,7 @@ const TradePlanModal = ({ isOpen, onClose, onSubmit, plan }) => {
                     name="quality.float"
                     value={formData.quality.float || ""}
                     onChange={handleChange}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600/70 rounded-md 
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600/70 round-sm 
                     bg-white dark:bg-gray-700/40 text-gray-900 dark:text-gray-100
                     focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary"
                   />
@@ -380,7 +380,7 @@ const TradePlanModal = ({ isOpen, onClose, onSubmit, plan }) => {
                     name="quality.supportArea"
                     value={formData.quality.supportArea || ""}
                     onChange={handleChange}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600/70 rounded-md 
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600/70 round-sm 
                     bg-white dark:bg-gray-700/40 text-gray-900 dark:text-gray-100
                     focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary"
                   />
@@ -397,7 +397,7 @@ const TradePlanModal = ({ isOpen, onClose, onSubmit, plan }) => {
                     onChange={handleChange}
                     min="1"
                     max="10"
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600/70 rounded-md 
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600/70 round-sm 
                     bg-white dark:bg-gray-700/40 text-gray-900 dark:text-gray-100
                     focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary"
                   />
@@ -421,7 +421,7 @@ const TradePlanModal = ({ isOpen, onClose, onSubmit, plan }) => {
                             },
                           })
                         }
-                        className={`py-2 px-3 rounded-md font-medium text-sm border flex items-center justify-center
+                        className={`py-2 px-3 round-sm font-medium text-sm border flex items-center justify-center
                         ${
                           formData.setup.setupGrade === grade
                             ? getGradeColor(grade) + " border-transparent"
@@ -437,7 +437,7 @@ const TradePlanModal = ({ isOpen, onClose, onSubmit, plan }) => {
             </div>
 
             {/* Execution Plan */}
-            <div className="bg-gray-50/80 dark:bg-gray-700/30 rounded-lg p-4 sm:p-5 border border-gray-200/70 dark:border-gray-600/40">
+            <div className="bg-gray-50/80 dark:bg-gray-700/30 rounded-sm p-4 sm:p-5 border border-gray-200/70 dark:border-gray-600/40">
               <h3 className="text-md font-medium text-gray-900 dark:text-gray-100 mb-4 flex items-center">
                 <FileEdit className="h-4 w-4 mr-2 text-primary dark:text-primary-light" />
                 Execution Plan
@@ -455,7 +455,7 @@ const TradePlanModal = ({ isOpen, onClose, onSubmit, plan }) => {
                     value={formData.execution.entry || ""}
                     onChange={handleChange}
                     step="0.01"
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600/70 rounded-md 
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600/70 round-sm 
                     bg-white dark:bg-gray-700/40 text-gray-900 dark:text-gray-100
                     focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary"
                   />
@@ -471,7 +471,7 @@ const TradePlanModal = ({ isOpen, onClose, onSubmit, plan }) => {
                     value={formData.execution.profitTarget || ""}
                     onChange={handleChange}
                     step="0.01"
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600/70 rounded-md 
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600/70 round-sm 
                     bg-white dark:bg-gray-700/40 text-gray-900 dark:text-gray-100
                     focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary"
                   />
@@ -487,7 +487,7 @@ const TradePlanModal = ({ isOpen, onClose, onSubmit, plan }) => {
                     value={formData.execution.stopLoss || ""}
                     onChange={handleChange}
                     step="0.01"
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600/70 rounded-md 
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600/70 round-sm 
                     bg-white dark:bg-gray-700/40 text-gray-900 dark:text-gray-100
                     focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary"
                   />
@@ -496,7 +496,7 @@ const TradePlanModal = ({ isOpen, onClose, onSubmit, plan }) => {
             </div>
 
             {/* Notes */}
-            <div className="bg-gray-50/80 dark:bg-gray-700/30 rounded-lg p-4 sm:p-5 border border-gray-200/70 dark:border-gray-600/40">
+            <div className="bg-gray-50/80 dark:bg-gray-700/30 rounded-sm p-4 sm:p-5 border border-gray-200/70 dark:border-gray-600/40">
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
                 Notes & Observations
               </label>
@@ -506,7 +506,7 @@ const TradePlanModal = ({ isOpen, onClose, onSubmit, plan }) => {
                 value={formData.notes || ""}
                 onChange={handleChange}
                 rows="4"
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600/70 rounded-md 
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600/70 round-sm 
                 bg-white dark:bg-gray-700/40 text-gray-900 dark:text-gray-100
                 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary"
                 placeholder="Add any additional notes, observations, or reminders about this trade plan..."
@@ -518,7 +518,7 @@ const TradePlanModal = ({ isOpen, onClose, onSubmit, plan }) => {
               <button
                 type="button"
                 onClick={onClose}
-                className="px-5 py-2.5 border border-gray-300 dark:border-gray-600/70 rounded-md 
+                className="px-5 py-2.5 border border-gray-300 dark:border-gray-600/70 round-sm 
                 bg-white dark:bg-gray-700/40 text-gray-700 dark:text-gray-300 
                 hover:bg-gray-50 dark:hover:bg-gray-600/70 font-medium transition-colors"
               >
@@ -527,7 +527,7 @@ const TradePlanModal = ({ isOpen, onClose, onSubmit, plan }) => {
               <button
                 type="submit"
                 disabled={loading}
-                className="px-5 py-2.5 bg-primary hover:bg-primary/90 text-white rounded-md shadow
+                className="px-5 py-2.5 bg-primary hover:bg-primary/90 text-white round-sm shadow
                 disabled:opacity-50 disabled:cursor-not-allowed font-medium transition-colors"
               >
                 {loading

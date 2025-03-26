@@ -17,7 +17,7 @@ const TraderCard = ({ trader, currentUserId, onFollowToggle }) => {
     totalTrades > 0 ? Math.round((winningTrades / totalTrades) * 1000) / 10 : 0;
 
   return (
-    <div className="bg-white dark:bg-gray-800/80 rounded-lg border border-gray-200 dark:border-gray-700/60 shadow-sm hover:shadow-md transition-shadow overflow-hidden">
+    <div className="bg-white dark:bg-gray-800/80 rounded-sm border border-gray-200 dark:border-gray-700/60 shadow-sm hover:shadow-md transition-shadow overflow-hidden">
       {/* Header */}
       <div className="flex justify-between items-center p-4 border-b border-gray-200 dark:border-gray-700/40 bg-gray-50/80 dark:bg-gray-700/30">
         <Link
@@ -35,7 +35,7 @@ const TraderCard = ({ trader, currentUserId, onFollowToggle }) => {
         {currentUserId !== trader._id && (
           <button
             onClick={() => onFollowToggle(trader._id)}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${
+            className={`flex items-center gap-1.5 px-3 py-1.5 round-sm text-xs font-medium transition-colors ${
               isFollowing
                 ? "bg-gray-100 dark:bg-gray-600/70 text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-600"
                 : "bg-primary/10 dark:bg-primary/20 text-primary dark:text-primary-light hover:bg-primary/20 dark:hover:bg-primary/30"
@@ -73,7 +73,7 @@ const TraderCard = ({ trader, currentUserId, onFollowToggle }) => {
 
         <div className="grid grid-cols-3 gap-3 pt-4 border-t border-gray-200 dark:border-gray-700/40">
           <div className="flex flex-col items-center">
-            <div className="bg-primary/10 dark:bg-primary/20 w-full rounded-md py-2.5 flex items-center justify-center mb-1.5">
+            <div className="bg-primary/10 dark:bg-primary/20 w-full round-sm py-2.5 flex items-center justify-center mb-1.5">
               <LineChart className="h-4 w-4 text-primary dark:text-primary-light mr-1.5" />
               <span className="font-semibold text-gray-900 dark:text-gray-100">
                 {trader.stats?.totalTrades || 0}
@@ -83,7 +83,7 @@ const TraderCard = ({ trader, currentUserId, onFollowToggle }) => {
           </div>
 
           <div className="flex flex-col items-center">
-            <div className="bg-accent/10 dark:bg-accent/20 w-full rounded-md py-2.5 flex items-center justify-center mb-1.5">
+            <div className="bg-accent/10 dark:bg-accent/20 w-full round-sm py-2.5 flex items-center justify-center mb-1.5">
               <User className="h-4 w-4 text-accent dark:text-accent-light mr-1.5" />
               <span className="font-semibold text-gray-900 dark:text-gray-100">
                 {trader.followers?.length || 0}
@@ -96,7 +96,7 @@ const TraderCard = ({ trader, currentUserId, onFollowToggle }) => {
 
           <div className="flex flex-col items-center">
             <div
-              className={`w-full rounded-md py-2.5 flex items-center justify-center mb-1.5 ${
+              className={`w-full round-sm py-2.5 flex items-center justify-center mb-1.5 ${
                 winRate >= 50
                   ? "bg-green-100/90 dark:bg-green-800/30"
                   : "bg-red-100/90 dark:bg-red-800/30"

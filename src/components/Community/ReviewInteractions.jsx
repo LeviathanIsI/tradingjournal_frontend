@@ -100,7 +100,7 @@ const ReviewInteractions = ({ review, onUpdate }) => {
                   value={comment}
                   onChange={(e) => setComment(e.target.value)}
                   placeholder="Add a comment..."
-                  className="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600/70 rounded-md bg-white dark:bg-gray-700/40 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary pr-10"
+                  className="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600/70 round-sm bg-white dark:bg-gray-700/40 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary pr-10"
                 />
                 <button
                   type="submit"
@@ -113,7 +113,7 @@ const ReviewInteractions = ({ review, onUpdate }) => {
               <button
                 type="submit"
                 disabled={!comment.trim()}
-                className="px-4 py-2.5 bg-primary hover:bg-primary/90 text-white rounded-md shadow transition-colors font-medium hidden sm:block disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-4 py-2.5 bg-primary hover:bg-primary/90 text-white round-sm shadow transition-colors font-medium hidden sm:block disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Post Comment
               </button>
@@ -122,7 +122,7 @@ const ReviewInteractions = ({ review, onUpdate }) => {
 
           <div className="space-y-3">
             {review.comments?.length === 0 ? (
-              <div className="bg-gray-50/80 dark:bg-gray-700/30 p-4 rounded-md text-center text-gray-500 dark:text-gray-400">
+              <div className="bg-gray-50/80 dark:bg-gray-700/30 p-4 round-sm text-center text-gray-500 dark:text-gray-400">
                 <MessageCircle className="h-5 w-5 mx-auto mb-2 opacity-50" />
                 <p>No comments yet. Be the first to share your thoughts!</p>
               </div>
@@ -130,7 +130,7 @@ const ReviewInteractions = ({ review, onUpdate }) => {
               review.comments?.map((cmt) => (
                 <div
                   key={cmt._id}
-                  className="flex justify-between items-start p-4 rounded-md bg-gray-50/80 dark:bg-gray-700/30 border border-gray-200/70 dark:border-gray-600/40"
+                  className="flex justify-between items-start p-4 round-sm bg-gray-50/80 dark:bg-gray-700/30 border border-gray-200/70 dark:border-gray-600/40"
                 >
                   <div className="flex gap-3">
                     <div className="flex-shrink-0 mt-0.5">

@@ -29,7 +29,7 @@ const TradePlanning = () => {
   if (authLoading || loading) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-gray-50 dark:bg-gray-900">
-        <div className="bg-white/90 dark:bg-gray-800/80 p-6 rounded-lg border border-gray-200 dark:border-gray-700/60 shadow-md backdrop-blur-sm">
+        <div className="bg-white/90 dark:bg-gray-800/80 p-6 rounded-sm border border-gray-200 dark:border-gray-700/60 shadow-md backdrop-blur-sm">
           <div className="animate-pulse flex flex-col items-center space-y-3">
             <div className="h-8 w-8 bg-primary/40 dark:bg-primary/30 rounded-full"></div>
             <div className="text-lg font-medium text-gray-700 dark:text-gray-200">
@@ -84,7 +84,7 @@ const TradePlanning = () => {
     >
       <td colSpan="9" className="p-5">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-          <div className="bg-gray-50/80 dark:bg-gray-700/30 p-4 rounded-lg border border-gray-200/70 dark:border-gray-600/30">
+          <div className="bg-gray-50/80 dark:bg-gray-700/30 p-4 rounded-sm border border-gray-200/70 dark:border-gray-600/30">
             <h4 className="font-medium text-gray-900 dark:text-gray-100 mb-2 flex items-center">
               <div className="h-1 w-4 bg-primary rounded-full mr-2"></div>
               Analysis
@@ -93,7 +93,7 @@ const TradePlanning = () => {
               {plan.analysis || "No analysis provided"}
             </p>
           </div>
-          <div className="bg-gray-50/80 dark:bg-gray-700/30 p-4 rounded-lg border border-gray-200/70 dark:border-gray-600/30">
+          <div className="bg-gray-50/80 dark:bg-gray-700/30 p-4 rounded-sm border border-gray-200/70 dark:border-gray-600/30">
             <h4 className="font-medium text-gray-900 dark:text-gray-100 mb-2 flex items-center">
               <div className="h-1 w-4 bg-secondary rounded-full mr-2"></div>
               Notes
@@ -123,7 +123,7 @@ const TradePlanning = () => {
           </div>
           <button
             onClick={handleNewPlan}
-            className="inline-flex items-center px-4 py-2 bg-primary hover:bg-primary/90 text-white rounded-md 
+            className="inline-flex items-center px-4 py-2 bg-primary hover:bg-primary/90 text-white round-sm 
             shadow hover:shadow-md transition-all"
           >
             <Plus size={18} className="mr-2" />
@@ -132,7 +132,7 @@ const TradePlanning = () => {
         </div>
 
         {/* Feature Info Card */}
-        <div className="bg-gradient-to-br from-gray-50/90 to-gray-100/80 dark:from-gray-700/30 dark:to-gray-600/20 p-4 rounded-lg border border-gray-200 dark:border-gray-600/50 shadow-sm backdrop-blur-sm mb-6">
+        <div className="bg-gradient-to-br from-gray-50/90 to-gray-100/80 dark:from-gray-700/30 dark:to-gray-600/20 p-4 rounded-sm border border-gray-200 dark:border-gray-600/50 shadow-sm backdrop-blur-sm mb-6">
           <div className="flex items-start gap-3">
             <BarChart2 className="h-5 w-5 text-primary mt-1 flex-shrink-0" />
             <div>
@@ -166,14 +166,14 @@ const TradePlanning = () => {
 
         {/* Error Message */}
         {error && (
-          <div className="mb-6 bg-red-50 dark:bg-red-900/20 border border-red-100 dark:border-red-800/50 text-red-700 dark:text-red-300 px-4 py-3 rounded-md flex items-start gap-3 shadow-sm">
+          <div className="mb-6 bg-red-50 dark:bg-red-900/20 border border-red-100 dark:border-red-800/50 text-red-700 dark:text-red-300 px-4 py-3 round-sm flex items-start gap-3 shadow-sm">
             <AlertTriangle className="h-5 w-5 text-red-500 dark:text-red-400 flex-shrink-0 mt-0.5" />
             <span>{error}</span>
           </div>
         )}
 
         {/* Main Content Card */}
-        <div className="bg-white/90 dark:bg-gray-800/60 rounded-lg border border-gray-200 dark:border-gray-700/60 shadow-md backdrop-blur-sm">
+        <div className="bg-white/90 dark:bg-gray-800/60 rounded-sm border border-gray-200 dark:border-gray-700/60 shadow-md backdrop-blur-sm">
           {/* Mobile view */}
           <div className="sm:hidden p-4">
             <TradePlanList

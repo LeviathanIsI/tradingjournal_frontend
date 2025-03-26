@@ -91,7 +91,7 @@ const NotificationDropdown = () => {
 
       {/* Dropdown menu */}
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-80 sm:w-96 bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm rounded-lg shadow-lg z-50 overflow-hidden border border-gray-200 dark:border-gray-700/60 transform origin-top-right animate-[scaleIn_0.2s_ease-out]">
+        <div className="absolute right-0 mt-2 w-80 sm:w-96 bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm rounded-sm shadow-lg z-50 overflow-hidden border border-gray-200 dark:border-gray-700/60 transform origin-top-right animate-[scaleIn_0.2s_ease-out]">
           {/* Header */}
           <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-700/40 flex justify-between items-center bg-gray-50/80 dark:bg-gray-800/80">
             <div className="flex items-center">

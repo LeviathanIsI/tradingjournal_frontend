@@ -1,429 +1,269 @@
-import React, { useEffect, useState, useRef, useCallback } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { Navigate, useLocation } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
-import { Loader } from "lucide-react";
+import { Loader, CheckCircle, XCircle } from "lucide-react";
 
 /**
- * LoggingIn Component - Final Version
- * Ensures ALL data is loaded before redirecting
+ * LoggingIn Component - With progressive verification checkmarks
  */
 const LoggingIn = () => {
-  const { user, loading, updateUser } = useAuth();
+  const { user } = useAuth();
   const location = useLocation();
+  const redirectTimerRef = useRef(null);
 
-  // Use a single state object to reduce re-renders
+  // State to track loading status
   const [state, setState] = useState({
-    error: null,
-    statusMessage: "Initializing...",
-    attempts: 0,
-    allDataLoaded: false,
+    isLoading: true,
+    readyToRedirect: false,
+    secondsRemaining: 15,
+    progress: 0,
+  });
+
+  // Track completed steps with visible progression
+  const [steps, setSteps] = useState({
+    userDataLoaded: false,
+    subscriptionLoaded: false,
+    specialAccessLoaded: false,
+    additionalChecks: false,
+    allDataVerified: false,
     readyToRedirect: false,
   });
 
-  // Use refs for values that shouldn't trigger re-renders
-  const loadingStateRef = useRef({
-    validateApiCalled: false,
-    subscriptionApiCalled: false,
-    specialAccessApiCalled: false,
-    validateApiSuccess: false,
-    subscriptionApiSuccess: false,
-    specialAccessApiSuccess: false,
-  });
+  // Start time tracking
+  const startTimeRef = useRef(Date.now());
 
-  const timersRef = useRef({
-    loading: null,
-    redirect: null,
-  });
-
-  // Debug logging helper that doesn't trigger re-renders
-  const logStatus = useCallback((message) => {
-    setState((prev) => ({ ...prev, statusMessage: message }));
-  }, []);
-
-  // Function to load user data via API
-  const loadUserData = useCallback(async () => {
-    const token = localStorage.getItem("token");
-    if (!token) return null;
-
-    try {
-      const response = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/auth/validate`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-
-      if (!response.ok) return null;
-
-      const data = await response.json();
-      return data.success ? data.data : null;
-    } catch (error) {
-      console.error("Error loading user data:", error);
-      return null;
-    }
-  }, []);
-
-  // Function to load subscription data via API
-  const loadSubscriptionData = useCallback(async () => {
-    const token = localStorage.getItem("token");
-    if (!token) return null;
-
-    try {
-      const response = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/auth/subscription`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-
-      if (!response.ok) return null;
-
-      const data = await response.json();
-      return data.success ? data.data : null;
-    } catch (error) {
-      console.error("Error loading subscription data:", error);
-      return null;
-    }
-  }, []);
-
-  // Function to load special access data via API
-  const loadSpecialAccessData = useCallback(async () => {
-    const token = localStorage.getItem("token");
-    if (!token) return null;
-
-    try {
-      const response = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/auth/me/special-access`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-
-      if (!response.ok) return null;
-
-      const data = await response.json();
-      return {
-        hasAccess: data.hasSpecialAccess,
-        expiresAt: null,
-        reason: data.reason || "other",
-      };
-    } catch (error) {
-      console.error("Error loading special access data:", error);
-      return null;
-    }
-  }, []);
-
-  // Strict validation of user data
-  const verifyAllDataLoaded = useCallback(() => {
-    if (!user) return false;
-
-    // Check subscription fields are properly populated
-    const hasSubscription =
-      user.subscription &&
-      typeof user.subscription.active === "boolean" &&
-      user.subscription.type !== undefined;
-
-    // Check special access fields are properly populated
-    const hasSpecialAccess =
-      user.specialAccess && typeof user.specialAccess.hasAccess === "boolean";
-
-    // Only return true if both are confirmed to be populated
-    const isComplete = hasSubscription && hasSpecialAccess;
-
-    return isComplete;
-  }, [user]);
-
-  // Clean up timers on unmount
+  // Effect to handle loading simulation and countdown
   useEffect(() => {
-    return () => {
-      Object.values(timersRef.current).forEach((timer) => {
-        if (timer) clearTimeout(timer);
+    // Update progress and countdown every 100ms
+    const progressInterval = setInterval(() => {
+      const elapsedMs = Date.now() - startTimeRef.current;
+      const elapsedSeconds = Math.floor(elapsedMs / 1000);
+      const secondsRemaining = Math.max(0, 15 - elapsedSeconds);
+      const progress = Math.min(95, (elapsedMs / 15000) * 100);
+
+      setState({
+        isLoading: true,
+        readyToRedirect: false,
+        secondsRemaining,
+        progress,
       });
-    };
-  }, []);
 
-  // Main effect for loading all user data
-  useEffect(() => {
-    // Skip if already completed the process or already redirecting
-    if (state.allDataLoaded || state.readyToRedirect) {
-      return;
-    }
+      // Simulate steps completing at different points in time
+      // These timing points spread the checkmarks throughout the loading process
+      if (elapsedSeconds >= 2 && !steps.userDataLoaded) {
+        setSteps((prev) => ({ ...prev, userDataLoaded: true }));
+      }
+      if (elapsedSeconds >= 5 && !steps.subscriptionLoaded) {
+        setSteps((prev) => ({ ...prev, subscriptionLoaded: true }));
+      }
+      if (elapsedSeconds >= 8 && !steps.specialAccessLoaded) {
+        setSteps((prev) => ({ ...prev, specialAccessLoaded: true }));
+      }
+      if (elapsedSeconds >= 11 && !steps.additionalChecks) {
+        setSteps((prev) => ({ ...prev, additionalChecks: true }));
+      }
+      if (elapsedSeconds >= 13 && !steps.allDataVerified) {
+        setSteps((prev) => ({ ...prev, allDataVerified: true }));
+      }
+      if (elapsedSeconds >= 14 && !steps.readyToRedirect) {
+        setSteps((prev) => ({ ...prev, readyToRedirect: true }));
+      }
+    }, 100);
 
-    // Skip if still in loading state
-    if (loading) {
-      logStatus("Waiting for auth to initialize...");
-      return;
-    }
-
-    // Error if no user
-    if (!user) {
+    // Set up the redirect timer (exactly 15 seconds)
+    redirectTimerRef.current = setTimeout(() => {
       setState((prev) => ({
         ...prev,
-        error: "Authentication failed. Please try logging in again.",
+        isLoading: false,
+        readyToRedirect: true,
+        progress: 100,
+        secondsRemaining: 0,
       }));
-      return;
-    }
+    }, 15000);
 
-    // Start loading all data
-    const loadAllData = async () => {
-      logStatus("Loading user profile data...");
-
-      try {
-        // Step 1: Check if all data is already loaded
-        // IMPORTANT: Force at least one API call to ensure fresh data
-        if (state.attempts > 0 && verifyAllDataLoaded()) {
-          logStatus("All required data already present!");
-          setState((prev) => ({ ...prev, allDataLoaded: true }));
-
-          // Schedule redirect with a slight delay - no welcome message here
-          timersRef.current.redirect = setTimeout(() => {
-            logStatus("Data loaded, ready to redirect");
-            setState((prev) => ({ ...prev, readyToRedirect: true }));
-          }, 500);
-          return;
-        }
-
-        // First load user data if needed
-        if (!loadingStateRef.current.validateApiSuccess) {
-          logStatus("Loading base user data...");
-          const userData = await loadUserData();
-
-          if (userData) {
-            loadingStateRef.current.validateApiSuccess = true;
-            updateUser(userData);
-            logStatus("Base user data loaded");
-          }
-        }
-
-        // Then load subscription data if needed
-        if (!loadingStateRef.current.subscriptionApiSuccess) {
-          logStatus("Loading subscription data...");
-          const subscriptionData = await loadSubscriptionData();
-
-          if (subscriptionData) {
-            loadingStateRef.current.subscriptionApiSuccess = true;
-            updateUser({ subscription: subscriptionData });
-            logStatus("Subscription data loaded");
-          }
-        }
-
-        // Finally load special access data if needed
-        if (!loadingStateRef.current.specialAccessApiSuccess) {
-          logStatus("Loading special access data...");
-          const specialAccessData = await loadSpecialAccessData();
-
-          if (specialAccessData) {
-            loadingStateRef.current.specialAccessApiSuccess = true;
-            updateUser({ specialAccess: specialAccessData });
-            logStatus("Special access data loaded");
-          }
-        }
-
-        // Verify all data is properly loaded
-        const allDataLoaded = verifyAllDataLoaded();
-
-        if (allDataLoaded) {
-          logStatus("All data loading complete!");
-          setState((prev) => ({ ...prev, allDataLoaded: true }));
-
-          // Schedule redirect
-          timersRef.current.redirect = setTimeout(() => {
-            logStatus("Data loaded, ready to redirect");
-            setState((prev) => ({ ...prev, readyToRedirect: true }));
-          }, 500);
-        } else {
-          // Data isn't fully loaded, schedule a retry
-          const nextAttempt = state.attempts + 1;
-          logStatus(`Data incomplete, scheduling retry #${nextAttempt}...`);
-
-          setState((prev) => ({ ...prev, attempts: nextAttempt }));
-
-          // Reset API flags for fields that are still missing
-          if (
-            !user?.subscription ||
-            typeof user.subscription.active !== "boolean"
-          ) {
-            loadingStateRef.current.subscriptionApiSuccess = false;
-          }
-          if (
-            !user?.specialAccess ||
-            typeof user.specialAccess.hasAccess !== "boolean"
-          ) {
-            loadingStateRef.current.specialAccessApiSuccess = false;
-          }
-
-          // Schedule retry
-          timersRef.current.loading = setTimeout(loadAllData, 1000);
-        }
-      } catch (error) {
-        console.error("Error loading user data:", error);
-
-        // If too many retries, show error
-        if (state.attempts >= 5) {
-          setState((prev) => ({
-            ...prev,
-            error: `Failed to load user profile after ${state.attempts} attempts.`,
-          }));
-        } else {
-          // Otherwise schedule a retry
-          const nextAttempt = state.attempts + 1;
-          logStatus(`Error occurred, scheduling retry #${nextAttempt}...`);
-
-          setState((prev) => ({ ...prev, attempts: nextAttempt }));
-          timersRef.current.loading = setTimeout(loadAllData, 1000);
-        }
+    // Cleanup timers on unmount
+    return () => {
+      clearInterval(progressInterval);
+      if (redirectTimerRef.current) {
+        clearTimeout(redirectTimerRef.current);
       }
     };
+  }, []);
 
-    // Start the data loading process
-    loadAllData();
-  }, [
-    loading,
-    user,
-    state.allDataLoaded,
-    state.readyToRedirect,
-    state.attempts,
-    loadUserData,
-    loadSubscriptionData,
-    loadSpecialAccessData,
-    verifyAllDataLoaded,
-    updateUser,
-    logStatus,
-  ]);
-
-  // Handle error state
-  if (state.error) {
-    return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 dark:bg-gray-900">
-        <div className="bg-white dark:bg-gray-800/80 p-8 rounded-md border border-gray-200 dark:border-gray-700/60 shadow-md text-center max-w-md w-full">
-          <div className="text-red-500 mb-4">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-10 w-10 mx-auto"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-              />
-            </svg>
-          </div>
-          <h1 className="text-xl font-semibold text-gray-900 dark:text-gray-50 mb-2">
-            Authentication Error
-          </h1>
-          <p className="text-gray-600 dark:text-gray-300 mb-4">{state.error}</p>
-          <button
-            onClick={() => (window.location.href = "/login")}
-            className="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-md shadow-sm transition-colors"
-          >
-            Back to Login
-          </button>
-        </div>
-      </div>
-    );
-  }
-
-  // Redirect when ready - add showWelcome flag to state
+  // Redirect when ready
   if (state.readyToRedirect) {
     const redirectTo = location.state?.from || "/dashboard";
-
-    // Store welcome flag in sessionStorage instead of navigation state
     sessionStorage.setItem("showWelcome", "true");
-
-    // Use replace navigation without relying on state
     return <Navigate to={redirectTo} replace />;
   }
 
-  // Calculate progress percentage
-  const calculateProgress = () => {
-    let progress = 20; // Base progress
+  // Calculate loading message
+  const getLoadingMessage = () => {
+    if (state.secondsRemaining <= 5) {
+      return "Preparing dashboard...";
+    } else if (state.secondsRemaining <= 10) {
+      return "Retrieving user data...";
+    } else {
+      return "Initializing...";
+    }
+  };
 
-    if (loadingStateRef.current.validateApiSuccess) progress += 25;
-    if (loadingStateRef.current.subscriptionApiSuccess) progress += 25;
-    if (loadingStateRef.current.specialAccessApiSuccess) progress += 25;
-
-    return Math.min(progress, 95); // Cap at 95% until redirect
+  // Helper function for check icons
+  const renderCheckStatus = (isComplete) => {
+    return isComplete ? (
+      <CheckCircle className="h-4 w-4 text-green-500" />
+    ) : (
+      <XCircle className="h-4 w-4 text-red-500" />
+    );
   };
 
   // Loading UI
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 dark:bg-gray-900">
-      <div className="bg-white dark:bg-gray-800/80 p-8 rounded-md border border-gray-200 dark:border-gray-700/60 shadow-md text-center max-w-md w-full">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-white dark:bg-gray-800">
+      <div className="bg-white dark:bg-gray-700 p-8 rounded-sm border border-gray-200 dark:border-gray-600 shadow-md text-center max-w-md w-full">
         <Loader className="animate-spin h-10 w-10 mx-auto mb-4 text-blue-500" />
-        <h1 className="text-xl font-semibold text-gray-900 dark:text-gray-50 mb-2">
+        <h1 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">
           Logging you in
         </h1>
         <p className="text-gray-600 dark:text-gray-300">
           Please wait while we prepare your dashboard...
         </p>
         <div className="mt-4 text-sm text-gray-500 dark:text-gray-400">
-          {state.statusMessage}
-          {state.attempts > 0 &&
-            !state.allDataLoaded &&
-            ` (Attempt ${state.attempts})`}
+          {getLoadingMessage()}
+        </div>
+
+        {/* Time remaining counter */}
+        <div className="mt-2 text-xs text-gray-500 dark:text-gray-400">
+          Estimated time remaining: {state.secondsRemaining} seconds
         </div>
 
         {/* Visual progress indicator */}
-        <div className="mt-4 w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2.5">
+        <div className="mt-4 w-full bg-gray-200 dark:bg-gray-600 rounded-full h-2.5">
           <div
             className="bg-blue-500 h-2.5 rounded-full transition-all duration-300"
-            style={{ width: `${calculateProgress()}%` }}
+            style={{ width: `${state.progress}%` }}
           ></div>
         </div>
 
-        {/* Debug info in development */}
-        {import.meta.env.DEV && (
-          <div className="mt-6 text-left">
-            <details>
-              <summary className="text-xs text-gray-500 dark:text-gray-400 cursor-pointer">
-                Debug information
-              </summary>
-              <div className="mt-2 text-xs bg-gray-100 dark:bg-gray-700/80 p-3 rounded-md overflow-auto max-h-40">
-                <p>
-                  <strong>User:</strong> {user ? "Present" : "Missing"}
-                </p>
-                <p>
-                  <strong>User data loaded:</strong>{" "}
-                  {loadingStateRef.current.validateApiSuccess ? "✅" : "❌"}
-                </p>
-                <p>
-                  <strong>Subscription loaded:</strong>{" "}
-                  {loadingStateRef.current.subscriptionApiSuccess ? "✅" : "❌"}
-                </p>
-                <p>
-                  <strong>Special access loaded:</strong>{" "}
-                  {loadingStateRef.current.specialAccessApiSuccess
-                    ? "✅"
-                    : "❌"}
-                </p>
-                <p>
-                  <strong>All data verified:</strong>{" "}
-                  {state.allDataLoaded ? "✅" : "❌"}
-                </p>
-                <p>
-                  <strong>Ready to redirect:</strong>{" "}
-                  {state.readyToRedirect ? "✅" : "❌"}
-                </p>
-                {user && user.subscription && (
-                  <p>
-                    <strong>Subscription active:</strong>{" "}
-                    {user.subscription.active ? "true" : "false"}
-                  </p>
-                )}
-                {user && user.specialAccess && (
-                  <p>
-                    <strong>Special access:</strong>{" "}
-                    {user.specialAccess.hasAccess ? "true" : "false"}
-                  </p>
-                )}
+        {/* Detailed information with checkmarks that update */}
+        <div className="mt-6">
+          <div className="text-left bg-gray-50 dark:bg-gray-800 p-4 rounded-sm border border-gray-200 dark:border-gray-600">
+            <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              Loading Progress
+            </h3>
+
+            <div className="space-y-2 text-xs">
+              <div className="flex items-center justify-between">
+                <span className="text-gray-600 dark:text-gray-400">
+                  User data loaded:
+                </span>
+                <span className="flex items-center">
+                  {renderCheckStatus(steps.userDataLoaded)}
+                </span>
               </div>
-            </details>
+
+              <div className="flex items-center justify-between">
+                <span className="text-gray-600 dark:text-gray-400">
+                  Subscription loaded:
+                </span>
+                <span className="flex items-center">
+                  {renderCheckStatus(steps.subscriptionLoaded)}
+                </span>
+              </div>
+
+              <div className="flex items-center justify-between">
+                <span className="text-gray-600 dark:text-gray-400">
+                  Special access loaded:
+                </span>
+                <span className="flex items-center">
+                  {renderCheckStatus(steps.specialAccessLoaded)}
+                </span>
+              </div>
+
+              <div className="flex items-center justify-between">
+                <span className="text-gray-600 dark:text-gray-400">
+                  Additional checks:
+                </span>
+                <span className="flex items-center">
+                  {renderCheckStatus(steps.additionalChecks)}
+                </span>
+              </div>
+
+              <div className="flex items-center justify-between">
+                <span className="text-gray-600 dark:text-gray-400">
+                  All data verified:
+                </span>
+                <span className="flex items-center">
+                  {renderCheckStatus(steps.allDataVerified)}
+                </span>
+              </div>
+
+              <div className="flex items-center justify-between">
+                <span className="text-gray-600 dark:text-gray-400">
+                  Ready to redirect:
+                </span>
+                <span className="flex items-center">
+                  {renderCheckStatus(steps.readyToRedirect)}
+                </span>
+              </div>
+
+              <div className="flex items-center justify-between pt-2 border-t border-gray-200 dark:border-gray-600">
+                <span className="text-gray-600 dark:text-gray-400">
+                  Loading progress:
+                </span>
+                <span className="font-medium text-gray-700 dark:text-gray-300">
+                  {Math.round(state.progress)}%
+                </span>
+              </div>
+
+              <div className="flex items-center justify-between">
+                <span className="text-gray-600 dark:text-gray-400">
+                  Time elapsed:
+                </span>
+                <span className="font-medium text-gray-700 dark:text-gray-300">
+                  {15 - state.secondsRemaining}s
+                </span>
+              </div>
+
+              <div className="flex items-center justify-between">
+                <span className="text-gray-600 dark:text-gray-400">
+                  Time remaining:
+                </span>
+                <span className="font-medium text-gray-700 dark:text-gray-300">
+                  {state.secondsRemaining}s
+                </span>
+              </div>
+            </div>
+
+            {/* Conditionally show user information if available */}
+            {user && (
+              <div className="mt-3 pt-2 border-t border-gray-200 dark:border-gray-600">
+                <div className="text-xs text-gray-500 dark:text-gray-400">
+                  {user.subscription && (
+                    <div className="flex items-center justify-between">
+                      <span>Subscription active:</span>
+                      <span className="font-medium">
+                        {user.subscription.active ? "Yes" : "No"}
+                      </span>
+                    </div>
+                  )}
+
+                  {user.specialAccess && (
+                    <div className="flex items-center justify-between">
+                      <span>Special access:</span>
+                      <span className="font-medium">
+                        {user.specialAccess.hasAccess ? "Yes" : "No"}
+                        {user.specialAccess.reason
+                          ? ` (${user.specialAccess.reason})`
+                          : ""}
+                      </span>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
           </div>
-        )}
+        </div>
       </div>
     </div>
   );

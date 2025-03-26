@@ -25,13 +25,13 @@ const LeaderboardCard = ({
 
     switch (variant) {
       case "mobile":
-        return `${baseClass} p-3 bg-white/90 dark:bg-gray-800/60 rounded-lg border border-gray-200 dark:border-gray-700/40 shadow-sm backdrop-blur-sm`;
+        return `${baseClass} p-3 bg-white/90 dark:bg-gray-800/60 rounded-sm border border-gray-200 dark:border-gray-700/40 shadow-sm backdrop-blur-sm`;
       case "detailed":
         return `${baseClass} p-4 border-b border-gray-200 dark:border-gray-700/40 ${
           isCurrentUser ? "bg-primary/5 dark:bg-primary/10" : ""
         }`;
       default:
-        return `${baseClass} p-4 bg-white/90 dark:bg-gray-800/60 rounded-lg border border-gray-200 dark:border-gray-700/40 shadow-sm backdrop-blur-sm hover:shadow-md transition-shadow`;
+        return `${baseClass} p-4 bg-white/90 dark:bg-gray-800/60 rounded-sm border border-gray-200 dark:border-gray-700/40 shadow-sm backdrop-blur-sm hover:shadow-md transition-shadow`;
     }
   };
 
@@ -105,7 +105,7 @@ const LeaderboardCard = ({
         className={`grid grid-cols-2 gap-4 text-sm ${
           variant === "detailed"
             ? ""
-            : "bg-gray-50/80 dark:bg-gray-700/30 p-3 rounded-md"
+            : "bg-gray-50/80 dark:bg-gray-700/30 p-3 round-sm"
         }`}
       >
         <div className="flex items-center">

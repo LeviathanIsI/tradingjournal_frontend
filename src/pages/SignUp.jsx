@@ -198,7 +198,7 @@ const SignUp = () => {
                     handleQuestionChange(questionKey, e.target.value)
                   }
                   className="w-full px-3 py-2 bg-white dark:bg-gray-700/50 border border-gray-300 dark:border-gray-600/70 
-                  text-gray-900 dark:text-gray-100 rounded-md focus:border-primary focus:ring-2 focus:ring-primary/30 
+                  text-gray-900 dark:text-gray-100 round-sm focus:border-primary focus:ring-2 focus:ring-primary/30 
                   shadow-sm appearance-none pr-8"
                   required
                 >
@@ -233,7 +233,7 @@ const SignUp = () => {
                     handleAnswerChange(questionKey, e.target.value)
                   }
                   className="w-full px-3 py-2 bg-white dark:bg-gray-700/50 border border-gray-300 dark:border-gray-600/70 
-                  text-gray-900 dark:text-gray-100 rounded-md focus:border-primary focus:ring-2 focus:ring-primary/30 shadow-sm"
+                  text-gray-900 dark:text-gray-100 round-sm focus:border-primary focus:ring-2 focus:ring-primary/30 shadow-sm"
                   required
                 />
               </div>
@@ -253,7 +253,7 @@ const SignUp = () => {
 
   return (
     <div className="min-h-screen pt-16 bg-gray-50 dark:bg-gray-900 flex items-center justify-center py-12">
-      <div className="w-full max-w-md bg-white/90 dark:bg-gray-800/80 p-6 sm:p-8 rounded-lg border border-gray-200 dark:border-gray-700/60 shadow-md backdrop-blur-sm mx-4">
+      <div className="w-full max-w-md bg-white/90 dark:bg-gray-800/80 p-6 sm:p-8 rounded-sm border border-gray-200 dark:border-gray-700/60 shadow-md backdrop-blur-sm mx-4">
         <div className="text-center mb-6">
           <div className="inline-flex items-center justify-center p-2 bg-primary/10 dark:bg-primary/20 rounded-full mb-4">
             <UserPlus className="h-6 w-6 text-primary" />
@@ -267,7 +267,7 @@ const SignUp = () => {
         </div>
 
         {error && (
-          <div className="mb-6 bg-red-50 dark:bg-red-900/20 border border-red-100 dark:border-red-800/50 text-red-700 dark:text-red-300 px-4 py-3 rounded-md flex items-start gap-3 shadow-sm">
+          <div className="mb-6 bg-red-50 dark:bg-red-900/20 border border-red-100 dark:border-red-800/50 text-red-700 dark:text-red-300 px-4 py-3 round-sm flex items-start gap-3 shadow-sm">
             <AlertTriangle className="h-5 w-5 text-red-500 dark:text-red-400 flex-shrink-0 mt-0.5" />
             <span className="text-sm">{error}</span>
           </div>
@@ -296,7 +296,7 @@ const SignUp = () => {
                     name="username"
                     type="text"
                     required
-                    className="block w-full pl-10 rounded-md border border-gray-300 dark:border-gray-600/70 px-3 py-2 
+                    className="block w-full pl-10 round-sm border border-gray-300 dark:border-gray-600/70 px-3 py-2 
                     text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-700/50 shadow-sm 
                     focus:border-primary focus:ring-2 focus:ring-primary/30 text-sm"
                     value={formData.username}
@@ -318,7 +318,7 @@ const SignUp = () => {
                     name="email"
                     type="email"
                     required
-                    className="block w-full pl-10 rounded-md border border-gray-300 dark:border-gray-600/70 px-3 py-2 
+                    className="block w-full pl-10 round-sm border border-gray-300 dark:border-gray-600/70 px-3 py-2 
                     text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-700/50 shadow-sm 
                     focus:border-primary focus:ring-2 focus:ring-primary/30 text-sm"
                     value={formData.email}
@@ -341,7 +341,7 @@ const SignUp = () => {
                       name="password"
                       type="password"
                       required
-                      className="block w-full pl-10 rounded-md border border-gray-300 dark:border-gray-600/70 px-3 py-2 
+                      className="block w-full pl-10 round-sm border border-gray-300 dark:border-gray-600/70 px-3 py-2 
                       text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-700/50 shadow-sm 
                       focus:border-primary focus:ring-2 focus:ring-primary/30 text-sm"
                       value={formData.password}
@@ -363,7 +363,7 @@ const SignUp = () => {
                       name="confirmPassword"
                       type="password"
                       required
-                      className="block w-full pl-10 rounded-md border border-gray-300 dark:border-gray-600/70 px-3 py-2 
+                      className="block w-full pl-10 round-sm border border-gray-300 dark:border-gray-600/70 px-3 py-2 
                       text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-700/50 shadow-sm 
                       focus:border-primary focus:ring-2 focus:ring-primary/30 text-sm"
                       value={formData.confirmPassword}
@@ -386,7 +386,7 @@ const SignUp = () => {
                 </h3>
               </div>
 
-              <div className="bg-blue-50/80 dark:bg-blue-900/20 p-4 rounded-md border border-blue-100 dark:border-blue-800/40 mb-5 flex items-start gap-3">
+              <div className="bg-blue-50/80 dark:bg-blue-900/20 p-4 round-sm border border-blue-100 dark:border-blue-800/40 mb-5 flex items-start gap-3">
                 <Shield className="h-5 w-5 text-blue-500 dark:text-blue-400 flex-shrink-0 mt-0.5" />
                 <p className="text-sm text-blue-800 dark:text-blue-200">
                   Choose three different security questions to help protect your
@@ -402,7 +402,7 @@ const SignUp = () => {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-primary hover:bg-primary/90 text-white py-3 rounded-md 
+              className="w-full bg-primary hover:bg-primary/90 text-white py-3 round-sm 
               disabled:opacity-50 shadow-sm text-sm font-medium flex items-center justify-center transition-colors"
             >
               {loading ? (
@@ -456,7 +456,7 @@ const SignUp = () => {
           <button
             type="button"
             onClick={handleGoogleSignup}
-            className="w-full bg-white hover:bg-gray-50 dark:bg-gray-700/50 dark:hover:bg-gray-700/70 text-gray-900 dark:text-gray-100 py-3 rounded-md 
+            className="w-full bg-white hover:bg-gray-50 dark:bg-gray-700/50 dark:hover:bg-gray-700/70 text-gray-900 dark:text-gray-100 py-3 round-sm 
             shadow-sm text-sm font-medium flex items-center justify-center border border-gray-300 dark:border-gray-600/70 transition-colors"
           >
             <svg

@@ -20,7 +20,7 @@ const Community = () => {
   if (authLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-gray-50 dark:bg-gray-900">
-        <div className="bg-white/90 dark:bg-gray-800/80 p-5 rounded-lg border border-gray-200 dark:border-gray-700/60 shadow-sm backdrop-blur-sm">
+        <div className="bg-white/90 dark:bg-gray-800/80 p-5 rounded-sm border border-gray-200 dark:border-gray-700/60 shadow-sm backdrop-blur-sm">
           <div className="animate-pulse flex flex-col items-center space-y-3">
             <div className="h-8 w-8 bg-primary/40 dark:bg-primary/30 rounded-full"></div>
             <div className="text-lg font-medium text-gray-700 dark:text-gray-200">
@@ -38,13 +38,13 @@ const Community = () => {
 
       {/* Info Section with improved styling */}
       <div className="px-3 sm:px-6 py-4 sm:py-6 bg-gradient-to-br from-white/90 to-gray-50/80 dark:from-gray-800/70 dark:to-gray-900/60 border-b border-gray-200 dark:border-gray-700/40 backdrop-blur-sm">
-        <div className="bg-white/90 dark:bg-gray-800/80 p-4 sm:p-6 rounded-lg border border-gray-200 dark:border-gray-700/60 shadow-md">
+        <div className="bg-white/90 dark:bg-gray-800/80 p-4 sm:p-6 rounded-sm border border-gray-200 dark:border-gray-700/60 shadow-md">
           <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-gray-100 mb-3">
             Community Features
           </h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-4">
-            <div className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-900/10 p-4 rounded-md border border-blue-100 dark:border-blue-800/30 flex items-start space-x-3">
-              <div className="bg-blue-100 dark:bg-blue-800/30 p-2 rounded-md">
+            <div className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-900/10 p-4 round-sm border border-blue-100 dark:border-blue-800/30 flex items-start space-x-3">
+              <div className="bg-blue-100 dark:bg-blue-800/30 p-2 round-sm">
                 <Users className="h-5 w-5 text-primary dark:text-primary" />
               </div>
               <div>
@@ -57,8 +57,8 @@ const Community = () => {
               </div>
             </div>
 
-            <div className="bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-900/10 p-4 rounded-md border border-purple-100 dark:border-purple-800/30 flex items-start space-x-3">
-              <div className="bg-purple-100 dark:bg-purple-800/30 p-2 rounded-md">
+            <div className="bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-900/10 p-4 round-sm border border-purple-100 dark:border-purple-800/30 flex items-start space-x-3">
+              <div className="bg-purple-100 dark:bg-purple-800/30 p-2 round-sm">
                 <BookOpen className="h-5 w-5 text-accent dark:text-accent" />
               </div>
               <div>
@@ -71,8 +71,8 @@ const Community = () => {
               </div>
             </div>
 
-            <div className="bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-900/10 p-4 rounded-md border border-green-100 dark:border-green-800/30 flex items-start space-x-3">
-              <div className="bg-green-100 dark:bg-green-800/30 p-2 rounded-md">
+            <div className="bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-900/10 p-4 round-sm border border-green-100 dark:border-green-800/30 flex items-start space-x-3">
+              <div className="bg-green-100 dark:bg-green-800/30 p-2 round-sm">
                 <BarChart2 className="h-5 w-5 text-secondary dark:text-secondary" />
               </div>
               <div>
@@ -85,8 +85,8 @@ const Community = () => {
               </div>
             </div>
 
-            <div className="bg-gradient-to-br from-amber-50 to-amber-100 dark:from-amber-900/20 dark:to-amber-900/10 p-4 rounded-md border border-amber-100 dark:border-amber-800/30 flex items-start space-x-3">
-              <div className="bg-amber-100 dark:bg-amber-800/30 p-2 rounded-md">
+            <div className="bg-gradient-to-br from-amber-50 to-amber-100 dark:from-amber-900/20 dark:to-amber-900/10 p-4 round-sm border border-amber-100 dark:border-amber-800/30 flex items-start space-x-3">
+              <div className="bg-amber-100 dark:bg-amber-800/30 p-2 round-sm">
                 <Trophy className="h-5 w-5 text-amber-500 dark:text-amber-400" />
               </div>
               <div>
@@ -112,7 +112,7 @@ const Community = () => {
 
       {/* Routes Section with improved container styling */}
       <div className="flex-1 w-full px-3 sm:px-6 py-5 sm:py-6 bg-gray-50/80 dark:bg-gray-900/60 backdrop-blur-sm">
-        <div className="bg-white/90 dark:bg-gray-800/80 rounded-lg border border-gray-200 dark:border-gray-700/60 shadow-md overflow-hidden">
+        <div className="bg-white/90 dark:bg-gray-800/80 rounded-sm border border-gray-200 dark:border-gray-700/60 shadow-md overflow-hidden">
           <Routes>
             {[
               {

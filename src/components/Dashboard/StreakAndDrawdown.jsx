@@ -64,7 +64,7 @@ const StreakAndDrawdown = ({ trades }) => {
   return (
     <div className="space-y-6">
       {/* Info Card */}
-      <div className="bg-gradient-to-br from-gray-50/90 to-gray-100/80 dark:from-gray-700/30 dark:to-gray-600/20 p-4 rounded-lg border border-gray-200 dark:border-gray-600/50 shadow-sm backdrop-blur-sm">
+      <div className="bg-gradient-to-br from-gray-50/90 to-gray-100/80 dark:from-gray-700/30 dark:to-gray-600/20 p-4 rounded-sm border border-gray-200 dark:border-gray-600/50 shadow-sm backdrop-blur-sm">
         <div className="flex items-start gap-3">
           <div className="mt-0.5">
             <Activity className="h-5 w-5 text-primary" />
@@ -111,7 +111,7 @@ const StreakAndDrawdown = ({ trades }) => {
             Winning Streaks
           </h3>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <div className="bg-white/90 dark:bg-gray-800/60 rounded-lg border border-gray-200 dark:border-gray-700/40 p-4 shadow-sm backdrop-blur-sm">
+            <div className="bg-white/90 dark:bg-gray-800/60 rounded-sm border border-gray-200 dark:border-gray-700/40 p-4 shadow-sm backdrop-blur-sm">
               <div className="flex justify-between">
                 <h4 className="text-sm font-medium text-gray-500 dark:text-gray-400">
                   Current Win Streak
@@ -146,7 +146,7 @@ const StreakAndDrawdown = ({ trades }) => {
               )}
             </div>
 
-            <div className="bg-white/90 dark:bg-gray-800/60 rounded-lg border border-gray-200 dark:border-gray-700/40 p-4 shadow-sm backdrop-blur-sm">
+            <div className="bg-white/90 dark:bg-gray-800/60 rounded-sm border border-gray-200 dark:border-gray-700/40 p-4 shadow-sm backdrop-blur-sm">
               <div className="flex justify-between">
                 <h4 className="text-sm font-medium text-gray-500 dark:text-gray-400">
                   Longest Win Streak
@@ -168,7 +168,7 @@ const StreakAndDrawdown = ({ trades }) => {
               </div>
             </div>
 
-            <div className="bg-white/90 dark:bg-gray-800/60 rounded-lg border border-gray-200 dark:border-gray-700/40 p-4 shadow-sm backdrop-blur-sm">
+            <div className="bg-white/90 dark:bg-gray-800/60 rounded-sm border border-gray-200 dark:border-gray-700/40 p-4 shadow-sm backdrop-blur-sm">
               <div className="flex justify-between">
                 <h4 className="text-sm font-medium text-gray-500 dark:text-gray-400">
                   Average Win Streak
@@ -201,7 +201,7 @@ const StreakAndDrawdown = ({ trades }) => {
             Drawdown Analysis
           </h3>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <div className="bg-white/90 dark:bg-gray-800/60 rounded-lg border border-gray-200 dark:border-gray-700/40 p-4 shadow-sm backdrop-blur-sm">
+            <div className="bg-white/90 dark:bg-gray-800/60 rounded-sm border border-gray-200 dark:border-gray-700/40 p-4 shadow-sm backdrop-blur-sm">
               <div className="flex justify-between">
                 <h4 className="text-sm font-medium text-gray-500 dark:text-gray-400">
                   Max Consecutive Losses
@@ -223,7 +223,7 @@ const StreakAndDrawdown = ({ trades }) => {
               </div>
             </div>
 
-            <div className="bg-white/90 dark:bg-gray-800/60 rounded-lg border border-gray-200 dark:border-gray-700/40 p-4 shadow-sm backdrop-blur-sm">
+            <div className="bg-white/90 dark:bg-gray-800/60 rounded-sm border border-gray-200 dark:border-gray-700/40 p-4 shadow-sm backdrop-blur-sm">
               <div className="flex justify-between">
                 <h4 className="text-sm font-medium text-gray-500 dark:text-gray-400">
                   Maximum Drawdown
@@ -241,7 +241,7 @@ const StreakAndDrawdown = ({ trades }) => {
               </div>
             </div>
 
-            <div className="bg-white/90 dark:bg-gray-800/60 rounded-lg border border-gray-200 dark:border-gray-700/40 p-4 shadow-sm backdrop-blur-sm">
+            <div className="bg-white/90 dark:bg-gray-800/60 rounded-sm border border-gray-200 dark:border-gray-700/40 p-4 shadow-sm backdrop-blur-sm">
               <div className="flex justify-between">
                 <h4 className="text-sm font-medium text-gray-500 dark:text-gray-400">
                   Current Status

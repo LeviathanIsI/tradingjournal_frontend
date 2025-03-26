@@ -121,7 +121,7 @@ const Profile = () => {
   if (error) {
     return (
       <div className="w-full min-h-[50vh] py-6 px-3 sm:px-6 flex items-center justify-center">
-        <div className="bg-red-50 dark:bg-red-900/20 p-4 rounded-md border border-red-100 dark:border-red-800/50 shadow-sm text-red-600 dark:text-red-400">
+        <div className="bg-red-50 dark:bg-red-900/20 p-4 round-sm border border-red-100 dark:border-red-800/50 shadow-sm text-red-600 dark:text-red-400">
           Error: {error}
         </div>
       </div>
@@ -131,7 +131,7 @@ const Profile = () => {
   if (!profile) {
     return (
       <div className="w-full min-h-[50vh] py-6 px-3 sm:px-6 flex items-center justify-center">
-        <div className="bg-yellow-50 dark:bg-yellow-900/20 p-4 rounded-md border border-yellow-100 dark:border-yellow-800/50 shadow-sm text-yellow-700 dark:text-yellow-400">
+        <div className="bg-yellow-50 dark:bg-yellow-900/20 p-4 round-sm border border-yellow-100 dark:border-yellow-800/50 shadow-sm text-yellow-700 dark:text-yellow-400">
           Profile not found
         </div>
       </div>
@@ -147,7 +147,7 @@ const Profile = () => {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 bg-gray-50 dark:bg-gray-900">
       {/* Profile Header */}
-      <div className="bg-white dark:bg-gray-800/80 rounded-lg border border-gray-200 dark:border-gray-700/60 shadow-sm p-6 mb-6">
+      <div className="bg-white dark:bg-gray-800/80 rounded-sm border border-gray-200 dark:border-gray-700/60 shadow-sm p-6 mb-6">
         <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-6">
           <div className="flex-1">
             <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 tracking-tight">
@@ -165,7 +165,7 @@ const Profile = () => {
             <div className="w-full sm:w-auto">
               <button
                 onClick={handleFollow}
-                className={`flex items-center justify-center gap-2 px-5 py-2.5 rounded-md font-medium shadow transition-colors w-full ${
+                className={`flex items-center justify-center gap-2 px-5 py-2.5 round-sm font-medium shadow transition-colors w-full ${
                   isFollowing
                     ? "bg-gray-100 dark:bg-gray-700/70 text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-700"
                     : "bg-primary hover:bg-primary/90 text-white"
@@ -189,7 +189,7 @@ const Profile = () => {
 
         {/* Stats Cards */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-8 pt-6 border-t border-gray-200 dark:border-gray-700/40">
-          <div className="bg-white dark:bg-gray-800 rounded-md p-4 border border-gray-100 dark:border-gray-700/40 shadow-sm hover:shadow transition-shadow">
+          <div className="bg-white dark:bg-gray-800 round-sm p-4 border border-gray-100 dark:border-gray-700/40 shadow-sm hover:shadow transition-shadow">
             <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">
               {stats?.totalTrades || 0}
             </p>
@@ -199,7 +199,7 @@ const Profile = () => {
             </p>
           </div>
 
-          <div className="bg-white dark:bg-gray-800 rounded-md p-4 border border-gray-100 dark:border-gray-700/40 shadow-sm hover:shadow transition-shadow">
+          <div className="bg-white dark:bg-gray-800 round-sm p-4 border border-gray-100 dark:border-gray-700/40 shadow-sm hover:shadow transition-shadow">
             <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">
               {formatPercent(stats?.winRate || 0)}
             </p>
@@ -215,7 +215,7 @@ const Profile = () => {
             </div>
           </div>
 
-          <div className="bg-white dark:bg-gray-800 rounded-md p-4 border border-gray-100 dark:border-gray-700/40 shadow-sm hover:shadow transition-shadow">
+          <div className="bg-white dark:bg-gray-800 round-sm p-4 border border-gray-100 dark:border-gray-700/40 shadow-sm hover:shadow transition-shadow">
             <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">
               {profile.user.followers?.length || 0}
             </p>
@@ -225,7 +225,7 @@ const Profile = () => {
             </p>
           </div>
 
-          <div className="bg-white dark:bg-gray-800 rounded-md p-4 border border-gray-100 dark:border-gray-700/40 shadow-sm hover:shadow transition-shadow">
+          <div className="bg-white dark:bg-gray-800 round-sm p-4 border border-gray-100 dark:border-gray-700/40 shadow-sm hover:shadow transition-shadow">
             <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">
               {profile.user.following?.length || 0}
             </p>
@@ -238,7 +238,7 @@ const Profile = () => {
       </div>
 
       {/* Content Tabs */}
-      <div className="bg-white dark:bg-gray-800/80 rounded-lg border border-gray-200 dark:border-gray-700/60 shadow-sm overflow-hidden">
+      <div className="bg-white dark:bg-gray-800/80 rounded-sm border border-gray-200 dark:border-gray-700/60 shadow-sm overflow-hidden">
         <div className="border-b border-gray-200 dark:border-gray-700/50 overflow-x-auto">
           <nav className="flex px-4 sm:px-6 min-w-max">
             <button

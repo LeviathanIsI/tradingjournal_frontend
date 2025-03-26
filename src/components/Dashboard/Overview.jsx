@@ -203,7 +203,7 @@ const TradingInsights = ({ trades, stats }) => {
   };
 
   return (
-    <div className="bg-white dark:bg-gray-800/80 p-4 sm:p-6 rounded-md border border-gray-200 dark:border-gray-700/60 shadow-md">
+    <div className="bg-white dark:bg-gray-800/80 p-4 sm:p-6 round-sm border border-gray-200 dark:border-gray-700/60 shadow-md">
       <div className="mb-4">
         <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-gray-50">
           Trading Insights
@@ -224,7 +224,7 @@ const TradingInsights = ({ trades, stats }) => {
             return (
               <div
                 key={index}
-                className={`flex items-start space-x-2 p-3 sm:p-4 rounded-md transition-shadow duration-200 hover:shadow-md
+                className={`flex items-start space-x-2 p-3 sm:p-4 round-sm transition-shadow duration-200 hover:shadow-md
                 ${
                   insight.color === "green"
                     ? "border border-green-200 dark:border-green-700/40 bg-green-50 dark:bg-green-700/20"
@@ -313,7 +313,7 @@ const Overview = ({ trades }) => {
     <div className="space-y-4 sm:space-y-6">
       {/* Quick Stats Grid */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-        <div className="bg-white dark:bg-gray-800/80 p-3 sm:p-4 rounded-md border border-gray-200 dark:border-gray-700/60 shadow-md hover:shadow-lg transition-shadow duration-200">
+        <div className="bg-white dark:bg-gray-800/80 p-3 sm:p-4 round-sm border border-gray-200 dark:border-gray-700/60 shadow-md hover:shadow-lg transition-shadow duration-200">
           <div className="flex items-center justify-between mb-2">
             <h3 className="text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-400">
               Best Winning Streak
@@ -328,7 +328,7 @@ const Overview = ({ trades }) => {
           </p>
         </div>
 
-        <div className="bg-white dark:bg-gray-800/80 p-3 sm:p-4 rounded-md border border-gray-200 dark:border-gray-700/60 shadow-md hover:shadow-lg transition-shadow duration-200">
+        <div className="bg-white dark:bg-gray-800/80 p-3 sm:p-4 round-sm border border-gray-200 dark:border-gray-700/60 shadow-md hover:shadow-lg transition-shadow duration-200">
           <div className="flex items-center justify-between mb-2">
             <h3 className="text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-400">
               Largest Win
@@ -343,7 +343,7 @@ const Overview = ({ trades }) => {
           </p>
         </div>
 
-        <div className="bg-white dark:bg-gray-800/80 p-3 sm:p-4 rounded-md border border-gray-200 dark:border-gray-700/60 shadow-md hover:shadow-lg transition-shadow duration-200">
+        <div className="bg-white dark:bg-gray-800/80 p-3 sm:p-4 round-sm border border-gray-200 dark:border-gray-700/60 shadow-md hover:shadow-lg transition-shadow duration-200">
           <div className="flex items-center justify-between mb-2">
             <h3 className="text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-400">
               Largest Loss
@@ -358,7 +358,7 @@ const Overview = ({ trades }) => {
           </p>
         </div>
 
-        <div className="bg-white dark:bg-gray-800/80 p-3 sm:p-4 rounded-md border border-gray-200 dark:border-gray-700/60 shadow-md hover:shadow-lg transition-shadow duration-200">
+        <div className="bg-white dark:bg-gray-800/80 p-3 sm:p-4 round-sm border border-gray-200 dark:border-gray-700/60 shadow-md hover:shadow-lg transition-shadow duration-200">
           <div className="flex items-center justify-between mb-2">
             <h3 className="text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-400">
               Win/Loss Ratio
@@ -375,7 +375,7 @@ const Overview = ({ trades }) => {
       </div>
 
       {/* Recent Activity */}
-      <div className="bg-white dark:bg-gray-800/80 p-3 sm:p-4 rounded-md border border-gray-200 dark:border-gray-700/60 shadow-md">
+      <div className="bg-white dark:bg-gray-800/80 p-3 sm:p-4 round-sm border border-gray-200 dark:border-gray-700/60 shadow-md">
         <div className="mb-4">
           <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-gray-50">
             Recent Activity

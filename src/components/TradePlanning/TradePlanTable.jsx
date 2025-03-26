@@ -75,7 +75,7 @@ const TradePlanTable = ({
   };
 
   return (
-    <div className="bg-white dark:bg-gray-800/80 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700/60 overflow-hidden">
+    <div className="bg-white dark:bg-gray-800/80 rounded-sm shadow-sm border border-gray-200 dark:border-gray-700/60 overflow-hidden">
       {tradePlans.length === 0 ? (
         <div className="p-8 text-center">
           <div className="inline-flex items-center justify-center p-3 bg-gray-100 dark:bg-gray-700/50 rounded-full mb-3">
@@ -129,7 +129,7 @@ const TradePlanTable = ({
                     onClick={() => toggleExpand(plan._id)}
                   >
                     <td className="py-4 px-3 text-gray-500 dark:text-gray-400">
-                      <button className="p-1.5 hover:bg-gray-100/70 dark:hover:bg-gray-600/50 rounded-md transition-colors">
+                      <button className="p-1.5 hover:bg-gray-100/70 dark:hover:bg-gray-600/50 round-sm transition-colors">
                         {expandedPlanId === plan._id ? (
                           <ChevronDown
                             size={16}
@@ -175,7 +175,7 @@ const TradePlanTable = ({
                     </td>
                     <td className="py-4 px-4 text-center">
                       <span
-                        className={`inline-block px-2.5 py-1 text-xs font-medium rounded-md ${getStatusStyles(
+                        className={`inline-block px-2.5 py-1 text-xs font-medium round-sm ${getStatusStyles(
                           plan.status
                         )}`}
                       >
@@ -190,7 +190,7 @@ const TradePlanTable = ({
                             e.stopPropagation();
                             handleStatusChange(plan._id, e.target.value);
                           }}
-                          className="mr-2 px-2.5 py-1.5 text-xs border border-gray-300 dark:border-gray-600/70 rounded-md 
+                          className="mr-2 px-2.5 py-1.5 text-xs border border-gray-300 dark:border-gray-600/70 round-sm 
                           bg-white dark:bg-gray-700/40 text-gray-900 dark:text-gray-100
                           focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary
                           appearance-none"
@@ -205,7 +205,7 @@ const TradePlanTable = ({
                             e.stopPropagation();
                             handleEdit(plan);
                           }}
-                          className="p-1.5 text-primary dark:text-primary-light hover:bg-primary/5 dark:hover:bg-primary/10 rounded-md transition-colors"
+                          className="p-1.5 text-primary dark:text-primary-light hover:bg-primary/5 dark:hover:bg-primary/10 round-sm transition-colors"
                           aria-label="Edit trade plan"
                         >
                           <Pencil size={16} />
@@ -215,7 +215,7 @@ const TradePlanTable = ({
                             e.stopPropagation();
                             handleDelete(plan._id);
                           }}
-                          className="p-1.5 text-red-600 dark:text-red-400 hover:bg-red-50/70 dark:hover:bg-red-900/20 rounded-md transition-colors"
+                          className="p-1.5 text-red-600 dark:text-red-400 hover:bg-red-50/70 dark:hover:bg-red-900/20 round-sm transition-colors"
                           aria-label="Delete trade plan"
                         >
                           <Trash2 size={16} />
