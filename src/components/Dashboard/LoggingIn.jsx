@@ -4,12 +4,13 @@ import { useAuth } from "../../context/AuthContext";
 import { Loader, CheckCircle, XCircle } from "lucide-react";
 
 /**
- * LoggingIn Component - With progressive verification checkmarks
+ * LoggingIn Component - With proper step-by-step verification
  */
 const LoggingIn = () => {
   const { user } = useAuth();
   const location = useLocation();
   const redirectTimerRef = useRef(null);
+  const shouldRedirectRef = useRef(false);
 
   // State to track loading status
   const [state, setState] = useState({
@@ -19,7 +20,7 @@ const LoggingIn = () => {
     progress: 0,
   });
 
-  // Track completed steps with visible progression
+  // Track completed steps
   const [steps, setSteps] = useState({
     userDataLoaded: false,
     subscriptionLoaded: false,
@@ -29,17 +30,55 @@ const LoggingIn = () => {
     readyToRedirect: false,
   });
 
+  // Current action message
+  const [currentAction, setCurrentAction] = useState(
+    "Initializing your session..."
+  );
+
+  // Step timing distribution (in seconds) - total should add up to 15s
+  const stepTimings = {
+    userDataLoaded: 2, // 0-2s
+    subscriptionLoaded: 3, // 2-5s
+    specialAccessLoaded: 3, // 5-8s
+    additionalChecks: 3, // 8-11s
+    allDataVerified: 2, // 11-13s
+    readyToRedirect: 2, // 13-15s
+  };
+
+  // Step text display
+  const stepMessages = {
+    initializing: "Initializing your session...",
+    userDataLoaded: "Loading user profile data...",
+    subscriptionLoaded: "Verifying subscription status...",
+    specialAccessLoaded: "Checking account privileges...",
+    additionalChecks: "Performing security validation...",
+    allDataVerified: "Finalizing data verification...",
+    readyToRedirect: "Preparing to load dashboard...",
+  };
+
+  // Step completion text
+  const completionMessages = {
+    userDataLoaded: "Profile loaded",
+    subscriptionLoaded: "Status verified",
+    specialAccessLoaded: "Privileges confirmed",
+    additionalChecks: "Validation complete",
+    allDataVerified: "All systems go",
+    readyToRedirect: "Ready to launch",
+  };
+
   // Start time tracking
   const startTimeRef = useRef(Date.now());
 
-  // Effect to handle loading simulation and countdown
+  // Effect to handle the loading simulation
   useEffect(() => {
-    // Update progress and countdown every 100ms
+    let cumulativeTime = 0;
+
+    // Set up the main interval to update progress and time
     const progressInterval = setInterval(() => {
       const elapsedMs = Date.now() - startTimeRef.current;
       const elapsedSeconds = Math.floor(elapsedMs / 1000);
       const secondsRemaining = Math.max(0, 15 - elapsedSeconds);
-      const progress = Math.min(95, (elapsedMs / 15000) * 100);
+      const progress = Math.min(99, (elapsedMs / 15000) * 100);
 
       setState({
         isLoading: true,
@@ -48,40 +87,94 @@ const LoggingIn = () => {
         progress,
       });
 
-      // Simulate steps completing at different points in time
-      // These timing points spread the checkmarks throughout the loading process
-      if (elapsedSeconds >= 2 && !steps.userDataLoaded) {
-        setSteps((prev) => ({ ...prev, userDataLoaded: true }));
-      }
-      if (elapsedSeconds >= 5 && !steps.subscriptionLoaded) {
-        setSteps((prev) => ({ ...prev, subscriptionLoaded: true }));
-      }
-      if (elapsedSeconds >= 8 && !steps.specialAccessLoaded) {
-        setSteps((prev) => ({ ...prev, specialAccessLoaded: true }));
-      }
-      if (elapsedSeconds >= 11 && !steps.additionalChecks) {
-        setSteps((prev) => ({ ...prev, additionalChecks: true }));
-      }
-      if (elapsedSeconds >= 13 && !steps.allDataVerified) {
-        setSteps((prev) => ({ ...prev, allDataVerified: true }));
-      }
-      if (elapsedSeconds >= 14 && !steps.readyToRedirect) {
-        setSteps((prev) => ({ ...prev, readyToRedirect: true }));
+      // Handle redirect at the end
+      if (elapsedSeconds >= 15 && !shouldRedirectRef.current) {
+        shouldRedirectRef.current = true;
+        setState((prev) => ({
+          ...prev,
+          isLoading: false,
+          readyToRedirect: true,
+          progress: 100,
+          secondsRemaining: 0,
+        }));
       }
     }, 100);
 
-    // Set up the redirect timer (exactly 15 seconds)
+    // Set up each step with appropriate timing
+
+    // Initial message is already set
+
+    // STEP 1: User data loading
+    cumulativeTime += stepTimings.userDataLoaded * 1000;
+    setTimeout(() => {
+      setCurrentAction(stepMessages.userDataLoaded);
+
+      // After showing the message, mark as complete
+      setTimeout(() => {
+        setSteps((prev) => ({ ...prev, userDataLoaded: true }));
+      }, 500);
+    }, 100); // Start almost immediately
+
+    // STEP 2: Subscription loading
+    setTimeout(() => {
+      setCurrentAction(stepMessages.subscriptionLoaded);
+
+      setTimeout(() => {
+        setSteps((prev) => ({ ...prev, subscriptionLoaded: true }));
+      }, 500);
+    }, cumulativeTime);
+
+    // STEP 3: Special access check
+    cumulativeTime += stepTimings.subscriptionLoaded * 1000;
+    setTimeout(() => {
+      setCurrentAction(stepMessages.specialAccessLoaded);
+
+      setTimeout(() => {
+        setSteps((prev) => ({ ...prev, specialAccessLoaded: true }));
+      }, 500);
+    }, cumulativeTime);
+
+    // STEP 4: Security checks
+    cumulativeTime += stepTimings.specialAccessLoaded * 1000;
+    setTimeout(() => {
+      setCurrentAction(stepMessages.additionalChecks);
+
+      setTimeout(() => {
+        setSteps((prev) => ({ ...prev, additionalChecks: true }));
+      }, 500);
+    }, cumulativeTime);
+
+    // STEP 5: Data verification
+    cumulativeTime += stepTimings.additionalChecks * 1000;
+    setTimeout(() => {
+      setCurrentAction(stepMessages.allDataVerified);
+
+      setTimeout(() => {
+        setSteps((prev) => ({ ...prev, allDataVerified: true }));
+      }, 500);
+    }, cumulativeTime);
+
+    // STEP 6: Dashboard preparation
+    cumulativeTime += stepTimings.allDataVerified * 1000;
+    setTimeout(() => {
+      setCurrentAction(stepMessages.readyToRedirect);
+
+      setTimeout(() => {
+        setSteps((prev) => ({ ...prev, readyToRedirect: true }));
+      }, 500);
+    }, cumulativeTime);
+
+    // Set the final redirect to occur at 15s
     redirectTimerRef.current = setTimeout(() => {
-      setState((prev) => ({
-        ...prev,
+      setState({
         isLoading: false,
         readyToRedirect: true,
-        progress: 100,
         secondsRemaining: 0,
-      }));
+        progress: 100,
+      });
     }, 15000);
 
-    // Cleanup timers on unmount
+    // Clean up on unmount
     return () => {
       clearInterval(progressInterval);
       if (redirectTimerRef.current) {
@@ -97,30 +190,33 @@ const LoggingIn = () => {
     return <Navigate to={redirectTo} replace />;
   }
 
-  // Calculate loading message
-  const getLoadingMessage = () => {
-    if (state.secondsRemaining <= 5) {
-      return "Preparing dashboard...";
-    } else if (state.secondsRemaining <= 10) {
-      return "Retrieving user data...";
-    } else {
-      return "Initializing...";
-    }
-  };
-
-  // Helper function for check icons
-  const renderCheckStatus = (isComplete) => {
-    return isComplete ? (
-      <CheckCircle className="h-4 w-4 text-green-500" />
-    ) : (
-      <XCircle className="h-4 w-4 text-red-500" />
+  // Helper function to render status row
+  const renderStatusRow = (step, label, completionText) => {
+    const isComplete = steps[step];
+    return (
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <span className="text-gray-600 dark:text-gray-400">{label}:</span>
+          {isComplete && (
+            <span className="text-xs text-green-600 dark:text-green-400 italic">
+              {completionText}
+            </span>
+          )}
+        </div>
+        <span className="flex items-center">
+          {isComplete ? (
+            <CheckCircle className="h-4 w-4 text-green-500" />
+          ) : (
+            <XCircle className="h-4 w-4 text-red-500" />
+          )}
+        </span>
+      </div>
     );
   };
 
-  // Loading UI
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-white dark:bg-gray-800">
-      <div className="bg-white dark:bg-gray-700 p-8 rounded-sm border border-gray-200 dark:border-gray-600 shadow-md text-center max-w-md w-full">
+      <div className="bg-white dark:bg-gray-700 p-8 rounded-lg border border-gray-200 dark:border-gray-600 shadow-md text-center max-w-md w-full">
         <Loader className="animate-spin h-10 w-10 mx-auto mb-4 text-blue-500" />
         <h1 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">
           Logging you in
@@ -128,8 +224,10 @@ const LoggingIn = () => {
         <p className="text-gray-600 dark:text-gray-300">
           Please wait while we prepare your dashboard...
         </p>
-        <div className="mt-4 text-sm text-gray-500 dark:text-gray-400">
-          {getLoadingMessage()}
+
+        {/* Current action text */}
+        <div className="mt-4 text-sm text-gray-600 dark:text-gray-300 font-medium">
+          {currentAction}
         </div>
 
         {/* Time remaining counter */}
@@ -145,69 +243,46 @@ const LoggingIn = () => {
           ></div>
         </div>
 
-        {/* Detailed information with checkmarks that update */}
+        {/* Loading progress panel */}
         <div className="mt-6">
-          <div className="text-left bg-gray-50 dark:bg-gray-800 p-4 rounded-sm border border-gray-200 dark:border-gray-600">
-            <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          <div className="text-left bg-gray-50 dark:bg-gray-800 p-4 rounded-lg border border-gray-200 dark:border-gray-600">
+            <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
               Loading Progress
             </h3>
 
             <div className="space-y-2 text-xs">
-              <div className="flex items-center justify-between">
-                <span className="text-gray-600 dark:text-gray-400">
-                  User data loaded:
-                </span>
-                <span className="flex items-center">
-                  {renderCheckStatus(steps.userDataLoaded)}
-                </span>
-              </div>
+              {renderStatusRow(
+                "userDataLoaded",
+                "User data",
+                completionMessages.userDataLoaded
+              )}
+              {renderStatusRow(
+                "subscriptionLoaded",
+                "Subscription",
+                completionMessages.subscriptionLoaded
+              )}
+              {renderStatusRow(
+                "specialAccessLoaded",
+                "Special access",
+                completionMessages.specialAccessLoaded
+              )}
+              {renderStatusRow(
+                "additionalChecks",
+                "Security checks",
+                completionMessages.additionalChecks
+              )}
+              {renderStatusRow(
+                "allDataVerified",
+                "Data verification",
+                completionMessages.allDataVerified
+              )}
+              {renderStatusRow(
+                "readyToRedirect",
+                "Dashboard preparation",
+                completionMessages.readyToRedirect
+              )}
 
-              <div className="flex items-center justify-between">
-                <span className="text-gray-600 dark:text-gray-400">
-                  Subscription loaded:
-                </span>
-                <span className="flex items-center">
-                  {renderCheckStatus(steps.subscriptionLoaded)}
-                </span>
-              </div>
-
-              <div className="flex items-center justify-between">
-                <span className="text-gray-600 dark:text-gray-400">
-                  Special access loaded:
-                </span>
-                <span className="flex items-center">
-                  {renderCheckStatus(steps.specialAccessLoaded)}
-                </span>
-              </div>
-
-              <div className="flex items-center justify-between">
-                <span className="text-gray-600 dark:text-gray-400">
-                  Additional checks:
-                </span>
-                <span className="flex items-center">
-                  {renderCheckStatus(steps.additionalChecks)}
-                </span>
-              </div>
-
-              <div className="flex items-center justify-between">
-                <span className="text-gray-600 dark:text-gray-400">
-                  All data verified:
-                </span>
-                <span className="flex items-center">
-                  {renderCheckStatus(steps.allDataVerified)}
-                </span>
-              </div>
-
-              <div className="flex items-center justify-between">
-                <span className="text-gray-600 dark:text-gray-400">
-                  Ready to redirect:
-                </span>
-                <span className="flex items-center">
-                  {renderCheckStatus(steps.readyToRedirect)}
-                </span>
-              </div>
-
-              <div className="flex items-center justify-between pt-2 border-t border-gray-200 dark:border-gray-600">
+              <div className="flex items-center justify-between pt-3 mt-1 border-t border-gray-200 dark:border-gray-600">
                 <span className="text-gray-600 dark:text-gray-400">
                   Loading progress:
                 </span>
